@@ -262,41 +262,55 @@ use crate::extension_headers::{*};
                 }
                 i
             }
-        }
-    
-        fn read_sequence_number (packet:&[u8]) -> Result<u16, GTPUError> {
-            if packet.len()<2 {
-                Err(GTPUError::HeaderSizeTooSmall)
-            } else {
-                Ok(((packet[0] as u16) << 8) | packet[1] as u16)
-            }
-        }
-    
-        fn read_npdu_number (packet:&[u8]) -> Result<u8, GTPUError> {
-            if packet.len()<1 {
-                Err(GTPUError::HeaderSizeTooSmall)
-            } else {
-                Ok(packet[0])
-            }
-        }
-    
-        fn read_next_extension_headers (packet:&[u8]) -> Result<Vec<NextExtensionHeaderField>,GTPUError> {
-            if packet.len()<1 {
-                Err(GTPUError::HeaderSizeTooSmall)
-            } else {
-                let mut result=vec!();
-                let mut i:usize=0;
-                loop {
-                    let t = NextExtensionHeaderField::parse(&packet[i..]);
-                    if matches!(t, NextExtensionHeaderField::NoMoreExtensionHeaders) || matches!(t, NextExtensionHeaderField::Reserved) {
-                        result.push(t);
-                        break;
-                    } else {
-                        i += t.len()-1;
-                        result.push(t);
-                    }
+        
+        pub fn header_offset (&self) -> usize {
+
+            match (self.sequence_number_flag, self.npdu_number_flag, self.extension_header_flag) {
+                (false, false,  false) => MIN_HEADER_LENGTH,      
+                (true,  false,  false) => MIN_HEADER_LENGTH+SQN_LENGTH+self.extension_headers_length(),        
+                (true,  true,   false) => 12,
+                (true,  true,   true) =>  10+self.extension_headers_length(),
+                (true,  false,  true) =>  9+self.extension_headers_length(),
+                (false, true,   true) =>  8+self.extension_headers_length(),  
+                (false, false,  true) =>  7+self.extension_headers_length(),
+                (false, true,   false) => 9,  
                 }
-                Ok(result)
+            }
+        }  
+        
+            fn read_sequence_number (packet:&[u8]) -> Result<u16, GTPUError> {
+                if packet.len()<2 {
+                    Err(GTPUError::HeaderSizeTooSmall)
+                } else {
+                    Ok(((packet[0] as u16) << 8) | packet[1] as u16)
+                }
+            }
+        
+            fn read_npdu_number (packet:&[u8]) -> Result<u8, GTPUError> {
+                if packet.len()<1 {
+                    Err(GTPUError::HeaderSizeTooSmall)
+                } else {
+                    Ok(packet[0])
+                }
+            }
+        
+            fn read_next_extension_headers (packet:&[u8]) -> Result<Vec<NextExtensionHeaderField>,GTPUError> {
+                if packet.len()<1 {
+                    Err(GTPUError::HeaderSizeTooSmall)
+                } else {
+                    let mut result=vec!();
+                    let mut i:usize=0;
+                    loop {
+                        let t = NextExtensionHeaderField::parse(&packet[i..]);
+                        if matches!(t, NextExtensionHeaderField::NoMoreExtensionHeaders) || matches!(t, NextExtensionHeaderField::Reserved) {
+                            result.push(t);
+                            break;
+                        } else {
+                            i += t.len()-1;
+                            result.push(t);
+                        }
+                    }
+                    Ok(result)
             }      
         }
 

@@ -146,66 +146,13 @@ impl GTPUMessage {
         }
         
         let mut offset:usize;
-
-        match (header.sequence_number_flag, header.npdu_number_flag, header.extension_header_flag) {
-            (false, false,  false) => {
-                    if (header.length as usize) <= buffer[7..].len() {
-                        offset = MIN_HEADER_LENGTH;
-                    } else {
-                        return Err(GTPUError::MessageLengthError);
-                    }
-                }
-            (true,  false,  false) => {
-                    if (header.length as usize) <= buffer[7..].len() {
-                        offset = MIN_HEADER_LENGTH+SQN_LENGTH+header.extension_headers_length();
-                    } else {
-                        return Err(GTPUError::MessageLengthError);
-                    }
-            }
-            (true,  true,   false) => {
-                    if (header.length as usize) <= buffer[7..].len() {
-                        offset = 12;
-                    } else {
-                        return Err(GTPUError::MessageLengthError);
-                    }
-            }
-            (true,  true,   true) => {
-                    if (header.length as usize) <= buffer[7..].len() {
-                        offset = 10+header.extension_headers_length();
-                    } else {
-                        return Err(GTPUError::MessageLengthError);
-                    }
-            }
-            (true,  false,  true) => {
-                    if (header.length as usize) <= buffer[7..].len() {
-                        offset = 9+header.extension_headers_length();
-                    } else {
-                        return Err(GTPUError::MessageLengthError);
-                    }
-            }
-            (false, true,   true) => {
-                    if (header.length as usize) <= buffer[7..].len() {
-                        offset = 8+header.extension_headers_length();
-                    } else {
-                        return Err(GTPUError::MessageLengthError);
-                    }
-            }
-            (false, false,  true) => {
-                    if (header.length as usize) <= buffer[7..].len() {
-                        offset = 7+header.extension_headers_length();
-                    } else {
-                        return Err(GTPUError::MessageLengthError);
-                    }
-            }
-            (false, true,   false) => {
-                if (header.length as usize) <= buffer[7..].len() {
-                    offset = 9;
-                } else {
-                    return Err(GTPUError::MessageLengthError);
-                }
-            }
+        
+        if (header.length as usize) <= buffer[7..].len() {
+            offset = header.header_offset();
+        } else {
+            return Err(GTPUError::MessageLengthError);
         }
-
+        
         match header.msgtype {
             G_PDU => {
                 let mut message = Gpdu::default();
