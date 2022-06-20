@@ -113,7 +113,7 @@
             LongPDCPPDUNumber{
                 extension_header_type: LONG_PDCP_PDU_NUMBER_R16,    // Default value according to Rel.16 
                 length:0x02,
-                long_pdcp_pdu_number:0,
+                long_pdcp_pdu_number:100,
             }
         } 
     }
@@ -122,9 +122,8 @@
         fn marshal(&self, buffer: &mut Vec<u8>) {
             buffer.push(self.extension_header_type);
             buffer.push(self.length);
-            buffer.push((self.long_pdcp_pdu_number>>16) as u8);
-            buffer.push(((self.long_pdcp_pdu_number<<16) >> 24) as u8);
-            buffer.push(((self.long_pdcp_pdu_number<<24) >> 24) as u8);
+            let b = self.long_pdcp_pdu_number.to_be_bytes();
+            buffer.extend_from_slice (&b[1..=3]);
             buffer.push(0x00);
             buffer.push(0x00);
             buffer.push(0x00);
@@ -379,7 +378,14 @@
                 match self {
                     NextExtensionHeaderField::NoMoreExtensionHeaders => buffer.push (NO_MORE_EXTENSION_HEADERS),
                     NextExtensionHeaderField::Reserved => (),
-                    _ => self.marshal(buffer),
+                    NextExtensionHeaderField::LongPDCPPDUNumber(i) => i.marshal(buffer),
+                    NextExtensionHeaderField::ServiceClassIndicator(i) => i.marshal(buffer),
+                    NextExtensionHeaderField::UDPPort(i) => i.marshal(buffer),
+                    NextExtensionHeaderField::RANContainer(i) => i.marshal(buffer),
+                    NextExtensionHeaderField::XwRANContainer(i) => i.marshal(buffer),
+                    NextExtensionHeaderField::NRRANContainer(i) => i.marshal(buffer),
+                    NextExtensionHeaderField::PDUSessionContainer(i) => i.marshal(buffer),
+                    NextExtensionHeaderField::PDCPPDUNumber(i) => i.marshal(buffer),
                 }
             }
     

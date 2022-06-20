@@ -1,10 +1,14 @@
 //use std::io;
 //use std::io::prelude::*;
+use gtpu::messages::Messages;
 use std::fs::File;
+use std::net::UdpSocket;
 use pcap_parser::*;
 use pcap_parser::traits::PcapReaderIterator;
-//use ::gtpu::header;
+use ::gtpu::header;
 use ::gtpu::messages;
+use ::gtpu::extension_headers;
+use std::net::{IpAddr,Ipv4Addr,Ipv6Addr};
 
 fn main() {
 
@@ -77,6 +81,44 @@ fn main() {
             }
         }
     }
+
+    let mut send_header=header::GtpuHeader::new();
+    send_header.msgtype=messages::ERROR_INDICATION;
+    send_header.sequence_number_flag=true;
+    send_header.sequence_number=Some(2000);
+    send_header.teid=4000;
+    send_header.extension_header_flag=true;
+    let mut port = extension_headers::UDPPort::default();
+    port.port=6511;
+    send_header.extension_headers.push(crate::extension_headers::NextExtensionHeaderField::UDPPort(port));
+    //send_header.extension_headers.push(extension_headers::NextExtensionHeaderField::LongPDCPPDUNumber(extension_headers::LongPDCPPDUNumber::default()));
+    //send_header.extension_headers.push(extension_headers::NextExtensionHeaderField::ServiceClassIndicator(extension_headers::ServiceClassIndicator::default()));
+    //send_header.length=21;
+    //let mut gdpu_message=messages::Gpdu::default();
+    //gdpu_message.header=send_header;
+    //gdpu_message.tpdu=vec![0x0,0x1,0x2];
+    //let mut message=messages::GTPUMessage::Gpdu(gdpu_message);
+    /*
+    println! ("Header to be marshaled {:?}", send_header);
+    for i in send_header.extension_headers.clone().into_iter() {
+        println!("{:?}", i);
+    }
+    
+    send_header.marshal(&mut buffer);
+    let test_header = header::GtpuHeader::unmarshal(&buffer);
+    println!("Sent out header {:?}", test_header);
+    */
+    let mut buffer:Vec<u8> = vec!();
+    let mut message = messages::ErrorIndication::default();
+    message.header=send_header;
+    message.teid.teid=5000;
+    message.peer.ip=IpAddr::V6(Ipv6Addr::new(0,0,0,0,0,0,0,0));
+    println!("Message to be sent {:?}", message);
+    message.marshal(&mut buffer);
+    println!("Marshaled buffer {:?}", buffer);
+    let socket = UdpSocket::bind("127.0.0.1:33000").expect("failed to bind to address");
+    socket.send_to(&buffer, "127.0.0.1:2152").expect("couldn't send data");
+
     /*if let messages::GTPUMessage::Gpdu(gpdu) = messages::GTPUMessage::unmarshal(&echo_request).unwrap() {
         println!("{:?}", gpdu);
     }

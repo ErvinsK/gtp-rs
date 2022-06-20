@@ -13,9 +13,17 @@ pub const SUPPORT_EXTENSION_HEADERS_NOTIFICATION:u8 = 31;
 pub const END_MARKER:u8 = 254;
 pub const G_PDU:u8 = 255;
 
+// Common traits of GTPU Messages
+
+pub trait Messages {
+    fn marshal (self, buffer: &mut Vec<u8>);
+    fn unmarshal (header:GtpuHeader, buffer:&[u8]) -> Result<Self, GTPUError> where Self:Sized;
+    //fn len (&self) -> usize;
+}
+
 // G-PDU message
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Gpdu {
     pub header:GtpuHeader,
     pub tpdu:Vec<u8>,
@@ -30,9 +38,25 @@ impl Default for Gpdu {
     }
 }
 
+impl Messages for Gpdu {
+
+    fn marshal (self, buffer: &mut Vec<u8>) {
+        self.header.marshal(buffer);
+        buffer.extend(self.tpdu);
+        set_length(buffer);
+    }
+
+    fn unmarshal (header: GtpuHeader, buffer: &[u8]) -> Result<Gpdu, GTPUError> {
+        let mut message = Gpdu::default();
+        message.header = header;
+        message.tpdu = buffer.to_vec();
+        Ok(message)
+    }
+}
+
 // Echo Request message
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct EchoRequest {
     pub header:GtpuHeader,
     pub private_extension:Option<PrivateExtension>,
@@ -47,9 +71,28 @@ impl Default for EchoRequest {
     }
 }
 
+impl Messages for EchoRequest {
+
+    fn marshal (self, buffer: &mut Vec<u8>) {
+        self.header.marshal(buffer);
+        if let Some(i) = self.private_extension {
+            i.marshal(buffer);
+        }
+        set_length(buffer);
+    }
+
+    fn unmarshal (header: GtpuHeader, buffer: &[u8]) -> Result<EchoRequest, GTPUError> {
+        let mut message = EchoRequest::default();
+        message.header = header;
+        message.private_extension = PrivateExtension::unmarshal(buffer);
+        Ok(message)
+    }
+}
+
+
 // Echo Response message 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct EchoResponse {
     pub header:GtpuHeader,
     pub recovery:Recovery,
@@ -65,9 +108,32 @@ impl Default for EchoResponse {
         }
     }
 }
+
+impl Messages for EchoResponse {
+
+    fn marshal(self, buffer: &mut Vec<u8>) {
+        self.header.marshal(buffer);
+        self.recovery.marshal(buffer);
+        if let Some(i) = self.private_extension {
+            i.marshal(buffer);
+        }
+        set_length(buffer);
+    }
+
+    fn unmarshal(header: GtpuHeader, buffer: &[u8]) -> Result<EchoResponse, GTPUError> {
+        let mut message = EchoResponse::default();
+        message.header=header;
+        match Recovery::unmarshal(buffer) {
+            Some(i) => message.recovery=i,
+            None => return Err(GTPUError::MandatoryIEMissing),
+        }
+        message.private_extension=PrivateExtension::unmarshal(&buffer[message.recovery.len()-1..]);
+        Ok(message)
+    }
+}
 // Supported Extension Headers Notification message 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct SupportedExtensionHeadersNotification {
     pub header:GtpuHeader,
     pub list:ExtensionHeaderTypeList,
@@ -81,9 +147,28 @@ impl Default for SupportedExtensionHeadersNotification {
         }
     }
 }
+
+impl Messages for SupportedExtensionHeadersNotification {
+
+    fn marshal(self, buffer: &mut Vec<u8>) {
+        self.header.marshal(buffer);
+        self.list.marshal(buffer);
+        set_length(buffer);
+    }
+
+    fn unmarshal(header: GtpuHeader, buffer: &[u8]) -> Result<SupportedExtensionHeadersNotification, GTPUError> {
+        let mut message = SupportedExtensionHeadersNotification::default();
+        message.header = header;
+        match ExtensionHeaderTypeList::unmarshal(buffer) {
+            Some(i) => message.list = i,
+            None => return Err(GTPUError::MandatoryIEMissing),
+        } 
+        Ok(message)
+    }
+}
 // Error Indication message
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ErrorIndication {
     pub header:GtpuHeader,
     pub teid:Teid,
@@ -102,9 +187,40 @@ impl Default for ErrorIndication {
     }
 }
 
+impl Messages for ErrorIndication {
+
+    fn marshal(self, buffer: &mut Vec<u8>) {
+        self.header.marshal(buffer);
+        self.teid.marshal(buffer);
+        self.peer.marshal(buffer);
+        if let Some(i) = self.private_extension {
+            i.marshal(buffer);
+        }
+        set_length(buffer);
+    }
+
+    fn unmarshal(header: GtpuHeader, buffer: &[u8]) -> Result<ErrorIndication, GTPUError> {
+        let mut message = ErrorIndication::default();
+        let mut cursor = 0;
+        message.header = header;
+        match Teid::unmarshal(buffer) {
+            Some(i) => message.teid=i,
+            None => return Err(GTPUError::MandatoryIEMissing),
+        }
+        cursor += message.teid.len()-1;
+        match GTPUPeerAddress::unmarshal(&buffer[cursor..]) {
+            Some(i) => message.peer=i,
+            None => return Err(GTPUError::MandatoryIEMissing),
+        }
+        cursor += message.peer.len()-1;
+        message.private_extension = PrivateExtension::unmarshal(&buffer[cursor..]);
+        Ok(message)
+    }
+}
+
 // End Marker message
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct EndMarker {
     pub header:GtpuHeader,
     pub private_extension: Option<PrivateExtension>,
@@ -118,9 +234,27 @@ impl Default for EndMarker {
         }
     }
 }
+
+impl Messages for EndMarker {
+
+    fn marshal(self, buffer: &mut Vec<u8>) {
+        self.header.marshal(buffer);
+        if let Some(i) = self.private_extension {
+            i.marshal(buffer);
+        }
+        set_length(buffer);
+    }
+
+    fn unmarshal(header: GtpuHeader, buffer: &[u8]) -> Result<EndMarker,GTPUError> {
+        let mut message = EndMarker::default();
+        message.header=header;
+        message.private_extension=PrivateExtension::unmarshal(buffer);
+        Ok(message)
+    }
+}
 // Enum of GTP-U messages 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum GTPUMessage {
     Gpdu(Gpdu),
     EchoRequest(EchoRequest),
@@ -134,6 +268,19 @@ pub enum GTPUMessage {
 
 impl GTPUMessage {
 
+// Marshal GTP-U Message 
+
+    pub fn marshal (self, buffer: &mut Vec<u8>) {
+
+        match self {
+            GTPUMessage::Gpdu(i) => i.marshal(buffer),
+            GTPUMessage::EchoRequest(i) => i.marshal(buffer),
+            GTPUMessage::EchoResponse(i) => i.marshal(buffer),
+            GTPUMessage::SupportedExtensionHeadersNotification(i) => i.marshal(buffer),
+            GTPUMessage::ErrorIndication(i) => i.marshal(buffer),
+            GTPUMessage::EndMarker(i) => i.marshal(buffer),
+        }
+    }
 // Parse GTP-U Message from byte slice
 
     pub fn unmarshal (buffer: &[u8]) -> Result<GTPUMessage, GTPUError> {
@@ -145,7 +292,7 @@ impl GTPUMessage {
            Err(i) => return Err(i),
         }
         
-        let mut offset:usize;
+        let offset:usize;
         
         if (header.length as usize) <= buffer[7..].len() {
             offset = header.header_offset();
@@ -155,64 +302,68 @@ impl GTPUMessage {
         
         match header.msgtype {
             G_PDU => {
-                let mut message = Gpdu::default();
-                message.header = header;
-                message.tpdu = buffer[offset..].to_vec();
-                Ok(GTPUMessage::Gpdu(message))
+                match Gpdu::unmarshal(header, &buffer[offset..]) {
+                    Ok(i) => Ok(GTPUMessage::Gpdu(i)),
+                    Err(i) => Err(i),
+                }
             }
             ECHO_REQUEST => {
-                let mut message = EchoRequest::default();
-                message.header = header;
-                message.private_extension = crate::ies::PrivateExtension::unmarshal(&buffer[offset..]);
-                Ok(GTPUMessage::EchoRequest(message))    
+                if header.sequence_number_flag == true {
+                    match EchoRequest::unmarshal(header, &buffer[offset..]) {
+                        Ok(i) => Ok (GTPUMessage::EchoRequest(i)),
+                        Err(i) => Err(i),
+                    } 
+                } else {
+                   Err(GTPUError::MandatoryHeaderFlagError)
+                }                  
             }
             ECHO_RESPONSE => {
-                if let Some(recovery) = crate::ies::Recovery::unmarshal(&buffer[offset+1..]) {
-                    let mut message = EchoResponse::default();
-                    message.header = header;
-                    message.recovery = recovery;
-                    offset+=crate::ies::RECOVERY_LENGTH;
-                    message.private_extension = crate::ies::PrivateExtension::unmarshal(&buffer[offset+1..]); 
-                    Ok(GTPUMessage::EchoResponse(message))
+                if header.sequence_number_flag == true {
+                    match EchoResponse::unmarshal(header, &buffer[offset..]) {
+                        Ok(i) => Ok (GTPUMessage::EchoResponse(i)),
+                        Err(i) => Err(i),
+                    }  
                 } else {
-                    Err(GTPUError::MandatoryIEMissing)
+                    Err(GTPUError::MandatoryHeaderFlagError)
                 }
             }
             ERROR_INDICATION => {
-                let mut message = ErrorIndication::default();
-                message.header = header;
-                if let Some(teid) = crate::ies::Teid::unmarshal(&buffer[offset+1..]) {
-                    message.teid = teid;
+                if header.sequence_number_flag == true {
+                    match ErrorIndication::unmarshal(header, &buffer[offset..]) {
+                        Ok(i) => Ok (GTPUMessage::ErrorIndication(i)),
+                        Err(i) => Err(i),
+                    }
                 } else {
-                    return Err(GTPUError::MandatoryIEMissing);
+                    Err(GTPUError::MandatoryHeaderFlagError)
                 }
-                offset+=crate::ies::TEID_LENGTH;
-                if let Some(peer) = crate::ies::GTPUPeerAddress::unmarshal(&buffer[offset+1..]) {
-                    message.peer = peer;
-                } else {
-                    return Err(GTPUError::MandatoryIEMissing);
-                }
-                offset+=message.peer.length as usize;
-                message.private_extension = crate::ies::PrivateExtension::unmarshal(&buffer[offset+1..]);
-                Ok(GTPUMessage::ErrorIndication(message))
             }
             SUPPORT_EXTENSION_HEADERS_NOTIFICATION => {
-                if let Some(list) = crate::ies::ExtensionHeaderTypeList::unmarshal(&buffer[offset+1..]) {
-                    let mut message = SupportedExtensionHeadersNotification::default();
-                    message.header = header;
-                    message.list = list;
-                    Ok(GTPUMessage::SupportedExtensionHeadersNotification(message))
+                if header.sequence_number_flag == true {
+                    match SupportedExtensionHeadersNotification::unmarshal(header, &buffer[offset..]) {
+                        Ok(i) => Ok(GTPUMessage::SupportedExtensionHeadersNotification(i)),
+                        Err(i) => Err(i),
+                    }
                 } else {
-                    Err(GTPUError::MandatoryIEMissing)
+                    Err(GTPUError::MandatoryHeaderFlagError)
                 }
             }
             END_MARKER => {
-                let mut message = EndMarker::default();
-                message.header = header;
-                message.private_extension = crate::ies::PrivateExtension::unmarshal(&buffer[offset+1..]);
-                Ok(GTPUMessage::EndMarker(message))
+                if header.sequence_number_flag == false {    
+                    match EndMarker::unmarshal(header, &buffer[offset..]) {
+                        Ok(i) => Ok(GTPUMessage::EndMarker(i)),
+                        Err(i) => Err(i),
+                    }
+                } else {
+                    Err(GTPUError::MandatoryHeaderFlagError)
+                }
             }
             _ => Err(GTPUError::MessageNotSupported)      
         }
     }
 }
+
+fn set_length (buffer: &mut Vec<u8>) {
+        let size = ((buffer.len()-8) as u16).to_be_bytes();
+        buffer[2]=size[0];
+        buffer[3]=size[1];             
+} 

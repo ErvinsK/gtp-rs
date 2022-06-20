@@ -13,13 +13,13 @@ pub const TEID_LENGTH:usize = 5;
 
 pub trait IEs {
     fn marshal (&self, buffer: &mut Vec<u8>);
-    fn unmarshal (buffer:&[u8]) -> Option<Self> where Self: std::marker::Sized;
+    fn unmarshal (buffer:&[u8]) -> Option<Self> where Self:Sized;
     fn len (&self) -> usize; // Total IE length including Type+Value for TV messages, Type+Length+Value for TLV messages
 }
 
 // Recovery IE implementation 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Recovery {
     pub t:u8,
     pub restart_counter:u8,
@@ -56,7 +56,7 @@ impl IEs for Recovery {
 
 // TEID IE implementation 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Teid {
     pub t:u8,
     pub teid:u32,
@@ -98,7 +98,7 @@ impl IEs for Teid {
 
 // GTP-U Peer Address IE implementation
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct GTPUPeerAddress {
     pub t:u8,
     pub length:u16,
@@ -120,12 +120,13 @@ impl IEs for GTPUPeerAddress {
         buffer.push(self.t);
         match self.ip {
             IpAddr::V4(i) => {
+                buffer.push(0x00);
                 buffer.push(0x04);
                 buffer.append(&mut i.octets().to_vec());
             }, 
             IpAddr::V6(i) => {
-                buffer.push(0x1);
-                buffer.push(0x0);
+                buffer.push(0x00);
+                buffer.push(0x10);
                 buffer.append(&mut i.octets().to_vec());
             },   
         }
@@ -164,7 +165,7 @@ impl IEs for GTPUPeerAddress {
 }
 // Extension Header Type List IE implementation
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ExtensionHeaderTypeList {
     pub t:u8,
     pub length:u8,
@@ -213,7 +214,7 @@ impl IEs for ExtensionHeaderTypeList {
 
 // Private Extension IE implementation
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PrivateExtension {
     pub t:u8,
     pub length:u16,
