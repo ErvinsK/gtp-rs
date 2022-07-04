@@ -1,13 +1,12 @@
 //use std::io;
 //use std::io::prelude::*;
-use gtpu::messages::Messages;
 use std::fs::File;
 use std::net::UdpSocket;
 use pcap_parser::*;
 use pcap_parser::traits::PcapReaderIterator;
-use ::gtpu::header;
-use ::gtpu::messages;
-use ::gtpu::extension_headers;
+use ::gtpu::gtpv1::header;
+use ::gtpu::gtpv1::gtpu::messages::{*};
+use ::gtpu::gtpv1::gtpu::extension_headers;
 use std::net::{IpAddr,Ipv4Addr,Ipv6Addr};
 
 fn main() {
@@ -70,20 +69,20 @@ fn main() {
     }
     if let Ok((_, block)) = reader.next() {
         if let PcapBlockOwned::Legacy(b) = block {    
-            match messages::GTPUMessage::unmarshal(&b.data[42..]) {
-                Ok(messages::GTPUMessage::Gpdu(i)) => println! ("{:?}", i),
-                Ok(messages::GTPUMessage::EchoRequest(i)) => println! ("{:?}", i),
-                Ok(messages::GTPUMessage::EchoResponse(i)) => println! ("{:?}", i),
-                Ok(messages::GTPUMessage::EndMarker(i)) => println! ("{:?}", i),
-                Ok(messages::GTPUMessage::ErrorIndication(i)) => println! ("{:?}", i),
-                Ok(messages::GTPUMessage::SupportedExtensionHeadersNotification(i)) => println!("{:?}", i),
+            match GTPUMessage::unmarshal(&b.data[42..]) {
+                Ok(GTPUMessage::Gpdu(i)) => println! ("{:?}", i),
+                Ok(GTPUMessage::EchoRequest(i)) => println! ("{:?}", i),
+                Ok(GTPUMessage::EchoResponse(i)) => println! ("{:?}", i),
+                Ok(GTPUMessage::EndMarker(i)) => println! ("{:?}", i),
+                Ok(GTPUMessage::ErrorIndication(i)) => println! ("{:?}", i),
+                Ok(GTPUMessage::SupportedExtensionHeadersNotification(i)) => println!("{:?}", i),
                 Err(i) => println! ("Error: {}", i),
             }
         }
     }
 
     let mut send_header=header::GtpuHeader::new();
-    send_header.msgtype=messages::ERROR_INDICATION;
+    send_header.msgtype=ERROR_INDICATION;
     send_header.sequence_number_flag=true;
     send_header.sequence_number=Some(2000);
     send_header.teid=4000;
@@ -109,7 +108,7 @@ fn main() {
     println!("Sent out header {:?}", test_header);
     */
     let mut buffer:Vec<u8> = vec!();
-    let mut message = messages::ErrorIndication::default();
+    let mut message = ErrorIndication::default();
     message.header=send_header;
     message.teid.teid=5000;
     message.peer.ip=IpAddr::V6(Ipv6Addr::new(0,0,0,0,0,0,0,0));
