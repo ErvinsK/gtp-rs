@@ -5,6 +5,7 @@ use std::net::UdpSocket;
 use pcap_parser::*;
 use pcap_parser::traits::PcapReaderIterator;
 use ::gtpu::gtpv1::header;
+use ::gtpu::gtpv1::messages::Messages;
 use ::gtpu::gtpv1::gtpu::messages::{*};
 use ::gtpu::gtpv1::gtpu::extension_headers;
 use std::net::{IpAddr,Ipv4Addr,Ipv6Addr};
@@ -111,11 +112,11 @@ fn main() {
     let mut message = ErrorIndication::default();
     message.header=send_header;
     message.teid.teid=5000;
-    message.peer.ip=IpAddr::V6(Ipv6Addr::new(0,0,0,0,0,0,0,0));
+    message.peer.ip=IpAddr::V6(Ipv6Addr::new(0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff));
     println!("Message to be sent {:?}", message);
     message.marshal(&mut buffer);
     println!("Marshaled buffer {:?}", buffer);
-    let socket = UdpSocket::bind("127.0.0.1:33000").expect("failed to bind to address");
+    let socket = UdpSocket::bind("127.0.1.1:33000").expect("failed to bind to address");
     socket.send_to(&buffer, "127.0.0.1:2152").expect("couldn't send data");
 
     /*if let messages::GTPUMessage::Gpdu(gpdu) = messages::GTPUMessage::unmarshal(&echo_request).unwrap() {

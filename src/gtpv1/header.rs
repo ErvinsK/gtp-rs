@@ -1,5 +1,5 @@
-use crate::gtpv1::errors::{*};
-use crate::gtpv1::gtpu::extension_headers::{*};
+use crate::gtpv1::errors::*;
+use crate::gtpv1::gtpu::extension_headers::*;
 
 // According to 3GPP TS 29.281 V16.0.0 (2019-12)
    
@@ -63,9 +63,7 @@ use crate::gtpv1::gtpu::extension_headers::{*};
                 }
 
                 buffer.push(self.msgtype);
-                
                 buffer.extend_from_slice(&self.length.to_be_bytes());
-                
                 buffer.extend_from_slice(&self.teid.to_be_bytes());
 
                 if self.sequence_number_flag || self.npdu_number_flag || self.extension_header_flag {
@@ -104,49 +102,36 @@ use crate::gtpv1::gtpu::extension_headers::{*};
     // Parse GTP-U header from byte slice
     
             pub fn unmarshal (packet:&[u8]) -> Result<GtpuHeader, GTPV1Error > {
-                
                 if packet.len()<8 {
-
                     Err(GTPV1Error::HeaderSizeTooSmall)
-                
                 } else {
-                
-                    let mut header = GtpuHeader::new();
-                    
+                    let mut header = GtpuHeader::new();                  
                     header.version = packet [0] >> 5;
                     header.protocol_type = (packet [0] & 0b10000) >> 4;
                     header.msgtype = packet [1];
                     header.length = ((packet[2] as u16) << 8)| packet[3] as u16;
-                    header.teid = ((packet [4] as u32) << 24) | ((packet[5] as u32) << 16) | ((packet[6] as u32) << 8) | (packet[7] as u32);
-        
+                    header.teid = ((packet [4] as u32) << 24) | ((packet[5] as u32) << 16) | ((packet[6] as u32) << 8) | (packet[7] as u32);       
                     match packet [0] & 0b111 {
                         0b000 => {
                                 header.extension_header_flag = false;                          
-
                                 header.sequence_number_flag = false;
                                 header.sequence_number = None;
-
                                 header.npdu_number_flag = false;
                                 header.npdu_number = None;
                             }, 
+
                         0b111 => {
-                            
                                 header.sequence_number_flag = true;
-                                
                                 match read_sequence_number(&packet[8..]) {
                                     Ok(i) => header.sequence_number=Some(i),
                                     Err(y) => return Err(y),
                                 }                         
-
                                 header.npdu_number_flag = true;
-                                
                                 match read_npdu_number(&packet[10..]) {
                                     Ok(i) => header.npdu_number = Some(i),
                                     Err(y) => return Err(y),
                                 } 
-
                                 header.extension_header_flag = true;
-
                                 match read_next_extension_headers (&packet[11..]) {
                                     Ok(i) => header.extension_headers = i,
                                     Err(y) => return Err(y),
@@ -154,34 +139,26 @@ use crate::gtpv1::gtpu::extension_headers::{*};
                             },
 
                         0b011 => {
-
                                 header.extension_header_flag = false;
-                                header.extension_headers.push(NextExtensionHeaderField::NoMoreExtensionHeaders);
-                                                                
+                                header.extension_headers.push(NextExtensionHeaderField::NoMoreExtensionHeaders);                              
                                 header.sequence_number_flag = true;
-                                
                                 match read_sequence_number(&packet[8..]) {
                                     Ok(i) => header.sequence_number=Some(i),
                                     Err(y) => return Err(y),
                                 }
-                                
                                 header.npdu_number_flag = true;
-                                
                                 match read_npdu_number(&packet[10..]) {
                                     Ok(i) => header.npdu_number = Some(i),
                                     Err(y) => return Err(y),
                                 } 
                         },
+
                         0b001 => {
-                            
                                 header.extension_header_flag = false;
                                 header.extension_headers.push(NextExtensionHeaderField::NoMoreExtensionHeaders);
-
                                 header.sequence_number_flag = false;
                                 header.sequence_number = None;
-
                                 header.npdu_number_flag = true;
-                                
                                 match read_npdu_number(&packet[10..]) {
                                     Ok(i) => header.npdu_number = Some(i),
                                     Err(y) => return Err(y),
@@ -189,61 +166,48 @@ use crate::gtpv1::gtpu::extension_headers::{*};
                         },
                         
                         0b101 => {
-                            
                                 header.extension_header_flag = true;
-                            
                                 match read_next_extension_headers (&packet[11..]) {
                                     Ok(i) => header.extension_headers = i,
                                     Err(y) => return Err(y),
                                 }
-
                                 header.sequence_number_flag = false;
                                 header.sequence_number = None;
-
                                 header.npdu_number_flag = true;
-                                
                                 match read_npdu_number(&packet[10..]) {
                                     Ok(i) => header.npdu_number = Some(i),
                                     Err(y) => return Err(y),
                                 } 
                         },
-                        0b110 => {
-                            
-                                header.extension_header_flag = true;
 
+                        0b110 => {
+                                header.extension_header_flag = true;
                                 match read_next_extension_headers (&packet[11..]) {
                                     Ok(i) => header.extension_headers = i,
                                     Err(y) => return Err(y),
                                 }
-
                                 header.sequence_number_flag = true;
-                                
                                 match read_sequence_number(&packet[8..]) {
                                     Ok(i) => header.sequence_number= Some(i),
                                     Err(y) => return Err(y),
                                 }
-                                
                                 header.npdu_number_flag = false;
                                 header.npdu_number = None;
                         },
+
                         0b010 => {
-                            
                                 header.extension_header_flag = false;
-                                header.extension_headers.push(NextExtensionHeaderField::NoMoreExtensionHeaders);
-                                                                
+                                header.extension_headers.push(NextExtensionHeaderField::NoMoreExtensionHeaders);                                
                                 header.sequence_number_flag = true;
-                                                        
                                 match read_sequence_number(&packet[8..]) {
                                     Ok(i) => header.sequence_number=Some(i),
                                     Err(y) => return Err(y),
                                 }
-
                                 header.npdu_number_flag = false;
                                 header.npdu_number = None;
                         },
                         _ => return Err(GTPV1Error::HeaderFlagError),
                     }
-        
                     Ok(header)
                 }
             }
@@ -254,7 +218,7 @@ use crate::gtpv1::gtpu::extension_headers::{*};
                     i += x.len();
                 }
                i
-            }
+        }
         
         pub fn header_offset (&self) -> usize {
 
@@ -271,49 +235,59 @@ use crate::gtpv1::gtpu::extension_headers::{*};
             }
         }  
         
-            fn read_sequence_number (packet:&[u8]) -> Result<u16, GTPV1Error> {
-                if packet.len()<2 {
-                    Err(GTPV1Error::HeaderSizeTooSmall)
-                } else {
-                    Ok(((packet[0] as u16) << 8) | packet[1] as u16)
-                }
-            }
+fn read_sequence_number (packet:&[u8]) -> Result<u16, GTPV1Error> {
+    if packet.len()<2 {
+        Err(GTPV1Error::HeaderSizeTooSmall)
+    } else {
+        Ok(((packet[0] as u16) << 8) | packet[1] as u16)
+    }
+}
         
-            fn read_npdu_number (packet:&[u8]) -> Result<u8, GTPV1Error> {
-                if packet.len()<1 {
-                    Err(GTPV1Error::HeaderSizeTooSmall)
-                } else {
-                    Ok(packet[0])
-                }
-            }
+fn read_npdu_number (packet:&[u8]) -> Result<u8, GTPV1Error> {
+    if packet.len()<1 {
+        Err(GTPV1Error::HeaderSizeTooSmall)
+    } else {
+        Ok(packet[0])
+    }
+}
         
-            fn read_next_extension_headers (packet:&[u8]) -> Result<Vec<NextExtensionHeaderField>,GTPV1Error> {
-                if packet.len()<1 {
-                    Err(GTPV1Error::HeaderSizeTooSmall)
-                } else {
-                    let mut result=vec!();
-                    let mut i:usize=0;
-                    loop {
-                        let t = NextExtensionHeaderField::parse(&packet[i..]);
-                        if matches!(t, NextExtensionHeaderField::NoMoreExtensionHeaders) || matches!(t, NextExtensionHeaderField::Reserved) {
-                            result.push(t);
-                            break;
-                        } else {
-                            i += t.len();
-                            result.push(t);
-                        }
-                    }
-                    Ok(result)
-            }      
+fn read_next_extension_headers (packet:&[u8]) -> Result<Vec<NextExtensionHeaderField>,GTPV1Error> {
+    if packet.len()<1 {
+        Err(GTPV1Error::HeaderSizeTooSmall)
+    } else {
+        let mut result=vec!();
+        let mut i:usize=0;
+        loop {
+            let t = NextExtensionHeaderField::parse(&packet[i..]);
+            if matches!(t, NextExtensionHeaderField::NoMoreExtensionHeaders) || matches!(t, NextExtensionHeaderField::Reserved) {
+                result.push(t);
+                break;
+            } else {
+                i += t.len();
+                result.push(t);
+            }
         }
+        Ok(result)
+    }      
+}
 
 #[cfg(test)]
 mod tests {
-    use crate::gtpv1::header;
+    use crate::gtpv1::{header, errors::GTPV1Error};
     #[test]
     fn test_read_npdu_number () {
         let npdu_number:[u8;1] = [0xff];
-        assert_eq!(header::read_npdu_number(&npdu_number),Ok(0xff));
+        assert_eq!(header::read_npdu_number(&npdu_number).unwrap(),0xff);
+    }
+    #[test]
+    fn test_sequence_number () {
+        let sqn:[u8;2] = [0xff,0xff];
+        assert_eq!(header::read_sequence_number(&sqn).unwrap(), 0xffff);
+    }
+    #[test]
+    fn test_sequence_number_too_small () {
+        let sqn:[u8;1] = [0xff];
+        assert_eq!(header::read_sequence_number(&sqn).unwrap_err(), GTPV1Error::HeaderSizeTooSmall);
     }
 }
 
