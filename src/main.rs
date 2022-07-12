@@ -5,7 +5,7 @@ use std::net::UdpSocket;
 use pcap_parser::*;
 use pcap_parser::traits::PcapReaderIterator;
 use ::gtpu::gtpv1::header;
-use ::gtpu::gtpv1::messages::Messages;
+use ::gtpu::gtpv1::messages::*;
 use ::gtpu::gtpv1::gtpu::messages::{*};
 use ::gtpu::gtpv1::gtpu::extension_headers;
 use std::net::{IpAddr,Ipv4Addr,Ipv6Addr};
@@ -82,7 +82,7 @@ fn main() {
         }
     }
 
-    let mut send_header=header::GtpuHeader::new();
+    let mut send_header=header::Gtpv1Header::new();
     send_header.msgtype=ERROR_INDICATION;
     send_header.sequence_number_flag=true;
     send_header.sequence_number=Some(2000);

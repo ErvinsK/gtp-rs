@@ -1,31 +1,23 @@
 use crate::gtpv1::header::*;
 use crate::gtpv1::errors::*;
 use crate::gtpv1::messages::*;
+use crate::gtpv1::utils::*;
 use crate::gtpv1::gtpu::ies::*;
 
 // According to 3GPP TS 29.281 V16.0.0 (2019-12)
-
-// Definition of GTP-U Messages
-
-pub const ECHO_REQUEST:u8 = 1;
-pub const ECHO_RESPONSE:u8 = 2;
-pub const ERROR_INDICATION:u8 = 26;
-pub const SUPPORT_EXTENSION_HEADERS_NOTIFICATION:u8 = 31;
-pub const END_MARKER:u8 = 254;
-pub const G_PDU:u8 = 255;
 
 // G-PDU message
 
 #[derive(Debug, Clone)]
 pub struct Gpdu {
-    pub header:GtpuHeader,
+    pub header:Gtpv1Header,
     pub tpdu:Vec<u8>,
 }
 
 impl Default for Gpdu {
     fn default() -> Gpdu {
         Gpdu {
-            header: GtpuHeader::new(),
+            header: Gtpv1Header::new(),
             tpdu:vec!(),
         }
     }
@@ -39,7 +31,7 @@ impl Messages for Gpdu {
         set_length(buffer);
     }
 
-    fn unmarshal (header: GtpuHeader, buffer: &[u8]) -> Result<Gpdu, GTPV1Error> {
+    fn unmarshal (header: Gtpv1Header, buffer: &[u8]) -> Result<Gpdu, GTPV1Error> {
         let mut message = Gpdu::default();
         message.header = header;
         message.tpdu = buffer.to_vec();
@@ -51,7 +43,7 @@ impl Messages for Gpdu {
 
 #[derive(Debug, Clone)]
 pub struct ErrorIndication {
-    pub header:GtpuHeader,
+    pub header:Gtpv1Header,
     pub teid:Teid,
     pub peer:GTPUPeerAddress,
     pub private_extension: Option<PrivateExtension>,
@@ -60,7 +52,7 @@ pub struct ErrorIndication {
 impl Default for ErrorIndication {
     fn default() -> ErrorIndication {
         ErrorIndication {
-            header: GtpuHeader::new(),
+            header: Gtpv1Header::new(),
             teid: Teid::default(),
             peer: GTPUPeerAddress::default(),
             private_extension: None,
@@ -80,7 +72,7 @@ impl Messages for ErrorIndication {
         set_length(buffer);
     }
 
-    fn unmarshal(header: GtpuHeader, buffer: &[u8]) -> Result<ErrorIndication, GTPV1Error> {
+    fn unmarshal(header: Gtpv1Header, buffer: &[u8]) -> Result<ErrorIndication, GTPV1Error> {
         let mut message = ErrorIndication::default();
         let mut cursor = 0;
         message.header = header;
@@ -103,14 +95,14 @@ impl Messages for ErrorIndication {
 
 #[derive(Debug, Clone)]
 pub struct EndMarker {
-    pub header:GtpuHeader,
+    pub header:Gtpv1Header,
     pub private_extension: Option<PrivateExtension>,
 }
 
 impl Default for EndMarker {
     fn default() -> EndMarker {
         EndMarker {
-            header: GtpuHeader::new(),
+            header: Gtpv1Header::new(),
             private_extension: None,
         }
     }
@@ -126,7 +118,7 @@ impl Messages for EndMarker {
         set_length(buffer);
     }
 
-    fn unmarshal(header: GtpuHeader, buffer: &[u8]) -> Result<EndMarker,GTPV1Error> {
+    fn unmarshal(header: Gtpv1Header, buffer: &[u8]) -> Result<EndMarker,GTPV1Error> {
         let mut message = EndMarker::default();
         message.header=header;
         message.private_extension=PrivateExtension::unmarshal(buffer);
@@ -166,9 +158,9 @@ impl GTPUMessage {
 
     pub fn unmarshal (buffer: &[u8]) -> Result<GTPUMessage, GTPV1Error> {
         
-        let header:GtpuHeader;
+        let header:Gtpv1Header;
 
-        match GtpuHeader::unmarshal(&buffer[0..]) {
+        match Gtpv1Header::unmarshal(&buffer[0..]) {
            Ok(x) => header = x,
            Err(i) => return Err(i),
         }

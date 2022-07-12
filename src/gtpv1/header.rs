@@ -3,14 +3,14 @@ use crate::gtpv1::gtpu::extension_headers::*;
 
 // According to 3GPP TS 29.281 V16.0.0 (2019-12)
    
-    // Definition of GTP-U Header
+    // Definition of GTPv1 Header
     
         pub const MIN_HEADER_LENGTH:usize = 8;
         pub const SQN_LENGTH:usize = 2;
         pub const NPDU_NUMBER_LENGTH:usize = 1;
 
         #[derive(Debug, Clone)]
-        pub struct GtpuHeader {
+        pub struct Gtpv1Header {
             pub version:u8,
             pub protocol_type:u8,
             pub extension_header_flag:bool,
@@ -24,14 +24,14 @@ use crate::gtpv1::gtpu::extension_headers::*;
             pub extension_headers:Vec<NextExtensionHeaderField>
         }
         
-    // Implementation of GTP-U Header
+    // Implementation of GTPv1 Header
     
-        impl GtpuHeader {
+        impl Gtpv1Header {
     
-    // Construct new empty GTP-U Header
+    // Construct new empty GTPv1 Header
     
-            pub fn new () -> GtpuHeader {
-                GtpuHeader {
+            pub fn new () -> Gtpv1Header {
+                Gtpv1Header {
                     version:1,
                     protocol_type:1,
                     extension_header_flag:false,
@@ -45,7 +45,8 @@ use crate::gtpv1::gtpu::extension_headers::*;
                     extension_headers:vec!(),
                 } 
             }
-    // Marshal GTP-U header into a mutable byte vector
+
+    // Marshal GTPv1 header into a mutable byte vector
     
             pub fn marshal (self, buffer: &mut Vec<u8>) {
                 
@@ -99,13 +100,13 @@ use crate::gtpv1::gtpu::extension_headers::*;
 
             }
 
-    // Parse GTP-U header from byte slice
+    // Parse GTPv1 header from byte slice
     
-            pub fn unmarshal (packet:&[u8]) -> Result<GtpuHeader, GTPV1Error > {
+            pub fn unmarshal (packet:&[u8]) -> Result<Gtpv1Header, GTPV1Error > {
                 if packet.len()<8 {
                     Err(GTPV1Error::HeaderSizeTooSmall)
                 } else {
-                    let mut header = GtpuHeader::new();                  
+                    let mut header = Gtpv1Header::new();                  
                     header.version = packet [0] >> 5;
                     header.protocol_type = (packet [0] & 0b10000) >> 4;
                     header.msgtype = packet [1];
@@ -271,24 +272,20 @@ fn read_next_extension_headers (packet:&[u8]) -> Result<Vec<NextExtensionHeaderF
     }      
 }
 
-#[cfg(test)]
-mod tests {
-    use crate::gtpv1::{header, errors::GTPV1Error};
-    #[test]
-    fn test_read_npdu_number () {
-        let npdu_number:[u8;1] = [0xff];
-        assert_eq!(header::read_npdu_number(&npdu_number).unwrap(),0xff);
-    }
-    #[test]
-    fn test_sequence_number () {
-        let sqn:[u8;2] = [0xff,0xff];
-        assert_eq!(header::read_sequence_number(&sqn).unwrap(), 0xffff);
-    }
-    #[test]
-    fn test_sequence_number_too_small () {
-        let sqn:[u8;1] = [0xff];
-        assert_eq!(header::read_sequence_number(&sqn).unwrap_err(), GTPV1Error::HeaderSizeTooSmall);
-    }
+#[test]
+fn test_read_npdu_number () {
+    let npdu_number:[u8;1] = [0xff];
+    assert_eq!(read_npdu_number(&npdu_number).unwrap(),0xff);
 }
 
+#[test]
+fn test_sequence_number () {
+    let sqn:[u8;2] = [0xff,0xff];
+    assert_eq!(read_sequence_number(&sqn).unwrap(), 0xffff);
+}
 
+#[test]
+fn test_sequence_number_too_small () {
+    let sqn:[u8;1] = [0xff];
+    assert_eq!(read_sequence_number(&sqn).unwrap_err(), GTPV1Error::HeaderSizeTooSmall);
+}
