@@ -48,6 +48,7 @@ fn tbcd_decode_test () {
 pub fn to_digits <T:ToString> (i:T) -> Vec<u8> {
     i.to_string().chars().flat_map(|c| c.to_digit(10)).map( |x| x as u8 ).collect()
 }
+
 // Set the right size of GTP message based on buffer size
 
 pub fn set_length (buffer: &mut Vec<u8>) {
@@ -55,4 +56,12 @@ pub fn set_length (buffer: &mut Vec<u8>) {
     buffer[2]=size[0];
     buffer[3]=size[1];             
 } 
+
+// Set the right size of IE based on buffer size
+
+pub fn set_ie_length (buffer: &mut Vec<u8>) {
+    let size = ((buffer.len()-3) as u16).to_be_bytes();
+    buffer[1]=size[0];
+    buffer[2]=size[1]; 
+}
 
