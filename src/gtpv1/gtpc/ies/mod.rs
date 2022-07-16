@@ -12,6 +12,7 @@ pub use {   recovery::*,
             privateextension::*,
             enduseraddress::*,
             apn::*,
+            pco::*,
 };
 
 mod apn;
@@ -28,4 +29,5 @@ mod gsnaddress;
 mod extensionheadertypelist;
 mod privateextension;
 mod enduseraddress;
+mod pco;
 mod commons;

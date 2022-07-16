@@ -34,27 +34,31 @@ impl IEs for GsnAddress {
             IpAddr::V4(i) => buffer.extend_from_slice(&i.octets()),
             IpAddr::V6(i) => buffer.extend_from_slice(&i.octets()), 
         }
-        set_ie_length(buffer);
+        set_tlv_ie_length(buffer);
     }
 
     fn unmarshal(buffer: &[u8]) -> Option<GsnAddress> {
-        if buffer.len()>=7 {
+        if buffer.len()>=3 {
             let mut data = GsnAddress::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            match data.length {
-                0x04 => data.ip = IpAddr::from([buffer[3], buffer[4], buffer[5], buffer[6]]),
-                0x10 => {
-                    if buffer.len()>=0x13 {
-                        let mut dst = [0;16];
-                        dst.copy_from_slice(&buffer[3..19]);
-                        data.ip = IpAddr::from(dst);
-                    } else { 
-                        return None;
-                    }   
-                    }
-                _ => return None,
+            if check_tlv_ie_buffer(data.length, buffer) {
+                match data.length {
+                    0x04 => data.ip = IpAddr::from([buffer[3], buffer[4], buffer[5], buffer[6]]),
+                    0x10 => {
+                        if buffer.len()>=0x13 {
+                            let mut dst = [0;16];
+                            dst.copy_from_slice(&buffer[3..19]);
+                            data.ip = IpAddr::from(dst);
+                        } else { 
+                            return None;
+                        }   
+                        }
+                    _ => return None,
+                }
+                Some(data)
+            } else {
+                None
             }
-            Some(data)
         } else {
             None
         }

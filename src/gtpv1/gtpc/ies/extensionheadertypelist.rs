@@ -30,9 +30,7 @@ impl IEs for ExtensionHeaderTypeList {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         buffer.push(self.t);
         buffer.push(self.length);
-        for i in self.list.iter() {
-            buffer.push(*i);
-        }
+        buffer.append(&mut self.list.clone());
     }
 
     fn unmarshal(buffer: &[u8]) -> Option<ExtensionHeaderTypeList> {

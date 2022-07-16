@@ -1,6 +1,6 @@
 // Private Extension IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-use crate::gtpv1::{gtpc::ies::commons::*, utils::set_ie_length};
+use crate::gtpv1::{gtpc::ies::commons::*, utils::set_tlv_ie_length};
 
 // Private Extension IE type
 
@@ -33,10 +33,8 @@ impl IEs for PrivateExtension {
         buffer.push(self.t);
         buffer.extend_from_slice(&self.length.to_be_bytes());
         buffer.extend_from_slice(&self.extension_id.to_be_bytes());
-        for i in self.extension_value.iter() {
-            buffer.push(*i);
-        }
-        set_ie_length(buffer);
+        buffer.append(&mut self.extension_value.clone());
+        set_tlv_ie_length(buffer);
     }
 
     fn unmarshal(buffer: &[u8]) -> Option<PrivateExtension> {

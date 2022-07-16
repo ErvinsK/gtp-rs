@@ -1,12 +1,12 @@
 // APN IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-use crate::gtpv1::gtpc::ies::commons::{*};
+use crate::gtpv1::{gtpc::ies::commons::{*}, utils::set_tlv_ie_length};
 
 // APN IE Type
 
 pub const APN:u8 = 131;
 
-// NSAPI IE implementation
+// APN IE implementation
 
 #[derive(Debug, Clone, PartialEq)]
 
@@ -33,6 +33,7 @@ impl IEs for Apn {
             z.extend_from_slice(i.as_bytes());
         }
         buffer.append(&mut z);
+        set_tlv_ie_length(buffer);
     }
 
     fn unmarshal (buffer:&[u8]) -> Option<Self> where Self:Sized {

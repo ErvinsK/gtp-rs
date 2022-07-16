@@ -9,17 +9,17 @@ pub const RECOVERY:u8 = 14;
 
 // Recovery IE implementation
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Recovery {
     pub t:u8,
-    pub restart_counter:u8,
+    pub value:u8,
 }
 
 impl Default for Recovery {
     fn default() -> Recovery {
         Recovery {
             t:RECOVERY,
-            restart_counter:0,
+            value:0,
         }
     }
 }
@@ -27,12 +27,12 @@ impl Default for Recovery {
 impl IEs for Recovery {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         buffer.push(RECOVERY);
-        buffer.push(self.restart_counter);
+        buffer.push(self.value);
     }
 
     fn unmarshal(buffer: &[u8]) -> Option<Recovery> {
-        if buffer.len()>=RECOVERY_LENGTH {
-            Some(Recovery { t:RECOVERY, restart_counter: buffer[1] })
+        if buffer.len()>=RECOVERY_LENGTH+1 {
+            Some(Recovery { t:RECOVERY, value: buffer[1] })
         } else { 
             None
         }
@@ -42,4 +42,20 @@ impl IEs for Recovery {
     fn len(&self) -> usize {
         RECOVERY_LENGTH+1
     }
+}
+
+#[test]
+fn recovery_ie_marshal_test () {
+    let ie_marshalled:[u8;2] = [0x0e, 0x63];
+    let ie_to_marshal = Recovery { t: RECOVERY, value: 0x63};
+    let mut buffer:Vec<u8>=vec!();
+    ie_to_marshal.marshal(&mut buffer);
+    assert_eq!(buffer, ie_marshalled);
+}
+
+#[test]
+fn recovery_ie_unmarshal_test() {
+    let ie_to_unmarshal:[u8;2] = [0x0e, 0x63];
+    let ie_unmarshalled = Recovery { t: RECOVERY, value: 0x63};
+    assert_eq!(Recovery::unmarshal(&ie_to_unmarshal).unwrap(), ie_unmarshalled);
 }

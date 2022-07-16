@@ -1,6 +1,6 @@
 // End User Address IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-use crate::gtpv1::gtpc::ies::commons::*;
+use crate::gtpv1::{gtpc::ies::commons::*, utils::{check_tlv_ie_buffer, set_tlv_ie_length}};
 use std::net::{Ipv4Addr, Ipv6Addr};
 
 // End User Address Type
@@ -63,50 +63,55 @@ impl IEs for EndUserAddress {
             },
             (IETF, _, _) => buffer.push(self.pdp_type_nbr),
             (_,_,_) => (),
-        }       
+        }
+        set_tlv_ie_length(buffer);       
     }
 
     fn unmarshal (buffer:&[u8]) -> Option<Self> where Self:Sized {
-        if buffer.len()>=5 {
+        if buffer.len()>=3 {
             let mut data = EndUserAddress::default();
             data.length=u16::from_be_bytes([buffer[1], buffer[2]]);
-            data.pdp_type_org = buffer[3] & 0b00001111;
-            data.pdp_type_nbr = buffer[4];
-            match (data.length, data.pdp_type_org, data.pdp_type_nbr) {
-                (2, ETSI, PPP) => (),
-                (2, ETSI, NONIP) => (),
-                (2, IETF, IPV4) => (),
-                (2, IETF, IPV6) => (),
-                (2, IETF, IPV46) => (),
-                (6, IETF, IPV4) => {
-                            let i:Result<[u8;4], _> = buffer[5..=8].try_into();
-                            match i {
-                                Ok(j) => data.ipv4 = Some(Ipv4Addr::from(j)),
-                                Err(_) => return None,
-                            }                              
-                },
-                (18, IETF, IPV6) => { 
-                            let i:Result<[u8;16], _> = buffer[5..=20].try_into();
-                            match i {
-                                Ok(j) => data.ipv6 = Some(Ipv6Addr::from(j)),
-                                Err(_) => return None,
-                            }                              
-                },
-                (22, IETF, IPV46) => {
-                            let ip4:Result<[u8;4], _> = buffer[5..=8].try_into();
-                            match ip4 {
-                                Ok(i) => data.ipv4 = Some(Ipv4Addr::from(i)),
-                                Err(_) => return None,
-                            }
-                            let ip6:Result<[u8;16], _> = buffer[9..=24].try_into();
-                            match ip6 {
-                                Ok(i) => data.ipv6 = Some(Ipv6Addr::from(i)),
-                                Err(_) => return None,
-                            }          
-                },
-                ( _, _, _,) => return None,
+            if check_tlv_ie_buffer(data.length, buffer) {
+                data.pdp_type_org = buffer[3] & 0b00001111;
+                data.pdp_type_nbr = buffer[4];
+                match (data.length, data.pdp_type_org, data.pdp_type_nbr) {
+                    (2, ETSI, PPP) => (),
+                    (2, ETSI, NONIP) => (),
+                    (2, IETF, IPV4) => (),
+                    (2, IETF, IPV6) => (),
+                    (2, IETF, IPV46) => (),
+                    (6, IETF, IPV4) => {
+                                let i:Result<[u8;4], _> = buffer[5..=8].try_into();
+                                match i {
+                                    Ok(j) => data.ipv4 = Some(Ipv4Addr::from(j)),
+                                    Err(_) => return None,
+                                }                              
+                    },
+                    (18, IETF, IPV6) => { 
+                                let i:Result<[u8;16], _> = buffer[5..=20].try_into();
+                                match i {
+                                    Ok(j) => data.ipv6 = Some(Ipv6Addr::from(j)),
+                                    Err(_) => return None,
+                                }                              
+                    },
+                    (22, IETF, IPV46) => {
+                                let ip4:Result<[u8;4], _> = buffer[5..=8].try_into();
+                                match ip4 {
+                                    Ok(i) => data.ipv4 = Some(Ipv4Addr::from(i)),
+                                    Err(_) => return None,
+                                }
+                                let ip6:Result<[u8;16], _> = buffer[9..=24].try_into();
+                                match ip6 {
+                                    Ok(i) => data.ipv6 = Some(Ipv6Addr::from(i)),
+                                    Err(_) => return None,
+                                }          
+                    },
+                    ( _, _, _,) => return None,
+                }
+                Some(data)
+            } else {
+                None
             }
-            Some(data)
         } else {
             None
         }

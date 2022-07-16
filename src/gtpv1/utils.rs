@@ -59,9 +59,18 @@ pub fn set_length (buffer: &mut Vec<u8>) {
 
 // Set the right size of IE based on buffer size
 
-pub fn set_ie_length (buffer: &mut Vec<u8>) {
+pub fn set_tlv_ie_length (buffer: &mut Vec<u8>) {
     let size = ((buffer.len()-3) as u16).to_be_bytes();
     buffer[1]=size[0];
     buffer[2]=size[1]; 
 }
 
+// Check TLV IE length vs buffer size
+
+pub fn check_tlv_ie_buffer (length:u16, buffer:&[u8]) -> bool {
+    if (length+3) as usize <= buffer.len() {
+        true
+    } else {
+        false
+    }
+}
