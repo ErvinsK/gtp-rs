@@ -1,5 +1,6 @@
 // Routeing Area Identity (RAI) IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
+use crate::gtpv1::errors::GTPV1Error;
 use crate::gtpv1::gtpc::ies::commons::{*};
 use crate::gtpv1::utils::{*};
 
@@ -42,7 +43,7 @@ impl IEs for Rai {
         buffer.push(self.rac);
     }
 
-    fn unmarshal (buffer:&[u8]) -> Option<Self> where Self:Sized {
+    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=RAI_LENGTH+1 {
             let mut data:Rai=Rai::default();
             let mut mcc_digits:Vec<u8>=vec!();
@@ -63,9 +64,9 @@ impl IEs for Rai {
             }
             data.lac=u16::from_be_bytes([buffer[4],buffer[5]]);
             data.rac=buffer[6];
-            Some (data)
+            Ok (data)
         } else {
-            None
+            Err(GTPV1Error::InvalidIELength)
         }
     }
 

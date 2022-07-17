@@ -1,6 +1,6 @@
 // Recovery IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-use crate::gtpv1::gtpc::ies::commons::{*};
+use crate::gtpv1::{gtpc::ies::commons::{*}, errors::GTPV1Error};
 
 // Recovery IE TV 
 
@@ -30,11 +30,11 @@ impl IEs for Recovery {
         buffer.push(self.value);
     }
 
-    fn unmarshal(buffer: &[u8]) -> Option<Recovery> {
+    fn unmarshal(buffer: &[u8]) -> Result<Recovery, GTPV1Error> {
         if buffer.len()>=RECOVERY_LENGTH+1 {
-            Some(Recovery { t:RECOVERY, value: buffer[1] })
+            Ok (Recovery { t:RECOVERY, value: buffer[1] })
         } else { 
-            None
+            Err(GTPV1Error::InvalidIELength)
         }
         
     }

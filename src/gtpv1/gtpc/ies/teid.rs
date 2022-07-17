@@ -1,6 +1,6 @@
 // TEID IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-use crate::gtpv1::gtpc::ies::commons::{*};
+use crate::gtpv1::{gtpc::ies::commons::{*}, errors::GTPV1Error};
 
 // TEID IE TL
 
@@ -32,14 +32,14 @@ impl IEs for Teid {
         buffer.extend_from_slice(&self.teid.to_be_bytes());
     }
 
-    fn unmarshal(buffer: &[u8]) -> Option<Teid> {
+    fn unmarshal(buffer: &[u8]) -> Result<Teid, GTPV1Error> {
         if buffer.len()>=TEID_LENGTH+1 {
             let mut data = Teid::default();
             data.t=buffer[0];
             data.teid=u32::from_be_bytes([buffer[1], buffer[2], buffer[3], buffer[4]]);
-            Some(data)
+            Ok(data)
         } else {
-            None
+            Err(GTPV1Error::InvalidIELength)
         }
     }
 

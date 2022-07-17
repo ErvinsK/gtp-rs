@@ -6,10 +6,15 @@ pub const IPV4:u8 = 0x21;
 pub const IPV6:u8 = 0x57;
 pub const IPV4V6:u8 = 0x8d;
 
+// Telephony numbering plans
+
+pub const E164:u8 = 0x01;
+pub const E212:u8 = 0x06;
+
 // Encode string into TBCD format, return slice of bytes
 
-pub fn tbcd_encode (imsi:&str) -> Vec<u8> {
-    let mut chr:Vec<u8>=imsi.chars().flat_map( |c| c.to_digit(10)).map( |x| x as u8).collect();
+pub fn tbcd_encode (number:&str) -> Vec<u8> {
+    let mut chr:Vec<u8>=number.chars().flat_map( |c| c.to_digit(10)).map( |x| x as u8).collect();
     if chr.len() % 2 != 0 {
         chr.push(0x0f);
     }
@@ -19,9 +24,9 @@ pub fn tbcd_encode (imsi:&str) -> Vec<u8> {
 
 #[test]
 fn tbcd_encode_test () {
-    let test_imsi:&str="987432101314063";
-    let encoded_imsi:[u8;8]=[137, 71, 35, 1, 49, 65, 96, 243];
-    assert_eq!(tbcd_encode(test_imsi),encoded_imsi);
+    let test_number:&str="987432101314063";
+    let encoded_number:[u8;8]=[137, 71, 35, 1, 49, 65, 96, 243];
+    assert_eq!(tbcd_encode(test_number),encoded_number);
 }
 
 // Decode slice of bytes from TBCD to string
@@ -38,9 +43,9 @@ pub fn tbcd_decode (buffer:&[u8]) -> String {
 
 #[test]
 fn tbcd_decode_test () {
-    let test_imsi:String="987432101314063".to_string();
-    let encoded_imsi:[u8;8]=[137, 71, 35, 1, 49, 65, 96, 243];
-    assert_eq!(tbcd_decode(&encoded_imsi), test_imsi);
+    let test_number:String="987432101314063".to_string();
+    let encoded_number:[u8;8]=[137, 71, 35, 1, 49, 65, 96, 243];
+    assert_eq!(tbcd_decode(&encoded_number), test_number);
 }
 
 // Convert unsigned int to vector of digits

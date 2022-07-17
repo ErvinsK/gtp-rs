@@ -1,6 +1,6 @@
 // APN IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-use crate::gtpv1::{gtpc::ies::commons::{*}, utils::set_tlv_ie_length};
+use crate::gtpv1::{gtpc::ies::commons::{*}, utils::{set_tlv_ie_length, check_tlv_ie_buffer}, errors::GTPV1Error};
 
 // APN IE Type
 
@@ -36,28 +36,32 @@ impl IEs for Apn {
         set_tlv_ie_length(buffer);
     }
 
-    fn unmarshal (buffer:&[u8]) -> Option<Self> where Self:Sized {
+    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=3 {
             let mut data=Apn::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            let mut donor:Vec<u8>=buffer[3..(3+data.length as usize)].to_vec();
-            let mut k:Vec<Vec<char>>=vec!();
-            loop {
-                if !donor.is_empty() {
-                    let index:Vec<_> = donor.drain(..1).collect();
-                    let mut part:Vec<_> = donor.drain(..index[0] as usize).map(|x| x as char).collect();
-                    part.push('.');
-                    k.push(part);
-                } else {
-                    break;
+            if check_tlv_ie_buffer(data.length, buffer) {
+                let mut donor:Vec<u8>=buffer[3..(3+data.length as usize)].to_vec();
+                let mut k:Vec<Vec<char>>=vec!();
+                loop {
+                    if !donor.is_empty() {
+                        let index:Vec<_> = donor.drain(..1).collect();
+                        let mut part:Vec<_> = donor.drain(..index[0] as usize).map(|x| x as char).collect();
+                        part.push('.');
+                        k.push(part);
+                    } else {
+                        break;
+                    }
                 }
+                let mut p:Vec<char> = k.into_iter().flatten().collect();
+                let _ = p.pop();
+                data.name = p.into_iter().collect();
+                Ok(data) 
+            } else {
+                Err(GTPV1Error::InvalidIELength)
             }
-            let mut p:Vec<char> = k.into_iter().flatten().collect();
-            let _ = p.pop();
-            data.name = p.into_iter().collect();
-            Some(data) 
         } else {
-            None
+            Err(GTPV1Error::InvalidIELength)
         }
     }
 

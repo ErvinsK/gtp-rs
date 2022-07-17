@@ -1,6 +1,6 @@
 // Charging Characteristics IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-use crate::gtpv1::gtpc::ies::commons::{*};
+use crate::gtpv1::{gtpc::ies::commons::*, errors::GTPV1Error};
 
 // Charging Characteristics IE TL
 
@@ -29,13 +29,13 @@ impl IEs for ChargingCharacteristics {
         buffer.push(0x00);
     }
 
-    fn unmarshal (buffer:&[u8]) -> Option<Self> where Self:Sized {
+    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=CHARGING_CHARACTERISTICS_LENGTH+1 {
             let mut data=ChargingCharacteristics::default();
             data.value = buffer[1] & 0b1111;
-            Some(data) 
+            Ok(data) 
         } else {
-            None
+            Err(GTPV1Error::InvalidIELength)
         }
     }
 

@@ -1,6 +1,6 @@
 // Extension Header Type List IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-use crate::gtpv1::gtpc::ies::commons::*;
+use crate::gtpv1::{gtpc::ies::commons::*, errors::GTPV1Error};
 
 // Extension Header Type List IE Type
 
@@ -33,17 +33,17 @@ impl IEs for ExtensionHeaderTypeList {
         buffer.append(&mut self.list.clone());
     }
 
-    fn unmarshal(buffer: &[u8]) -> Option<ExtensionHeaderTypeList> {
+    fn unmarshal(buffer: &[u8]) -> Result<ExtensionHeaderTypeList, GTPV1Error> {
         if buffer.len()>=2 {
             let mut data = ExtensionHeaderTypeList::default();
             data.length = buffer[1];
             if data.length*3+2>(buffer.len()-2) as u8 {
-                return None;
+                return Err(GTPV1Error::InvalidIELength);
             }
             data.list.extend_from_slice(&buffer[2..]);
-            Some(data)
+            Ok(data)
         } else {
-            None
+            Err(GTPV1Error::InvalidIELength)
         }
                 
     }

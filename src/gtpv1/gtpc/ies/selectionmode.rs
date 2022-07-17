@@ -1,6 +1,6 @@
 // Selection Mode IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-use crate::gtpv1::gtpc::ies::commons::{*};
+use crate::gtpv1::{gtpc::ies::commons::{*}, errors::GTPV1Error};
 
 // Selection Mode IE TL
 
@@ -27,13 +27,13 @@ impl IEs for SelectionMode {
         buffer.push(0b11111100 | self.value);
     }
 
-    fn unmarshal (buffer:&[u8]) -> Option<Self> where Self:Sized {
+    fn unmarshal (buffer:&[u8]) -> Result <Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=SELECTION_MODE_LENGTH+1 {
             let mut data=SelectionMode::default();
             data.value = buffer[1] & 0b11;
-            Some(data) 
+            Ok(data) 
         } else {
-            None
+            Err(GTPV1Error::InvalidIELength)
         }
     }
 

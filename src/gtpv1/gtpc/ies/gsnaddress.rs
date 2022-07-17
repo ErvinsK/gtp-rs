@@ -1,7 +1,7 @@
 // GSN Address IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
 use std::{net::{IpAddr, Ipv4Addr}};
-use crate::gtpv1::{gtpc::ies::commons::*, utils::*};
+use crate::gtpv1::{gtpc::ies::commons::*, utils::*, errors::GTPV1Error};
 
 // GSN Address Type
 
@@ -37,7 +37,7 @@ impl IEs for GsnAddress {
         set_tlv_ie_length(buffer);
     }
 
-    fn unmarshal(buffer: &[u8]) -> Option<GsnAddress> {
+    fn unmarshal(buffer: &[u8]) -> Result<GsnAddress, GTPV1Error> {
         if buffer.len()>=3 {
             let mut data = GsnAddress::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
@@ -50,17 +50,17 @@ impl IEs for GsnAddress {
                             dst.copy_from_slice(&buffer[3..19]);
                             data.ip = IpAddr::from(dst);
                         } else { 
-                            return None;
+                            return Err(GTPV1Error::InvalidIELength);
                         }   
                         }
-                    _ => return None,
+                    _ => return Err(GTPV1Error::IncorrectIE),
                 }
-                Some(data)
+                Ok(data)
             } else {
-                None
+                Err(GTPV1Error::InvalidIELength)
             }
         } else {
-            None
+            Err(GTPV1Error::InvalidIELength)
         }
     }
     

@@ -13,6 +13,12 @@ pub use {   recovery::*,
             enduseraddress::*,
             apn::*,
             pco::*,
+            msisdn::*,
+            qos::*,
+            tft::*,
+            triggerid::*,
+            omcid::*,
+            commonflags::*,
 };
 
 mod apn;
@@ -30,4 +36,10 @@ mod extensionheadertypelist;
 mod privateextension;
 mod enduseraddress;
 mod pco;
+mod msisdn;
+mod qos;
+mod tft;
+mod triggerid;
+mod omcid;
+mod commonflags;
 mod commons;

@@ -1,6 +1,6 @@
 // Private Extension IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-use crate::gtpv1::{gtpc::ies::commons::*, utils::set_tlv_ie_length};
+use crate::gtpv1::{gtpc::ies::commons::*, utils::{set_tlv_ie_length, check_tlv_ie_buffer}, errors::GTPV1Error};
 
 // Private Extension IE type
 
@@ -37,15 +37,19 @@ impl IEs for PrivateExtension {
         set_tlv_ie_length(buffer);
     }
 
-    fn unmarshal(buffer: &[u8]) -> Option<PrivateExtension> {
-        if buffer.len()>=6 {
+    fn unmarshal(buffer: &[u8]) -> Result <PrivateExtension, GTPV1Error> {
+        if buffer.len()>=3 {
             let mut data = PrivateExtension::default();
             data.length = u16::from_be_bytes([buffer[1],buffer[2]]);
-            data.extension_id = u16::from_be_bytes([buffer[3],buffer[4]]);
-            data.extension_value.extend_from_slice(&buffer[5..]);
-            Some(data)
+            if check_tlv_ie_buffer(data.length, buffer) {
+                data.extension_id = u16::from_be_bytes([buffer[3],buffer[4]]);
+                data.extension_value.extend_from_slice(&buffer[5..]);
+                Ok(data)
+            } else {
+                Err(GTPV1Error::InvalidIELength)
+            }
         } else {
-            None
+            Err(GTPV1Error::InvalidIELength)
         }    
     }
 

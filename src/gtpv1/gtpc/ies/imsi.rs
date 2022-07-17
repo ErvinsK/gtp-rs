@@ -1,5 +1,6 @@
 // IMSI IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
+use crate::gtpv1::errors::GTPV1Error;
 use crate::gtpv1::gtpc::ies::commons::*;
 use crate::gtpv1::utils::*;
 
@@ -28,16 +29,16 @@ impl IEs for Imsi {
         buffer.extend(tbcd_encode(&self.imsi));
     }
 
-    fn unmarshal (buffer:&[u8]) -> Option<Imsi> where Self:Sized {
+    fn unmarshal (buffer:&[u8]) -> Result<Imsi, GTPV1Error> where Self:Sized {
         if buffer.len()>=IMSI_LENGTH+1 {
             let mut data = Imsi::default();
             match buffer[1..=8].try_into() {
                Ok(i) => data.imsi = tbcd_decode(i),
-               Err(_) => return None, 
+               Err(_) => return Err(GTPV1Error::IncorrectIE), 
             }
-            Some(data)
+            Ok(data)
         } else {
-            None
+            Err(GTPV1Error::InvalidIELength)
         }
     }
     

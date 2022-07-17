@@ -1,6 +1,6 @@
 // Trace Type IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-use crate::gtpv1::gtpc::ies::commons::*;
+use crate::gtpv1::{gtpc::ies::commons::*, errors::GTPV1Error};
 
 // Trace Type TL
 
@@ -28,13 +28,13 @@ impl IEs for TraceType {
         buffer.extend_from_slice(&self.value.to_be_bytes());
     }
 
-    fn unmarshal (buffer:&[u8]) -> Option<Self> where Self:Sized {
+    fn unmarshal (buffer:&[u8]) -> Result <Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=TRACE_TYPE_LENGTH+1 {
             let mut data=TraceType::default();
             data.value = u16::from_be_bytes([buffer[1],buffer[2]]);
-            Some(data) 
+            Ok(data) 
         } else {
-            None
+            Err(GTPV1Error::InvalidIELength)
         }
     }
 
