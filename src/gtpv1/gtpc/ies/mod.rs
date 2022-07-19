@@ -11,6 +11,7 @@ pub use {   recovery::*,
             extensionheadertypelist::*,
             privateextension::*,
             enduseraddress::*,
+            msisdn::*,
             apn::*,
             pco::*,
             msisdn::*,
@@ -22,6 +23,7 @@ pub use {   recovery::*,
             apnrestriction::*,
             rattype::*,
             uli::*,
+            mstimezone::*,
 };
 
 mod apn;
@@ -48,4 +50,5 @@ mod commonflags;
 mod apnrestriction;
 mod rattype;
 mod uli;
+mod mstimezone;
 mod commons;

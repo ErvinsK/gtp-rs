@@ -54,7 +54,7 @@ impl IEs for RatType {
     }
 
     fn len (&self) -> usize {
-       RATTYPE_LENGTH as usize 
+       (RATTYPE_LENGTH+3) as usize 
     }
 
 }
