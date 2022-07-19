@@ -52,12 +52,8 @@ impl IEs for MsTimeZone {
                 1 => data.time_zone = -(((((bcd & 0x7f) >> 4)*10+((bcd & 0x7f) & 0xf)) >> 2) as i8),
                 _ => data.time_zone = 0,
             }
-            data.dst = buffer[4];
-            if data.dst <3 {     
-                Ok(data)
-            } else {
-                Err(GTPV1Error::IncorrectIE)
-            }
+            data.dst = buffer[4] & 0x07;
+            Ok(data)
         } else {
             Err(GTPV1Error::InvalidIELength)
         }
