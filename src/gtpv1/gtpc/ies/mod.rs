@@ -19,6 +19,9 @@ pub use {   recovery::*,
             triggerid::*,
             omcid::*,
             commonflags::*,
+            apnrestriction::*,
+            rattype::*,
+            uli::*,
 };
 
 mod apn;
@@ -42,4 +45,7 @@ mod tft;
 mod triggerid;
 mod omcid;
 mod commonflags;
+mod apnrestriction;
+mod rattype;
+mod uli;
 mod commons;

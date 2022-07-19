@@ -5,6 +5,7 @@ use crate::gtpv1::{gtpc::ies::commons::*, utils::*, errors::GTPV1Error};
 // Common Flags IE Type
 
 pub const COMMONFLAGS:u8 = 148;
+pub const COMMONFLAGS_LENGTH:u16 = 1;
 
 // Common Flags IE implementation
 
@@ -24,7 +25,7 @@ pub struct CommonFlags {
 
 impl Default for CommonFlags {
     fn default() -> Self {
-        CommonFlags { t: COMMONFLAGS, length:1, dual_addr_bearer:false, upgrade_qos_support:false, nrsn: false, no_qos_negotiation: false, mbms_counting_info: false, ran_procedures_ready: false, mbms_service_type: false, prohibit_payload_compr: false}
+        CommonFlags { t: COMMONFLAGS, length:COMMONFLAGS_LENGTH, dual_addr_bearer:false, upgrade_qos_support:false, nrsn: false, no_qos_negotiation: false, mbms_counting_info: false, ran_procedures_ready: false, mbms_service_type: false, prohibit_payload_compr: false}
     }
 }
 
@@ -79,7 +80,7 @@ impl CommonFlags {
 #[test]
 fn commonflags_ie_marshal_test () {
     let ie_marshalled:[u8;4]=[0x94, 0x00, 0x01, 0x60];
-    let ie_to_marshal = CommonFlags { t:COMMONFLAGS, length: 1, dual_addr_bearer:false, upgrade_qos_support:true, nrsn:true, no_qos_negotiation:false, mbms_counting_info:false, ran_procedures_ready:false, mbms_service_type:false, prohibit_payload_compr:false };
+    let ie_to_marshal = CommonFlags { t:COMMONFLAGS, length: COMMONFLAGS_LENGTH, dual_addr_bearer:false, upgrade_qos_support:true, nrsn:true, no_qos_negotiation:false, mbms_counting_info:false, ran_procedures_ready:false, mbms_service_type:false, prohibit_payload_compr:false };
     let mut buffer:Vec<u8>=vec!();
     ie_to_marshal.marshal(&mut buffer);
     assert_eq!(buffer,ie_marshalled);
@@ -88,6 +89,6 @@ fn commonflags_ie_marshal_test () {
 #[test]
 fn commonflags_ie_unmarshal_test () {
     let ie_to_unmarshal:[u8;4]=[0x94, 0x00, 0x01, 0x60];
-    let ie_unmarshalled = CommonFlags { t:COMMONFLAGS, length: 1, dual_addr_bearer:false, upgrade_qos_support:true, nrsn:true, no_qos_negotiation:false, mbms_counting_info:false, ran_procedures_ready:false, mbms_service_type:false, prohibit_payload_compr:false };
+    let ie_unmarshalled = CommonFlags { t:COMMONFLAGS, length: COMMONFLAGS_LENGTH, dual_addr_bearer:false, upgrade_qos_support:true, nrsn:true, no_qos_negotiation:false, mbms_counting_info:false, ran_procedures_ready:false, mbms_service_type:false, prohibit_payload_compr:false };
     assert_eq!(CommonFlags::unmarshal(&ie_to_unmarshal).unwrap(), ie_unmarshalled);
 }

@@ -2,7 +2,7 @@
 
 use crate::gtpv1::errors::GTPV1Error;
 use crate::gtpv1::gtpc::ies::commons::{*};
-use crate::gtpv1::utils::{*};
+use crate::gtpv1::utils::{mcc_mnc_encode, mcc_mnc_decode};
 
 // Routeing Area Identity (RAI) IE TL
 
@@ -29,16 +29,8 @@ impl Default for Rai {
 
 impl IEs for Rai {
     fn marshal (&self, buffer: &mut Vec<u8>) {
-        let mcc_digits:Vec<u8> = to_digits(self.mcc);
-        let mnc_digits:Vec<u8> = to_digits(self.mnc);
         buffer.push(self.t);
-        buffer.push(mcc_digits[1]<<4 | mcc_digits[0]);
-        if mnc_digits.len()==2 {
-            buffer.push(0b1111<<4 | mcc_digits[2]);
-        } else {
-            buffer.push(mnc_digits[2]<<4 | mcc_digits[2]);
-        }
-        buffer.push(mnc_digits[1]<<4 | mnc_digits[0]);
+        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
         buffer.extend_from_slice(&self.lac.to_be_bytes());
         buffer.push(self.rac);
     }
@@ -46,22 +38,7 @@ impl IEs for Rai {
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=RAI_LENGTH+1 {
             let mut data:Rai=Rai::default();
-            let mut mcc_digits:Vec<u8>=vec!();
-            let mut mnc_digits:Vec<u8>=vec!();
-            mcc_digits.push(buffer[1] & 0b1111);
-            mcc_digits.push(buffer[1] >> 4);
-            mcc_digits.push(buffer[2] & 0b00001111);
-            mnc_digits.push(buffer[3] & 0b1111);
-            mnc_digits.push(buffer[3] >> 4);
-            if buffer[2]>>4 != 0b1111 {
-                mnc_digits.push(buffer[2]>>4);
-            }
-            if let Ok(i) = mcc_digits.iter().flat_map( |c| char::from_digit(*c as u32, 10)).collect::<String>().parse::<u16>() {
-                data.mcc=i;
-            }
-            if let Ok(i) = mnc_digits.iter().flat_map( |c| char::from_digit(*c as u32, 10)).collect::<String>().parse::<u16>() {
-                data.mnc=i;
-            }
+            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[1..=3]);
             data.lac=u16::from_be_bytes([buffer[4],buffer[5]]);
             data.rac=buffer[6];
             Ok (data)
@@ -78,8 +55,8 @@ impl IEs for Rai {
 
 #[test]
 fn rai_ie_marshal_test() {
-    let rai_to_marshal = Rai { t:3, mcc:999, mnc:111, lac:999, rac: 67};
-    let rai_marshalled:[u8;7] = [0x03, 0x99, 0x19, 0x11, 0x03, 0xe7, 0x43];
+    let rai_to_marshal = Rai { t:3, mcc:999, mnc:1, lac:999, rac: 67};
+    let rai_marshalled:[u8;7] = [0x03, 0x99, 0xf9, 0x10, 0x03, 0xe7, 0x43];
     let mut buffer:Vec<u8>=vec!();
     rai_to_marshal.marshal(&mut buffer);
     assert_eq!(buffer,rai_marshalled);
@@ -87,7 +64,7 @@ fn rai_ie_marshal_test() {
 
 #[test]
 fn rai_ie_unmarshal_test() {
-    let rai_unmarshalled = Rai { t:3, mcc:999, mnc:111, lac:999, rac: 67};
-    let rai_to_unmarshal:[u8;7] = [0x03, 0x99, 0x19, 0x11, 0x03, 0xe7, 0x43];
+    let rai_unmarshalled = Rai { t:3, mcc:999, mnc:1, lac:999, rac: 67};
+    let rai_to_unmarshal:[u8;7] = [0x03, 0x99, 0xf9, 0x10, 0x03, 0xe7, 0x43];
     assert_eq!(Rai::unmarshal(&rai_to_unmarshal).unwrap(), rai_unmarshalled);
 }

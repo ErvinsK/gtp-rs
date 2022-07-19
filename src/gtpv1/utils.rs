@@ -48,10 +48,69 @@ fn tbcd_decode_test () {
     assert_eq!(tbcd_decode(&encoded_number), test_number);
 }
 
+// Encode MCC and MNC
+
+pub fn mcc_mnc_encode (mcc:u16, mnc:u16) -> Vec<u8> {
+        let mcc_digits:Vec<u8> = to_digits(mcc);
+        let mnc_digits:Vec<u8> = to_digits(mnc);
+        let mut result:Vec<u8> = vec!();
+        result.push(mcc_digits[1]<<4 | mcc_digits[0]);
+        if mnc_digits.len()==2 {
+            result.push(0b1111<<4 | mcc_digits[2]);
+        } else {
+            result.push(mnc_digits[2]<<4 | mcc_digits[2]);
+        }
+        result.push(mnc_digits[1]<<4 | mnc_digits[0]);
+        result
+}
+
+#[test]
+fn mcc_mnc_encode_test () {
+    let test_mcc:u16 = 262;
+    let test_mnc:u16 = 1;
+    let encoded_number:[u8;3]=[0x62, 0xf2, 0x10];
+    assert_eq!(mcc_mnc_encode(test_mcc, test_mnc),encoded_number);
+}
+
+// Decode MCC and MNC
+
+pub fn mcc_mnc_decode (buffer:&[u8]) -> (u16, u16) {
+    let mut mcc_digits:Vec<u8>=vec!();
+    let mut mnc_digits:Vec<u8>=vec!();
+    mcc_digits.push(buffer[0] & 0b1111);
+    mcc_digits.push(buffer[0] >> 4);
+    mcc_digits.push(buffer[1] & 0b00001111);
+    mnc_digits.push(buffer[2] & 0b1111);
+    mnc_digits.push(buffer[2] >> 4);
+    if buffer[1]>>4 != 0b1111 {
+        mnc_digits.push(buffer[1]>>4);
+    }
+    let (mut mcc, mut mnc)=(0,0);
+    if let Ok(i) = mcc_digits.iter().flat_map( |c| char::from_digit(*c as u32, 10)).collect::<String>().parse::<u16>() {
+        mcc=i;
+    }
+    if let Ok(i) = mnc_digits.iter().flat_map( |c| char::from_digit(*c as u32, 10)).collect::<String>().parse::<u16>() {
+        mnc=i;
+    }
+    (mcc, mnc)
+}
+
+#[test]
+fn mcc_mnc_decode_test () {
+    let test_mcc:u16 = 262;
+    let test_mnc:u16 = 1;
+    let encoded_number:[u8;3]=[0x62, 0xf2, 0x10];
+    assert_eq!(mcc_mnc_decode(&encoded_number), (test_mcc, test_mnc));
+}
+
 // Convert unsigned int to vector of digits
 
 pub fn to_digits <T:ToString> (i:T) -> Vec<u8> {
-    i.to_string().chars().flat_map(|c| c.to_digit(10)).map( |x| x as u8 ).collect()
+    let mut result:Vec<u8>=i.to_string().chars().flat_map(|c| c.to_digit(10)).map( |x| x as u8 ).collect();
+    if result.len()==1 {
+        result.insert(0, 0);
+    }
+    result
 }
 
 // Set the right size of GTP message based on buffer size
