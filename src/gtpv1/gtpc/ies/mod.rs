@@ -24,6 +24,18 @@ pub use {   recovery::*,
             rattype::*,
             uli::*,
             mstimezone::*,
+            imei::*,
+            camelcic::*,
+            additionaltraceinfo::*,
+            correlationid::*,
+            evolvedallocretentioni::*,
+            extendedcommonflags::*,
+            uci::*,
+            apnambr::*,
+            spi::*,
+            cnose::*,
+            upfsif::*,
+            mueut::*,
 };
 
 mod apn;
@@ -51,4 +63,16 @@ mod apnrestriction;
 mod rattype;
 mod uli;
 mod mstimezone;
+mod imei;
+mod camelcic;
+mod additionaltraceinfo;
+mod correlationid;
+mod evolvedallocretentioni;
+mod extendedcommonflags;
+mod uci;
+mod apnambr;
+mod spi;
+mod cnose;
+mod upfsif;
+mod mueut;
 mod commons;
