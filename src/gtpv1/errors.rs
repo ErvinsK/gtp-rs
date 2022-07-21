@@ -3,14 +3,20 @@ use std::fmt::Display;
 #[derive(Debug, PartialEq)]
 
 pub enum GTPV1Error {
+// GTPv1 Header Errors
     HeaderSizeTooSmall,
     HeaderSizeMismatch,
     HeaderFlagError,
     HeaderTypeMismatch,
     MandatoryHeaderFlagError,
+// GTPv1 Extension Header Errors
+    ExtHeaderInvalidLength,
+    ExtHeaderUnknown,
+// GTPv1 IE Errors
     IETypeMismatch,
-    InvalidIELength,
-    IncorrectIE,
+    IEInvalidLength,
+    IEIncorrect,
+// GTPv1 Message Errors
     MessageLengthError,
     MessageNotSupported,
     MandatoryIEMissing,
@@ -27,10 +33,13 @@ impl Display for GTPV1Error {
             GTPV1Error::HeaderFlagError => write!(f, "Header flag error"),
             GTPV1Error::HeaderTypeMismatch => write!(f, "Header type mismatch"),
             GTPV1Error::MandatoryHeaderFlagError => write!(f, "Mandatory header flag is not properly set for the particular GTP message"),
+// GTPv1 Extension Header Errors
+            GTPV1Error::ExtHeaderInvalidLength => write!(f, "Invalid Extension Header length"),
+            GTPV1Error::ExtHeaderUnknown => write!(f, "Incorrect Extension Header"),
 // GTPv1 IE Errors
             GTPV1Error::IETypeMismatch => write!(f, "IE type mismatch"),
-            GTPV1Error::InvalidIELength => write!(f, "Invalid IE length"),
-            GTPV1Error::IncorrectIE => write!(f, "Incorrect IE"),
+            GTPV1Error::IEInvalidLength => write!(f, "Invalid IE length"),
+            GTPV1Error::IEIncorrect => write!(f, "Incorrect IE"),
 // GTPv1 Message Errors
             GTPV1Error::MessageLengthError => write!(f, "Message length error"),
             GTPV1Error::MandatoryIEMissing => write!(f, "Mandatory IE missing"),
