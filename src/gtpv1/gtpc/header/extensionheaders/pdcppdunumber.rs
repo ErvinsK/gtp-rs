@@ -1,4 +1,4 @@
-use crate::gtpv1::gtpc::header::extensionheaders::commons::*;
+use crate::gtpv1::{gtpc::header::extensionheaders::commons::*, errors::GTPV1Error};
 
 pub const PDCP_PDU_NUMBER:u8 = 0xc0;
 pub const PDCP_PDU_NUMBER_LENGTH:u8 = 1;
@@ -29,10 +29,15 @@ impl ExtensionHeaders for PDCPPDUNumber {
         buffer.extend_from_slice(&self.pdcp_pdu_number.to_be_bytes());
     }
 
-    fn unmarshal(buffer: &[u8]) -> PDCPPDUNumber {
+    fn unmarshal(buffer: &[u8]) -> Result<Self,GTPV1Error> {
         let mut data = PDCPPDUNumber::default();
-        data.pdcp_pdu_number = u16::from_be_bytes([buffer[2], buffer [3]]);
-        data
+        data.length = buffer[1];
+        if (data.length * 4) as usize <= buffer.len() {
+            data.pdcp_pdu_number = u16::from_be_bytes([buffer[2],buffer [3]]);
+            Ok(data)
+        } else {
+            Err(GTPV1Error::ExtHeaderInvalidLength)
+        }        
     }
 
     fn len (&self) -> usize {
@@ -45,7 +50,7 @@ fn pdcp_exthdr_unmarshal_test () {
     let encoded_ie:[u8;4]=[0xc0, 0x01, 0x10, 0x00];
     let test_struct = PDCPPDUNumber { extension_header_type:PDCP_PDU_NUMBER, length: PDCP_PDU_NUMBER_LENGTH, pdcp_pdu_number: 4096 };
     let i = PDCPPDUNumber::unmarshal(&encoded_ie);
-    assert_eq!(i, test_struct);
+    assert_eq!(i.unwrap(), test_struct);
 }
 
 #[test]

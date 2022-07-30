@@ -104,7 +104,7 @@ use crate::gtpv1::gtpu::extension_headers::*;
     
             pub fn unmarshal (packet:&[u8]) -> Result<Gtpv1Header, GTPV1Error > {
                 if packet.len()<8 {
-                    Err(GTPV1Error::HeaderSizeTooSmall)
+                    Err(GTPV1Error::HeaderInvalidLength)
                 } else {
                     let mut header = Gtpv1Header::new();                  
                     header.version = packet [0] >> 5;
@@ -238,7 +238,7 @@ use crate::gtpv1::gtpu::extension_headers::*;
         
 fn read_sequence_number (packet:&[u8]) -> Result<u16, GTPV1Error> {
     if packet.len()<2 {
-        Err(GTPV1Error::HeaderSizeTooSmall)
+        Err(GTPV1Error::HeaderInvalidLength)
     } else {
         Ok(((packet[0] as u16) << 8) | packet[1] as u16)
     }
@@ -246,7 +246,7 @@ fn read_sequence_number (packet:&[u8]) -> Result<u16, GTPV1Error> {
         
 fn read_npdu_number (packet:&[u8]) -> Result<u8, GTPV1Error> {
     if packet.len()<1 {
-        Err(GTPV1Error::HeaderSizeTooSmall)
+        Err(GTPV1Error::HeaderInvalidLength)
     } else {
         Ok(packet[0])
     }
@@ -254,7 +254,7 @@ fn read_npdu_number (packet:&[u8]) -> Result<u8, GTPV1Error> {
         
 fn read_next_extension_headers (packet:&[u8]) -> Result<Vec<NextExtensionHeaderField>,GTPV1Error> {
     if packet.len()<1 {
-        Err(GTPV1Error::HeaderSizeTooSmall)
+        Err(GTPV1Error::HeaderInvalidLength)
     } else {
         let mut result=vec!();
         let mut i:usize=0;
@@ -287,5 +287,5 @@ fn test_sequence_number () {
 #[test]
 fn test_sequence_number_too_small () {
     let sqn:[u8;1] = [0xff];
-    assert_eq!(read_sequence_number(&sqn).unwrap_err(), GTPV1Error::HeaderSizeTooSmall);
+    assert_eq!(read_sequence_number(&sqn).unwrap_err(), GTPV1Error::HeaderInvalidLength);
 }

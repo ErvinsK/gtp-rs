@@ -4,8 +4,8 @@ use std::fmt::Display;
 
 pub enum GTPV1Error {
 // GTPv1 Header Errors
-    HeaderSizeTooSmall,
-    HeaderSizeMismatch,
+    HeaderInvalidLength,
+    HeaderVersionNotSupported,
     HeaderFlagError,
     HeaderTypeMismatch,
     MandatoryHeaderFlagError,
@@ -28,8 +28,8 @@ impl Display for GTPV1Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
 // GTPv1 Header Errors
-            GTPV1Error::HeaderSizeTooSmall => write!(f, "Header too small"),
-            GTPV1Error::HeaderSizeMismatch => write!(f, "Header size mismatch"),
+            GTPV1Error::HeaderInvalidLength => write!(f, "Invalid Header lenght"),
+            GTPV1Error::HeaderVersionNotSupported => write!(f, "GTP Version not supported"),
             GTPV1Error::HeaderFlagError => write!(f, "Header flag error"),
             GTPV1Error::HeaderTypeMismatch => write!(f, "Header type mismatch"),
             GTPV1Error::MandatoryHeaderFlagError => write!(f, "Mandatory header flag is not properly set for the particular GTP message"),

@@ -1,4 +1,4 @@
-use crate::gtpv1::gtpc::header::extensionheaders::commons::*;
+use crate::gtpv1::{gtpc::header::extensionheaders::commons::*, errors::GTPV1Error};
 
 pub const MS_INFO_CHANGE_REPORTING_SUPPORT_INDICATION:u8 = 2;
 pub const MS_INFO_CHANGE_REPORTING_SUPPORT_INDICATION_LENGTH:u8 = 1;
@@ -29,10 +29,15 @@ pub const MS_INFO_CHANGE_REPORTING_SUPPORT_INDICATION_LENGTH:u8 = 1;
          buffer.extend_from_slice(&self.value.to_be_bytes());
      }
  
-     fn unmarshal(buffer: &[u8]) -> MSInfoChangeReportingSupportIndication {
-         let mut data = MSInfoChangeReportingSupportIndication::default();
-         data.value = u16::from_be_bytes([buffer[2],buffer [3]]);
-         data
+     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV1Error> {
+        let mut data = MSInfoChangeReportingSupportIndication::default();
+        data.length = buffer[1];
+        if (data.length * 4) as usize <= buffer.len() {
+            data.value = u16::from_be_bytes([buffer[2],buffer [3]]);
+            Ok(data)
+        } else {
+            Err(GTPV1Error::ExtHeaderInvalidLength)
+        }        
      }
  
      fn len (&self) -> usize {
@@ -45,7 +50,7 @@ fn msicrsi_exthdr_unmarshal_test () {
     let encoded_ie:[u8;4]=[0x02, 0x01, 0xff, 0xff];
     let test_struct = MSInfoChangeReportingSupportIndication { extension_header_type:MS_INFO_CHANGE_REPORTING_SUPPORT_INDICATION, length: MS_INFO_CHANGE_REPORTING_SUPPORT_INDICATION_LENGTH, value: DEFAULT };
     let i = MSInfoChangeReportingSupportIndication::unmarshal(&encoded_ie);
-    assert_eq!(i, test_struct);
+    assert_eq!(i.unwrap(), test_struct);
 }
 
 #[test]

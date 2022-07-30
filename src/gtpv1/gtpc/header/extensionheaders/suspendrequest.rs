@@ -1,4 +1,4 @@
-use crate::gtpv1::gtpc::header::extensionheaders::commons::*;
+use crate::gtpv1::{gtpc::header::extensionheaders::commons::*, errors::GTPV1Error};
 
 pub const SUSPEND_REQUEST:u8 = 0xc1;
 pub const SUSPEND_REQUEST_LENGTH:u8 = 1;
@@ -29,10 +29,15 @@ impl ExtensionHeaders for SuspendRequest {
         buffer.extend_from_slice(&self.value.to_be_bytes());
     }
 
-    fn unmarshal(buffer: &[u8]) -> Self {
+    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV1Error> {
         let mut data = SuspendRequest::default();
-        data.value = u16::from_be_bytes([buffer[2],buffer[3]]);
-        data
+        data.length = buffer[1];
+        if (data.length * 4) as usize <= buffer.len() {
+            data.value = u16::from_be_bytes([buffer[2],buffer [3]]);
+            Ok(data)
+        } else {
+            Err(GTPV1Error::ExtHeaderInvalidLength)
+        }        
     }
 
     fn len (&self) -> usize {
@@ -45,7 +50,7 @@ fn suspend_req_exthdr_unmarshal_test () {
     let encoded_ie:[u8;4]=[0xc1, 0x01, 0xff, 0xff];
     let test_struct = SuspendRequest { extension_header_type:SUSPEND_REQUEST, length: SUSPEND_REQUEST_LENGTH, value: DEFAULT };
     let i = SuspendRequest::unmarshal(&encoded_ie);
-    assert_eq!(i, test_struct);
+    assert_eq!(i.unwrap(), test_struct);
 }
 
 #[test]

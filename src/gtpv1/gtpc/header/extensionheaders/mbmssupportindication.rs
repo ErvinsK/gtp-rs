@@ -1,4 +1,4 @@
-use crate::gtpv1::gtpc::header::extensionheaders::commons::*;
+use crate::gtpv1::{gtpc::header::extensionheaders::commons::*, errors::GTPV1Error};
 
 pub const MBMS_SUPPORT_INDICATION:u8 = 1;
 pub const MBMS_SUPPORT_INDICATION_LENGTH:u8 = 1;
@@ -29,10 +29,15 @@ impl ExtensionHeaders for MBMSSupportIndication {
         buffer.extend_from_slice(&self.value.to_be_bytes());
     }
 
-    fn unmarshal(buffer: &[u8]) -> MBMSSupportIndication {
+    fn unmarshal(buffer: &[u8]) -> Result<MBMSSupportIndication, GTPV1Error> {
         let mut data = MBMSSupportIndication::default();
-        data.value = u16::from_be_bytes([buffer[2],buffer [3]]);
-        data
+        data.length = buffer[1];
+        if (data.length * 4) as usize <= buffer.len() {
+            data.value = u16::from_be_bytes([buffer[2],buffer [3]]);
+            Ok(data)
+        } else {
+            Err(GTPV1Error::ExtHeaderInvalidLength)
+        }        
     }
 
     fn len (&self) -> usize {
@@ -45,7 +50,7 @@ fn mbmssupport_ind_exthdr_unmarshal_test () {
     let encoded_ie:[u8;4]=[0x01, 0x01, 0xff, 0xff];
     let test_struct = MBMSSupportIndication { extension_header_type:MBMS_SUPPORT_INDICATION, length: MBMS_SUPPORT_INDICATION_LENGTH, value: DEFAULT };
     let i = MBMSSupportIndication::unmarshal(&encoded_ie);
-    assert_eq!(i, test_struct);
+    assert_eq!(i.unwrap(), test_struct);
 }
 
 #[test]
