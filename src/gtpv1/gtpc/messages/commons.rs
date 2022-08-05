@@ -25,9 +25,3 @@ pub trait Messages {
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized;
     //fn len (&self) -> usize;
 }
-
-pub fn marshal_IE <T:IEs> (i:T, buffer:&mut Vec<u8>) {
-    let mut buffer_ie:Vec<u8> = vec!();
-    i.marshal(&mut buffer_ie);
-    buffer.append(&mut buffer_ie);
-}

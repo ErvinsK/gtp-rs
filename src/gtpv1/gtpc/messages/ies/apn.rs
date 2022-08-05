@@ -24,16 +24,18 @@ impl Default for Apn {
 
 impl IEs for Apn {
     fn marshal (&self, buffer: &mut Vec<u8>) {
-        buffer.push(self.t);
-        buffer.extend_from_slice(&self.length.to_be_bytes());
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         let n:Vec<_> = self.name.split(".").collect();
         let mut z:Vec<u8>=vec!();
         for i in n.iter() {
             z.push(i.len() as u8);
             z.extend_from_slice(i.as_bytes());
         }
-        buffer.append(&mut z);
-        set_tlv_ie_length(buffer);
+        buffer_ie.append(&mut z);
+        set_tlv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
@@ -66,7 +68,7 @@ impl IEs for Apn {
     }
 
     fn len (&self) -> usize {
-        self.length as usize
+        (self.length + 3) as usize
     }
 }
 

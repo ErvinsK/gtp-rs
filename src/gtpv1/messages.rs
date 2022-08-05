@@ -98,7 +98,7 @@ impl Messages for EchoResponse {
         message.header=header;
         match Recovery::unmarshal(buffer) {
             Some(i) => message.recovery=i,
-            None => return Err(GTPV1Error::MandatoryIEMissing),
+            None => return Err(GTPV1Error::MessageMandatoryIEMissing),
         }
         message.private_extension=PrivateExtension::unmarshal(&buffer[message.recovery.len()-1..]);
         Ok(message)
@@ -134,7 +134,7 @@ impl Messages for SupportedExtensionHeadersNotification {
         message.header = header;
         match ExtensionHeaderTypeList::unmarshal(buffer) {
             Some(i) => message.list = i,
-            None => return Err(GTPV1Error::MandatoryIEMissing),
+            None => return Err(GTPV1Error::MessageMandatoryIEMissing),
         } 
         Ok(message)
     }

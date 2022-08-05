@@ -24,10 +24,12 @@ impl Default for Imei {
 
 impl IEs for Imei {
     fn marshal (&self, buffer: &mut Vec<u8>) {
-        buffer.push(self.t);
-        buffer.extend_from_slice(&self.length.to_be_bytes());
-        buffer.extend(tbcd_encode(&self.imei));
-        set_tlv_ie_length(buffer);
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
+        buffer_ie.extend(tbcd_encode(&self.imei));
+        set_tlv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Imei, GTPV1Error> where Self:Sized {

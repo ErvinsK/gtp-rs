@@ -43,28 +43,30 @@ impl Default for EndUserAddress {
 
 impl IEs for EndUserAddress {
     fn marshal (&self, buffer: &mut Vec<u8>) {
-        buffer.push(self.t);
-        buffer.extend_from_slice(&self.length.to_be_bytes());
-        buffer.push(0b11110000 | self.pdp_type_org);
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
+        buffer_ie.push(0b11110000 | self.pdp_type_org);
         match (self.pdp_type_org, self.ipv4, self.ipv6) {
-            (ETSI, _, _) => buffer.push(self.pdp_type_nbr),
+            (ETSI, _, _) => buffer_ie.push(self.pdp_type_nbr),
             (IETF, Some(i), None) => {
-                buffer.push(self.pdp_type_nbr);    
-                buffer.extend_from_slice(&i.octets());
+                buffer_ie.push(self.pdp_type_nbr);    
+                buffer_ie.extend_from_slice(&i.octets());
             },
             (IETF, None, Some(i)) => {
-                buffer.push(self.pdp_type_nbr);
-                buffer.extend_from_slice(&i.octets());
+                buffer_ie.push(self.pdp_type_nbr);
+                buffer_ie.extend_from_slice(&i.octets());
             },
             (IETF, Some(i), Some(j)) => {
-                buffer.push(self.pdp_type_nbr);
-                buffer.extend_from_slice(&i.octets());
-                buffer.extend_from_slice(&j.octets());
+                buffer_ie.push(self.pdp_type_nbr);
+                buffer_ie.extend_from_slice(&i.octets());
+                buffer_ie.extend_from_slice(&j.octets());
             },
-            (IETF, _, _) => buffer.push(self.pdp_type_nbr),
+            (IETF, _, _) => buffer_ie.push(self.pdp_type_nbr),
             (_,_,_) => (),
         }
-        set_tlv_ie_length(buffer);       
+        set_tlv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);       
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
@@ -118,7 +120,7 @@ impl IEs for EndUserAddress {
     }
 
     fn len (&self) -> usize {
-        self.length as usize
+        (self.length+3) as usize
     }
 }
 

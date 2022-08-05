@@ -26,10 +26,12 @@ impl Default for EvolvedAllocationRetentionI {
 
 impl IEs for EvolvedAllocationRetentionI {
     fn marshal (&self, buffer: &mut Vec<u8>) {
-        buffer.push(self.t);
-        buffer.extend_from_slice(&self.length.to_be_bytes());
-        buffer.push((self.pre_emption_capability << 7 & 0x40) | (self.priority_level << 2 & 0x3C)  | (self.pre_emption_vulnerability & 0x01));
-        set_tlv_ie_length(buffer);
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
+        buffer_ie.push((self.pre_emption_capability << 7 & 0x40) | (self.priority_level << 2 & 0x3C)  | (self.pre_emption_vulnerability & 0x01));
+        set_tlv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {

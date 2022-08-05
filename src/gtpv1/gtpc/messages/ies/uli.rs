@@ -36,30 +36,32 @@ impl Default for Uli {
 
 impl IEs for Uli {
     fn marshal (&self, buffer: &mut Vec<u8>) {
-        buffer.push(self.t);
-        buffer.extend_from_slice(&self.length.to_be_bytes());
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         match self.loc {
             Location::Ci(i) => {
-                buffer.push(0);
-                buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
-                buffer.extend_from_slice(&self.lac.to_be_bytes());
-                buffer.extend_from_slice(&i.to_be_bytes());
+                buffer_ie.push(0);
+                buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+                buffer_ie.extend_from_slice(&self.lac.to_be_bytes());
+                buffer_ie.extend_from_slice(&i.to_be_bytes());
             },
             Location::Sac(j) => {
-                buffer.push(1);
-                buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
-                buffer.extend_from_slice(&self.lac.to_be_bytes());
-                buffer.extend_from_slice(&j.to_be_bytes());
+                buffer_ie.push(1);
+                buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+                buffer_ie.extend_from_slice(&self.lac.to_be_bytes());
+                buffer_ie.extend_from_slice(&j.to_be_bytes());
             },
             Location::Rac(z) => {
-                buffer.push(2);
-                buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
-                buffer.extend_from_slice(&self.lac.to_be_bytes());
-                buffer.push(z);
-                buffer.push(0xff);
+                buffer_ie.push(2);
+                buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+                buffer_ie.extend_from_slice(&self.lac.to_be_bytes());
+                buffer_ie.push(z);
+                buffer_ie.push(0xff);
             },
         }
-        set_tlv_ie_length(buffer);
+        set_tlv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {

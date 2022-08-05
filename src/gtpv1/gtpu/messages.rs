@@ -78,12 +78,12 @@ impl Messages for ErrorIndication {
         message.header = header;
         match Teid::unmarshal(buffer) {
             Some(i) => message.teid=i,
-            None => return Err(GTPV1Error::MandatoryIEMissing),
+            None => return Err(GTPV1Error::MessageMandatoryIEMissing),
         }
         cursor += message.teid.len()-1;
         match GTPUPeerAddress::unmarshal(&buffer[cursor..]) {
             Some(i) => message.peer=i,
-            None => return Err(GTPV1Error::MandatoryIEMissing),
+            None => return Err(GTPV1Error::MessageMandatoryIEMissing),
         }
         cursor += message.peer.len()-1;
         message.private_extension = PrivateExtension::unmarshal(&buffer[cursor..]);

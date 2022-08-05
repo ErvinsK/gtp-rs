@@ -25,21 +25,23 @@ impl Default for MsTimeZone {
 
 impl IEs for MsTimeZone {
     fn marshal (&self, buffer: &mut Vec<u8>) {
-        buffer.push(self.t);
-        buffer.extend_from_slice(&self.length.to_be_bytes());
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         if self.time_zone>=0 {
             let tz = (self.time_zone as u8) << 2;
             let b: u8 = ((tz - (tz%10))/ 10)<<4;
             let a = tz % 10;
-            buffer.push(b>>4 | a<<4);
+            buffer_ie.push(b>>4 | a<<4);
         } else {
             let tz = (self.time_zone.abs() as u8) << 2 ;
             let b: u8 = (((tz - (tz%10))/ 10)<<4) | 0x80;
             let a = tz % 10;
-            buffer.push(b>>4 | a<<4);
+            buffer_ie.push(b>>4 | a<<4);
         }
-        buffer.push(self.dst);
-        set_tlv_ie_length(buffer);
+        buffer_ie.push(self.dst);
+        set_tlv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {

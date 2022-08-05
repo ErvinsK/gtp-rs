@@ -19,7 +19,9 @@ pub enum GTPV1Error {
 // GTPv1 Message Errors
     MessageLengthError,
     MessageNotSupported,
-    MandatoryIEMissing,
+    MessageMandatoryIEMissing,
+    MessageOptionalIEIncorrect,
+    MessageInvalidMessageFormat,
 }
 
 impl std::error::Error for GTPV1Error{}
@@ -42,8 +44,10 @@ impl Display for GTPV1Error {
             GTPV1Error::IEIncorrect => write!(f, "Incorrect IE"),
 // GTPv1 Message Errors
             GTPV1Error::MessageLengthError => write!(f, "Message length error"),
-            GTPV1Error::MandatoryIEMissing => write!(f, "Mandatory IE missing"),
+            GTPV1Error::MessageMandatoryIEMissing => write!(f, "Mandatory IE missing"),
             GTPV1Error::MessageNotSupported => write!(f, "Message not supported"),
+            GTPV1Error::MessageOptionalIEIncorrect => write!(f, "Optional IE incorrect"),
+            GTPV1Error::MessageInvalidMessageFormat => write!(f, "Invalid Mesage format"),
         }
     }
 }

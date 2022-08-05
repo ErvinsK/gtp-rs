@@ -60,7 +60,7 @@ impl Messages for EchoResponse {
             let mut cursor = message.header.get_header_size();
             match Recovery::unmarshal(&buffer[cursor..]) {
                 Ok(i) => message.recovery=i,
-                Err(_) => return Err(GTPV1Error::MandatoryIEMissing),
+                Err(_) => return Err(GTPV1Error::MessageMandatoryIEMissing),
             }
             cursor+=message.recovery.len();
             match PrivateExtension::unmarshal(&buffer[cursor..]) {
@@ -116,13 +116,13 @@ fn test_echo_resp_marshal () {
 #[test]
 fn test_echo_resp_without_mandatory_ie_unmarshal () {
     let encoded:[u8;12] = [0x32, 0x02, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00];
-    assert_eq!(EchoResponse::unmarshal(&encoded).unwrap_err(), GTPV1Error::MandatoryIEMissing);
+    assert_eq!(EchoResponse::unmarshal(&encoded).unwrap_err(), GTPV1Error::MessageMandatoryIEMissing);
 }
 
 #[test]
 fn test_echo_resp_with_incorrect_mandatory_ie_unmarshal () {
     let encoded:[u8;14] = [0x32, 0x02, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00, 0x0f, 0x26];
-    assert_eq!(EchoResponse::unmarshal(&encoded).unwrap_err(), GTPV1Error::MandatoryIEMissing);
+    assert_eq!(EchoResponse::unmarshal(&encoded).unwrap_err(), GTPV1Error::MessageMandatoryIEMissing);
 }
 
 #[test]
@@ -174,13 +174,13 @@ fn test_echo_resp_with_private_ext_marshal () {
 #[test]
 fn test_echo_resp_with_with_incorrect_mandatory_ie_and_private_ext_unmarshal () {
     let encoded:[u8;22] = [0x32, 0x02, 0x00, 0x0e, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00, 0x0f, 0x26, 0xff, 0x00, 0x05, 0x00, 0x08, 0x01, 0x02, 0x03];
-    assert_eq!(EchoResponse::unmarshal(&encoded).unwrap_err(), GTPV1Error::MandatoryIEMissing);
+    assert_eq!(EchoResponse::unmarshal(&encoded).unwrap_err(), GTPV1Error::MessageMandatoryIEMissing);
 }
 
 #[test]
 fn test_echo_resp_with_with_missing_mandatory_ie_and_private_ext_unmarshal () {
     let encoded:[u8;20] = [0x32, 0x02, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00, 0xff, 0x00, 0x05, 0x00, 0x08, 0x01, 0x02, 0x03];
-    assert_eq!(EchoResponse::unmarshal(&encoded).unwrap_err(), GTPV1Error::MandatoryIEMissing);
+    assert_eq!(EchoResponse::unmarshal(&encoded).unwrap_err(), GTPV1Error::MessageMandatoryIEMissing);
 }
 
 #[test]

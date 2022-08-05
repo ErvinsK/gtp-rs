@@ -1,6 +1,6 @@
 // Extension Header Type List IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-use crate::gtpv1::{errors::GTPV1Error, gtpc::messages::ies::commons::*};
+use crate::gtpv1::{errors::GTPV1Error, gtpc::messages::ies::commons::*, utils::set_tlv_ie_length};
 
 // Extension Header Type List IE Type
 
@@ -11,7 +11,7 @@ pub const EXTENSION_HEADER_TYPE_LIST:u8 = 141;
 #[derive(Debug, Clone, PartialEq)]
 pub struct ExtensionHeaderTypeList {
     pub t:u8,
-    pub length:u8,
+    pub length:u16,
     pub list:Vec<u8>,
 }
 
@@ -28,24 +28,23 @@ impl Default for ExtensionHeaderTypeList {
 impl IEs for ExtensionHeaderTypeList {
 
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.push(self.t);
-        buffer.push(self.length);
-        buffer.append(&mut self.list.clone());
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
+        buffer_ie.append(&mut self.list.clone());
+        set_tlv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<ExtensionHeaderTypeList, GTPV1Error> {
-        if buffer.len()>=2 {
-            let mut data = ExtensionHeaderTypeList::default();
-            data.length = buffer[1];
-            if data.length*3+2>(buffer.len()-2) as u8 {
-                return Err(GTPV1Error::IEInvalidLength);
-            }
-            data.list.extend_from_slice(&buffer[2..]);
-            Ok(data)
+        let mut data = ExtensionHeaderTypeList::default();
+        data.length = u16::from_be_bytes([buffer[1],buffer[2]]);
+        if (data.length+3) as usize <=buffer.len() {
+            data.list.extend_from_slice(&buffer[3..]);
+            Ok(data)               
         } else {
             Err(GTPV1Error::IEInvalidLength)
-        }
-                
+        }            
     }
 
     fn len(&self) -> usize {
@@ -55,8 +54,8 @@ impl IEs for ExtensionHeaderTypeList {
 
 #[test]
 fn extension_header_type_list_ie_marshal_test() {
-    let ie_to_marshal = ExtensionHeaderTypeList { t: EXTENSION_HEADER_TYPE_LIST, length:1, list: vec![ 0x00, 0x01, 0x02, 0x03, 0x04]};
-    let ie_marshalled:[u8;7] = [0x8d, 0x01, 0x00, 0x01, 0x02, 0x03, 0x04];
+    let ie_to_marshal = ExtensionHeaderTypeList { t: EXTENSION_HEADER_TYPE_LIST, length:5, list: vec![ 0x00, 0x01, 0x02, 0x03, 0x04]};
+    let ie_marshalled:[u8;8] = [0x8d, 0x00, 0x05, 0x00, 0x01, 0x02, 0x03, 0x04];
     let mut buffer:Vec<u8>=vec!();
     ie_to_marshal.marshal(&mut buffer);
     assert_eq!(buffer,ie_marshalled);
@@ -64,7 +63,7 @@ fn extension_header_type_list_ie_marshal_test() {
 
 #[test]
 fn extension_header_type_list_ie_unmarshal_test() {
-    let ie_unmarshalled = ExtensionHeaderTypeList { t: EXTENSION_HEADER_TYPE_LIST, length:1, list: vec![ 0x00, 0x01, 0x02, 0x03, 0x04]};
-    let ie_to_unmarshal:[u8;7] = [0x8d, 0x01, 0x00, 0x01, 0x02, 0x03, 0x04];
+    let ie_unmarshalled = ExtensionHeaderTypeList { t: EXTENSION_HEADER_TYPE_LIST, length:5, list: vec![ 0x00, 0x01, 0x02, 0x03, 0x04]};
+    let ie_to_unmarshal:[u8;8] = [0x8d, 0x00, 0x05, 0x00, 0x01, 0x02, 0x03, 0x04];
     assert_eq!(ExtensionHeaderTypeList::unmarshal(&ie_to_unmarshal).unwrap(), ie_unmarshalled);
 }

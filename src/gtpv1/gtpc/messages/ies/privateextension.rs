@@ -30,11 +30,13 @@ impl Default for PrivateExtension {
 
 impl IEs for PrivateExtension {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.push(self.t);
-        buffer.extend_from_slice(&self.length.to_be_bytes());
-        buffer.extend_from_slice(&self.extension_id.to_be_bytes());
-        buffer.append(&mut self.extension_value.clone());
-        set_tlv_ie_length(buffer);
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
+        buffer_ie.extend_from_slice(&self.extension_id.to_be_bytes());
+        buffer_ie.append(&mut self.extension_value.clone());
+        set_tlv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal(buffer: &[u8]) -> Result <PrivateExtension, GTPV1Error> {

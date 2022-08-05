@@ -49,7 +49,7 @@ impl Messages for SupportedExtensionHeadersNotification {
         if message.header.length as usize <= buffer.len() {
             match ExtensionHeaderTypeList::unmarshal(&buffer[message.header.get_header_size()..]) {
                 Ok(i) => message.list=i,
-                Err(_) => return Err(GTPV1Error::MandatoryIEMissing),
+                Err(_) => return Err(GTPV1Error::MessageMandatoryIEMissing),
             }
             Ok(message)    
         } else {
@@ -104,11 +104,11 @@ fn test_supported_ext_hdr_notification_marshal () {
 #[test]
 fn test_echo_resp_without_mandatory_ie_unmarshal () {
     let encoded:[u8;12] = [0x32, 0x1f, 0x00, 0x0b, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00];
-    assert_eq!(SupportedExtensionHeadersNotification::unmarshal(&encoded).unwrap_err(), GTPV1Error::MandatoryIEMissing);
+    assert_eq!(SupportedExtensionHeadersNotification::unmarshal(&encoded).unwrap_err(), GTPV1Error::MessageMandatoryIEMissing);
 }
 
 #[test]
 fn test_echo_resp_with_incorrect_mandatory_ie_unmarshal () {
     let encoded:[u8;17] = [0x32, 0x1f, 0x00, 0x0b, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00, 0x8d, 0x01, 0x00, 0x01, 0x02];
-    assert_eq!(SupportedExtensionHeadersNotification::unmarshal(&encoded).unwrap_err(), GTPV1Error::MandatoryIEMissing);
+    assert_eq!(SupportedExtensionHeadersNotification::unmarshal(&encoded).unwrap_err(), GTPV1Error::MessageMandatoryIEMissing);
 }

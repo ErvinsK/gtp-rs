@@ -16,7 +16,6 @@ pub struct Rai {
     pub mnc: u16,
     pub lac: u16,
     pub rac: u8,
-
 }
 
 impl Default for Rai {

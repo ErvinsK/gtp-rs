@@ -31,13 +31,15 @@ impl Default for CnOperatorSelectionEntity {
 
 impl IEs for CnOperatorSelectionEntity {
     fn marshal (&self, buffer: &mut Vec<u8>) {
-        buffer.push(self.t);
-        buffer.extend_from_slice(&self.length.to_be_bytes());
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         match self.selection_entity {
-            SelectionMode::ServingNetworkSelectedbyUE => buffer.push(0x00),
-            SelectionMode::ServingNetworkSelectedbyNetwork => buffer.push(0x01),
+            SelectionMode::ServingNetworkSelectedbyUE => buffer_ie.push(0x00),
+            SelectionMode::ServingNetworkSelectedbyNetwork => buffer_ie.push(0x01),
         }
-        set_tlv_ie_length(buffer);
+        set_tlv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {

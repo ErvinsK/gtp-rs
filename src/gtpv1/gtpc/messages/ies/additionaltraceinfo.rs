@@ -29,18 +29,20 @@ impl Default for AdditionalTraceInfo {
 
 impl IEs for AdditionalTraceInfo {
     fn marshal (&self, buffer: &mut Vec<u8>) {
-        buffer.push(self.t);
-        buffer.extend_from_slice(&self.length.to_be_bytes());
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         {
             let slice = self.trace_ref.to_be_bytes();
-            buffer.extend_from_slice(&slice[1..]); // Trace Reference is u24 not u32
+            buffer_ie.extend_from_slice(&slice[1..]); // Trace Reference is u24 not u32
         }
-        buffer.extend_from_slice(&self.trace_rec_session_ref.to_be_bytes());
-        buffer.push(self.triggering_events);
-        buffer.push(self.trace_depth);
-        buffer.push(self.interface_list);
-        buffer.push(self.trace_activity_control);
-        set_tlv_ie_length(buffer);
+        buffer_ie.extend_from_slice(&self.trace_rec_session_ref.to_be_bytes());
+        buffer_ie.push(self.triggering_events);
+        buffer_ie.push(self.trace_depth);
+        buffer_ie.push(self.interface_list);
+        buffer_ie.push(self.trace_activity_control);
+        set_tlv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {

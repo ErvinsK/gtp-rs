@@ -46,19 +46,21 @@ impl Default for Uci {
 
 impl IEs for Uci {
     fn marshal (&self, buffer: &mut Vec<u8>) {
-        buffer.push(self.t);
-        buffer.extend_from_slice(&self.length.to_be_bytes());
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
-        buffer.extend_from_slice(&(self.csgid & 0x07ffffff).to_be_bytes());
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
+        buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer_ie.extend_from_slice(&(self.csgid & 0x07ffffff).to_be_bytes());
         match (&self.access_mode, &self.cmi) {
-            (AccessMode::ClosedMode, Cmi::CsgMembership) => buffer.push(0x00),
-            (AccessMode::ClosedMode, Cmi::NonCsgMembership) => buffer.push(0x01),
-            (AccessMode::HybridMode, Cmi::CsgMembership) => buffer.push(0x40),
-            (AccessMode::HybridMode, Cmi::NonCsgMembership) => buffer.push(0x41),
-            (AccessMode::Reserved, Cmi::CsgMembership) => buffer.push(0x80),
-            (AccessMode::Reserved, Cmi::NonCsgMembership) => buffer.push(0x81), 
+            (AccessMode::ClosedMode, Cmi::CsgMembership) => buffer_ie.push(0x00),
+            (AccessMode::ClosedMode, Cmi::NonCsgMembership) => buffer_ie.push(0x01),
+            (AccessMode::HybridMode, Cmi::CsgMembership) => buffer_ie.push(0x40),
+            (AccessMode::HybridMode, Cmi::NonCsgMembership) => buffer_ie.push(0x41),
+            (AccessMode::Reserved, Cmi::CsgMembership) => buffer_ie.push(0x80),
+            (AccessMode::Reserved, Cmi::NonCsgMembership) => buffer_ie.push(0x81), 
         }
-        set_tlv_ie_length(buffer);
+        set_tlv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
