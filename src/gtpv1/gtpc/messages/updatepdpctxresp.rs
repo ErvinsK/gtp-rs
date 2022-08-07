@@ -8,21 +8,18 @@ use crate::gtpv1::utils::*;
 
 // According to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-pub const CREATE_PDP_CONTEXT_RESPONSE:u8 = 17;
+pub const UPDATE_PDP_CONTEXT_RESPONSE:u8 = 19;
 
-// Definition of GTPv1-C Create PDP Context Response
+// Definition of GTPv1-C Update PDP Context Response
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct CreatePDPContextResponse {
+pub struct UpdatePDPContextResponse {
     pub header:Gtpv1Header,
     pub cause:Cause,
-    pub reordering_req:Option<ReorderingRequired>,
     pub recovery:Option<Recovery>,
     pub teid_data:Option<Teid>,
     pub teid_control:Option<Teid>,
-    pub nsapi:Option<Nsapi>,
     pub charging_id:Option<ChargingID>,
-    pub end_user_address:Option<EndUserAddress>,
     pub pco:Option<Pco>,
     pub ggsn_ip_control:Option<GsnAddress>,
     pub ggsn_ip_user:Option<GsnAddress>,
@@ -36,28 +33,22 @@ pub struct CreatePDPContextResponse {
     pub ms_info_change:Option<MSInfoChangeReportingAction>,
     pub bearer_ctrl_mode:Option<BearerControlMode>,
     pub evolved_alloc:Option<EvolvedAllocationRetentionI>,
-    pub ext_common_flags:Option<ExtendedCommonFlags>,
     pub csg_info_report:Option<CSGInformationReportingAction>,
     pub apn_ambr:Option<ApnAmbr>,
-    pub ggsn_backoff_time:Option<GGSNBackOffTime>,
-    pub ext_common_flags_ii:Option<ExtendedCommonFlagsII>,
     pub private_extension: Option<PrivateExtension>,
 }
 
-impl Default for CreatePDPContextResponse {
-    fn default() -> CreatePDPContextResponse {
+impl Default for UpdatePDPContextResponse {
+    fn default() -> UpdatePDPContextResponse {
         let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = CREATE_PDP_CONTEXT_RESPONSE;
-        CreatePDPContextResponse {
+        hdr.msgtype = UPDATE_PDP_CONTEXT_RESPONSE;
+        UpdatePDPContextResponse {
             header: hdr,
             cause:Cause::default(),
-            reordering_req:None,
             recovery:None,
             teid_data:None,
             teid_control:None,
-            nsapi:None,
             charging_id:None,
-            end_user_address:None,
             pco:None,
             ggsn_ip_control:None,
             ggsn_ip_user:None,
@@ -71,18 +62,15 @@ impl Default for CreatePDPContextResponse {
             ms_info_change:None,
             bearer_ctrl_mode:None,
             evolved_alloc:None,
-            ext_common_flags:None,
             csg_info_report:None,
             apn_ambr:None,
-            ggsn_backoff_time:None,
-            ext_common_flags_ii:None,
             private_extension: None,
         }
     }
 }
 
 
-impl Messages for CreatePDPContextResponse {
+impl Messages for UpdatePDPContextResponse {
 
     fn marshal (self, buffer: &mut Vec<u8>) {
     
@@ -93,15 +81,6 @@ impl Messages for CreatePDPContextResponse {
         // Marshal Cause IE
 
             self.cause.marshal(buffer);
-
-        // Marshal Reordering Required IE
-
-        match self.reordering_req {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
 
         // Marshal Recovery IE
 
@@ -130,27 +109,9 @@ impl Messages for CreatePDPContextResponse {
             None => (),
         }
 
-        // Marshal NSAPI IE 
-
-        match self.nsapi {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
         // Marshal Charging ID IE
 
         match self.charging_id {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
-        // Marshal End User Address IE
-
-        match self.end_user_address {
             Some(i) => {
                 i.marshal(buffer);
             },
@@ -274,15 +235,6 @@ impl Messages for CreatePDPContextResponse {
             None => (),
         }
 
-        // Marshal Extended Common Flags IE
-
-        match self.ext_common_flags {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
         // Marshal CSG Information Reporting Action IE
 
         match self.csg_info_report {
@@ -295,24 +247,6 @@ impl Messages for CreatePDPContextResponse {
         // Marshal APN-AMBR IE
 
         match self.apn_ambr {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
-        // Marshal GGSN Back-Off Time IE
-
-        match self.ggsn_backoff_time {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
-        // Marshal Extended Common Flags II IE
-
-        match self.ext_common_flags_ii {
             Some(i) => {
                 i.marshal(buffer);
             },
@@ -335,7 +269,7 @@ impl Messages for CreatePDPContextResponse {
         
         let mut msg_hash:HashMap<u8,u8> = HashMap::new();
 
-        let mut message = CreatePDPContextResponse::default();
+        let mut message = UpdatePDPContextResponse::default();
 
         match Gtpv1Header::unmarshal(buffer) {
             Ok(i) => message.header=i,
@@ -366,24 +300,6 @@ impl Messages for CreatePDPContextResponse {
                                         Err (_) => return Err(GTPV1Error::MessageMandatoryIEMissing), 
                                     }
                                 }, 
-                                REORDERING_REQUIRED => {
-                                    match ReorderingRequired::unmarshal(&buffer[cursor..]) {
-                                        Ok(i) => {
-                                            if !msg_hash.contains_key(&buffer[cursor]) {
-                                                increment = buffer[cursor];
-                                                msg_hash.insert(buffer[cursor], 1);
-                                                cursor+=i.len();
-                                                message.reordering_req= Some(i);
-                                            } else {
-                                                let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
-                                                msg_hash.insert(buffer[cursor], n);
-                                                increment = buffer[cursor];
-                                                cursor+=i.len();
-                                            }
-                                        },
-                                        Err (_) => return Err(GTPV1Error::MessageOptionalIEIncorrect), 
-                                    }
-                                },
                                 RECOVERY => {
                                     match Recovery::unmarshal(&buffer[cursor..]) {
                                         Ok(i) => {
@@ -438,24 +354,6 @@ impl Messages for CreatePDPContextResponse {
                                         Err (_) => return Err(GTPV1Error::MessageOptionalIEIncorrect), 
                                     }
                                 },
-                                NSAPI => {
-                                    match Nsapi::unmarshal(&buffer[cursor..]) {
-                                        Ok(i) => {
-                                            if !msg_hash.contains_key(&buffer[cursor]) {
-                                                increment = buffer[cursor];
-                                                msg_hash.insert(buffer[cursor], 1);
-                                                cursor+=i.len();
-                                                message.nsapi= Some(i);
-                                            } else {
-                                                let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
-                                                msg_hash.insert(buffer[cursor], n);
-                                                increment = buffer[cursor];
-                                                cursor+=i.len();
-                                            }
-                                        },   
-                                        Err (_) => return Err(GTPV1Error::MessageOptionalIEIncorrect),
-                                    }
-                                },
                                 CHARGING_ID => {
                                     match ChargingID::unmarshal(&buffer[cursor..]) {
                                         Ok(i) => {
@@ -464,24 +362,6 @@ impl Messages for CreatePDPContextResponse {
                                                 msg_hash.insert(buffer[cursor], 1);
                                                 cursor+=i.len();
                                                 message.charging_id= Some(i);
-                                            } else {
-                                                let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
-                                                msg_hash.insert(buffer[cursor], n);
-                                                increment = buffer[cursor];
-                                                cursor+=i.len();
-                                            }
-                                        },
-                                        Err (_) => return Err(GTPV1Error::MessageOptionalIEIncorrect), 
-                                    }
-                                },
-                                END_USER_ADDRESS => {
-                                    match EndUserAddress::unmarshal(&buffer[cursor..]) {
-                                        Ok(i) => {
-                                            if !msg_hash.contains_key(&buffer[cursor]) {
-                                                increment = buffer[cursor];
-                                                msg_hash.insert(buffer[cursor], 1);
-                                                cursor+=i.len();
-                                                message.end_user_address= Some(i);
                                             } else {
                                                 let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
                                                 msg_hash.insert(buffer[cursor], n);
@@ -683,24 +563,6 @@ impl Messages for CreatePDPContextResponse {
                                         Err (_) => return Err(GTPV1Error::MessageOptionalIEIncorrect), 
                                     }
                                 },
-                                EXTCOMMONFLAGS => {
-                                    match ExtendedCommonFlags::unmarshal(&buffer[cursor..]) {
-                                        Ok(i) => {
-                                            if !msg_hash.contains_key(&buffer[cursor]) {
-                                                increment = buffer[cursor];
-                                                msg_hash.insert(buffer[cursor], 1);
-                                                cursor+=i.len();
-                                                message.ext_common_flags= Some(i);
-                                            } else {
-                                                let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
-                                                msg_hash.insert(buffer[cursor], n);
-                                                increment = buffer[cursor];
-                                                cursor+=i.len();
-                                            }
-                                        },
-                                        Err (_) => return Err(GTPV1Error::MessageOptionalIEIncorrect), 
-                                    }
-                                },
                                 CSG_INFO_REPORT => 
                                     match CSGInformationReportingAction::unmarshal(&buffer[cursor..]) {
                                         Ok(i) => {
@@ -735,41 +597,6 @@ impl Messages for CreatePDPContextResponse {
                                             },
                                             Err (_) => return Err(GTPV1Error::MessageOptionalIEIncorrect), 
                                         }
-                                },
-                                GGSN_BACKOFF => 
-                                    match GGSNBackOffTime::unmarshal(&buffer[cursor..]) {
-                                        Ok(i) => {
-                                            if !msg_hash.contains_key(&buffer[cursor]) {
-                                                increment = buffer[cursor];
-                                                msg_hash.insert(buffer[cursor], 1);
-                                                cursor+=i.len();
-                                                message.ggsn_backoff_time= Some(i);
-                                            } else {
-                                                let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
-                                                msg_hash.insert(buffer[cursor], n);
-                                                increment = buffer[cursor];
-                                                cursor+=i.len();
-                                            }
-                                        },
-                                        Err (_) => return Err(GTPV1Error::MessageOptionalIEIncorrect), 
-                                },
-                                EXTCOMMONFLAGS_II => {
-                                    match ExtendedCommonFlagsII::unmarshal(&buffer[cursor..]) {
-                                        Ok(i) => {
-                                            if !msg_hash.contains_key(&buffer[cursor]) {
-                                                increment = buffer[cursor];
-                                                msg_hash.insert(buffer[cursor], 1);
-                                                cursor+=i.len();
-                                                message.ext_common_flags_ii= Some(i);
-                                            } else {
-                                                let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
-                                                msg_hash.insert(buffer[cursor], n);
-                                                increment = buffer[cursor];
-                                                cursor+=i.len();
-                                            }
-                                        },
-                                        Err (_) => return Err(GTPV1Error::MessageOptionalIEIncorrect), 
-                                    }
                                 },
                                 PRIVATE_EXTENSION => {
                                     match PrivateExtension::unmarshal(&buffer[cursor..]) {
@@ -810,115 +637,80 @@ impl Messages for CreatePDPContextResponse {
 }
 
 #[test]
-
-fn create_pdp_ctx_resp_unmarshal_test() {
+fn update_pdp_ctx_resp_unmarshal_test() {
     use std::{net::{IpAddr, Ipv4Addr}};
-    let encoded:[u8;94]= [
-        0x32, 0x11, 0x00, 0x56, 0x70, 0x0b, /* ..2..Vp. */
-        0x0c, 0x60, 0x74, 0x17, 0x00, 0x00, 0x01, 0x80, /* .`t..... */
-        0x08, 0xfe, 0x0e, 0x06, 0x10, 0xf3, 0xc3, 0xe7, /* ........ */
-        0xf9, 0x11, 0x1f, 0x4b, 0xf2, 0xf4, 0x7f, 0x05, /* ...K.... */
-        0xeb, 0x6b, 0xb3, 0x80, 0x00, 0x06, 0xf1, 0x21, /* .k.....! */
-        0x0a, 0xdb, 0x3b, 0x30, 0x84, 0x00, 0x14, 0x80, /* ..;0.... */
-        0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, /* .!...... */
-        0x06, 0x08, 0x08, 0x08, 0x08, 0x83, 0x06, 0x08, /* ........ */
-        0x08, 0x04, 0x04, 0x85, 0x00, 0x04, 0x3e, 0x99, /* ......>. */
-        0x89, 0x41, 0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, /* .A...>.. */
-        0x4b, 0x87, 0x00, 0x0c, 0x03, 0x1b, 0x93, 0x1f, /* K....... */
-        0x73, 0x96, 0x97, 0x97, 0x44, 0xfb, 0x10, 0x40  /* s...D..@ */
+    let encoded:[u8;60]= [
+        0x32, 0x13, 0x00, 0x34, 0x37, 0x38, /* ..2..478 */
+        0xbf, 0x7a, 0x9b, 0xcf, 0x00, 0x00, 0x01, 0x80, /* .z...... */
+        0x0e, 0x05, 0x10, 0xa6, 0x97, 0x49, 0xf4, 0x11, /* .....I.. */
+        0x09, 0x86, 0xbb, 0x9f, 0x7f, 0x03, 0x94, 0x38, /* .......8 */
+        0x7d, 0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, 0x5f, /* }...>.._ */
+        0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, 0x60, 0x87, /* ...>..`. */
+        0x00, 0x0c, 0x03, 0x13, 0x83, 0x1f, 0x71, 0x96, /* ......q. */
+        0x87, 0x87, 0x74, 0xfa, 0xff, 0xff
         ];
-    let decoded = CreatePDPContextResponse { 
-        header: Gtpv1Header { 
-            msgtype: 17, 
-            length: 86, 
-            teid: 1879772256, 
-            sequence_number: Some(29719), 
-            npdu_number: None, 
-            extension_headers: None },
-            cause: Cause { t: 1, value: 128 },
-            reordering_req: Some(ReorderingRequired { t: 8, req: false }),
-            recovery: Some(Recovery { t: 14, value: 6 }),
-            teid_data: Some(Teid { t: 16, teid: 4089702393 }),
-            teid_control: Some(Teid { t: 17, teid: 525071092 }),
-            nsapi: None,
-            charging_id: Some(ChargingID { t: 127, value: 99314611 }),
-            end_user_address: Some(EndUserAddress { t: 128, length: 6, pdp_type_org: 1, pdp_type_nbr: 33, ipv4: Some(Ipv4Addr::new(10, 219, 59, 48)), ipv6: None }),
-            pco: Some(Pco { t: 132, length: 20, pco: vec!(128, 128, 33, 16, 2, 0, 0, 16, 129, 6, 8, 8, 8, 8, 131, 6, 8, 8, 4, 4) }),
-            ggsn_ip_control: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62, 153, 137, 65)) }),
-            ggsn_ip_user: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62, 153, 137, 75))  }),
-            alt_ggsn_ip_control: None,
-            alt_ggsn_ip_user: None, 
-            qos: Some(Qos { t: 135, length: 12, arp: 3, qos: vec!(27, 147, 31, 115, 150, 151, 151, 68, 251, 16, 64) }),
-            charging_gw_addr: None,
-            alt_charging_gw_addr: None,
-            common_flags: None,
-            apn_restriction: None,
-            ms_info_change: None,
-            bearer_ctrl_mode: None,
-            evolved_alloc: None,
-            ext_common_flags: None,
-            csg_info_report: None,
-            apn_ambr: None,
-            ggsn_backoff_time: None,
-            ext_common_flags_ii: None,
-            private_extension: None
-        };
-    assert_eq!(CreatePDPContextResponse::unmarshal(&encoded).unwrap(),decoded);
+    let decoded = UpdatePDPContextResponse { 
+        header: Gtpv1Header { msgtype: 19, length: 52, teid: 926465914, sequence_number: Some(39887), npdu_number: None, extension_headers: None }, 
+        cause: Cause { t: 1, value: 128 }, 
+        recovery: Some(Recovery { t: 14, value: 5 }), 
+        teid_data: Some(Teid { t: 16, teid: 2794932724 }), 
+        teid_control: Some(Teid { t: 17, teid: 159824799 }), 
+        charging_id: Some(ChargingID { t: 127, value: 60045437 }), 
+        pco: None, 
+        ggsn_ip_control: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62,153,137,95)) }), 
+        ggsn_ip_user: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62,153,137,96)) }), 
+        alt_ggsn_ip_control: None, 
+        alt_ggsn_ip_user: None, 
+        qos: Some(Qos { t: 135, length: 12, arp: 3, qos: vec!(19, 131, 31, 113, 150, 135, 135, 116, 250, 255, 255) }), 
+        charging_gw_addr: None, 
+        alt_charging_gw_addr: None, 
+        common_flags: None, 
+        apn_restriction: None, 
+        ms_info_change: None, 
+        bearer_ctrl_mode: None, 
+        evolved_alloc: None, 
+        csg_info_report: None, 
+        apn_ambr: None, 
+        private_extension: None };
+    assert_eq!(UpdatePDPContextResponse::unmarshal(&encoded).unwrap(),decoded);
 }
 
 #[test]
-fn create_pdp_ctx_response_marshal_test() {
+fn update_pdp_ctx_response_marshal_test() {
     use std::{net::{IpAddr, Ipv4Addr}};
-    let encoded:[u8;94]= [
-        0x32, 0x11, 0x00, 0x56, 0x70, 0x0b, /* ..2..Vp. */
-        0x0c, 0x60, 0x74, 0x17, 0x00, 0x00, 0x01, 0x80, /* .`t..... */
-        0x08, 0xfe, 0x0e, 0x06, 0x10, 0xf3, 0xc3, 0xe7, /* ........ */
-        0xf9, 0x11, 0x1f, 0x4b, 0xf2, 0xf4, 0x7f, 0x05, /* ...K.... */
-        0xeb, 0x6b, 0xb3, 0x80, 0x00, 0x06, 0xf1, 0x21, /* .k.....! */
-        0x0a, 0xdb, 0x3b, 0x30, 0x84, 0x00, 0x14, 0x80, /* ..;0.... */
-        0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, /* .!...... */
-        0x06, 0x08, 0x08, 0x08, 0x08, 0x83, 0x06, 0x08, /* ........ */
-        0x08, 0x04, 0x04, 0x85, 0x00, 0x04, 0x3e, 0x99, /* ......>. */
-        0x89, 0x41, 0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, /* .A...>.. */
-        0x4b, 0x87, 0x00, 0x0c, 0x03, 0x1b, 0x93, 0x1f, /* K....... */
-        0x73, 0x96, 0x97, 0x97, 0x44, 0xfb, 0x10, 0x40  /* s...D..@ */
+    let encoded:[u8;60]= [
+        0x32, 0x13, 0x00, 0x34, 0x37, 0x38, /* ..2..478 */
+        0xbf, 0x7a, 0x9b, 0xcf, 0x00, 0x00, 0x01, 0x80, /* .z...... */
+        0x0e, 0x05, 0x10, 0xa6, 0x97, 0x49, 0xf4, 0x11, /* .....I.. */
+        0x09, 0x86, 0xbb, 0x9f, 0x7f, 0x03, 0x94, 0x38, /* .......8 */
+        0x7d, 0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, 0x5f, /* }...>.._ */
+        0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, 0x60, 0x87, /* ...>..`. */
+        0x00, 0x0c, 0x03, 0x13, 0x83, 0x1f, 0x71, 0x96, /* ......q. */
+        0x87, 0x87, 0x74, 0xfa, 0xff, 0xff
         ];
-    let decoded = CreatePDPContextResponse { 
-        header: Gtpv1Header { 
-            msgtype: 17, 
-            length: 86, 
-            teid: 1879772256, 
-            sequence_number: Some(29719), 
-            npdu_number: None, 
-            extension_headers: None },
-            cause: Cause { t: 1, value: 128 },
-            reordering_req: Some(ReorderingRequired { t: 8, req: false }),
-            recovery: Some(Recovery { t: 14, value: 6 }),
-            teid_data: Some(Teid { t: 16, teid: 4089702393 }),
-            teid_control: Some(Teid { t: 17, teid: 525071092 }),
-            nsapi: None,
-            charging_id: Some(ChargingID { t: 127, value: 99314611 }),
-            end_user_address: Some(EndUserAddress { t: 128, length: 6, pdp_type_org: 1, pdp_type_nbr: 33, ipv4: Some(Ipv4Addr::new(10, 219, 59, 48)), ipv6: None }),
-            pco: Some(Pco { t: 132, length: 20, pco: vec!(128, 128, 33, 16, 2, 0, 0, 16, 129, 6, 8, 8, 8, 8, 131, 6, 8, 8, 4, 4) }),
-            ggsn_ip_control: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62, 153, 137, 65)) }),
-            ggsn_ip_user: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62, 153, 137, 75))  }),
-            alt_ggsn_ip_control: None,
-            alt_ggsn_ip_user: None, 
-            qos: Some(Qos { t: 135, length: 12, arp: 3, qos: vec!(27, 147, 31, 115, 150, 151, 151, 68, 251, 16, 64) }),
-            charging_gw_addr: None,
-            alt_charging_gw_addr: None,
-            common_flags: None,
-            apn_restriction: None,
-            ms_info_change: None,
-            bearer_ctrl_mode: None,
-            evolved_alloc: None,
-            ext_common_flags: None,
-            csg_info_report: None,
-            apn_ambr: None,
-            ggsn_backoff_time: None,
-            ext_common_flags_ii: None,
-            private_extension: None
-        };
+    let decoded = UpdatePDPContextResponse { 
+        header: Gtpv1Header { msgtype: 19, length: 52, teid: 926465914, sequence_number: Some(39887), npdu_number: None, extension_headers: None }, 
+        cause: Cause { t: 1, value: 128 }, 
+        recovery: Some(Recovery { t: 14, value: 5 }), 
+        teid_data: Some(Teid { t: 16, teid: 2794932724 }), 
+        teid_control: Some(Teid { t: 17, teid: 159824799 }), 
+        charging_id: Some(ChargingID { t: 127, value: 60045437 }), 
+        pco: None, 
+        ggsn_ip_control: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62,153,137,95)) }), 
+        ggsn_ip_user: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62,153,137,96)) }), 
+        alt_ggsn_ip_control: None, 
+        alt_ggsn_ip_user: None, 
+        qos: Some(Qos { t: 135, length: 12, arp: 3, qos: vec!(19, 131, 31, 113, 150, 135, 135, 116, 250, 255, 255) }), 
+        charging_gw_addr: None, 
+        alt_charging_gw_addr: None, 
+        common_flags: None, 
+        apn_restriction: None, 
+        ms_info_change: None, 
+        bearer_ctrl_mode: None, 
+        evolved_alloc: None, 
+        csg_info_report: None, 
+        apn_ambr: None, 
+        private_extension: None };
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);
@@ -927,102 +719,77 @@ fn create_pdp_ctx_response_marshal_test() {
 #[test]
 fn create_pdp_ctx_resp_unmarshal_with_repetitive_fields_ggsn_addr_charging_gw() {
     use std::{net::{IpAddr, Ipv4Addr}};
-    let encoded:[u8;122]= [
-        0x32, 0x11, 0x00, 0x72, 0x70, 0x0b, /* ..2..Vp. */
-        0x0c, 0x60, 0x74, 0x17, 0x00, 0x00, 0x01, 0x80, /* .`t..... */
-        0x08, 0xfe, 0x0e, 0x06, 0x10, 0xf3, 0xc3, 0xe7, /* ........ */
-        0xf9, 0x11, 0x1f, 0x4b, 0xf2, 0xf4, 0x7f, 0x05, /* ...K.... */
-        0xeb, 0x6b, 0xb3, 0x80, 0x00, 0x06, 0xf1, 0x21, /* .k.....! */
-        0x0a, 0xdb, 0x3b, 0x30, 0x84, 0x00, 0x14, 0x80, /* ..;0.... */
-        0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, /* .!...... */
-        0x06, 0x08, 0x08, 0x08, 0x08, 0x83, 0x06, 0x08, /* ........ */
-        0x08, 0x04, 0x04, 0x85, 0x00, 0x04, 0x3e, 0x99, /* ......>. */
-        0x89, 0x41, 0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, /* .A...>.. */
-        0x4b, 
-        0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, /* .A...>.. */
-        0x4c,
-        0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, /* .A...>.. */
-        0x4d,
-        0x87, 0x00, 0x0c, 0x03, 0x1b, 0x93, 0x1f, /* K....... */
-        0x73, 0x96, 0x97, 0x97, 0x44, 0xfb, 0x10, 0x40,  /* s...D..@ */
+    let encoded:[u8;88]= [
+        0x32, 0x13, 0x00, 0x50, 0x37, 0x38, /* ..2..478 */
+        0xbf, 0x7a, 0x9b, 0xcf, 0x00, 0x00, 0x01, 0x80, /* .z...... */
+        0x0e, 0x05, 0x10, 0xa6, 0x97, 0x49, 0xf4, 0x11, /* .....I.. */
+        0x09, 0x86, 0xbb, 0x9f, 0x7f, 0x03, 0x94, 0x38, /* .......8 */
+        0x7d, 0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, 0x5f, /* }...>.._ */
+        0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, 0x60, 
+        0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, 0x61,
+        0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, 0x62,
+        0x87, /* ...>..`. */
+        0x00, 0x0c, 0x03, 0x13, 0x83, 0x1f, 0x71, 0x96, /* ......q. */
+        0x87, 0x87, 0x74, 0xfa, 0xff, 0xff,
         0xfb, 0x00, 0x04, 0x3e, 0x99, 0x89, /* .A...>.. */
         0x4e,
         0xfb, 0x00, 0x04, 0x3e, 0x99, 0x89, /* .A...>.. */
         0x4f
         ];
-    let decoded = CreatePDPContextResponse { 
-        header: Gtpv1Header { 
-            msgtype: 17, 
-            length: 114, 
-            teid: 1879772256, 
-            sequence_number: Some(29719), 
-            npdu_number: None, 
-            extension_headers: None },
-            cause: Cause { t: 1, value: 128 },
-            reordering_req: Some(ReorderingRequired { t: 8, req: false }),
-            recovery: Some(Recovery { t: 14, value: 6 }),
-            teid_data: Some(Teid { t: 16, teid: 4089702393 }),
-            teid_control: Some(Teid { t: 17, teid: 525071092 }),
-            nsapi: None,
-            charging_id: Some(ChargingID { t: 127, value: 99314611 }),
-            end_user_address: Some(EndUserAddress { t: 128, length: 6, pdp_type_org: 1, pdp_type_nbr: 33, ipv4: Some(Ipv4Addr::new(10, 219, 59, 48)), ipv6: None }),
-            pco: Some(Pco { t: 132, length: 20, pco: vec!(128, 128, 33, 16, 2, 0, 0, 16, 129, 6, 8, 8, 8, 8, 131, 6, 8, 8, 4, 4) }),
-            ggsn_ip_control: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62, 153, 137, 65)) }),
-            ggsn_ip_user: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62, 153, 137, 75))  }),
-            alt_ggsn_ip_control: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62, 153, 137, 76))  }),
-            alt_ggsn_ip_user: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62, 153, 137, 77))  }), 
-            qos: Some(Qos { t: 135, length: 12, arp: 3, qos: vec!(27, 147, 31, 115, 150, 151, 151, 68, 251, 16, 64) }),
-            charging_gw_addr: Some(ChargingGWAddress { t: CHARGING_GW_ADDRESS, length:4, ip: IpAddr::V4(Ipv4Addr::new(62, 153, 137, 78)) }),
-            alt_charging_gw_addr: Some(ChargingGWAddress { t: CHARGING_GW_ADDRESS, length:4, ip: IpAddr::V4(Ipv4Addr::new(62, 153, 137, 79)) }),
-            common_flags: None,
-            apn_restriction: None,
-            ms_info_change: None,
-            bearer_ctrl_mode: None,
-            evolved_alloc: None,
-            ext_common_flags: None,
-            csg_info_report: None,
-            apn_ambr: None,
-            ggsn_backoff_time: None,
-            ext_common_flags_ii: None,
-            private_extension: None
-        };
-    assert_eq!(CreatePDPContextResponse::unmarshal(&encoded).unwrap(),decoded);
+    let decoded = UpdatePDPContextResponse { 
+        header: Gtpv1Header { msgtype: 19, length: 80, teid: 926465914, sequence_number: Some(39887), npdu_number: None, extension_headers: None }, 
+        cause: Cause { t: 1, value: 128 }, 
+        recovery: Some(Recovery { t: 14, value: 5 }), 
+        teid_data: Some(Teid { t: 16, teid: 2794932724 }), 
+        teid_control: Some(Teid { t: 17, teid: 159824799 }), 
+        charging_id: Some(ChargingID { t: 127, value: 60045437 }), 
+        pco: None, 
+        ggsn_ip_control: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62,153,137,95)) }), 
+        ggsn_ip_user: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62,153,137,96)) }), 
+        alt_ggsn_ip_control: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62,153,137,97)) }),
+        alt_ggsn_ip_user: Some(GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62,153,137,98)) }), 
+        qos: Some(Qos { t: 135, length: 12, arp: 3, qos: vec!(19, 131, 31, 113, 150, 135, 135, 116, 250, 255, 255) }), 
+        charging_gw_addr: Some(ChargingGWAddress { t: CHARGING_GW_ADDRESS, length:4, ip: IpAddr::V4(Ipv4Addr::new(62, 153, 137, 78)) }),
+        alt_charging_gw_addr: Some(ChargingGWAddress { t: CHARGING_GW_ADDRESS, length:4, ip: IpAddr::V4(Ipv4Addr::new(62, 153, 137, 79)) }),
+        common_flags: None, 
+        apn_restriction: None, 
+        ms_info_change: None, 
+        bearer_ctrl_mode: None, 
+        evolved_alloc: None, 
+        csg_info_report: None, 
+        apn_ambr: None, 
+        private_extension: None };
+    assert_eq!(UpdatePDPContextResponse::unmarshal(&encoded).unwrap(),decoded);
 }
 
 #[test]
-fn create_pdp_ctx_resp_wrong_ie_order_unmarshal_test() {
-    let encoded:[u8;94]= [
-        0x32, 0x11, 0x00, 0x56, 0x70, 0x0b, /* ..2..Vp. */
-        0x0c, 0x60, 0x74, 0x17, 0x00, 0x00,  /* .`t..... */
-        0x08, 0xfe, 0x01, 0x80, 0x0e, 0x06, 0x10, 0xf3, 0xc3, 0xe7, /* ........ */
-        0xf9, 0x11, 0x1f, 0x4b, 0xf2, 0xf4, 0x7f, 0x05, /* ...K.... */
-        0xeb, 0x6b, 0xb3, 0x80, 0x00, 0x06, 0xf1, 0x21, /* .k.....! */
-        0x0a, 0xdb, 0x3b, 0x30, 0x84, 0x00, 0x14, 0x80, /* ..;0.... */
-        0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, /* .!...... */
-        0x06, 0x08, 0x08, 0x08, 0x08, 0x83, 0x06, 0x08, /* ........ */
-        0x08, 0x04, 0x04, 0x85, 0x00, 0x04, 0x3e, 0x99, /* ......>. */
-        0x89, 0x41, 0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, /* .A...>.. */
-        0x4b, 0x87, 0x00, 0x0c, 0x03, 0x1b, 0x93, 0x1f, /* K....... */
-        0x73, 0x96, 0x97, 0x97, 0x44, 0xfb, 0x10, 0x40  /* s...D..@ */
+fn update_pdp_ctx_resp_wrong_ie_order_unmarshal_test() {
+    let encoded:[u8;60]= [
+        0x32, 0x13, 0x00, 0x34, 0x37, 0x38, /* ..2..478 */
+        0xbf, 0x7a, 0x9b, 0xcf, 0x00, 0x00, 0x01, 0x80, /* .z...... */
+        0x0e, 0x05, 0x10, 0xa6, 0x97, 0x49, 0xf4, 0x11, /* .....I.. */
+        0x09, 0x86, 0xbb, 0x9f, 0x7f, 0x03, 0x94, 0x38, /* .......8 */
+        0x7d, 
+        0x87, /* ...>..`. */
+        0x00, 0x0c, 0x03, 0x13, 0x83, 0x1f, 0x71, 0x96, /* ......q. */
+        0x87, 0x87, 0x74, 0xfa, 0xff, 0xff,
+        0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, 0x5f, /* }...>.._ */
+        0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, 0x60 
         ];
-    assert_eq!(CreatePDPContextResponse::unmarshal(&encoded),Err(GTPV1Error::MessageInvalidMessageFormat));
+    assert_eq!(UpdatePDPContextResponse::unmarshal(&encoded),Err(GTPV1Error::MessageInvalidMessageFormat));
 }
 
 #[test]
-fn create_pdp_ctx_resp_missing_mandatory_ie_unmarshal_test() {
-   let encoded:[u8;92]= [
-        0x32, 0x11, 0x00, 0x54, 0x70, 0x0b, /* ..2..Vp. */
-        0x0c, 0x60, 0x74, 0x17, 0x00, 0x00, /* .`t..... */
-        0x08, 0xfe, 0x0e, 0x06, 0x10, 0xf3, 0xc3, 0xe7, /* ........ */
-        0xf9, 0x11, 0x1f, 0x4b, 0xf2, 0xf4, 0x7f, 0x05, /* ...K.... */
-        0xeb, 0x6b, 0xb3, 0x80, 0x00, 0x06, 0xf1, 0x21, /* .k.....! */
-        0x0a, 0xdb, 0x3b, 0x30, 0x84, 0x00, 0x14, 0x80, /* ..;0.... */
-        0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, /* .!...... */
-        0x06, 0x08, 0x08, 0x08, 0x08, 0x83, 0x06, 0x08, /* ........ */
-        0x08, 0x04, 0x04, 0x85, 0x00, 0x04, 0x3e, 0x99, /* ......>. */
-        0x89, 0x41, 0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, /* .A...>.. */
-        0x4b, 0x87, 0x00, 0x0c, 0x03, 0x1b, 0x93, 0x1f, /* K....... */
-        0x73, 0x96, 0x97, 0x97, 0x44, 0xfb, 0x10, 0x40  /* s...D..@ */
-        ]; 
-    assert_eq!(CreatePDPContextResponse::unmarshal(&encoded),Err(GTPV1Error::MessageMandatoryIEMissing));
+fn update_pdp_ctx_resp_missing_mandatory_ie_unmarshal_test() {
+    let encoded:[u8;58]= [
+        0x32, 0x13, 0x00, 0x32, 0x37, 0x38, /* ..2..478 */
+        0xbf, 0x7a, 0x9b, 0xcf, 0x00, 0x00,  /* .z...... */
+        0x0e, 0x05, 0x10, 0xa6, 0x97, 0x49, 0xf4, 0x11, /* .....I.. */
+        0x09, 0x86, 0xbb, 0x9f, 0x7f, 0x03, 0x94, 0x38, /* .......8 */
+        0x7d, 0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, 0x5f, /* }...>.._ */
+        0x85, 0x00, 0x04, 0x3e, 0x99, 0x89, 0x60, 0x87, /* ...>..`. */
+        0x00, 0x0c, 0x03, 0x13, 0x83, 0x1f, 0x71, 0x96, /* ......q. */
+        0x87, 0x87, 0x74, 0xfa, 0xff, 0xff
+        ];
+    assert_eq!(UpdatePDPContextResponse::unmarshal(&encoded),Err(GTPV1Error::MessageMandatoryIEMissing));
 }

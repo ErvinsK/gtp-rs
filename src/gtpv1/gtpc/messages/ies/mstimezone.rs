@@ -69,8 +69,8 @@ impl IEs for MsTimeZone {
 
 #[test]
 fn mstimezone_ie_marshal_test () {
-    let ie_marshalled:[u8;5]=[0x99, 0x00, 0x02, 0x40, 0x00];
-    let ie_to_marshal = MsTimeZone { t:MSTIMEZONETYPE, length: MSTIMEZONE_LENGTH, time_zone: 1, dst:0 };
+    let ie_marshalled:[u8;5]=[0x99, 0x00, 0x02, 0x80, 0x00];
+    let ie_to_marshal = MsTimeZone { t:MSTIMEZONETYPE, length: MSTIMEZONE_LENGTH, time_zone: 2, dst:0 };
     let mut buffer:Vec<u8>=vec!();
     ie_to_marshal.marshal(&mut buffer);
     assert_eq!(buffer,ie_marshalled);
