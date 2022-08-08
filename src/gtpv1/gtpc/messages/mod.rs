@@ -8,6 +8,8 @@ pub use {
     createpdpctxresp::*,
     updatepdpctxreq::*,
     updatepdpctxresp::*,
+    deletepdpctxreq::*,
+    deletepdpctxresp::*,
 };
 mod ies;
 mod echoreq;
@@ -18,4 +20,6 @@ mod createpdpctxreq;
 mod createpdpctxresp;
 mod updatepdpctxreq;
 mod updatepdpctxresp;
+mod deletepdpctxreq;
+mod deletepdpctxresp;
 mod commons;
