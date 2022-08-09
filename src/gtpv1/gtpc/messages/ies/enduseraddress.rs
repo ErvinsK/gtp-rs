@@ -9,19 +9,19 @@ pub const END_USER_ADDRESS:u8 = 128;
 
 // PDP Type Organization
 
-const ETSI:u8=0;
-const IETF:u8=1;
+pub const ETSI:u8=0;
+pub const IETF:u8=1;
 
 // ETSI PDP Type Number
 
-const PPP:u8=1;
-const NONIP:u8=2;
+pub const PPP:u8=1;
+pub const NONIP:u8=2;
 
 // IETF PDP Type Number
 
-const IPV4:u8 = 0x21;
-const IPV6:u8 = 0x57;
-const IPV46:u8 = 0x8D;
+pub const IPV4:u8 = 0x21;
+pub const IPV6:u8 = 0x57;
+pub const IPV46:u8 = 0x8D;
 
 // End User Address IE implementation
 
