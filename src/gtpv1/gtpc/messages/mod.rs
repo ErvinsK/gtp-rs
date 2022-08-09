@@ -13,6 +13,9 @@ pub use {
     updatepdpctxreq_ggsn::*,
     updatepdpctxresp_ggsn::*,
     pdunotificationreq::*,
+    pdunotificationresp::*,
+    pdunotificationrejectreq::*,
+    pdunotificationrejectresp::*,
 };
 mod ies;
 mod echoreq;
@@ -28,4 +31,7 @@ mod deletepdpctxresp;
 mod updatepdpctxreq_ggsn;
 mod updatepdpctxresp_ggsn;
 mod pdunotificationreq;
+mod pdunotificationresp;
+mod pdunotificationrejectreq;
+mod pdunotificationrejectresp;
 mod commons;
