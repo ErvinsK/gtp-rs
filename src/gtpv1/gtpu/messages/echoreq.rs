@@ -1,15 +1,15 @@
-use crate::gtpv1::gtpc::header::*;
-use crate::gtpv1::gtpc::messages::commons::*;
+use crate::gtpv1::gtpu::header::*;
+use crate::gtpv1::gtpu::messages::commons::*;
 use crate::gtpv1::errors::*;
-use crate::gtpv1::gtpc::messages::ies::*;
+use crate::gtpv1::gtpu::messages::ies::*;
 use crate::gtpv1::utils::*;
 
 
-// According to 3GPP TS 29.060 V15.5.0 (2019-06)
+// According to 3GPP TS 29.281 V16.0.0 (2019-12)
 
 pub const ECHO_REQUEST:u8 = 1;
 
-// Definition of GTPv1-C Echo Request Message
+// Definition of GTPv1-U Echo Request Message
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct EchoRequest {

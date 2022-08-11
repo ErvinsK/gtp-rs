@@ -1,11 +1,11 @@
-use crate::gtpv1::gtpc::header::*;
-use crate::gtpv1::gtpc::messages::commons::*;
+use crate::gtpv1::gtpu::header::*;
+use crate::gtpv1::gtpu::messages::commons::*;
 use crate::gtpv1::errors::*;
-use crate::gtpv1::gtpc::messages::ies::*;
+use crate::gtpv1::gtpu::messages::ies::*;
 use crate::gtpv1::utils::*;
 
 
-// According to 3GPP TS 29.060 V15.5.0 (2019-06)
+// According to 3GPP TS 29.281 V16.0.0 (2019-12)
 
 pub const SUPPORTED_EXTENSION_HEADERS_NOTIFICATION:u8 = 31;
 

@@ -38,6 +38,9 @@ impl Messages for VersionNotSupported {
             Ok(i) => message.header=i,
             Err(j) => return Err(j),
         }
+        if message.header.msgtype != VERSION_NOT_SUPPORTED {
+            return Err(GTPV1Error::MessageIncorrectMessageType);
+        }
         Ok(message)
     }
 }

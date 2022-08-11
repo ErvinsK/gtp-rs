@@ -1,6 +1,6 @@
-// Extension Header Type List IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
+// Extension Header Type List IE - according to 3GPP TS 29.281 V16.0.0 (2019-12)
 
-use crate::gtpv1::{errors::GTPV1Error, gtpc::messages::ies::commons::*};
+use crate::gtpv1::{errors::GTPV1Error, gtpu::messages::ies::commons::*};
 
 // Extension Header Type List IE Type
 

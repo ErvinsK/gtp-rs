@@ -26,7 +26,7 @@ impl Default for InitiatePDPContextActivationRequest {
     fn default() -> InitiatePDPContextActivationRequest {
         let mut hdr = Gtpv1Header::default();
         hdr.msgtype = INITIATE_PDP_CTX_ACTIVATION_REQUEST;
-        PDUNotificationRequest {
+        InitiatePDPContextActivationRequest {
             header: hdr,
             linked_nsapi:Nsapi::default(),
             pco:None,
@@ -67,7 +67,10 @@ impl Messages for InitiatePDPContextActivationRequest {
         
         // Marshal TFT IE
 
-        self.tft.marshal(buffer);
+        match self.tft {
+            Some(i) => i.marshal(buffer),
+            None => (),
+        }
 
         // Marshal Correlation ID IE
 
@@ -98,27 +101,36 @@ impl Messages for InitiatePDPContextActivationRequest {
         
         let mut msg_hash:HashMap<u8,u8> = HashMap::new();
 
-        let mut message = PDUNotificationRequest::default();
+        let mut message = InitiatePDPContextActivationRequest::default();
 
         match Gtpv1Header::unmarshal(buffer) {
             Ok(i) => message.header=i,
             Err(j) => return Err(j),
         }
+
+        if message.header.msgtype != INITIATE_PDP_CTX_ACTIVATION_REQUEST {
+            return Err(GTPV1Error::MessageIncorrectMessageType);
+        }
+
         if (message.header.length+8) as usize <= buffer.len() {
             
             let mut cursor = message.header.get_header_size();
             let mut increment:u8=0;
+            
             loop {
+                if cursor>=buffer.len() {
+                    break; 
+                }
                 if buffer[cursor]>=increment {    
                     match buffer[cursor] {
-                                IMSI => { 
-                                    match Imsi::unmarshal(&buffer[cursor..]) {
+                                NSAPI => { 
+                                    match Nsapi::unmarshal(&buffer[cursor..]) {
                                         Ok(i) => { 
                                             if !msg_hash.contains_key(&buffer[cursor]) {
                                                 increment = buffer[cursor];
                                                 msg_hash.insert(buffer[cursor], 1);
                                                 cursor+=i.len();
-                                                message.imsi= i;
+                                                message.linked_nsapi= i;
                                             } else {
                                                 let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
                                                 msg_hash.insert(buffer[cursor], n);
@@ -129,60 +141,6 @@ impl Messages for InitiatePDPContextActivationRequest {
                                         Err (_) => return Err(GTPV1Error::MessageMandatoryIEMissing), 
                                     }
                                 }, 
-                                TEID_CONTROL => {
-                                    match Teid::unmarshal(&buffer[cursor..]) {
-                                        Ok(i) => {
-                                            if !msg_hash.contains_key(&buffer[cursor]) {
-                                                increment = buffer[cursor];
-                                                msg_hash.insert(buffer[cursor], 1);
-                                                cursor+=i.len();
-                                                message.teid_control= i;
-                                            } else {
-                                                let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
-                                                msg_hash.insert(buffer[cursor], n);
-                                                increment = buffer[cursor];
-                                                cursor+=i.len();
-                                            }
-                                        },
-                                        Err (_) => return Err(GTPV1Error::MessageOptionalIEIncorrect), 
-                                    }
-                                },
-                                END_USER_ADDRESS => {
-                                    match EndUserAddress::unmarshal(&buffer[cursor..]) {
-                                        Ok(i) => {
-                                            if !msg_hash.contains_key(&buffer[cursor]) {
-                                                increment = buffer[cursor];
-                                                msg_hash.insert(buffer[cursor], 1);
-                                                cursor+=i.len();
-                                                message.end_user_address= i;
-                                            } else {
-                                                let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
-                                                msg_hash.insert(buffer[cursor], n);
-                                                increment = buffer[cursor];
-                                                cursor+=i.len();
-                                            }
-                                        },
-                                        Err (_) => return Err(GTPV1Error::MessageMandatoryIEMissing), 
-                                    }
-                                },
-                                APN => {
-                                    match Apn::unmarshal(&buffer[cursor..]) {
-                                        Ok(i) => {
-                                            if !msg_hash.contains_key(&buffer[cursor]) {
-                                                increment = buffer[cursor];
-                                                msg_hash.insert(buffer[cursor], 1);
-                                                cursor+=i.len();
-                                                message.apn= i;
-                                            } else {
-                                                let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
-                                                msg_hash.insert(buffer[cursor], n);
-                                                increment = buffer[cursor];
-                                                cursor+=i.len();
-                                            }
-                                        },
-                                        Err (_) => return Err(GTPV1Error::MessageMandatoryIEMissing), 
-                                    }
-                                },
                                 PCO => {
                                     match Pco::unmarshal(&buffer[cursor..]) {
                                         Ok(i) => {
@@ -201,14 +159,14 @@ impl Messages for InitiatePDPContextActivationRequest {
                                         Err (_) => return Err(GTPV1Error::MessageOptionalIEIncorrect), 
                                     }
                                 },
-                                GSN_ADDRESS=> {
-                                    match GsnAddress::unmarshal(&buffer[cursor..]) {
+                                QOS => {
+                                    match Qos::unmarshal(&buffer[cursor..]) {
                                         Ok(i) => {
                                             if !msg_hash.contains_key(&buffer[cursor]) {
                                                 increment = buffer[cursor];
                                                 msg_hash.insert(buffer[cursor], 1);
                                                 cursor+=i.len();
-                                                message.ggsn_ip_control= i;
+                                                message.qos= i;
                                             } else {
                                                 let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
                                                 msg_hash.insert(buffer[cursor], n);
@@ -217,6 +175,60 @@ impl Messages for InitiatePDPContextActivationRequest {
                                             }
                                         },
                                         Err (_) => return Err(GTPV1Error::MessageMandatoryIEMissing), 
+                                    }
+                                },
+                                TFT => {
+                                    match Tft::unmarshal(&buffer[cursor..]) {
+                                        Ok(i) => {
+                                            if !msg_hash.contains_key(&buffer[cursor]) {
+                                                increment = buffer[cursor];
+                                                msg_hash.insert(buffer[cursor], 1);
+                                                cursor+=i.len();
+                                                message.tft= Some(i);
+                                            } else {
+                                                let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
+                                                msg_hash.insert(buffer[cursor], n);
+                                                increment = buffer[cursor];
+                                                cursor+=i.len();
+                                            }
+                                        },
+                                        Err (_) => return Err(GTPV1Error::MessageOptionalIEIncorrect), 
+                                    }
+                                },
+                                CORRELATIONID=> {
+                                    match CorrelationId::unmarshal(&buffer[cursor..]) {
+                                        Ok(i) => {
+                                            if !msg_hash.contains_key(&buffer[cursor]) {
+                                                increment = buffer[cursor];
+                                                msg_hash.insert(buffer[cursor], 1);
+                                                cursor+=i.len();
+                                                message.correlation_id= i;
+                                            } else {
+                                                let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
+                                                msg_hash.insert(buffer[cursor], n);
+                                                increment = buffer[cursor];
+                                                cursor+=i.len();
+                                            }
+                                        },
+                                        Err (_) => return Err(GTPV1Error::MessageMandatoryIEMissing), 
+                                    }
+                                },
+                                EVOLVEDALLOCRETENTIONI => {
+                                    match EvolvedAllocationRetentionI::unmarshal(&buffer[cursor..]) {
+                                        Ok(i) => {
+                                            if !msg_hash.contains_key(&buffer[cursor]) {
+                                                increment = buffer[cursor];
+                                                msg_hash.insert(buffer[cursor], 1);
+                                                cursor+=i.len();
+                                                message.evolved_alloc= Some(i);
+                                            } else {
+                                                let n = *msg_hash.get(&buffer[cursor]).unwrap()+1;
+                                                msg_hash.insert(buffer[cursor], n);
+                                                increment = buffer[cursor];
+                                                cursor+=i.len();
+                                            }
+                                        },
+                                        Err (_) => return Err(GTPV1Error::MessageOptionalIEIncorrect), 
                                     }
                                 },
                                 PRIVATE_EXTENSION => {
@@ -242,12 +254,10 @@ impl Messages for InitiatePDPContextActivationRequest {
                         } else {
                             return Err(GTPV1Error::MessageInvalidMessageFormat);
                         }
-                        if cursor>=buffer.len() {
-                            match (msg_hash.get(&IMSI), msg_hash.get(&TEID_CONTROL), msg_hash.get(&END_USER_ADDRESS), msg_hash.get(&APN), msg_hash.get(&GSN_ADDRESS)) {
-                                (Some(_),Some(_),Some(_), Some(_), Some(_)) => return Ok(message),
-                                _ => return Err(GTPV1Error::MessageMandatoryIEMissing),
-                            }
-                        }
+                }
+                match (msg_hash.get(&NSAPI), msg_hash.get(&QOS), msg_hash.get(&CORRELATIONID)) {
+                    (Some(_),Some(_),Some(_)) => return Ok(message),
+                    _ => return Err(GTPV1Error::MessageMandatoryIEMissing),
                 }
             } else {
                 return Err(GTPV1Error::MessageLengthError);
@@ -257,59 +267,43 @@ impl Messages for InitiatePDPContextActivationRequest {
 }
 
 #[test]
-fn pdu_notification_req_unmarshal_test() {
-    use std::{net::{IpAddr, Ipv4Addr}};
-    let encoded:[u8;93]= [
-        0x32,0x1b,0x0,0x55,0x37,0x38,0xbf,0x7a,
-        0x9b,0xcf,0x0,0x0,0x2,0x9,0x41,0x50,
-        0x1,0x71,0x44,0x45,0xf6,0x11,0xa6,0x97,
-        0x49,0xf4,0x80,0x0,0x6,0xf1,0x21,0xa,
-        0xdb,0x3b,0x30,0x83,0x0,0xd,0x3,0x69,
-        0x6f,0x74,0x4,0x31,0x6e,0x63,0x65,0x3,
-        0x6e,0x65,0x74,0x84,0x0,0x20,0x80,0x80,
-        0x21,0x10,0x1,0x0,0x0,0x10,0x81,0x6,
-        0x0,0x0,0x0,0x0,0x83,0x6,0x0,0x0,
-        0x0,0x0,0x0,0xd,0x0,0x0,0xa,0x0,
-        0x0,0x5,0x0,0x0,0x11,0x0,0x85,0x0,
-        0x4,0x3e,0x99,0x89,0x60
+fn init_pdp_ctx_activation_req_unmarshal_test() {
+    let encoded:[u8;36]= [
+        0x32, 0x16, 0x00, 0x1c, 0x37, 0x38, 0xbf, 0x7a, 
+        0x9b, 0xcf, 0x00, 0x00, 0x14, 0x05, 0x87, 0x00, 
+        0x0f, 0x03, 0x1b, 0x63, 0x1f, 0x73, 0x96, 0x73, 
+        0x73, 0x74, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 
+        0xb7, 0x00, 0x01, 0xff
     ];
-    let decoded = PDUNotificationRequest { 
-        header: Gtpv1Header { msgtype: PDU_NOTIFICATION_REQUEST, length: 85, teid: 926465914, sequence_number: Some(39887), npdu_number: None, extension_headers: None }, 
-        imsi: Imsi { t: 2, imsi: "901405101744546".to_string() },
-        teid_control: Teid { t: TEID_CONTROL, teid: 2794932724 },
-        end_user_address: EndUserAddress { t: 128, length: 6, pdp_type_org: 1, pdp_type_nbr: 33, ipv4: Some(Ipv4Addr::new(10, 219, 59, 48)), ipv6: None },
-        apn: Apn { t: 131, length: 13, name: "iot.1nce.net".to_string() },  
-        pco: Some(Pco { t: 132, length: 32, pco: vec!(128, 128, 33, 16, 1, 0, 0, 16, 129, 6, 0, 0, 0, 0, 131, 6, 0, 0, 0, 0, 0, 13, 0, 0, 10, 0, 0, 5, 0, 0, 17, 0) }),
-        ggsn_ip_control: GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62,153,137,96)) }, 
+    let decoded = InitiatePDPContextActivationRequest { 
+        header: Gtpv1Header { msgtype: INITIATE_PDP_CTX_ACTIVATION_REQUEST, length: 28, teid: 926465914, sequence_number: Some(39887), npdu_number: None, extension_headers: None }, 
+        linked_nsapi: Nsapi { t: NSAPI, value: 5 },
+        pco: None,
+        qos: Qos { t: 135, length: 15, arp: 3, qos: vec!(27, 99, 31, 115, 150, 115, 115, 116, 255, 255, 255, 0, 0, 0) },
+        tft: None,
+        correlation_id: CorrelationId { t:CORRELATIONID, length: CORRELATIONID_LENGTH, correlation_id: 0xff },
+        evolved_alloc: None,
         private_extension: None };
-    assert_eq!(PDUNotificationRequest::unmarshal(&encoded).unwrap(),decoded);
+    assert_eq!(InitiatePDPContextActivationRequest::unmarshal(&encoded).unwrap(),decoded);
 }
 
 #[test]
-fn pdu_notification_req_marshal_test() {
-    use std::{net::{IpAddr, Ipv4Addr}};
-    let encoded:[u8;93]= [
-        0x32,0x1b,0x0,0x55,0x37,0x38,0xbf,0x7a,
-        0x9b,0xcf,0x0,0x0,0x2,0x9,0x41,0x50,
-        0x1,0x71,0x44,0x45,0xf6,0x11,0xa6,0x97,
-        0x49,0xf4,0x80,0x0,0x6,0xf1,0x21,0xa,
-        0xdb,0x3b,0x30,0x83,0x0,0xd,0x3,0x69,
-        0x6f,0x74,0x4,0x31,0x6e,0x63,0x65,0x3,
-        0x6e,0x65,0x74,0x84,0x0,0x20,0x80,0x80,
-        0x21,0x10,0x1,0x0,0x0,0x10,0x81,0x6,
-        0x0,0x0,0x0,0x0,0x83,0x6,0x0,0x0,
-        0x0,0x0,0x0,0xd,0x0,0x0,0xa,0x0,
-        0x0,0x5,0x0,0x0,0x11,0x0,0x85,0x0,
-        0x4,0x3e,0x99,0x89,0x60
+fn init_pdp_ctx_activation_req_marshal_test() {
+    let encoded:[u8;36]= [
+        0x32, 0x16, 0x00, 0x1c, 0x37, 0x38, 0xbf, 0x7a, 
+        0x9b, 0xcf, 0x00, 0x00, 0x14, 0x05, 0x87, 0x00, 
+        0x0f, 0x03, 0x1b, 0x63, 0x1f, 0x73, 0x96, 0x73, 
+        0x73, 0x74, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 
+        0xb7, 0x00, 0x01, 0xff
     ];
-    let decoded = PDUNotificationRequest { 
-        header: Gtpv1Header { msgtype: PDU_NOTIFICATION_REQUEST, length: 85, teid: 926465914, sequence_number: Some(39887), npdu_number: None, extension_headers: None }, 
-        imsi: Imsi { t: 2, imsi: "901405101744546".to_string() },
-        teid_control: Teid { t: TEID_CONTROL, teid: 2794932724 },
-        end_user_address: EndUserAddress { t: 128, length: 6, pdp_type_org: 1, pdp_type_nbr: 33, ipv4: Some(Ipv4Addr::new(10, 219, 59, 48)), ipv6: None },
-        apn: Apn { t: 131, length: 13, name: "iot.1nce.net".to_string() },  
-        pco: Some(Pco { t: 132, length: 32, pco: vec!(128, 128, 33, 16, 1, 0, 0, 16, 129, 6, 0, 0, 0, 0, 131, 6, 0, 0, 0, 0, 0, 13, 0, 0, 10, 0, 0, 5, 0, 0, 17, 0) }),
-        ggsn_ip_control: GsnAddress { t: 133, length: 4, ip: IpAddr::V4(Ipv4Addr::new(62,153,137,96)) }, 
+    let decoded = InitiatePDPContextActivationRequest { 
+        header: Gtpv1Header { msgtype: INITIATE_PDP_CTX_ACTIVATION_REQUEST, length: 28, teid: 926465914, sequence_number: Some(39887), npdu_number: None, extension_headers: None }, 
+        linked_nsapi: Nsapi { t: NSAPI, value: 5 },
+        pco: None,
+        qos: Qos { t: 135, length: 15, arp: 3, qos: vec!(27, 99, 31, 115, 150, 115, 115, 116, 255, 255, 255, 0, 0, 0) },
+        tft: None,
+        correlation_id: CorrelationId { t:CORRELATIONID, length: CORRELATIONID_LENGTH, correlation_id: 0xff },
+        evolved_alloc: None,
         private_extension: None };
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
@@ -317,38 +311,24 @@ fn pdu_notification_req_marshal_test() {
 }
 
 #[test]
-fn pdu_notification_req_wrong_ie_order_unmarshal_test() {
-    let encoded:[u8;93]= [
-        0x32,0x1b,0x0,0x55,0x37,0x38,0xbf,0x7a,
-        0x9b,0xcf,0x0,0x0,0x2,0x9,0x41,0x50,
-        0x1,0x71,0x44,0x45,0xf6,0x11,0xa6,0x97,
-        0x49,0xf4,0x80,0x0,0x6,0xf1,0x21,0xa,
-        0xdb,0x3b,0x30,0x83,0x0,0xd,0x3,0x69,
-        0x6f,0x74,0x4,0x31,0x6e,0x63,0x65,0x3,
-        0x6e,0x65,0x74,0x85,0x0,
-        0x4,0x3e,0x99,0x89,0x60,0x84,0x0,0x20,0x80,0x80,
-        0x21,0x10,0x1,0x0,0x0,0x10,0x81,0x6,
-        0x0,0x0,0x0,0x0,0x83,0x6,0x0,0x0,
-        0x0,0x0,0x0,0xd,0x0,0x0,0xa,0x0,
-        0x0,0x5,0x0,0x0,0x11,0x0
+fn init_pdp_ctx_activation_req_wrong_ie_order_unmarshal_test() {
+    let encoded:[u8;36]= [
+        0x32, 0x16, 0x00, 0x1c, 0x37, 0x38, 0xbf, 0x7a, 
+        0x9b, 0xcf, 0x00, 0x00, 0xb7, 0x00, 0x01, 0xff, 0x14, 0x05, 0x87, 0x00, 
+        0x0f, 0x03, 0x1b, 0x63, 0x1f, 0x73, 0x96, 0x73, 
+        0x73, 0x74, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 
+        
     ];
-    assert_eq!(PDUNotificationRequest::unmarshal(&encoded),Err(GTPV1Error::MessageInvalidMessageFormat));
+    assert_eq!(InitiatePDPContextActivationRequest::unmarshal(&encoded),Err(GTPV1Error::MessageInvalidMessageFormat));
 }
 
 #[test]
-fn pdu_notification_req_missing_mandatory_ie_unmarshal_test() {
-    let encoded:[u8;86]= [
-        0x32,0x1b,0x0,0x4e,0x37,0x38,0xbf,0x7a,
-        0x9b,0xcf,0x0,0x0,0x2,0x9,0x41,0x50,
-        0x1,0x71,0x44,0x45,0xf6,0x11,0xa6,0x97,
-        0x49,0xf4,0x80,0x0,0x6,0xf1,0x21,0xa,
-        0xdb,0x3b,0x30,0x83,0x0,0xd,0x3,0x69,
-        0x6f,0x74,0x4,0x31,0x6e,0x63,0x65,0x3,
-        0x6e,0x65,0x74,0x84,0x0,0x20,0x80,0x80,
-        0x21,0x10,0x1,0x0,0x0,0x10,0x81,0x6,
-        0x0,0x0,0x0,0x0,0x83,0x6,0x0,0x0,
-        0x0,0x0,0x0,0xd,0x0,0x0,0xa,0x0,
-        0x0,0x5,0x0,0x0,0x11,0x0
+fn init_pdp_ctx_activation_req_missing_mandatory_ie_unmarshal_test() {
+    let encoded:[u8;32]= [
+        0x32, 0x16, 0x00, 0x18, 0x37, 0x38, 0xbf, 0x7a, 
+        0x9b, 0xcf, 0x00, 0x00, 0x14, 0x05, 0x87, 0x00, 
+        0x0f, 0x03, 0x1b, 0x63, 0x1f, 0x73, 0x96, 0x73, 
+        0x73, 0x74, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00
     ];
-    assert_eq!(PDUNotificationRequest::unmarshal(&encoded),Err(GTPV1Error::MessageMandatoryIEMissing));
+    assert_eq!(InitiatePDPContextActivationRequest::unmarshal(&encoded),Err(GTPV1Error::MessageMandatoryIEMissing));
 }

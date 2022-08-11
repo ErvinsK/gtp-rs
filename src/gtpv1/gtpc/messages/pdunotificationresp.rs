@@ -64,11 +64,19 @@ impl Messages for PDUNotificationResponse {
             Ok(i) => message.header=i,
             Err(j) => return Err(j),
         }
+
+        if message.header.msgtype != PDU_NOTIFICATION_RESPONSE {
+            return Err(GTPV1Error::MessageIncorrectMessageType);
+        }
+
         if (message.header.length+8) as usize <= buffer.len() {
             
             let mut cursor = message.header.get_header_size();
             let mut increment:u8=0;
             loop {
+                if cursor>=buffer.len() {
+                    break;           
+                }
                 if buffer[cursor]>=increment {    
                     match buffer[cursor] {
                                 CAUSE => { 
@@ -112,13 +120,11 @@ impl Messages for PDUNotificationResponse {
                         } else {
                             return Err(GTPV1Error::MessageInvalidMessageFormat);
                         }
-                        if cursor>=buffer.len() {
-                            if let Some(_) = msg_hash.get(&CAUSE) {
-                                return Ok(message);
-                            } else {
-                                return Err(GTPV1Error::MessageMandatoryIEMissing);
-                            }
-                        }
+                }
+                if let Some(_) = msg_hash.get(&CAUSE) {
+                    return Ok(message);
+                } else {
+                    return Err(GTPV1Error::MessageMandatoryIEMissing);
                 }
             } else {
                 return Err(GTPV1Error::MessageLengthError);
@@ -161,7 +167,7 @@ fn pdu_notification_resp_wrong_ie_order_unmarshal_test() {
         0x32,0x1c,0x0,0x08,0x37,0x38,0xbf,0x7a,
         0x9b,0xcf,0x0,0x0,0x08, 0xfe, 0x01,0x80
     ];
-    assert_eq!(PDUNotificationRequest::unmarshal(&encoded),Err(GTPV1Error::MessageInvalidMessageFormat));
+    assert_eq!(PDUNotificationResponse::unmarshal(&encoded),Err(GTPV1Error::MessageInvalidMessageFormat));
 }
 
 #[test]
@@ -170,5 +176,5 @@ fn pdu_notification_resp_missing_mandatory_ie_unmarshal_test() {
         0x32,0x1c,0x0,0x0c,0x37,0x38,0xbf,0x7a,
         0x9b,0xcf,0x0,0x0, 0xff, 0x00, 0x05, 0x00, 0x08, 0x01, 0x02, 0x03 
     ];
-    assert_eq!(PDUNotificationRequest::unmarshal(&encoded),Err(GTPV1Error::MessageMandatoryIEMissing));
+    assert_eq!(PDUNotificationResponse::unmarshal(&encoded),Err(GTPV1Error::MessageMandatoryIEMissing));
 }

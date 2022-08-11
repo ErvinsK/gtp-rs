@@ -1,15 +1,15 @@
-use crate::gtpv1::gtpc::header::*;
-use crate::gtpv1::gtpc::messages::commons::*;
+use crate::gtpv1::gtpu::header::*;
+use crate::gtpv1::gtpu::messages::commons::*;
 use crate::gtpv1::errors::*;
-use crate::gtpv1::gtpc::messages::ies::*;
+use crate::gtpv1::gtpu::messages::ies::*;
 use crate::gtpv1::utils::*;
 
 
-// According to 3GPP TS 29.060 V15.5.0 (2019-06)
+// According to 3GPP TS 29.281 V16.0.0 (2019-12)
 
 pub const ECHO_RESPONSE:u8 = 2;
 
-// Definition of GTPv1-C Echo Response Message
+// Definition of GTPv1-U Echo Response Message
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct EchoResponse {
@@ -82,7 +82,7 @@ impl Messages for EchoResponse {
 
 #[test]
 fn test_echo_resp_unmarshal () {
-    let encoded:[u8;14] = [0x32, 0x02, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00, 0x0e, 0x26];
+    let encoded:[u8;14] = [0x32, 0x02, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00, 0x0e, 0x00];
     let decoded:EchoResponse = EchoResponse { 
         header: Gtpv1Header {
             msgtype:ECHO_RESPONSE,
@@ -93,14 +93,14 @@ fn test_echo_resp_unmarshal () {
             extension_headers:None},
             recovery: Recovery {
                 t:RECOVERY,
-                value:38},
+                value:0},
             private_ext: None };
     assert_eq!(EchoResponse::unmarshal(&encoded).unwrap(),decoded);
 }
 
 #[test]
 fn test_echo_resp_marshal () {
-    let encoded:[u8;14] = [0x32, 0x02, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00, 0x0e, 0x26];
+    let encoded:[u8;14] = [0x32, 0x02, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00, 0x0e, 0x00];
     let decoded:EchoResponse = EchoResponse { 
         header: Gtpv1Header {
             msgtype:ECHO_RESPONSE,
@@ -111,7 +111,7 @@ fn test_echo_resp_marshal () {
             extension_headers:None},
             recovery: Recovery {
                 t:RECOVERY,
-                value:38},
+                value:0},
             private_ext: None };
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
@@ -132,7 +132,7 @@ fn test_echo_resp_with_incorrect_mandatory_ie_unmarshal () {
 
 #[test]
 fn test_echo_resp_with_private_ext_unmarshal () {
-    let encoded:[u8;22] = [0x32, 0x02, 0x00, 0x0e, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00, 0x0e, 0x26, 0xff, 0x00, 0x05, 0x00, 0x08, 0x01, 0x02, 0x03];
+    let encoded:[u8;22] = [0x32, 0x02, 0x00, 0x0e, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00, 0x0e, 0x00, 0xff, 0x00, 0x05, 0x00, 0x08, 0x01, 0x02, 0x03];
     let decoded:EchoResponse = EchoResponse {
          header: Gtpv1Header {
             msgtype:ECHO_RESPONSE,
@@ -143,7 +143,7 @@ fn test_echo_resp_with_private_ext_unmarshal () {
             extension_headers:None},
             recovery: Recovery {
                 t:RECOVERY,
-                value:38 },
+                value:0 },
             private_ext: Some(PrivateExtension {
                 t:PRIVATE_EXTENSION,
                 length:5,
@@ -154,7 +154,7 @@ fn test_echo_resp_with_private_ext_unmarshal () {
 
 #[test]
 fn test_echo_resp_with_private_ext_marshal () {
-    let encoded:[u8;22] = [0x32, 0x02, 0x00, 0x0e, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00, 0x0e, 0x26, 0xff, 0x00, 0x05, 0x00, 0x08, 0x01, 0x02, 0x03];
+    let encoded:[u8;22] = [0x32, 0x02, 0x00, 0x0e, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4b, 0x00, 0x00, 0x0e, 0x00, 0xff, 0x00, 0x05, 0x00, 0x08, 0x01, 0x02, 0x03];
     let decoded:EchoResponse = EchoResponse {
         header: Gtpv1Header {
            msgtype:ECHO_RESPONSE,
@@ -165,7 +165,7 @@ fn test_echo_resp_with_private_ext_marshal () {
            extension_headers:None},
            recovery: Recovery {
                t:RECOVERY,
-               value:38 },
+               value:0 },
            private_ext: Some(PrivateExtension {
                t:PRIVATE_EXTENSION,
                length:5,

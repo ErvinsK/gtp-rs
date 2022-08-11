@@ -16,6 +16,8 @@ pub use {
     pdunotificationresp::*,
     pdunotificationrejectreq::*,
     pdunotificationrejectresp::*,
+    initiatepdpctxactivationreq::*,
+    initiatepdpctxactivationresp::*,
 };
 mod ies;
 mod echoreq;
@@ -34,4 +36,6 @@ mod pdunotificationreq;
 mod pdunotificationresp;
 mod pdunotificationrejectreq;
 mod pdunotificationrejectresp;
+mod initiatepdpctxactivationreq;
+mod initiatepdpctxactivationresp;
 mod commons;

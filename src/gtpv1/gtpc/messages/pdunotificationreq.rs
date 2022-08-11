@@ -99,11 +99,19 @@ impl Messages for PDUNotificationRequest {
             Ok(i) => message.header=i,
             Err(j) => return Err(j),
         }
+
+        if message.header.msgtype != PDU_NOTIFICATION_REQUEST {
+            return Err(GTPV1Error::MessageIncorrectMessageType);
+        }
+
         if (message.header.length+8) as usize <= buffer.len() {
             
             let mut cursor = message.header.get_header_size();
             let mut increment:u8=0;
             loop {
+                if cursor>=buffer.len() {
+                    break;           
+                }
                 if buffer[cursor]>=increment {    
                     match buffer[cursor] {
                                 IMSI => { 
@@ -237,12 +245,10 @@ impl Messages for PDUNotificationRequest {
                         } else {
                             return Err(GTPV1Error::MessageInvalidMessageFormat);
                         }
-                        if cursor>=buffer.len() {
-                            match (msg_hash.get(&IMSI), msg_hash.get(&TEID_CONTROL), msg_hash.get(&END_USER_ADDRESS), msg_hash.get(&APN), msg_hash.get(&GSN_ADDRESS)) {
-                                (Some(_),Some(_),Some(_), Some(_), Some(_)) => return Ok(message),
-                                _ => return Err(GTPV1Error::MessageMandatoryIEMissing),
-                            }
-                        }
+                }
+                match (msg_hash.get(&IMSI), msg_hash.get(&TEID_CONTROL), msg_hash.get(&END_USER_ADDRESS), msg_hash.get(&APN), msg_hash.get(&GSN_ADDRESS)) {
+                    (Some(_),Some(_),Some(_), Some(_), Some(_)) => return Ok(message),
+                    _ => return Err(GTPV1Error::MessageMandatoryIEMissing),
                 }
             } else {
                 return Err(GTPV1Error::MessageLengthError);

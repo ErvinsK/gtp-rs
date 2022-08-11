@@ -142,11 +142,19 @@ impl Messages for DeletePDPContextRequest {
             Ok(i) => message.header=i,
             Err(j) => return Err(j),
         }
+
+        if message.header.msgtype != DELETE_PDP_CONTEXT_REQUEST {
+            return Err(GTPV1Error::MessageIncorrectMessageType);
+        }
+
         if (message.header.length+8) as usize <= buffer.len() {
             
             let mut cursor = message.header.get_header_size();
             let mut increment:u8=0;
             loop {
+                if cursor>=buffer.len() {
+                   break;         
+                }
                 if buffer[cursor]>=increment {    
                     match buffer[cursor] {
                                 CAUSE => { 
@@ -314,13 +322,11 @@ impl Messages for DeletePDPContextRequest {
                         } else {
                             return Err(GTPV1Error::MessageInvalidMessageFormat);
                         }
-                        if cursor>=buffer.len() {
-                            if let Some(_) = msg_hash.get(&NSAPI) {
-                                return Ok(message);
-                            } else {
-                                return Err(GTPV1Error::MessageMandatoryIEMissing);
-                            }
-                        }
+                }
+                if let Some(_) = msg_hash.get(&NSAPI) {
+                    return Ok(message);
+                } else {
+                    return Err(GTPV1Error::MessageMandatoryIEMissing);
                 }
             } else {
                 return Err(GTPV1Error::MessageLengthError);

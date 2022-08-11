@@ -32,7 +32,6 @@ impl IEs for GGSNBackOffTime {
             i if i<0x7f => buffer_ie.push ((self.timer_unit<<5)| self.timer_value),
             _ => buffer_ie.push ((self.timer_unit<<5)| 0x7f),
         }
-        buffer_ie.push ((self.timer_unit<<5)| self.timer_value);
         set_tlv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
     }

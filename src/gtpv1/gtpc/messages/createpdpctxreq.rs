@@ -452,11 +452,19 @@ impl Messages for CreatePDPContextRequest {
             Ok(i) => message.header=i,
             Err(j) => return Err(j),
         }
+
+        if message.header.msgtype != CREATE_PDP_CONTEXT_REQUEST {
+            return Err(GTPV1Error::MessageIncorrectMessageType);
+        }
+        
         if (message.header.length+8) as usize <= buffer.len() {
             
             let mut cursor = message.header.get_header_size();
             let mut increment:u8=0;
             loop {
+                if cursor>=buffer.len() {
+                    break;
+                }
                 if buffer[cursor]>=increment {    
                     match buffer[cursor] {
                                 IMSI => { 
@@ -1146,12 +1154,10 @@ impl Messages for CreatePDPContextRequest {
                         } else {
                             return Err(GTPV1Error::MessageInvalidMessageFormat);
                         }
-                        if cursor>=buffer.len() {
-                            match (msg_hash.get(&TEID_DATA), msg_hash.get(&NSAPI), msg_hash.get(&GSN_ADDRESS), msg_hash.get(&QOS)) {
-                                (Some(_),Some(_),Some(_), Some(_)) => return Ok(message),
-                                _ => return Err(GTPV1Error::MessageMandatoryIEMissing),
-                            }
-                        }
+                }
+                match (msg_hash.get(&TEID_DATA), msg_hash.get(&NSAPI), msg_hash.get(&GSN_ADDRESS), msg_hash.get(&QOS)) {
+                    (Some(_),Some(_),Some(_), Some(_)) => return Ok(message),
+                    _ => return Err(GTPV1Error::MessageMandatoryIEMissing),
                 }
             } else {
                 return Err(GTPV1Error::MessageLengthError);

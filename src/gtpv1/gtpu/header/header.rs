@@ -1,18 +1,21 @@
 use crate::gtpv1::errors::*;
-use crate::gtpv1::gtpc::header::extensionheaders::*;
+use crate::gtpv1::gtpu::header::extensionheaders::*;
 
 // According to 3GPP TS 29.281 V16.0.0 (2019-12)
 
-// Enum to hold all possible Extension headers for GTPv1-C
+// Enum to hold all possible Extension headers for GTPv1-U
     
 #[derive(Clone, Debug, PartialEq)]
 pub enum ExtensionHeader {
     NoMoreExtensionHeaders,
     PDCPPDUNumber(PDCPPDUNumber),
-    SuspendRequest(SuspendRequest),
-    SuspendResponse(SuspendResponse),
-    MBMSSupportIndication(MBMSSupportIndication),
-    MSInfoChangeReportingSupportIndication(MSInfoChangeReportingSupportIndication),
+    UDPPort(UDPPort),
+    LongPDCPPDUNumber(LongPDCPPDUNumber),
+    Sci(Sci),
+    RanContainer(RanContainer),
+    XwRanContainer(XwRanContainer),
+    NrRanContainer(NrRanContainer),
+    PduSessionContainer(PduSessionContainer),
     Unknown(Unknown),
 }
 
@@ -27,27 +30,51 @@ impl ExtensionHeader {
                     Err(j) => Err(j),
                 }
             },
-            SUSPEND_REQUEST => {
-                match SuspendRequest::unmarshal(&buffer) {
-                    Ok(i) => Ok(ExtensionHeader::SuspendRequest(i)),
+            UDP_PORT => {
+                match UDPPort::unmarshal(&buffer) {
+                    Ok(i) => Ok(ExtensionHeader::UDPPort(i)),
                     Err(j) => Err(j),
                 }
             },
-            SUSPEND_RESPONSE => {
-                match SuspendResponse::unmarshal(&buffer) {
-                    Ok(i) => Ok(ExtensionHeader::SuspendResponse(i)),
+            LONG_PDCP_PDU_NUMBER_I => {
+                match LongPDCPPDUNumber::unmarshal(&buffer) {
+                    Ok(i) => Ok(ExtensionHeader::LongPDCPPDUNumber(i)),
                     Err(j) => Err(j),
                 }
             },
-            MBMS_SUPPORT_INDICATION => {
-                match MBMSSupportIndication::unmarshal(&buffer) {
-                    Ok(i) => Ok(ExtensionHeader::MBMSSupportIndication(i)),
+            LONG_PDCP_PDU_NUMBER_II => {
+                match LongPDCPPDUNumber::unmarshal(&buffer) {
+                    Ok(i) => Ok(ExtensionHeader::LongPDCPPDUNumber(i)),
                     Err(j) => Err(j),
                 }
             },
-            MS_INFO_CHANGE_REPORTING_SUPPORT_INDICATION => {
-                match MSInfoChangeReportingSupportIndication::unmarshal(&buffer) {
-                    Ok(i) => Ok(ExtensionHeader::MSInfoChangeReportingSupportIndication(i)),
+            SCI => {
+                match Sci::unmarshal(&buffer) {
+                    Ok(i) => Ok(ExtensionHeader::Sci(i)),
+                    Err(j) => Err(j),
+                }
+            },
+            RAN_CONTAINER => {
+                match RanContainer::unmarshal(&buffer) {
+                    Ok(i) => Ok(ExtensionHeader::RanContainer(i)),
+                    Err(j) => Err(j),
+                }
+            },
+            XW_RAN_CONTAINER => {
+                match XwRanContainer::unmarshal(&buffer) {
+                    Ok(i) => Ok(ExtensionHeader::XwRanContainer(i)),
+                    Err(j) => Err(j),
+                }
+            },
+            NR_RAN_CONTAINER => {
+                match NrRanContainer::unmarshal(&buffer) {
+                    Ok(i) => Ok(ExtensionHeader::NrRanContainer(i)),
+                    Err(j) => Err(j),
+                }
+            },
+            PDU_SESSION_CONTAINER => {
+                match PduSessionContainer::unmarshal(&buffer) {
+                    Ok(i) => Ok(ExtensionHeader::PduSessionContainer(i)),
                     Err(j) => Err(j),
                 }
             },
@@ -64,10 +91,13 @@ impl ExtensionHeader {
         match self {
             ExtensionHeader::NoMoreExtensionHeaders => (),
             ExtensionHeader::PDCPPDUNumber(i) => i.marshal(buffer),
-            ExtensionHeader::SuspendRequest(i) => i.marshal(buffer),
-            ExtensionHeader::SuspendResponse(i) => i.marshal(buffer),
-            ExtensionHeader::MBMSSupportIndication(i) => i.marshal(buffer),
-            ExtensionHeader::MSInfoChangeReportingSupportIndication(i) => i.marshal(buffer),
+            ExtensionHeader::LongPDCPPDUNumber(i) => i.marshal(buffer),
+            ExtensionHeader::Sci(i) => i.marshal(buffer),
+            ExtensionHeader::UDPPort(i) => i.marshal(buffer),
+            ExtensionHeader::RanContainer(i) => i.marshal(buffer),
+            ExtensionHeader::XwRanContainer(i) => i.marshal(buffer),
+            ExtensionHeader::NrRanContainer(i) => i.marshal(buffer),
+            ExtensionHeader::PduSessionContainer(i) => i.marshal(buffer),
             ExtensionHeader::Unknown (i) => i.marshal(buffer),
         }
     }
@@ -76,17 +106,20 @@ impl ExtensionHeader {
         match self {
             ExtensionHeader::NoMoreExtensionHeaders => 1,
             ExtensionHeader::PDCPPDUNumber(i) => i.len(),
-            ExtensionHeader::SuspendRequest(i) => i.len(),
-            ExtensionHeader::SuspendResponse(i) => i.len(),
-            ExtensionHeader::MBMSSupportIndication(i) => i.len(),
-            ExtensionHeader::MSInfoChangeReportingSupportIndication(i) => i.len(),
+            ExtensionHeader::LongPDCPPDUNumber(i) => i.len(),
+            ExtensionHeader::Sci(i) => i.len(),
+            ExtensionHeader::UDPPort(i) => i.len(),
+            ExtensionHeader::RanContainer(i) => i.len(),
+            ExtensionHeader::XwRanContainer(i) => i.len(),
+            ExtensionHeader::NrRanContainer(i) => i.len(),
+            ExtensionHeader::PduSessionContainer(i) => i.len(),
             ExtensionHeader::Unknown (i) => i.len(),
         }
     }
 }
 
 
-// Definition of GTPv1 Header
+// Definition of GTPv1-U Header
     
 pub const MIN_HEADER_LENGTH:usize = 8;
 pub const SQN_LENGTH:usize = 2;
@@ -355,15 +388,15 @@ fn test_gtpv1_hdr_with_sqn_marshal () {
 
 #[test]
 fn test_gtpv1_hdr_with_sqn_and_one_ext_header_unmarshal () {
-    let encoded:[u8;16] = [0x36, 0x02, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4e, 0x00, 0x01, 0x01, 0xff, 0xff, 0x00];
-    let decoded:Gtpv1Header = Gtpv1Header { msgtype: 0x02, length: 8, teid: 0x0, sequence_number: Some(0xf64e), npdu_number: None, extension_headers: Some(vec!(ExtensionHeader::MBMSSupportIndication(MBMSSupportIndication { extension_header_type:MBMS_SUPPORT_INDICATION, length: MBMS_SUPPORT_INDICATION_LENGTH, value: DEFAULT }))) };
+    let encoded:[u8;16] = [0x36, 0x02, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4e, 0x00, 0x40, 0x01, 0x10, 0x00, 0x00];
+    let decoded:Gtpv1Header = Gtpv1Header { msgtype: 0x02, length: 8, teid: 0x0, sequence_number: Some(0xf64e), npdu_number: None, extension_headers: Some(vec!(ExtensionHeader::UDPPort(UDPPort { extension_header_type:UDP_PORT, length: UDP_PORT_LENGTH, udp_port: 4096 }))) };
     assert_eq!(Gtpv1Header::unmarshal(&encoded).unwrap(),decoded);
 }
 
 #[test]
 fn test_gtpv1_hdr_with_sqn_and_one_ext_header_marshal () {
-    let encoded:[u8;16] = [0x36, 0x02, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4e, 0x00, 0x01, 0x01, 0xff, 0xff, 0x00];
-    let decoded:Gtpv1Header = Gtpv1Header { msgtype: 0x02, length: 8, teid: 0x0, sequence_number: Some(0xf64e), npdu_number: None, extension_headers: Some(vec!(ExtensionHeader::MBMSSupportIndication(MBMSSupportIndication { extension_header_type:MBMS_SUPPORT_INDICATION, length: MBMS_SUPPORT_INDICATION_LENGTH, value: DEFAULT }))) };
+    let encoded:[u8;16] = [0x36, 0x02, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4e, 0x00, 0x40, 0x01, 0x10, 0x00, 0x00];
+    let decoded:Gtpv1Header = Gtpv1Header { msgtype: 0x02, length: 8, teid: 0x0, sequence_number: Some(0xf64e), npdu_number: None, extension_headers: Some(vec!(ExtensionHeader::UDPPort(UDPPort { extension_header_type:UDP_PORT, length: UDP_PORT_LENGTH, udp_port: 4096 }))) };
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
     assert_eq!(buffer,encoded);
@@ -371,15 +404,15 @@ fn test_gtpv1_hdr_with_sqn_and_one_ext_header_marshal () {
 
 #[test]
 fn test_gtpv1_hdr_with_sqn_and_two_ext_header_unmarshal () {
-    let encoded:[u8;20] = [0x36, 0x02, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4e, 0x00, 0x01, 0x01, 0xff, 0xff, 0xc0, 0x01, 0x10, 0x00, 0x00];
-    let decoded:Gtpv1Header = Gtpv1Header { msgtype: 0x02, length: 12, teid: 0x0, sequence_number: Some(0xf64e), npdu_number: None, extension_headers: Some(vec!(ExtensionHeader::MBMSSupportIndication(MBMSSupportIndication { extension_header_type:MBMS_SUPPORT_INDICATION, length: MBMS_SUPPORT_INDICATION_LENGTH, value: DEFAULT }), ExtensionHeader::PDCPPDUNumber(PDCPPDUNumber { extension_header_type:PDCP_PDU_NUMBER, length: PDCP_PDU_NUMBER_LENGTH, pdcp_pdu_number: 4096 }))) };
+    let encoded:[u8;20] = [0x36, 0x02, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4e, 0x00, 0x40, 0x01, 0x10, 0x00, 0xc0, 0x01, 0x10, 0x00, 0x00];
+    let decoded:Gtpv1Header = Gtpv1Header { msgtype: 0x02, length: 12, teid: 0x0, sequence_number: Some(0xf64e), npdu_number: None, extension_headers: Some(vec!(ExtensionHeader::UDPPort(UDPPort { extension_header_type:UDP_PORT, length: UDP_PORT_LENGTH, udp_port: 4096 }), ExtensionHeader::PDCPPDUNumber(PDCPPDUNumber { extension_header_type:PDCP_PDU_NUMBER, length: PDCP_PDU_NUMBER_LENGTH, pdcp_pdu_number: 4096 }))) };
     assert_eq!(Gtpv1Header::unmarshal(&encoded).unwrap(),decoded);
 }
 
 #[test]
 fn test_gtpv1_hdr_with_sqn_and_two_ext_header_marshal () {
-    let encoded:[u8;20] = [0x36, 0x02, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4e, 0x00, 0x01, 0x01, 0xff, 0xff, 0xc0, 0x01, 0x10, 0x00, 0x00];
-    let decoded:Gtpv1Header = Gtpv1Header { msgtype: 0x02, length: 12, teid: 0x0, sequence_number: Some(0xf64e), npdu_number: None, extension_headers: Some(vec!(ExtensionHeader::MBMSSupportIndication(MBMSSupportIndication { extension_header_type:MBMS_SUPPORT_INDICATION, length: MBMS_SUPPORT_INDICATION_LENGTH, value: DEFAULT }), ExtensionHeader::PDCPPDUNumber(PDCPPDUNumber { extension_header_type:PDCP_PDU_NUMBER, length: PDCP_PDU_NUMBER_LENGTH, pdcp_pdu_number: 4096 }))) };
+    let encoded:[u8;20] = [0x36, 0x02, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4e, 0x00, 0x40, 0x01, 0x10, 0x00, 0xc0, 0x01, 0x10, 0x00, 0x00];
+    let decoded:Gtpv1Header = Gtpv1Header { msgtype: 0x02, length: 12, teid: 0x0, sequence_number: Some(0xf64e), npdu_number: None, extension_headers: Some(vec!(ExtensionHeader::UDPPort(UDPPort { extension_header_type:UDP_PORT, length: UDP_PORT_LENGTH, udp_port: 4096 }), ExtensionHeader::PDCPPDUNumber(PDCPPDUNumber { extension_header_type:PDCP_PDU_NUMBER, length: PDCP_PDU_NUMBER_LENGTH, pdcp_pdu_number: 4096 }))) };
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
     assert_eq!(buffer,encoded);
@@ -387,15 +420,15 @@ fn test_gtpv1_hdr_with_sqn_and_two_ext_header_marshal () {
 
 #[test]
 fn test_gtpv1_hdr_with_sqn_npdu_and_two_ext_header_unmarshal () {
-    let encoded:[u8;20] = [0x37, 0x02, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4e, 0xff, 0x01, 0x01, 0xff, 0xff, 0xc0, 0x01, 0x10, 0x00, 0x00];
-    let decoded:Gtpv1Header = Gtpv1Header { msgtype: 0x02, length: 12, teid: 0x0, sequence_number: Some(0xf64e), npdu_number: Some(0xff), extension_headers: Some(vec!(ExtensionHeader::MBMSSupportIndication(MBMSSupportIndication { extension_header_type:MBMS_SUPPORT_INDICATION, length: MBMS_SUPPORT_INDICATION_LENGTH, value: DEFAULT }), ExtensionHeader::PDCPPDUNumber(PDCPPDUNumber { extension_header_type:PDCP_PDU_NUMBER, length: PDCP_PDU_NUMBER_LENGTH, pdcp_pdu_number: 4096 }))) };
+    let encoded:[u8;20] = [0x36, 0x02, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4e, 0x00, 0x40, 0x01, 0x10, 0x00, 0xc0, 0x01, 0x10, 0x00, 0x00];
+    let decoded:Gtpv1Header = Gtpv1Header { msgtype: 0x02, length: 8, teid: 0x0, sequence_number: Some(0xf64e), npdu_number: None, extension_headers: Some(vec!(ExtensionHeader::UDPPort(UDPPort { extension_header_type:UDP_PORT, length: UDP_PORT_LENGTH, udp_port: 4096 }), ExtensionHeader::PDCPPDUNumber(PDCPPDUNumber { extension_header_type:PDCP_PDU_NUMBER, length: PDCP_PDU_NUMBER_LENGTH, pdcp_pdu_number: 4096 }))) };
     assert_eq!(Gtpv1Header::unmarshal(&encoded).unwrap(),decoded);
 }
 
 #[test]
 fn test_gtpv1_hdr_with_sqn_npdu_and_two_ext_header_marshal () {
-    let encoded:[u8;20] = [0x37, 0x02, 0x00, 0x0c, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4e, 0xff, 0x01, 0x01, 0xff, 0xff, 0xc0, 0x01, 0x10, 0x00, 0x00];
-    let decoded:Gtpv1Header = Gtpv1Header { msgtype: 0x02, length: 12, teid: 0x0, sequence_number: Some(0xf64e), npdu_number: Some(0xff), extension_headers: Some(vec!(ExtensionHeader::MBMSSupportIndication(MBMSSupportIndication { extension_header_type:MBMS_SUPPORT_INDICATION, length: MBMS_SUPPORT_INDICATION_LENGTH, value: DEFAULT }), ExtensionHeader::PDCPPDUNumber(PDCPPDUNumber { extension_header_type:PDCP_PDU_NUMBER, length: PDCP_PDU_NUMBER_LENGTH, pdcp_pdu_number: 4096 }))) };
+    let encoded:[u8;20] = [0x36, 0x02, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0xf6, 0x4e, 0x00, 0x40, 0x01, 0x10, 0x00, 0xc0, 0x01, 0x10, 0x00, 0x00];
+    let decoded:Gtpv1Header = Gtpv1Header { msgtype: 0x02, length: 8, teid: 0x0, sequence_number: Some(0xf64e), npdu_number: None, extension_headers: Some(vec!(ExtensionHeader::UDPPort(UDPPort { extension_header_type:UDP_PORT, length: UDP_PORT_LENGTH, udp_port: 4096 }), ExtensionHeader::PDCPPDUNumber(PDCPPDUNumber { extension_header_type:PDCP_PDU_NUMBER, length: PDCP_PDU_NUMBER_LENGTH, pdcp_pdu_number: 4096 }))) };
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
     assert_eq!(buffer,encoded);
