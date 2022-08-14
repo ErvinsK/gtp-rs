@@ -5,6 +5,7 @@ pub use {
     supportedexthdrnotification::*,
     endmarker::*,
     gpdu::*,
+    errorindication::*,
     commons::*,
 };
 mod ies;
@@ -13,4 +14,5 @@ mod echoresp;
 mod supportedexthdrnotification;
 mod endmarker;
 mod gpdu;
+mod errorindication;
 mod commons;
