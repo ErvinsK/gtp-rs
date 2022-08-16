@@ -45,7 +45,7 @@ pub use {   recovery::*,
             csginforeporting::*,
             extendedcommonflagsii::*,
             ggsnbackofftime::*,
-            directfunnelflags::*,
+            directtunnelflags::*,
             teardownind::*,
             ulitimestamp::*,
             commons::*,
@@ -97,7 +97,7 @@ mod msinfochange;
 mod csginforeporting;
 mod extendedcommonflagsii;
 mod ggsnbackofftime;
-mod directfunnelflags;
+mod directtunnelflags;
 mod teardownind;
 mod ulitimestamp;
 mod commons;

@@ -62,9 +62,12 @@ impl Gtpv2Header {
                     }
                     data.msgtype = buffer[1];
                     data.length = u16::from_be_bytes([buffer[2],buffer[3]]);
+                    if data.length < (MIN_HEADER_LENGTH as u16) {
+                        return Err(GTPV2Error::MessageLengthError);
+                    }
                     data.sqn = u32::from_be_bytes([0x00,buffer[4],buffer[5],buffer[6]]);
                 },
-                _ => {
+                1 => {
                     if buffer.len() >= MAX_HEADER_LENGTH {
                         match (buffer[0]>>4) & 0x01 {
                             0 => data.piggyback = false,
@@ -72,6 +75,9 @@ impl Gtpv2Header {
                         }
                         data.msgtype = buffer[1];
                         data.length = u16::from_be_bytes([buffer[2],buffer[3]]);
+                        if data.length < (MAX_HEADER_LENGTH as u16) {
+                            return Err(GTPV2Error::MessageLengthError);
+                        }
                         data.teid = Some(u32::from_be_bytes([buffer[4],buffer[5],buffer[6],buffer[7]]));
                         data.sqn = u32::from_be_bytes([0x00,buffer[8],buffer[9],buffer[10]]);
                         match (buffer[0]>>2) & 0x01 {
@@ -82,6 +88,7 @@ impl Gtpv2Header {
                         return Err(GTPV2Error::MessageLengthError);
                     }
                 },
+                _ => return Err(GTPV2Error::MessageInvalidMessageFormat),
             } 
             Ok(data)
         } else {
@@ -107,15 +114,67 @@ impl Gtpv2Header {
 }
 
 #[test]
-fn test_gtpv2_hdr_tzero_unmarshal () {
+fn test_gtpv2_hdr_t0_unmarshal () {
     let encoded:[u8;8] = [0x40, 0x01, 0x00, 0x08, 0x6d, 0x3d, 0x7c, 0x00];
     let decoded = Gtpv2Header { msgtype: 0x01, length: 8, teid: None , sqn: 0x6d3d7c, piggyback: false, message_prio: None};
     assert_eq!(Gtpv2Header::unmarshal(&encoded).unwrap(),decoded);
 }
 
 #[test]
-fn test_gtpv2_hdr_tone_unmarshal () {
+fn test_gtpv2_hdr_t0_version_incorrect_unmarshal () {
+    let encoded:[u8;8] = [0x20, 0x01, 0x00, 0x06, 0x6d, 0x3d, 0x7c, 0x00];
+    assert_eq!(Gtpv2Header::unmarshal(&encoded),Err(GTPV2Error::HeaderVersionNotSupported));
+}
+
+#[test]
+fn test_gtpv2_hdr_t0_invalid_length_unmarshal () {
+    let encoded:[u8;8] = [0x40, 0x01, 0x00, 0x06, 0x6d, 0x3d, 0x7c, 0x00];
+    assert_eq!(Gtpv2Header::unmarshal(&encoded),Err(GTPV2Error::MessageLengthError));
+}
+
+#[test]
+fn test_gtpv2_hdr_t0_marshal () {
+    let encoded:[u8;8] = [0x40, 0x01, 0x00, 0x08, 0x6d, 0x3d, 0x7c, 0x00];
+    let decoded = Gtpv2Header { msgtype: 0x01, length: 8, teid: None , sqn: 0x6d3d7c, piggyback: false, message_prio: None};
+    let mut buffer:Vec<u8>=vec!();
+    decoded.marshal(&mut buffer);
+    assert_eq!(buffer,encoded);
+}
+
+#[test]
+fn test_gtpv2_hdr_t1_unmarshal () {
     let encoded:[u8;12] = [0x48, 0x34, 0x00, 0x0c, 0x41, 0x76, 0xf6, 0x1e, 0x3c, 0xea, 0x57, 0x00];
     let decoded = Gtpv2Header { msgtype: 0x34, length: 0x0c, teid: Some(0x4176f61e) , sqn: 0x3cea57, piggyback: false, message_prio: None};
     assert_eq!(Gtpv2Header::unmarshal(&encoded).unwrap(),decoded);
+}
+
+#[test]
+fn test_gtpv2_hdr_t1_invalid_length_unmarshal () {
+    let encoded:[u8;12] = [0x48, 0x34, 0x00, 0x0a, 0x41, 0x76, 0xf6, 0x1e, 0x3c, 0xea, 0x57, 0x00];
+    assert_eq!(Gtpv2Header::unmarshal(&encoded),Err(GTPV2Error::MessageLengthError));
+}
+
+#[test]
+fn test_gtpv2_hdr_t1_marshal () {
+    let encoded:[u8;12] = [0x48, 0x34, 0x00, 0x0c, 0x41, 0x76, 0xf6, 0x1e, 0x3c, 0xea, 0x57, 0x00];
+    let decoded = Gtpv2Header { msgtype: 0x34, length: 0x0c, teid: Some(0x4176f61e) , sqn: 0x3cea57, piggyback: false, message_prio: None};
+    let mut buffer:Vec<u8>=vec!();
+    decoded.marshal(&mut buffer);
+    assert_eq!(buffer,encoded);
+}
+
+#[test]
+fn test_gtpv2_hdr_t1_with_msg_prio_unmarshal () {
+    let encoded:[u8;12] = [0x4c, 0x34, 0x00, 0x0c, 0x41, 0x76, 0xf6, 0x1e, 0x3c, 0xea, 0x57, 0xf0];
+    let decoded = Gtpv2Header { msgtype: 0x34, length: 0x0c, teid: Some(0x4176f61e) , sqn: 0x3cea57, piggyback: false, message_prio: Some(0x0f)};
+    assert_eq!(Gtpv2Header::unmarshal(&encoded).unwrap(),decoded);
+}
+
+#[test]
+fn test_gtpv2_hdr_t1_with_msg_prio_marshal () {
+    let encoded:[u8;12] = [0x4c, 0x34, 0x00, 0x0c, 0x41, 0x76, 0xf6, 0x1e, 0x3c, 0xea, 0x57, 0xf0];
+    let decoded = Gtpv2Header { msgtype: 0x34, length: 0x0c, teid: Some(0x4176f61e) , sqn: 0x3cea57, piggyback: false, message_prio: Some(0x0f)};
+    let mut buffer:Vec<u8>=vec!();
+    decoded.marshal(&mut buffer);
+    assert_eq!(buffer,encoded);
 }
