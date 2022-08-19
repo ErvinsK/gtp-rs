@@ -13,7 +13,7 @@ trait Li {
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> where Self:Sized;
 }
 
-#[derive(Debug,Clone,PartialEq)]
+#[derive(Debug,Clone,PartialEq, PartialOrd)]
 pub struct Cgi {
     pub mcc: u16,
     pub mnc: u16,
@@ -47,7 +47,7 @@ impl Li for Cgi {
     }
 }
 
-#[derive(Debug,Clone,PartialEq)]
+#[derive(Debug,Clone,PartialEq,PartialOrd)]
 pub struct Sai {
     pub mcc: u16,
     pub mnc: u16,
@@ -81,7 +81,7 @@ impl Li for Sai {
     }
 }
 
-#[derive(Debug,Clone,PartialEq)]
+#[derive(Debug,Clone,PartialEq,PartialOrd)]
 pub struct Rai {
     pub mcc: u16,
     pub mnc: u16,
@@ -116,7 +116,7 @@ impl Li for Rai {
     }
 }
 
-#[derive(Debug,Clone,PartialEq)]
+#[derive(Debug,Clone,PartialEq,PartialOrd)]
 pub struct Tai {
     pub mcc: u16,
     pub mnc: u16,
@@ -147,7 +147,7 @@ impl Li for Tai {
     }
 }
 
-#[derive(Debug,Clone,PartialEq)]
+#[derive(Debug,Clone,PartialEq,PartialOrd)]
 pub struct Ecgi {
     pub mcc: u16,
     pub mnc: u16,
@@ -178,7 +178,7 @@ impl Li for Ecgi {
     }
 }
 
-#[derive(Debug,Clone,PartialEq)]
+#[derive(Debug,Clone,PartialEq,PartialOrd)]
 pub struct Lai {
     pub mcc: u16,
     pub mnc: u16,
@@ -209,7 +209,7 @@ impl Li for Lai {
     }
 }
 
-#[derive(Debug,Clone,PartialEq)]
+#[derive(Debug,Clone,PartialEq,PartialOrd)]
 pub struct MacroEnbId {
     pub mcc: u16,
     pub mnc: u16,
@@ -240,7 +240,7 @@ impl Li for MacroEnbId {
     }
 }
 
-#[derive(Debug,Clone,PartialEq)]
+#[derive(Debug,Clone,PartialEq,PartialOrd)]
 pub struct ExtMacroEnbId {
     pub mcc: u16,
     pub mnc: u16,
@@ -258,7 +258,7 @@ impl Li for ExtMacroEnbId {
     fn marshal (&self, buffer: &mut Vec<u8>) {
         buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
         if self.smenb {
-            let i = self.ext_macro_id.to_be_bytes();
+            let mut i = self.ext_macro_id.to_be_bytes();
             i[1]=(i[1] | 0x80) & 0x83;
             buffer.extend_from_slice(&i[1..]);
         } else {
@@ -280,6 +280,7 @@ impl Li for ExtMacroEnbId {
                     data.smenb = true;
                     data.ext_macro_id = u32::from_be_bytes([0x00,(buffer[3] & 0x03),buffer[4],buffer[5]]);
                 },
+                _ => (),
             }
             Ok (data)
         } else {
@@ -291,7 +292,7 @@ impl Li for ExtMacroEnbId {
 
 // CGI, SAI, RAI, TAI, ECGI, LAI, Macro eNB ID, Extended Macro eNB ID
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
 pub enum Location {
     Cgi(Cgi),
     Sai(Sai),
@@ -323,10 +324,12 @@ impl IEs for Uli {
         let mut buffer_ie:Vec<u8> = vec!();  
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
-        buffer_ie.push(self.ins);
+        buffer_ie.push(self.ins);     
         let mut flags:u8 = 0;
         let mut buffer_li:Vec<u8> = vec!();
-        for i in self.loc.iter() {
+        let mut sorted_loc = self.loc.clone();
+        sorted_loc.sort_by(|a,b| a.partial_cmp(b).unwrap());
+        for i in sorted_loc.iter() {
             match i {
                 Location::Cgi(j) => {
                     if flags & 0x01 == 0 {
@@ -385,86 +388,123 @@ impl IEs for Uli {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>=(ULI_LENGTH+3) as usize {
+        if buffer.len()>=MIN_IE_SIZE {
             let mut data=Uli::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            match buffer[3] {
-                0 => {
-                    (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..=6]);
-                    data.lac=u16::from_be_bytes([buffer[7],buffer[8]]);
-                    data.loc=Location::Ci(u16::from_be_bytes([buffer[9], buffer[10]]));
-                },
-                1 => {
-                    (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..=6]);
-                    data.lac=u16::from_be_bytes([buffer[7],buffer[8]]);
-                    data.loc=Location::Sac(u16::from_be_bytes([buffer[9], buffer[10]]));
-                },
-                2 => {
-                    (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..=6]);
-                    data.lac=u16::from_be_bytes([buffer[7],buffer[8]]);
-                    data.loc=Location::Rac(buffer[9]);
-                },
-                _ => {
-                    return Err(GTPV1Error::IEIncorrect);
+            data.ins = buffer[3];
+            if check_tliv_ie_buffer(data.length, buffer) {
+                let order = to_flags(&buffer[4]);
+                let mut cursor:usize = 5;
+                for i in order.iter() {
+                    match i {
+                        1 => {
+                            match Cgi::unmarshal(&buffer[cursor..]) {
+                                Ok(k) => data.loc.push(Location::Cgi(k)),
+                                Err(n) => return Err(n),
+                            }
+                            cursor+=7;
+                        },
+                        2 => {
+                            match Sai::unmarshal(&buffer[cursor..]) {
+                                Ok(k) => data.loc.push(Location::Sai(k)),
+                                Err(n) => return Err(n),
+                            }
+                            cursor+=7;
+                        },
+                        3 => {
+                            match Rai::unmarshal(&buffer[cursor..]) {
+                                Ok(k) => data.loc.push(Location::Rai(k)),
+                                Err(n) => return Err(n),
+                            }
+                            cursor+=7;
+                        },
+                        4 => {
+                            match Tai::unmarshal(&buffer[cursor..]) {
+                                Ok(k) => data.loc.push(Location::Tai(k)),
+                                Err(n) => return Err(n),
+                            }
+                            cursor+=5;
+                        },
+                        5 => {
+                            match Ecgi::unmarshal(&buffer[cursor..]) {
+                                Ok(k) => data.loc.push(Location::Ecgi(k)),
+                                Err(n) => return Err(n),
+                            }
+                            cursor+=7;
+                        },
+                        6 => {
+                            match Lai::unmarshal(&buffer[cursor..]) {
+                                Ok(k) => data.loc.push(Location::Lai(k)),
+                                Err(n) => return Err(n),
+                            }
+                            cursor+=5;
+                        },
+                        7 => {
+                            match MacroEnbId::unmarshal(&buffer[cursor..]) {
+                                Ok(k) => data.loc.push(Location::MacroEnbId(k)),
+                                Err(n) => return Err(n),
+                            }
+                            cursor+=6;
+                        },
+                        8 => {
+                            match ExtMacroEnbId::unmarshal(&buffer[cursor..]) {
+                                Ok(k) => data.loc.push(Location::ExtMacroEnbId(k)),
+                                Err(n) => return Err(n),
+                            }
+                            cursor+=6;
+                        },
+                        _ => (),
+                    }
                 }
+            } else {
+                return Err(GTPV2Error::IEInvalidLength);
             }
             Ok (data)
         } else {
-            Err(GTPV1Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength)
         }
     }
 
     fn len (&self) -> usize {
-        (ULI_LENGTH+3) as usize
+        (self.length as usize) + MIN_IE_SIZE
     }
 
 }
 
+// Helper function to convert flag octets into Vector of u8
+fn to_flags (i:&u8) -> Vec<u8> {
+    let mut results = vec!(1,2,3,4,5,6,7,8);
+    let mut flags = vec!();
+    for j in 0..=7 {
+        if i & (0x01<<j) == (0x01<<j) {
+            flags.push(true);
+        } else {
+            flags.push(false);
+        }
+    }
+    let mut iter = flags.iter();
+    results.retain(|_| *iter.next().unwrap());
+    results
+    }
+
 #[test]
-fn uli_ie_marshal_test_cgi() {
-    let ie_to_marshal = Uli { t:ULI, length: ULI_LENGTH, mcc:262, mnc:3, lac:48190, loc: Location::Ci(14076)};
-    let ie_unmarshalled:[u8;11] = [0x98, 0x00, 0x08, 0x00, 0x62, 0xf2, 0x30, 0xbc, 0x3e, 0x36, 0xfc];
+fn uli_ie_marshal_test_tai_ecgi() {
+    let decoded = Uli { t:ULI, length: 13, ins: 0, loc: vec!(Location::Ecgi(Ecgi{ mcc: 262, mnc:1, eci:28983298}),Location::Tai(Tai { mcc: 262, mnc:1, tac:0x0bd9}))};
+    let encoded:[u8;17] = [0x56, 0x00, 0x0d, 0x00, 0x18, 0x62, 0xf2, 0x10, 0x0b, 0xd9, 0x62, 0xf2, 0x10, 0x01, 0xba, 0x40, 0x02];
     let mut buffer:Vec<u8>=vec!();
-    ie_to_marshal.marshal(&mut buffer);
-    assert_eq!(buffer,ie_unmarshalled);
+    decoded.marshal(&mut buffer);
+    assert_eq!(buffer,encoded);
 }
 
 #[test]
-fn uli_ie_unmarshal_test_cgi() {
-    let ie_to_marshal = Uli { t:ULI, length: ULI_LENGTH, mcc:262, mnc:3, lac:48190, loc: Location::Ci(14076)};
-    let ie_unmarshalled:[u8;11] = [0x98, 0x00, 0x08, 0x00, 0x62, 0xf2, 0x30, 0xbc, 0x3e, 0x36, 0xfc];
-    assert_eq!(Uli::unmarshal(&ie_unmarshalled).unwrap(), ie_to_marshal);
+fn uli_ie_unmarshal_test_tai_ecgi() {
+    let decoded = Uli { t:ULI, length: 13, ins: 0, loc: vec!(Location::Tai(Tai { mcc: 262, mnc:1, tac:0x0bd9}),Location::Ecgi(Ecgi{ mcc: 262, mnc:1, eci:28983298}))};
+    let encoded:[u8;17] = [0x56, 0x00, 0x0d, 0x00, 0x18, 0x62, 0xf2, 0x10, 0x0b, 0xd9, 0x62, 0xf2, 0x10, 0x01, 0xba, 0x40, 0x02];
+    assert_eq!(Uli::unmarshal(&encoded), Ok(decoded));
 }
 
 #[test]
-fn uli_ie_marshal_test_sai() {
-    let ie_to_marshal = Uli { t:ULI, length: ULI_LENGTH, mcc:262, mnc:3, lac:48190, loc: Location::Sac(14076)};
-    let ie_unmarshalled:[u8;11] = [0x98, 0x00, 0x08, 0x01, 0x62, 0xf2, 0x30, 0xbc, 0x3e, 0x36, 0xfc];
-    let mut buffer:Vec<u8>=vec!();
-    ie_to_marshal.marshal(&mut buffer);
-    assert_eq!(buffer,ie_unmarshalled);
+fn uli_ie_unmarshal_test_tai_ecgi_invalid_length() {
+    let encoded:[u8;16] = [0x56, 0x00, 0x0d, 0x00, 0x18, 0x62, 0xf2, 0x10, 0x0b, 0xd9, 0x62, 0xf2, 0x01, 0xba, 0x40, 0x02];
+    assert_eq!(Uli::unmarshal(&encoded), Err(GTPV2Error::IEInvalidLength));
 }
-
-#[test]
-fn uli_ie_unmarshal_test_sai() {
-    let ie_to_marshal = Uli { t:ULI, length: ULI_LENGTH, mcc:262, mnc:3, lac:48190, loc: Location::Sac(14076)};
-    let ie_unmarshalled:[u8;11] = [0x98, 0x00, 0x08, 0x01, 0x62, 0xf2, 0x30, 0xbc, 0x3e, 0x36, 0xfc];
-    assert_eq!(Uli::unmarshal(&ie_unmarshalled).unwrap(), ie_to_marshal);
-}
-
-#[test]
-fn uli_ie_marshal_test_rai() {
-    let ie_to_marshal = Uli { t:ULI, length: ULI_LENGTH, mcc:262, mnc:3, lac:48190, loc: Location::Rac(0x10)};
-    let ie_unmarshalled:[u8;11] = [0x98, 0x00, 0x08, 0x02, 0x62, 0xf2, 0x30, 0xbc, 0x3e, 0x10, 0xff];
-    let mut buffer:Vec<u8>=vec!();
-    ie_to_marshal.marshal(&mut buffer);
-    assert_eq!(buffer,ie_unmarshalled);
-}
-
-#[test]
-fn uli_ie_unmarshal_test_rai() {
-    let ie_to_marshal = Uli { t:ULI, length: ULI_LENGTH, mcc:262, mnc:3, lac:48190, loc: Location::Rac(0x10)};
-    let ie_unmarshalled:[u8;11] = [0x98, 0x00, 0x08, 0x02, 0x62, 0xf2, 0x30, 0xbc, 0x3e, 0x10, 0xff];
-    assert_eq!(Uli::unmarshal(&ie_unmarshalled).unwrap(), ie_to_marshal);
-}
-
