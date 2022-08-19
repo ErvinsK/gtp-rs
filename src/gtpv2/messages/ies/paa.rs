@@ -160,7 +160,7 @@ fn paa_ie_ipv4_marshal_test () {
 }
 
 #[test]
-fn gsn_address_ie_ipv6_marshal_test () {
+fn paa_ie_ipv6_marshal_test () {
     let encoded:[u8;22]=[0x4f, 0x00, 0x12, 0x00, 0x02, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
     let decoded = PdnAddressAllocation { t:PAA, length:18, ins:0, ip: PdnAddress::V6(Ipv6Addr::new(0,0,0,0,0,0,0,0), 128) };
     let mut buffer:Vec<u8>=vec!();
@@ -169,7 +169,7 @@ fn gsn_address_ie_ipv6_marshal_test () {
 }
 
 #[test]
-fn gsn_address_ie_ipv46_marshal_test () {
+fn paa_ie_ipv46_marshal_test () {
     let encoded:[u8;26]=[0x4f, 0x00, 0x16, 0x00, 0x03, 0x80, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00];
     let decoded = PdnAddressAllocation { t:PAA, length:22, ins:0, ip: PdnAddress::DualStack(Ipv4Addr::new(1,0,0,0), Ipv6Addr::new(1,0,0,0,0,0,0,0), 128) };
     let mut buffer:Vec<u8>=vec!();

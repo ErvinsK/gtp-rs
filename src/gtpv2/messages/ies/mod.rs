@@ -19,6 +19,7 @@ pub use {
     bearertft::*,
     tad::*,
     uli::*,
+    fteid::*,
 };
 
 mod commons;
@@ -41,3 +42,4 @@ mod servingnetwork;
 mod bearertft;
 mod tad;
 mod uli;
+mod fteid;
