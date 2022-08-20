@@ -1,0 +1,71 @@
+// Packet Flow ID IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+
+// Packet Flow ID TL
+
+pub const PCKTFLOW:u8 = 123;
+pub const PCKTFLOW_LENGTH:usize = 5;
+
+// Packet Flow ID IE implementation
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct PacketFlowId {
+    pub t:u8,
+    pub length:u16,
+    pub ins:u8,
+    pub ebi:u8,
+    pub flow_id:u32,
+}
+
+impl Default for PacketFlowId {
+    fn default() -> Self {
+        PacketFlowId { t: PCKTFLOW, length: PCKTFLOW_LENGTH as u16, ins:0, ebi: 0, flow_id:0 }
+    }
+}
+
+impl IEs for PacketFlowId {
+    fn marshal (&self, buffer: &mut Vec<u8>) {
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
+        buffer_ie.push(self.ins);
+        buffer_ie.push(self.ebi);
+        buffer_ie.extend_from_slice(&self.flow_id.to_be_bytes());
+        set_tliv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);
+    }
+
+    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
+        if buffer.len()>=PCKTFLOW_LENGTH+MIN_IE_SIZE {
+            let mut data=PacketFlowId::default();
+            data.length = u16::from_be_bytes([buffer[1],buffer[2]]);
+            data.ins = buffer[3] & 0x0f;
+            data.ebi = buffer[4] & 0x0f;
+            data.flow_id = u32::from_be_bytes([buffer[5],buffer[6],buffer[7],buffer[8]]);
+            Ok(data) 
+        } else {
+            Err(GTPV2Error::IEInvalidLength)
+        }
+    }
+
+    fn len (&self) -> usize {
+        PCKTFLOW_LENGTH+MIN_IE_SIZE
+    }
+}
+
+#[test]
+fn packet_flow_id_ie_marshal_test() {
+    let decoded= PacketFlowId { t: PCKTFLOW, length:PCKTFLOW_LENGTH as u16, ins:0, ebi:5, flow_id: 0xffffffff};
+    let encoded:[u8;9]=[0x7b, 0x00, 0x05, 0x00, 0x05, 0xff, 0xff, 0xff, 0xff];
+    let mut buffer:Vec<u8>=vec!();
+    decoded.marshal(&mut buffer);
+    assert_eq!(buffer, encoded);
+}
+
+#[test]
+fn packet_flow_id_ie_unmarshal_test() {
+    let decoded= PacketFlowId { t: PCKTFLOW, length:PCKTFLOW_LENGTH as u16, ins:0, ebi:5, flow_id: 0xffffffff};
+    let encoded:[u8;9]=[0x7b, 0x00, 0x05, 0x00, 0x05, 0xff, 0xff, 0xff, 0xff];
+    assert_eq!(PacketFlowId::unmarshal(&encoded).unwrap(), decoded);
+}

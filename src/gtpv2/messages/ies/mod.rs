@@ -20,6 +20,24 @@ pub use {
     tad::*,
     uli::*,
     fteid::*,
+    chargingid::*,
+    chargingchar::*,
+    traceinfo::*,
+    pdntype::*,
+    pti::*,
+    ptmsi::*,
+    ptmsisignature::*,
+    hopcounter::*,
+    uetimezone::*,
+    tracereference::*,
+    plmnid::*,
+    packetflowid::*,
+    apnrestriction::*,
+    selectionmode::*,
+    nodetype::*,
+    portnumber::*,
+    changereportingaction::*,
+    uci::*,
 };
 
 mod commons;
@@ -43,3 +61,23 @@ mod bearertft;
 mod tad;
 mod uli;
 mod fteid;
+mod chargingid;
+mod chargingchar;
+mod traceinfo;
+mod pdntype;
+mod pti;
+mod ptmsi;
+mod ptmsisignature;
+mod hopcounter;
+mod uetimezone;
+mod tracereference;
+mod plmnid;
+mod packetflowid;
+mod apnrestriction;
+mod selectionmode;
+mod nodetype;
+mod portnumber;
+mod changereportingaction;
+mod privateextension;
+mod uci;
+mod csginforeporting;

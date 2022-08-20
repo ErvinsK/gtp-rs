@@ -1,0 +1,69 @@
+// Selection Mode IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
+
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+
+// Selection Mode IE Type
+
+pub const SELECTION_MODE:u8 = 128;
+pub const SELECTION_MODE_LENGTH:usize = 1;
+
+// Charging Characteristics IE implementation
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct SelectionMode {
+    pub t:u8,
+    pub length:u16,
+    pub ins:u8,
+    pub mode:u8,
+}
+
+impl Default for SelectionMode {
+    fn default() -> Self {
+        SelectionMode { t: SELECTION_MODE, length:SELECTION_MODE_LENGTH as u16, ins:0, mode:0}
+    }
+}
+
+impl IEs for SelectionMode {
+    fn marshal (&self, buffer: &mut Vec<u8>) {
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
+        buffer_ie.push(self.ins);
+        buffer_ie.push(self.mode);
+        set_tliv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);
+    }
+
+    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
+        if buffer.len()>=MIN_IE_SIZE+SELECTION_MODE_LENGTH {
+            let mut data=SelectionMode::default();
+            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            data.ins = buffer[3];
+            data.mode = buffer[4] & 0x03;
+            Ok(data)
+        } else {
+            Err(GTPV2Error::IEInvalidLength)
+        }
+    }
+
+    fn len (&self) -> usize {
+       SELECTION_MODE_LENGTH + MIN_IE_SIZE 
+    }
+
+}
+
+#[test]
+fn selection_mode_ie_marshal_test () {
+    let encoded:[u8;5]=[0x80, 0x00, 0x01, 0x00, 0x00];
+    let decoded = SelectionMode { t:SELECTION_MODE, length: SELECTION_MODE_LENGTH as u16, ins:0, mode:0x00 };
+    let mut buffer:Vec<u8>=vec!();
+    decoded.marshal(&mut buffer);
+    assert_eq!(buffer,encoded);
+}
+
+#[test]
+fn chargingchar_ie_unmarshal_test () {
+    let encoded:[u8;5]=[0x80, 0x00, 0x01, 0x00, 0x00];
+    let decoded = SelectionMode { t:SELECTION_MODE, length: SELECTION_MODE_LENGTH as u16, ins:0, mode:0x00 };
+    assert_eq!(SelectionMode::unmarshal(&encoded).unwrap(), decoded);
+}
