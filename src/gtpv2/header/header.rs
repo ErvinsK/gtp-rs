@@ -63,7 +63,7 @@ impl Gtpv2Header {
                     data.msgtype = buffer[1];
                     data.length = u16::from_be_bytes([buffer[2],buffer[3]]);
                     if data.length < (MIN_HEADER_LENGTH as u16) {
-                        return Err(GTPV2Error::MessageLengthError);
+                        return Err(GTPV2Error::MessageInvalidLength(0));
                     }
                     data.sqn = u32::from_be_bytes([0x00,buffer[4],buffer[5],buffer[6]]);
                 },
@@ -76,7 +76,7 @@ impl Gtpv2Header {
                         data.msgtype = buffer[1];
                         data.length = u16::from_be_bytes([buffer[2],buffer[3]]);
                         if data.length < (MAX_HEADER_LENGTH as u16) {
-                            return Err(GTPV2Error::MessageLengthError);
+                            return Err(GTPV2Error::MessageInvalidLength(0));
                         }
                         data.teid = Some(u32::from_be_bytes([buffer[4],buffer[5],buffer[6],buffer[7]]));
                         data.sqn = u32::from_be_bytes([0x00,buffer[8],buffer[9],buffer[10]]);
@@ -85,14 +85,14 @@ impl Gtpv2Header {
                             _ => data.message_prio = Some(buffer[11]>>4),
                         }
                     } else {
-                        return Err(GTPV2Error::MessageLengthError);
+                        return Err(GTPV2Error::MessageInvalidLength(0));
                     }
                 },
                 _ => return Err(GTPV2Error::MessageInvalidMessageFormat),
             } 
             Ok(data)
         } else {
-            Err(GTPV2Error::MessageLengthError)
+            Err(GTPV2Error::MessageInvalidLength(0))
         }
     }
 
@@ -129,7 +129,7 @@ fn test_gtpv2_hdr_t0_version_incorrect_unmarshal () {
 #[test]
 fn test_gtpv2_hdr_t0_invalid_length_unmarshal () {
     let encoded:[u8;8] = [0x40, 0x01, 0x00, 0x06, 0x6d, 0x3d, 0x7c, 0x00];
-    assert_eq!(Gtpv2Header::unmarshal(&encoded),Err(GTPV2Error::MessageLengthError));
+    assert_eq!(Gtpv2Header::unmarshal(&encoded),Err(GTPV2Error::MessageInvalidLength(0)));
 }
 
 #[test]
@@ -151,7 +151,7 @@ fn test_gtpv2_hdr_t1_unmarshal () {
 #[test]
 fn test_gtpv2_hdr_t1_invalid_length_unmarshal () {
     let encoded:[u8;12] = [0x48, 0x34, 0x00, 0x0a, 0x41, 0x76, 0xf6, 0x1e, 0x3c, 0xea, 0x57, 0x00];
-    assert_eq!(Gtpv2Header::unmarshal(&encoded),Err(GTPV2Error::MessageLengthError));
+    assert_eq!(Gtpv2Header::unmarshal(&encoded),Err(GTPV2Error::MessageInvalidLength(0)));
 }
 
 #[test]

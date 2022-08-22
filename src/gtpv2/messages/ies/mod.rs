@@ -40,6 +40,8 @@ pub use {
     changereportingaction::*,
     uci::*,
     csginforeporting::*,
+    unknown::*,
+    nodefeatures::*,
 };
 
 mod commons;
@@ -83,3 +85,5 @@ mod changereportingaction;
 mod privateextension;
 mod uci;
 mod csginforeporting;
+mod unknown;
+mod nodefeatures;

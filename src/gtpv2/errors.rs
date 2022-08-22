@@ -13,10 +13,10 @@ pub enum GTPV2Error {
     IEInvalidLength(u8),
     IEIncorrect(u8),
 // GTPv2 Message Errors
-    MessageLengthError,
+    MessageInvalidLength(u8),
     MessageNotSupported,
-    MessageMandatoryIEMissing,
-    MessageOptionalIEIncorrect,
+    MessageMandatoryIEMissing(u8),
+    MessageOptionalIEIncorrect(u8),
     MessageInvalidMessageFormat,
     MessageIncorrectMessageType,
 }
@@ -36,10 +36,10 @@ impl Display for GTPV2Error {
             GTPV2Error::IEInvalidLength(i) => write!(f, "Invalid IE type {} length", i),
             GTPV2Error::IEIncorrect(i)  => write!(f, "Incorrect IE type {}", i),
 // GTPv2 Message Errors
-            GTPV2Error::MessageLengthError => write!(f, "Message length error"),
-            GTPV2Error::MessageMandatoryIEMissing => write!(f, "Mandatory IE missing"),
+            GTPV2Error::MessageInvalidLength(i) => write!(f, "Message invalid length {}", i),
+            GTPV2Error::MessageMandatoryIEMissing(i) => write!(f, "Mandatory IE of type {} missing", i),
             GTPV2Error::MessageNotSupported => write!(f, "Message not supported"),
-            GTPV2Error::MessageOptionalIEIncorrect => write!(f, "Optional IE incorrect"),
+            GTPV2Error::MessageOptionalIEIncorrect(i) => write!(f, "Optional IE of type {} incorrect", i),
             GTPV2Error::MessageInvalidMessageFormat => write!(f, "Invalid Mesage format"),
             GTPV2Error::MessageIncorrectMessageType => write!(f, "Incorrect Message type"),
         }

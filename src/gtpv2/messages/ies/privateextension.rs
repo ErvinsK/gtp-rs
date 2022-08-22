@@ -36,11 +36,11 @@ impl IEs for PrivateExtension {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>=MIN_IE_SIZE {
+        if buffer.len()>=MIN_IE_SIZE+3 {
             let mut data=PrivateExtension::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
             data.ins = buffer[3];
-            if  check_tliv_ie_buffer(data.length, buffer) {
+            if check_tliv_ie_buffer(data.length, buffer) {
                 data.enterprise_id = u16::from_be_bytes([buffer[4],buffer[5]]);
                 data.value.extend_from_slice(&buffer[6..(data.length+4) as usize]);
                 Ok(data)
@@ -72,4 +72,10 @@ fn private_ext_ie_unmarshal_test () {
     let encoded:[u8;7]=[0xff, 0x00, 0x03, 0x00, 0x0a, 0xff, 0x00];
     let decoded = PrivateExtension { t:PRIVATE_EXT, length: 3, ins: 0, enterprise_id:0xaff, value: vec!(0x00) };
     assert_eq!(PrivateExtension::unmarshal(&encoded).unwrap(), decoded);
+}
+
+#[test]
+fn private_ext_ie_wrong_size_unmarshal_test () {
+    let encoded:[u8;6]=[0xff, 0x00, 0x02, 0x00, 0x0a, 0x00];
+    assert_eq!(PrivateExtension::unmarshal(&encoded), Err(GTPV2Error::IEInvalidLength(PRIVATE_EXT)));
 }

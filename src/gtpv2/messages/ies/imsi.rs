@@ -26,6 +26,7 @@ impl Default for Imsi {
     }
 }
 
+
 impl IEs for Imsi {
     fn marshal (&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie:Vec<u8> = vec!();  

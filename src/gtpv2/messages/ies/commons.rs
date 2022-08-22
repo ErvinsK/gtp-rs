@@ -10,7 +10,7 @@ pub trait IEs {
     fn len (&self) -> usize; // Total IE length = Type+Length+Instance+Value for TLIV messages
 }
 
-
+#[derive(Debug, Clone, PartialEq)]
 pub enum InformationElement {
     Imsi(Imsi),
     Cause(Cause),
@@ -92,7 +92,7 @@ pub enum InformationElement {
     // Service Indicator
     // Detach Type
     // Local Distiguished Name
-    // Node Features
+    NodeFeatures(NodeFeatures),
     // MBMS Time to Data Transfer
     // Throttling
     // Allocation/Retention Priority
@@ -233,7 +233,7 @@ impl InformationElement {
             // Service Indicator
             // Detach Type
             // Local Distiguished Name
-            // Node Features
+            InformationElement::NodeFeatures(i) => i.marshal(buffer),
             // MBMS Time to Data Transfer
             // Throttling
             // Allocation/Retention Priority
@@ -628,5 +628,146 @@ impl InformationElement {
             _ => Err(GTPV2Error::IEIncorrect(buffer[0])),
         }
     }
+/* 
+    pub fn get_ie (&self) -> Box<dyn IEs> {
+        match *self {
+            InformationElement::Imsi(i) => Box::new(i),
+            InformationElement::Cause(i) => Box::new(i),
+            InformationElement::Recovery(i) => Box::new(i),
+            // STN-SR
+            InformationElement::Apn(i) => Box::new(i),
+            InformationElement::ApnAmbr(i) => Box::new(i),
+            InformationElement::Ebi(i) => Box::new(i),
+            InformationElement::IpAddress(i) => Box::new(i),
+            InformationElement::Mei(i) => Box::new(i),
+            InformationElement::Msisdn(i) => Box::new(i),
+            InformationElement::Indication(i) => Box::new(i),
+            InformationElement::Pco(i) => Box::new(i),
+            InformationElement::PdnAddressAllocation(i) => Box::new(i),
+            InformationElement::BearerQos(i) => Box::new(i),
+            InformationElement::FlowQos(i) => Box::new(i),
+            InformationElement::RatType(i) => Box::new(i),
+            InformationElement::ServingNetwork(i) => Box::new(i),
+            InformationElement::BearerTft(i) => Box::new(i),
+            InformationElement::TrafficAggregateDescription(i) => Box::new(i), 
+            InformationElement::Uli(i) => Box::new(i),
+            InformationElement::Fteid(i) => Box::new(i),
+            // Tmsi(Tmsi),
+            // Global CN-id
+            // S103 PDN Data Forwarding Info
+            // S1-U Data Forwarding Info
+            // Delay Value
+            // Bearer Context
+            InformationElement::ChargingId(i) => Box::new(i),
+            InformationElement::ChargingCharacteristics(i) => Box::new(i),
+            InformationElement::TraceInformation(i) => Box::new(i),
+            // Bearer Flags
+            InformationElement::PdnType(i) => Box::new(i),
+            // Procedure Transaction ID
+            // MM Context (GSM Keys and Triplets)
+            // MM Context (UMTS Keys, Used Chiper, and Quintuplets)
+            // MM Context (GSM Keys, Used Chiper, and Quintuplets)
+            // MM Context (UMTS Keys and Quintuplets)
+            // MM Context (EPS Security Context, Quadruplets and Quintuplets)
+            // MM Context (UMTS Key, Quadruplets and Quintuplets)
+            // PDN Connection
+            // PDU Numbers
+            InformationElement::Ptmsi(i) => Box::new(i),
+            InformationElement::PtmsiSignature(i) => Box::new(i),
+            InformationElement::HopCounter(i) => Box::new(i),
+            InformationElement::UeTimeZone(i) => Box::new(i),
+            InformationElement::TraceReference(i) => Box::new(i),
+            // Complete Request Message
+            // GUTI
+            // F-Container
+            // F-Cause
+            InformationElement::PlmnId(i) => Box::new(i),
+            // Target Identification
+            InformationElement::PacketFlowId(i) => Box::new(i),
+            // RAB Context
+            // Source RNC PDCP Context Info
+            InformationElement::PortNumber(i) => Box::new(i),
+            InformationElement::ApnRestriction(i) => Box::new(i),
+            InformationElement::SelectionMode(i) => Box::new(i),
+            // Source Identification
+            InformationElement::ChangeReportingAction(i) => Box::new(i),
+            // FQ-CSID
+            // Channel Needed
+            // eMLPP Priority
+            InformationElement::NodeType(i) => Box::new(i),
+            // FQDN
+            // Transaction Identifier
+            // MBMS Session Duration
+            // MBMS Service Area
+            // MBMS Session Identifier
+            // MBMS Flow Identifier
+            // MBMS IP Multicast Distribution
+            // MBMS Distribution Acknowledge
+            // RFSP Index
+            InformationElement::Uci(i) => Box::new(i),
+            InformationElement::CSGInformationReportingAction(i) => Box::new(i),
+            // CSG ID
+            // CSG Membership Indication
+            // Service Indicator
+            // Detach Type
+            // Local Distiguished Name
+            InformationElement::NodeFeatures(i) => Box::new(i),
+            // MBMS Time to Data Transfer
+            // Throttling
+            // Allocation/Retention Priority
+            // EPC Timer
+            // Signalling Priority Indication
+            // Temporary Mobile Group Identity
+            // Additional MM context SRVCC
+            // Additional flags SRVCC
+            // MDT Configuration
+            // Additional PCO
+            // Absolute Time of MBMS Data Transfer
+            // H(e)NB Information Reporting
+            // IPv4 Configuration Parameters (IP4CP)
+            // Change to Report Flags
+            // Action Indication
+            // TWAN Identifier
+            // ULI Timestamp
+            // MBMS Flags
+            // RAN/NAS Cause
+            // CN Operator Selection Entity
+            // Trusted WLAN Mode Indication
+            // Node Number
+            // Node Identifier
+            // Presence Reporting Area Action
+            // Presence Reporting Area Information
+            // TWAN Identifier Timestamp
+            // Overload Control Information
+            // Load Control Information
+            // Metric
+            // Sequence Number
+            // APN and Relative Capacity
+            // WLAN Offloadability Indication
+            // Paging and Service Information
+            // Integer Number
+            // Millisecond Time Stamp
+            // Monitoring Event Information
+            // ECGI List
+            // Remote UE Context
+            // Remote User ID
+            // Remote UE IP Information
+            // CIoT Optimization Support Indication
+            // SCEF PDN Connection
+            // Header Compression Configuration
+            // Extended PCO
+            // Serving PLMN Rate Control
+            // Counter
+            // Mapped UE Usage Type
+            // Secondary UE Usage Type
+            // UP Function Selection Indication Flags
+            // Max Packet Loss Rate
+            // APN Rate Control Status
+            // Extended Trace Information
+            // Monitoring Event Extension Information
+            // Special IE type for IE Type Extension
+            InformationElement::PrivateExtension(i) => Box::new(i),  
+        }
+    } */
 }
 
