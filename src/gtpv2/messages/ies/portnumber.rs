@@ -42,7 +42,7 @@ impl IEs for PortNumber {
             data.port = u16::from_be_bytes([buffer[4],buffer[5]]);
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(PORT_NBR))
         }
     }
 

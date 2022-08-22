@@ -45,14 +45,14 @@ impl IEs for Imsi {
             if (data.length as usize)+MIN_IE_SIZE <= buffer.len() {
                 match buffer[4..=(data.length as usize)+3].try_into() {
                 Ok(i) => data.imsi = tbcd_decode(i),
-                Err(_) => return Err(GTPV2Error::IEIncorrect), 
+                Err(_) => return Err(GTPV2Error::IEIncorrect(IMSI)), 
                 }
                 Ok(data)
             } else {
-                Err(GTPV2Error::IEInvalidLength)
+                Err(GTPV2Error::IEInvalidLength(IMSI))
             }
         } else {
-            Err(GTPV2Error::IEIncorrect)
+            Err(GTPV2Error::IEIncorrect(IMSI))
         }    
     }
     

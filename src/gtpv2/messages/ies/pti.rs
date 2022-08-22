@@ -42,7 +42,7 @@ impl IEs for Pti {
             data.pti = buffer[4];
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(PTI))
         }
     }
 

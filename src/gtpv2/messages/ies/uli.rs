@@ -42,7 +42,7 @@ impl Li for Cgi {
             data.ci = u16::from_be_bytes([buffer[5],buffer[6]]);
             Ok (data)
         } else {
-            Err(GTPV2Error::IEIncorrect)
+            Err(GTPV2Error::IEIncorrect(ULI))
         }
     }
 }
@@ -76,7 +76,7 @@ impl Li for Sai {
             data.sac = u16::from_be_bytes([buffer[5],buffer[6]]);
             Ok (data)
         } else {
-            Err(GTPV2Error::IEIncorrect)
+            Err(GTPV2Error::IEIncorrect(ULI))
         }
     }
 }
@@ -111,7 +111,7 @@ impl Li for Rai {
             data.rac = buffer[5];
             Ok (data)
         } else {
-            Err(GTPV2Error::IEIncorrect)
+            Err(GTPV2Error::IEIncorrect(ULI))
         }
     }
 }
@@ -142,7 +142,7 @@ impl Li for Tai {
             data.tac = u16::from_be_bytes([buffer[3],buffer[4]]);
             Ok (data)
         } else {
-            Err(GTPV2Error::IEIncorrect)
+            Err(GTPV2Error::IEIncorrect(ULI))
         }
     }
 }
@@ -173,7 +173,7 @@ impl Li for Ecgi {
             data.eci = u32::from_be_bytes([buffer[3],buffer[4], buffer[5],buffer[6]]);
             Ok (data)
         } else {
-            Err(GTPV2Error::IEIncorrect)
+            Err(GTPV2Error::IEIncorrect(ULI))
         }
     }
 }
@@ -204,7 +204,7 @@ impl Li for Lai {
             data.lac = u16::from_be_bytes([buffer[3],buffer[4]]);
             Ok (data)
         } else {
-            Err(GTPV2Error::IEIncorrect)
+            Err(GTPV2Error::IEIncorrect(ULI))
         }
     }
 }
@@ -235,7 +235,7 @@ impl Li for MacroEnbId {
             data.macro_id = u32::from_be_bytes([0x00,buffer[3],buffer[4], buffer[5]]);
             Ok (data)
         } else {
-            Err(GTPV2Error::IEIncorrect)
+            Err(GTPV2Error::IEIncorrect(ULI))
         }
     }
 }
@@ -284,7 +284,7 @@ impl Li for ExtMacroEnbId {
             }
             Ok (data)
         } else {
-            Err(GTPV2Error::IEIncorrect)
+            Err(GTPV2Error::IEIncorrect(ULI))
         }
     }
 }
@@ -457,11 +457,11 @@ impl IEs for Uli {
                     }
                 }
             } else {
-                return Err(GTPV2Error::IEInvalidLength);
+                return Err(GTPV2Error::IEInvalidLength(ULI));
             }
             Ok (data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(ULI))
         }
     }
 
@@ -506,5 +506,5 @@ fn uli_ie_unmarshal_test_tai_ecgi() {
 #[test]
 fn uli_ie_unmarshal_test_tai_ecgi_invalid_length() {
     let encoded:[u8;16] = [0x56, 0x00, 0x0d, 0x00, 0x18, 0x62, 0xf2, 0x10, 0x0b, 0xd9, 0x62, 0xf2, 0x01, 0xba, 0x40, 0x02];
-    assert_eq!(Uli::unmarshal(&encoded), Err(GTPV2Error::IEInvalidLength));
+    assert_eq!(Uli::unmarshal(&encoded), Err(GTPV2Error::IEInvalidLength(ULI)));
 }

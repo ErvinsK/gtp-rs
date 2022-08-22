@@ -45,10 +45,10 @@ impl IEs for PrivateExtension {
                 data.value.extend_from_slice(&buffer[6..(data.length+4) as usize]);
                 Ok(data)
             } else {
-                Err(GTPV2Error::IEInvalidLength)
+                Err(GTPV2Error::IEInvalidLength(PRIVATE_EXT))
             } 
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(PRIVATE_EXT))
         }
     }
 

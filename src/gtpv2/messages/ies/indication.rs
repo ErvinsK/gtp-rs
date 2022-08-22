@@ -161,7 +161,7 @@ impl IEs for Indication {
             data.from_array(&flags[..]);
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(INDICATION))
         }
     }
 

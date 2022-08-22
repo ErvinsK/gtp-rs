@@ -29,7 +29,7 @@ impl AccessMode {
             0 => Ok(AccessMode::ClosedMode),
             1 => Ok(AccessMode::HybridMode),
             2 | 3 => Ok(AccessMode::Reserved),
-            _ => Err(GTPV2Error::IEIncorrect),
+            _ => Err(GTPV2Error::IEIncorrect(UCI)),
         }
     }
 } 
@@ -53,7 +53,7 @@ impl Cmi {
         match i {
             0 => Ok(Cmi::NonCsgMembership),
             1 => Ok(Cmi::CsgMembership),
-            _ => Err(GTPV2Error::IEIncorrect),
+            _ => Err(GTPV2Error::IEIncorrect(UCI)),
         }
     }
 } 
@@ -124,7 +124,7 @@ impl IEs for Uci {
             }
             Ok (data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(UCI))
         }
     }
 

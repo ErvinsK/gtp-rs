@@ -32,12 +32,14 @@ pub use {
     tracereference::*,
     plmnid::*,
     packetflowid::*,
+    privateextension::*,
     apnrestriction::*,
     selectionmode::*,
     nodetype::*,
     portnumber::*,
     changereportingaction::*,
     uci::*,
+    csginforeporting::*,
 };
 
 mod commons;

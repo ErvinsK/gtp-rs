@@ -61,10 +61,10 @@ impl IEs for Apn {
                 data.name = p.into_iter().collect();
                 Ok(data) 
             } else {
-                Err(GTPV2Error::IEInvalidLength)
+                Err(GTPV2Error::IEInvalidLength(APN))
             }
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(APN))
         }
     }
 

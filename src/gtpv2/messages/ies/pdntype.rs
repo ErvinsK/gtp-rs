@@ -32,7 +32,7 @@ impl Pdn {
             2 => Ok(Pdn::Ipv6),
             3 => Ok(Pdn::Ipv46),
             4 => Ok(Pdn::NonIp),
-            _ => Err(GTPV2Error::IEIncorrect),
+            _ => Err(GTPV2Error::IEIncorrect(PDNTYPE)),
         }
     }
 }      
@@ -75,7 +75,7 @@ impl IEs for PdnType {
             }
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(PDNTYPE))
         }
     }
 
@@ -104,5 +104,5 @@ fn pdntype_ie_unmarshal_test () {
 #[test]
 fn pdntype_ie_unknown_rattype_unmarshal_test () {
     let encoded:[u8;5]=[0x63, 0x00, 0x01, 0x00, 0x05];
-    assert_eq!(PdnType::unmarshal(&encoded), Err(GTPV2Error::IEIncorrect));
+    assert_eq!(PdnType::unmarshal(&encoded), Err(GTPV2Error::IEIncorrect(PDNTYPE)));
 }

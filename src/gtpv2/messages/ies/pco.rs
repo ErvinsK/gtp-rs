@@ -42,10 +42,10 @@ impl IEs for Pco {
                 data.pco.extend_from_slice(&buffer[4..(data.length+4) as usize]);
                 Ok(data)
             } else {
-                Err(GTPV2Error::IEInvalidLength)
+                Err(GTPV2Error::IEInvalidLength(PCO))
             } 
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(PCO))
         }
     }
 

@@ -42,14 +42,14 @@ impl IEs for Mei {
             if check_tliv_ie_buffer(data.length,buffer) {
                 match buffer[4..(data.length+4) as usize].try_into() {
                     Ok(i) => data.mei = tbcd_decode(i),
-                    Err(_) => return Err(GTPV2Error::IEIncorrect), 
+                    Err(_) => return Err(GTPV2Error::IEIncorrect(MEI)), 
                  }
                  Ok(data)
             } else {
-                Err(GTPV2Error::IEInvalidLength)
+                Err(GTPV2Error::IEInvalidLength(MEI))
             }          
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(MEI))
         }
     }
     

@@ -56,17 +56,17 @@ impl IEs for IpAddress {
                             dst.copy_from_slice(&buffer[4..20]);
                             data.ip = IpAddr::from(dst);
                         } else { 
-                            return Err(GTPV2Error::IEInvalidLength);
+                            return Err(GTPV2Error::IEInvalidLength(IP_ADDRESS));
                         }   
                         }
-                    _ => return Err(GTPV2Error::IEIncorrect),
+                    _ => return Err(GTPV2Error::IEIncorrect(IP_ADDRESS)),
                 }
                 Ok(data)
             } else {
-                Err(GTPV2Error::IEInvalidLength)
+                Err(GTPV2Error::IEInvalidLength(IP_ADDRESS))
             }
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(IP_ADDRESS))
         }
     }
     

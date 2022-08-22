@@ -84,14 +84,14 @@ impl IEs for Fteid {
                         dst.copy_from_slice(&buffer[9..25]);
                         data.ipv6 = Some(Ipv6Addr::from(dst));
                     },
-                    _ => return Err(GTPV2Error::IEIncorrect),
+                    _ => return Err(GTPV2Error::IEIncorrect(FTEID)),
                 }
                 Ok(data)
             } else {
-                Err(GTPV2Error::IEInvalidLength)
+                Err(GTPV2Error::IEInvalidLength(FTEID))
             }
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(FTEID))
         }
     }
     
@@ -129,7 +129,7 @@ fn fteid_ie_wrong_flags_unmarshal_test () {
     let encoded:[u8;29]=[0x57, 0x00, 0x19, 0x00, 0x06, 0x27, 0x89, 0x2f, 0x70, 0x8b, 0x07, 0x85, 0xb8, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ];
     //let decoded = Fteid { t:FTEID, length:0x19, ins:0, interface:6, teid: 0x27892f70, ipv4: Some(Ipv4Addr::new(139,7,133,184)), ipv6:Some(Ipv6Addr::new(1,0,0,0,0,0,0,0)) };
     let i = Fteid::unmarshal(&encoded);
-    assert_eq!(i, Err(GTPV2Error::IEIncorrect));
+    assert_eq!(i, Err(GTPV2Error::IEIncorrect(FTEID)));
 }
 
 #[test]

@@ -72,7 +72,7 @@ impl IEs for Cause {
                         data.pce = to_bool((buffer[5]>>2) & 1); 
                         Ok(data)  
                     } else {
-                        Err(GTPV2Error::IEIncorrect)
+                        Err(GTPV2Error::IEIncorrect(CAUSE))
                     }
                 },
                 LONG_CAUSE_LENGTH => {
@@ -84,13 +84,13 @@ impl IEs for Cause {
                         data.offend_ie_type = Some(buffer[6]);
                         Ok(data)   
                     } else {
-                        Err(GTPV2Error::IEIncorrect)
+                        Err(GTPV2Error::IEIncorrect(CAUSE))
                     }
                 },
-                _ => return Err(GTPV2Error::IEIncorrect),
+                _ => return Err(GTPV2Error::IEIncorrect(CAUSE)),
             }
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(CAUSE))
         }    
     }
 
@@ -135,11 +135,11 @@ fn cause_ie_long_unmarshal_test() {
 #[test]
 fn cause_ie_incorrect_length_unmarshal_test() {
     let encoded:[u8;12]=[0x02, 0x00, 0x08, 0x00, 0x10, 0x02, 0x0f, 0x00, 0x00, 0x00, 0x00, 0x00];
-    assert_eq!(Cause::unmarshal(&encoded), Err(GTPV2Error::IEIncorrect));
+    assert_eq!(Cause::unmarshal(&encoded), Err(GTPV2Error::IEIncorrect(CAUSE)));
 }
 
 #[test]
 fn cause_ie_too_incorrect_length_too_small_unmarshal_test() {
     let encoded:[u8;10]=[0x02, 0x00, 0x08, 0x00, 0x10, 0x02, 0x0f, 0x00, 0x00, 0x00];
-    assert_eq!(Cause::unmarshal(&encoded), Err(GTPV2Error::IEIncorrect));
+    assert_eq!(Cause::unmarshal(&encoded), Err(GTPV2Error::IEIncorrect(CAUSE)));
 }

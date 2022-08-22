@@ -42,7 +42,7 @@ impl IEs for Ebi {
             data.value = buffer[4] & 0x0f;
             Ok(data) 
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(EBI))
         }
     }
 

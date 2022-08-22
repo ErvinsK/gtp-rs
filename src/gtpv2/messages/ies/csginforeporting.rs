@@ -45,7 +45,7 @@ impl IEs for CSGInformationReportingAction {
             data.action = buffer[4] & 0b111;
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(CSG_INFO_REPORT))
         }
     }
     

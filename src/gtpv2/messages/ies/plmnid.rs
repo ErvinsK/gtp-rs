@@ -43,7 +43,7 @@ impl IEs for PlmnId {
             (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..7]);
             Ok (data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(PLMNID))
         }
     }
 

@@ -62,7 +62,7 @@ impl IEs for TraceInformation {
             data.trace_collection_ip = Ipv4Addr::from([buffer[34], buffer[35], buffer[36], buffer[37]]);
             Ok (data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(TRACEINFO))
         }
     }
 

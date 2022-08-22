@@ -35,7 +35,7 @@ impl Restriction {
             2 => Ok(Restriction::Public2),
             3 => Ok(Restriction::Private1),
             4 => Ok(Restriction::Private2),
-            _ => Err(GTPV2Error::IEIncorrect),
+            _ => Err(GTPV2Error::IEIncorrect(APNRESTRICTION)),
         }
     }
 }
@@ -78,7 +78,7 @@ impl IEs for ApnRestriction {
             }
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(APNRESTRICTION))
         }
     }
 

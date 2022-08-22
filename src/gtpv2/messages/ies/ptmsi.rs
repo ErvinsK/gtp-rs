@@ -42,7 +42,7 @@ impl IEs for Ptmsi {
             data.ptmsi = u32::from_be_bytes([buffer[4],buffer[5],buffer[6],buffer[7]]);
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(PTMSI))
         }
     }
 

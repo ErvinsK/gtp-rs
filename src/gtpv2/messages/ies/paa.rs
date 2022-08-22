@@ -77,7 +77,7 @@ impl IEs for PdnAddressAllocation {
                         if data.length>=5 {
                             data.ip = PdnAddress::V4(Ipv4Addr::from([buffer[5], buffer[6], buffer[7], buffer[8]]));
                         } else {
-                            return Err(GTPV2Error::IEInvalidLength);
+                            return Err(GTPV2Error::IEInvalidLength(PAA));
                         }
                     },
                     0x02 => {
@@ -87,7 +87,7 @@ impl IEs for PdnAddressAllocation {
                             dst.copy_from_slice(&buffer[6..22]);
                             data.ip = PdnAddress::V6(Ipv6Addr::from(dst), prefix_length);
                         } else { 
-                            return Err(GTPV2Error::IEInvalidLength);
+                            return Err(GTPV2Error::IEInvalidLength(PAA));
                         }   
                         },
                     0x03 => {
@@ -98,18 +98,18 @@ impl IEs for PdnAddressAllocation {
                             let v4addr = Ipv4Addr::from([buffer[22],buffer[23],buffer[24],buffer[25]]);
                             data.ip = PdnAddress::DualStack(v4addr, Ipv6Addr::from(dst), prefix_length); 
                         } else {
-                            return Err(GTPV2Error::IEInvalidLength);
+                            return Err(GTPV2Error::IEInvalidLength(PAA));
                         }
                     },
                     0x04 => data.ip = PdnAddress::NonIp,
-                    _ => return Err(GTPV2Error::IEIncorrect),
+                    _ => return Err(GTPV2Error::IEIncorrect(PAA)),
                 }
                 Ok(data)
             } else {
-                Err(GTPV2Error::IEInvalidLength)
+                Err(GTPV2Error::IEInvalidLength(PAA))
             }
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(PAA))
         }
     }
     

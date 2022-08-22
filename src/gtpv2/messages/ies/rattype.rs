@@ -49,7 +49,7 @@ impl Rat {
             8 => Ok(Rat::Nbiot),
             9 => Ok(Rat::Ltem),
             10 => Ok(Rat::Nr),
-            _ => Err(GTPV2Error::IEIncorrect),
+            _ => Err(GTPV2Error::IEIncorrect(RATTYPE)),
         }
     }
 }      
@@ -92,7 +92,7 @@ impl IEs for RatType {
             }
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(RATTYPE))
         }
     }
 
@@ -121,5 +121,5 @@ fn rattype_ie_unmarshal_test () {
 #[test]
 fn rattype_ie_unknown_rattype_unmarshal_test () {
     let encoded:[u8;5]=[0x52, 0x00, 0x01, 0x00, 0x0f];
-    assert_eq!(RatType::unmarshal(&encoded), Err(GTPV2Error::IEIncorrect));
+    assert_eq!(RatType::unmarshal(&encoded), Err(GTPV2Error::IEIncorrect(RATTYPE)));
 }

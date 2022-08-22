@@ -42,7 +42,7 @@ impl IEs for ChargingCharacteristics {
             data.charging_char = u16::from_be_bytes([buffer[4],buffer[5]]);
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(CHARGINGCHAR))
         }
     }
 

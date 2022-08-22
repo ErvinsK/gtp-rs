@@ -46,7 +46,7 @@ impl IEs for TraceReference {
             data.trace_id = u32::from_be_bytes([0x00, buffer[7],buffer[8],buffer[9]]); 
             Ok (data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(TRACEREF))
         }
     }
 

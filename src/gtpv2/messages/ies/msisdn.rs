@@ -41,14 +41,14 @@ impl IEs for Msisdn {
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4..(data.length+4) as usize].try_into() {
                     Ok(i) => data.msisdn = tbcd_decode(i),
-                    Err(_) => return Err(GTPV2Error::IEIncorrect), 
+                    Err(_) => return Err(GTPV2Error::IEIncorrect(MSISDN)), 
                 }
                 Ok(data)
             } else {
-                Err(GTPV2Error::IEInvalidLength)
+                Err(GTPV2Error::IEInvalidLength(MSISDN))
             }
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(MSISDN))
         }
     }
     

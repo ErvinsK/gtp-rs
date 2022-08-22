@@ -56,7 +56,7 @@ impl IEs for ChangeReportingAction {
             data.action = buffer[4];
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(CHANGE_RPRT))
         }
     }
 

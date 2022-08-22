@@ -42,7 +42,7 @@ impl IEs for SelectionMode {
             data.mode = buffer[4] & 0x03;
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(SELECTION_MODE))
         }
     }
 

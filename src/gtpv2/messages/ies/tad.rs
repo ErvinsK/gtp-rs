@@ -42,10 +42,10 @@ impl IEs for TrafficAggregateDescription {
                 data.tad.extend_from_slice(&buffer[MIN_IE_SIZE..(MIN_IE_SIZE+(data.length as usize))]);
                 Ok(data)
             } else {
-                Err(GTPV2Error::IEInvalidLength)
+                Err(GTPV2Error::IEInvalidLength(TAD))
             }
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(TAD))
         }
     }
 

@@ -42,7 +42,7 @@ impl IEs for HopCounter {
             data.hop_counter = buffer[4];
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(HOP_CNTR))
         }
     }
 

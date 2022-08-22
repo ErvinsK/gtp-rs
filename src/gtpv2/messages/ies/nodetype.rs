@@ -26,7 +26,7 @@ impl Node {
         match i {
             0 => Ok(Node::Mme),
             1 => Ok(Node::Sgsn),
-            _ => Err(GTPV2Error::IEIncorrect),
+            _ => Err(GTPV2Error::IEIncorrect(NODETYPE)),
         }
     }
 }
@@ -69,7 +69,7 @@ impl IEs for NodeType {
             }
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(NODETYPE))
         }
     }
 

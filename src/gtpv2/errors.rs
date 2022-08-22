@@ -10,9 +10,8 @@ pub enum GTPV2Error {
     HeaderTypeMismatch,
     MandatoryHeaderFlagError,
 // GTPv2 IE Errors
-    IETypeMismatch,
-    IEInvalidLength,
-    IEIncorrect,
+    IEInvalidLength(u8),
+    IEIncorrect(u8),
 // GTPv2 Message Errors
     MessageLengthError,
     MessageNotSupported,
@@ -34,9 +33,8 @@ impl Display for GTPV2Error {
             GTPV2Error::HeaderTypeMismatch => write!(f, "Header type mismatch"),
             GTPV2Error::MandatoryHeaderFlagError => write!(f, "Mandatory header flag is not properly set for the particular GTP message"),
 // GTPv2 IE Errors
-            GTPV2Error::IETypeMismatch => write!(f, "IE type mismatch"),
-            GTPV2Error::IEInvalidLength => write!(f, "Invalid IE length"),
-            GTPV2Error::IEIncorrect => write!(f, "Incorrect IE"),
+            GTPV2Error::IEInvalidLength(i) => write!(f, "Invalid IE type {} length", i),
+            GTPV2Error::IEIncorrect(i)  => write!(f, "Incorrect IE type {}", i),
 // GTPv2 Message Errors
             GTPV2Error::MessageLengthError => write!(f, "Message length error"),
             GTPV2Error::MessageMandatoryIEMissing => write!(f, "Mandatory IE missing"),

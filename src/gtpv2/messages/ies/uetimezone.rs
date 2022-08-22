@@ -60,7 +60,7 @@ impl IEs for UeTimeZone {
             data.dst = buffer[5] & 0x07;
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(UETIMEZONE))
         }
     }
 

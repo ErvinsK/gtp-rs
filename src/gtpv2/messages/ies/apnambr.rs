@@ -45,7 +45,7 @@ impl IEs for ApnAmbr {
             data.ambr_dl = u32::from_be_bytes([buffer[8],buffer[9],buffer[10],buffer[11]]);
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(APNAMBR))
         }
     }
 

@@ -72,7 +72,7 @@ impl IEs for BearerQos {
             data.gbr_dl = u64::from_be_bytes([0x00, 0x00, 0x00, buffer[21],buffer[22],buffer[23],buffer[24], buffer[25]]);
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(BEARERQOS))
         }
     }
     

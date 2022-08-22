@@ -46,7 +46,7 @@ impl IEs for Recovery {
             data.recovery = buffer[4];
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength)
+            Err(GTPV2Error::IEInvalidLength(RECOVERY))
         }    
     }
 
@@ -74,6 +74,6 @@ fn recovery_ie_unmarshal_test() {
 #[test]
 fn recovery_ie_unmarshal_fail_test() {
     let encoded:[u8;4]=[0x03, 0x00, 0x01, 0x00];
-    assert_eq!(Recovery::unmarshal(&encoded), Err(GTPV2Error::IEInvalidLength));
+    assert_eq!(Recovery::unmarshal(&encoded), Err(GTPV2Error::IEInvalidLength(RECOVERY)));
 }
 
