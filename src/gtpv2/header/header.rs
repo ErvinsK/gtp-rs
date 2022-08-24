@@ -62,7 +62,7 @@ impl Gtpv2Header {
                     }
                     data.msgtype = buffer[1];
                     data.length = u16::from_be_bytes([buffer[2],buffer[3]]);
-                    if data.length < (MIN_HEADER_LENGTH as u16) {
+                    if data.length < (MIN_HEADER_LENGTH-4) as u16 {
                         return Err(GTPV2Error::MessageInvalidLength(0));
                     }
                     data.sqn = u32::from_be_bytes([0x00,buffer[4],buffer[5],buffer[6]]);
@@ -75,9 +75,6 @@ impl Gtpv2Header {
                         }
                         data.msgtype = buffer[1];
                         data.length = u16::from_be_bytes([buffer[2],buffer[3]]);
-                        if data.length < (MAX_HEADER_LENGTH as u16) {
-                            return Err(GTPV2Error::MessageInvalidLength(0));
-                        }
                         data.teid = Some(u32::from_be_bytes([buffer[4],buffer[5],buffer[6],buffer[7]]));
                         data.sqn = u32::from_be_bytes([0x00,buffer[8],buffer[9],buffer[10]]);
                         match (buffer[0]>>2) & 0x01 {

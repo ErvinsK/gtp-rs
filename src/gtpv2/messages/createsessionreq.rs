@@ -2,15 +2,77 @@ use crate::gtpv2::{header::*, messages::{commons::*,ies::*}, errors::*, utils::*
 
 // According to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-pub const ECHO_REQUEST:u8 = 1;
+pub const CREATE_SESSION_REQ:u8 = 32;
 
-// Definition of GTPv2-C Echo Request Message
+// Definition of GTPv2-C Create Session Request Message
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct EchoRequest {
+pub struct CreateSessionRequest {
     pub header:Gtpv2Header,
-    pub recovery: Recovery,
-    pub sending_node_features: Option<NodeFeatures>,
+    pub imsi: Option<Imsi>,
+    pub msisdn: Option<Msisdn>,
+    pub mei: Option<Mei>,
+    pub uli: Option<Uli>,
+    pub servingnetwork: Option<ServingNetwork>,
+    pub rattype: RatType,
+    pub indication: Option<Indication>,
+    pub fteid_control: Fteid,
+    pub pgw_addr_control: Option<Fteid>,
+    pub apn: Apn,
+    pub selectionmode: Option<SelectionMode>,
+    pub pdntype: Option<PdnType>,
+    pub paa:Option<PdnAddressAllocation>,
+    pub max_apnrestriction: Option<ApnRestriction>,
+    pub apnambr: Option<ApnAmbr>,
+    pub linked_ebi: Option<Ebi>,
+    // pub twmi: Option<Twmi>
+    pub pco: Option<Pco>,
+    // pub bearer_0: BearerContext
+    // pub bearer_1: Option<BearerContext>
+    pub traceinfo: Option<TraceInformation>,
+    pub recovery: Option<Recovery>,
+    // pub mme_fqcsid: Option<Fqcsid>,
+    // pub sgw_fqcsid: Option<Fqcsid>,
+    // pub epdg_fqcsid: Option<Fqcsid>,
+    // pub twan_fqcsid: Option<Fqcsid>,
+    pub uetimezone: Option<UeTimeZone>,
+    pub uci: Option<Uci>,
+    pub chargingchar: Option<ChargingCharacteristics>,
+    // pub mme_ldn: Option<Ldn>,
+    // pub sgw_ldn: Option<Ldn>,
+    // pub epdg_ldn: Option<Ldn>,
+    // pub twan_ldn: Option<Ldn>,
+    // pub spi: Option<Spi>,
+    pub ue_localip: Option<IpAddress>,
+    pub ue_udpport: Option<PortNumber>,
+    // pub apco: Option<AddPco>,
+    pub henb_localip: Option<IpAddress>,
+    pub henb_udpport: Option<PortNumber>,
+    pub mme_id: Option<IpAddress>,
+    // pub twan_id: Option<TwanIdentifier>,
+    pub epdg_ip: Option<IpAddress>,
+    // pub cnose: Option<CNOperatorSelectionEntity>,
+    // pub presence_reporting: Option<PresenceReportingAreaInformation>,
+    // pub mme_overload: Option<OverloadControlInfo>,
+    // pub sgw_overload: Option<OverloadControlInfo>,
+    // pub twan_epdg_overload: Option<OverloadControlInfo>,
+    // pub origination_timestamp: Option<MillisecondTimeStamp>,
+    // pub max_waittime: Option<IntegerNumber>,
+    // pub wlan_loc: Option<TwanId>,
+    // pub wlan_loc_timestamp: Option<TwanIdTimeStamp>,
+    // pub nbifom: Option<Fcontainer>,
+    // pub remote_ue_ctx_connected: Option<RemoteUeContext>,
+    // pub aaaserver_id: Option<NodeIdentifier>,
+    // pub epco: Option<Epco>,
+    // pub serv_plmn_ratecontrol: Option<ServingPlmnRateControl>,
+    // pub mo_exception_data_counter: Option<Counter>,
+    pub ue_tcpport: Option<PortNumber>,
+    // pub mappedue_usage_type: Option<MappedUeUsageType>,
+    pub uli_for_sgw: Option<Uli>,
+    // pub sgwu_node: Option<Fqdn>,
+    // pub secondary_rat_usage_report: Option<SecondaryRatUsageDataReport>,
+    // pub up_function_selection_flags: Option<UpFunctionSelectionIndicationFlags>,
+    // pub apn_rate_control_status: Option<ApnRateControlStatus>,
     pub private_ext:Option<PrivateExtension>,
 }
 

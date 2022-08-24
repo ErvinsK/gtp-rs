@@ -42,9 +42,11 @@ pub use {
     csginforeporting::*,
     unknown::*,
     nodefeatures::*,
+    ie::*,
 };
 
 mod commons;
+mod ie;
 mod imsi;
 mod cause;
 mod recovery;

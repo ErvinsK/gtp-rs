@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use crate::gtpv2::errors::*;
 
 // Common traits of GTPv2 Messages
