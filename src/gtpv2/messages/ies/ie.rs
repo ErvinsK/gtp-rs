@@ -27,14 +27,14 @@ pub enum InformationElement {
     // Global CN-id
     // S103 PDN Data Forwarding Info
     // S1-U Data Forwarding Info
-    // Delay Value
+    DelayValue(DelayValue),
     BearerContext(GroupedIe),
     ChargingId(ChargingId),
     ChargingCharacteristics(ChargingCharacteristics),
     TraceInformation(TraceInformation),
-    // Bearer Flags
+    BearerFlags(BearerFlags),
     PdnType(PdnType),
-    // Procedure Transaction ID
+    Pti(Pti),
     // MM Context (GSM Keys and Triplets)
     // MM Context (UMTS Keys, Used Chiper, and Quintuplets)
     // MM Context (GSM Keys, Used Chiper, and Quintuplets)
@@ -42,7 +42,7 @@ pub enum InformationElement {
     // MM Context (EPS Security Context, Quadruplets and Quintuplets)
     // MM Context (UMTS Key, Quadruplets and Quintuplets)
     PdnConnection(GroupedIe),
-    // PDU Numbers
+    PduNumbers(PduNumbers),
     Ptmsi(Ptmsi),
     PtmsiSignature(PtmsiSignature),
     HopCounter(HopCounter),
@@ -55,7 +55,7 @@ pub enum InformationElement {
     PlmnId(PlmnId),
     // Target Identification
     PacketFlowId(PacketFlowId),
-    // RAB Context
+    RabContext(RabContext), 
     // Source RNC PDCP Context Info
     PortNumber(PortNumber),
     ApnRestriction(ApnRestriction),
@@ -66,7 +66,7 @@ pub enum InformationElement {
     // Channel Needed
     // eMLPP Priority
     NodeType(NodeType),
-    // FQDN
+    Fqdn(Fqdn),
     // Transaction Identifier
     // MBMS Session Duration
     // MBMS Service Area
@@ -74,13 +74,13 @@ pub enum InformationElement {
     // MBMS Flow Identifier
     // MBMS IP Multicast Distribution
     // MBMS Distribution Acknowledge
-    // RFSP Index
+    RfspIndex(RfspIndex),
     Uci(Uci),
     CSGInformationReportingAction(CSGInformationReportingAction),
     // CSG ID
     // CSG Membership Indication
-    // Service Indicator
-    // Detach Type
+    ServiceIndicator(ServiceIndicator),
+    DetachType(DetachType),
     // Local Distiguished Name
     NodeFeatures(NodeFeatures),
     // MBMS Time to Data Transfer
@@ -99,7 +99,7 @@ pub enum InformationElement {
     // Change to Report Flags
     // Action Indication
     // TWAN Identifier
-    // ULI Timestamp
+    UliTimestamp(UliTimestamp),
     // MBMS Flags
     // RAN/NAS Cause
     // CN Operator Selection Entity
@@ -169,14 +169,14 @@ impl InformationElement {
             // Global CN-id
             // S103 PDN Data Forwarding Info
             // S1-U Data Forwarding Info
-            // Delay Value
+            InformationElement::DelayValue(i) => i.marshal(buffer), 
             InformationElement::BearerContext(i) => i.marshal(buffer),
             InformationElement::ChargingId(i) => i.marshal(buffer),
             InformationElement::ChargingCharacteristics(i) => i.marshal(buffer),
             InformationElement::TraceInformation(i) => i.marshal(buffer),
-            // Bearer Flags
+            InformationElement::BearerFlags(i) => i.marshal(buffer),
             InformationElement::PdnType(i) => i.marshal(buffer),
-            // Procedure Transaction ID
+            InformationElement::Pti(i) => i.marshal(buffer),
             // MM Context (GSM Keys and Triplets)
             // MM Context (UMTS Keys, Used Chiper, and Quintuplets)
             // MM Context (GSM Keys, Used Chiper, and Quintuplets)
@@ -184,7 +184,7 @@ impl InformationElement {
             // MM Context (EPS Security Context, Quadruplets and Quintuplets)
             // MM Context (UMTS Key, Quadruplets and Quintuplets)
             InformationElement::PdnConnection(i) => i.marshal(buffer),
-            // PDU Numbers
+            InformationElement::PduNumbers(i) => i.marshal(buffer),
             InformationElement::Ptmsi(i) => i.marshal(buffer),
             InformationElement::PtmsiSignature(i) => i.marshal(buffer),
             InformationElement::HopCounter(i) => i.marshal(buffer),
@@ -197,7 +197,7 @@ impl InformationElement {
             InformationElement::PlmnId(i) => i.marshal(buffer),
             // Target Identification
             InformationElement::PacketFlowId(i) => i.marshal(buffer),
-            // RAB Context
+            InformationElement::RabContext(i) => i.marshal(buffer),
             // Source RNC PDCP Context Info
             InformationElement::PortNumber(i) => i.marshal(buffer),
             InformationElement::ApnRestriction(i) => i.marshal(buffer),
@@ -208,7 +208,7 @@ impl InformationElement {
             // Channel Needed
             // eMLPP Priority
             InformationElement::NodeType(i) => i.marshal(buffer),
-            // FQDN
+            InformationElement::Fqdn(i) => i.marshal(buffer),
             // Transaction Identifier
             // MBMS Session Duration
             // MBMS Service Area
@@ -216,13 +216,13 @@ impl InformationElement {
             // MBMS Flow Identifier
             // MBMS IP Multicast Distribution
             // MBMS Distribution Acknowledge
-            // RFSP Index
+            InformationElement::RfspIndex(i) => i.marshal(buffer),
             InformationElement::Uci(i) => i.marshal(buffer),
             InformationElement::CSGInformationReportingAction(i) => i.marshal(buffer),
             // CSG ID
             // CSG Membership Indication
-            // Service Indicator
-            // Detach Type
+            InformationElement::ServiceIndicator(i) => i.marshal(buffer),
+            InformationElement::DetachType(i) => i.marshal(buffer),
             // Local Distiguished Name
             InformationElement::NodeFeatures(i) => i.marshal(buffer),
             // MBMS Time to Data Transfer
@@ -241,7 +241,7 @@ impl InformationElement {
             // Change to Report Flags
             // Action Indication
             // TWAN Identifier
-            // ULI Timestamp
+            InformationElement::UliTimestamp(i) => i.marshal(buffer),
             // MBMS Flags
             // RAN/NAS Cause
             // CN Operator Selection Entity
@@ -484,7 +484,15 @@ impl InformationElement {
                     // Global CN-id
                     // S103 PDN Data Forwarding Info
                     // S1-U Data Forwarding Info
-                    // Delay Value
+                    92 => {
+                        match DelayValue::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::DelayValue(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     93 => {
                         match GroupedIe::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
@@ -521,7 +529,15 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Bearer Flags
+                    97 => {
+                        match BearerFlags::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::BearerFlags(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     99 => {
                         match PdnType::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
@@ -531,7 +547,15 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Procedure Transaction ID
+                    100 => {
+                        match Pti::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Pti(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // MM Context (GSM Keys and Triplets)
                     // MM Context (UMTS Keys, Used Chiper, and Quintuplets)
                     // MM Context (GSM Keys, Used Chiper, and Quintuplets)
@@ -547,8 +571,15 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // PDN Connection
-                    // PDU Numbers
+                    110 => {
+                        match PduNumbers::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::PduNumbers(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     111 => {
                         match Ptmsi::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
@@ -668,7 +699,15 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // FQDN
+                    136 => {
+                        match Fqdn::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Fqdn(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Transaction Identifier
                     // MBMS Session Duration
                     // MBMS Service Area
@@ -676,7 +715,15 @@ impl InformationElement {
                     // MBMS Flow Identifier
                     // MBMS IP Multicast Distribution
                     // MBMS Distribution Acknowledge
-                    // RFSP Index
+                    144 => {
+                        match RfspIndex::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::RfspIndex(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     145 => {
                         match Uci::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
@@ -697,8 +744,24 @@ impl InformationElement {
                     },
                     // CSG ID
                     // CSG Membership Indication
-                    // Service Indicator
-                    // Detach Type
+                    149 => {
+                        match ServiceIndicator::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::ServiceIndicator(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    150 => {
+                        match DetachType::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::DetachType(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Local Distiguished Name
                     // Node Features
                     // MBMS Time to Data Transfer
@@ -717,7 +780,15 @@ impl InformationElement {
                     // Change to Report Flags
                     // Action Indication
                     // TWAN Identifier
-                    // ULI Timestamp
+                    170 => {
+                        match UliTimestamp::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::UliTimestamp(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // MBMS Flags
                     // RAN/NAS Cause
                     // CN Operator Selection Entity

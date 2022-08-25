@@ -47,7 +47,7 @@ impl IEs for HopCounter {
     }
 
     fn len (&self) -> usize {
-       HOP_CNTR_LENGTH+MIN_IE_SIZE 
+       (self.length as usize)+MIN_IE_SIZE 
     }
 
 }

@@ -47,7 +47,7 @@ impl IEs for PtmsiSignature {
     }
 
     fn len (&self) -> usize {
-       PTMSI_SIG_LENGTH+MIN_IE_SIZE 
+       (self.length as usize)+MIN_IE_SIZE 
     }
 
 }

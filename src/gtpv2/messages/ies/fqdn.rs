@@ -1,28 +1,28 @@
-// APN IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+// Fully Qualified Domain Name (FQDN) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
 use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
 
-// APN IE Type
+// FQDN IE Type
 
-pub const APN:u8 = 71;
+pub const FQDN:u8 = 136;
 
-// APN IE implementation
+// FQDN IE implementation
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Apn {
+pub struct Fqdn {
     pub t:u8,
     pub length:u16,
     pub ins:u8,
     pub name:String,
 }
 
-impl Default for Apn {
+impl Default for Fqdn {
     fn default() -> Self {
-        Apn { t: APN, length:1, ins:0, name: "".to_string() }
+        Fqdn { t: FQDN, length:1, ins:0, name: "".to_string() }
     }
 }
 
-impl IEs for Apn {
+impl IEs for Fqdn {
     fn marshal (&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie:Vec<u8> = vec!();  
         buffer_ie.push(self.t);
@@ -41,7 +41,7 @@ impl IEs for Apn {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE {
-            let mut data=Apn::default();
+            let mut data=Fqdn::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
             data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
@@ -62,10 +62,10 @@ impl IEs for Apn {
                 data.name = p.into_iter().collect();
                 Ok(data) 
             } else {
-                Err(GTPV2Error::IEInvalidLength(APN))
+                Err(GTPV2Error::IEInvalidLength(FQDN))
             }
         } else {
-            Err(GTPV2Error::IEInvalidLength(APN))
+            Err(GTPV2Error::IEInvalidLength(FQDN))
         }
     }
 
@@ -75,17 +75,21 @@ impl IEs for Apn {
 }
 
 #[test]
-fn apn_ie_marshal_test () {
-    let encoded:[u8;17]=[0x47, 0x00, 0x0d, 0x00, 0x04, 0x74, 0x65, 0x73, 0x74, 0x03, 0x6e, 0x65, 0x74, 0x03, 0x63, 0x6f, 0x6d];
-    let decoded = Apn { t:APN, length: 13, ins:0, name: "test.net.com".to_string() };
+fn fqdn_ie_marshal_test () {
+    let encoded:[u8;57]=[0x88, 0x00, 0x35, 0x00, 0x05, 0x74, 0x6f, 0x70, 0x6f, 0x6e, 0x05, 0x6e, 0x6f, 0x64, 0x65, 0x73, 0x03, 0x70, 0x67, 0x77,
+                         0x02, 0x73, 0x65, 0x03, 0x65, 0x70, 0x63, 0x05, 0x6d, 0x6e, 0x63, 0x30, 0x35, 0x06, 0x6d, 0x63, 0x63, 0x32, 0x33, 0x34,
+                         0x0b, 0x33, 0x67, 0x70, 0x70, 0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x03, 0x6f, 0x72, 0x67, 0x00];
+    let decoded = Fqdn { t:FQDN, length: 53, ins:0, name: "topon.nodes.pgw.se.epc.mnc05.mcc234.3gppnetwork.org.".to_string() };
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
     assert_eq!(buffer,encoded);
 }
 
 #[test]
-fn apn_ie_unmarshal_test () {
-   let encoded:[u8;17]=[0x47, 0x00, 0x0d, 0x00, 0x04, 0x74, 0x65, 0x73, 0x74, 0x03, 0x6e, 0x65, 0x74, 0x03, 0x63, 0x6f, 0x6d];
-    let decoded = Apn { t:APN, length: 13, ins:0, name: "test.net.com".to_string() };
-    assert_eq!(Apn::unmarshal(&encoded).unwrap(), decoded);
+fn fqdn_ie_unmarshal_test () {
+    let encoded:[u8;57]=[0x88, 0x00, 0x35, 0x00, 0x05, 0x74, 0x6f, 0x70, 0x6f, 0x6e, 0x05, 0x6e, 0x6f, 0x64, 0x65, 0x73, 0x03, 0x70, 0x67, 0x77,
+                         0x02, 0x73, 0x65, 0x03, 0x65, 0x70, 0x63, 0x05, 0x6d, 0x6e, 0x63, 0x30, 0x35, 0x06, 0x6d, 0x63, 0x63, 0x32, 0x33, 0x34,
+                         0x0b, 0x33, 0x67, 0x70, 0x70, 0x6e, 0x65, 0x74, 0x77, 0x6f, 0x72, 0x6b, 0x03, 0x6f, 0x72, 0x67, 0x00];
+    let decoded = Fqdn { t:FQDN, length: 53, ins:0, name: "topon.nodes.pgw.se.epc.mnc05.mcc234.3gppnetwork.org.".to_string() };
+    assert_eq!(Fqdn::unmarshal(&encoded).unwrap(), decoded);
 }

@@ -65,7 +65,7 @@ impl IEs for UeTimeZone {
     }
 
     fn len (&self) -> usize {
-       UETIMEZONE_LENGTH+MIN_IE_SIZE 
+       (self.length as usize)+MIN_IE_SIZE 
     }
 
 }

@@ -44,6 +44,15 @@ pub use {
     nodefeatures::*,
     ie::*,
     groupedie::*,
+    delayvalue::*,
+    bearerflags::*,
+    pdunumbers::*,
+    rabcontext::*,
+    fqdn::*,
+    rfspindex::*,
+    serviceindicator::*,
+    datachtype::*,
+    ulitimestamp::*,
 };
 
 mod commons;
@@ -91,3 +100,12 @@ mod uci;
 mod csginforeporting;
 mod unknown;
 mod nodefeatures;
+mod delayvalue;
+mod bearerflags;
+mod pdunumbers;
+mod rabcontext;
+mod fqdn;
+mod rfspindex;
+mod serviceindicator;
+mod datachtype;
+mod ulitimestamp;
