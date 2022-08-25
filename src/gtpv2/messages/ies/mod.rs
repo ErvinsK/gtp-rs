@@ -43,10 +43,12 @@ pub use {
     unknown::*,
     nodefeatures::*,
     ie::*,
+    groupedie::*,
 };
 
 mod commons;
 mod ie;
+mod groupedie;
 mod imsi;
 mod cause;
 mod recovery;

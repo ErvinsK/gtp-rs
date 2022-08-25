@@ -28,7 +28,7 @@ pub enum InformationElement {
     // S103 PDN Data Forwarding Info
     // S1-U Data Forwarding Info
     // Delay Value
-    BearerContext(Vec<InformationElement>),
+    BearerContext(GroupedIe),
     ChargingId(ChargingId),
     ChargingCharacteristics(ChargingCharacteristics),
     TraceInformation(TraceInformation),
@@ -41,7 +41,7 @@ pub enum InformationElement {
     // MM Context (UMTS Keys and Quintuplets)
     // MM Context (EPS Security Context, Quadruplets and Quintuplets)
     // MM Context (UMTS Key, Quadruplets and Quintuplets)
-    // PDN Connection
+    PdnConnection(GroupedIe),
     // PDU Numbers
     Ptmsi(Ptmsi),
     PtmsiSignature(PtmsiSignature),
@@ -109,8 +109,8 @@ pub enum InformationElement {
     // Presence Reporting Area Action
     // Presence Reporting Area Information
     // TWAN Identifier Timestamp
-    // Overload Control Information
-    // Load Control Information
+    OverloadControlInfo(GroupedIe),
+    LoadControlInfo(GroupedIe),
     // Metric
     // Sequence Number
     // APN and Relative Capacity
@@ -120,11 +120,11 @@ pub enum InformationElement {
     // Millisecond Time Stamp
     // Monitoring Event Information
     // ECGI List
-    // Remote UE Context
+    RemoteUeContext(GroupedIe),
     // Remote User ID
     // Remote UE IP Information
     // CIoT Optimization Support Indication
-    // SCEF PDN Connection
+    ScefPdnConnection(GroupedIe),
     // Header Compression Configuration
     // Extended PCO
     // Serving PLMN Rate Control
@@ -138,6 +138,7 @@ pub enum InformationElement {
     // Monitoring Event Extension Information
     // Special IE type for IE Type Extension
     PrivateExtension(PrivateExtension),
+    Unknown(Unknown),
 }
 
 impl InformationElement {
@@ -169,11 +170,7 @@ impl InformationElement {
             // S103 PDN Data Forwarding Info
             // S1-U Data Forwarding Info
             // Delay Value
-            InformationElement::BearerContext(i) => {
-                for k in i.iter() {
-                    k.clone().marshal(buffer);
-                }
-            },
+            InformationElement::BearerContext(i) => i.marshal(buffer),
             InformationElement::ChargingId(i) => i.marshal(buffer),
             InformationElement::ChargingCharacteristics(i) => i.marshal(buffer),
             InformationElement::TraceInformation(i) => i.marshal(buffer),
@@ -186,7 +183,7 @@ impl InformationElement {
             // MM Context (UMTS Keys and Quintuplets)
             // MM Context (EPS Security Context, Quadruplets and Quintuplets)
             // MM Context (UMTS Key, Quadruplets and Quintuplets)
-            // PDN Connection
+            InformationElement::PdnConnection(i) => i.marshal(buffer),
             // PDU Numbers
             InformationElement::Ptmsi(i) => i.marshal(buffer),
             InformationElement::PtmsiSignature(i) => i.marshal(buffer),
@@ -254,8 +251,8 @@ impl InformationElement {
             // Presence Reporting Area Action
             // Presence Reporting Area Information
             // TWAN Identifier Timestamp
-            // Overload Control Information
-            // Load Control Information
+            InformationElement::OverloadControlInfo(i) => i.marshal(buffer),
+            InformationElement::LoadControlInfo(i) => i.marshal(buffer),
             // Metric
             // Sequence Number
             // APN and Relative Capacity
@@ -266,10 +263,11 @@ impl InformationElement {
             // Monitoring Event Information
             // ECGI List
             // Remote UE Context
+            InformationElement::RemoteUeContext(i) => i.marshal(buffer),
             // Remote User ID
             // Remote UE IP Information
             // CIoT Optimization Support Indication
-            // SCEF PDN Connection
+            InformationElement::ScefPdnConnection(i) => i.marshal(buffer),
             // Header Compression Configuration
             // Extended PCO
             // Serving PLMN Rate Control
@@ -283,6 +281,7 @@ impl InformationElement {
             // Monitoring Event Extension Information
             // Special IE type for IE Type Extension
             InformationElement::PrivateExtension(i) => i.marshal(buffer),  
+            InformationElement::Unknown(i) => i.marshal(buffer),
         }
     }
 
@@ -486,7 +485,15 @@ impl InformationElement {
                     // S103 PDN Data Forwarding Info
                     // S1-U Data Forwarding Info
                     // Delay Value
-                    // Bearer Context
+                    93 => {
+                        match GroupedIe::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::BearerContext(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     94 => {
                         match ChargingId::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
@@ -531,6 +538,15 @@ impl InformationElement {
                     // MM Context (UMTS Keys and Quintuplets)
                     // MM Context (EPS Security Context, Quadruplets and Quintuplets)
                     // MM Context (UMTS Key, Quadruplets and Quintuplets)
+                    109 => {
+                        match GroupedIe::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::PdnConnection(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // PDN Connection
                     // PDU Numbers
                     111 => {
@@ -712,6 +728,24 @@ impl InformationElement {
                     // Presence Reporting Area Information
                     // TWAN Identifier Timestamp
                     // Overload Control Information
+                    180 => {
+                        match GroupedIe::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::BearerContext(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    }, 
+                    181 => {
+                        match GroupedIe::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::BearerContext(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Load Control Information
                     // Metric
                     // Sequence Number
@@ -727,6 +761,15 @@ impl InformationElement {
                     // Remote UE IP Information
                     // CIoT Optimization Support Indication
                     // SCEF PDN Connection
+                    195 => {
+                        match GroupedIe::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::ScefPdnConnection(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Header Compression Configuration
                     // Extended PCO
                     // Serving PLMN Rate Control
@@ -748,7 +791,15 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    _ => return Err(GTPV2Error::IEIncorrect(buffer[0])),
+                    _ => {
+                        match Unknown::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Unknown(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                 }
             }
             Ok(ies)
