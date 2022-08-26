@@ -65,6 +65,12 @@ pub use {
     apnrelativecapacity::*,
     wlanoffloadindication::*,
     epco::*,
+    mueut::*,
+    counter::*,
+    secondaryratudr::*,
+    maxpacketlossrate::*,
+    apnratecontrolstatus::*,
+    ciotoptimizationssupport::*,
 };
 
 mod commons;
@@ -133,3 +139,9 @@ mod sqn;
 mod apnrelativecapacity;
 mod wlanoffloadindication;
 mod epco;
+mod mueut;
+mod counter;
+mod secondaryratudr;
+mod maxpacketlossrate;
+mod apnratecontrolstatus;
+mod ciotoptimizationssupport;

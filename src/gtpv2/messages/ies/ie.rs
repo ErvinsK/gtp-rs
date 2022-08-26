@@ -123,17 +123,17 @@ pub enum InformationElement {
     RemoteUeContext(GroupedIe),
     // Remote User ID
     // Remote UE IP Information
-    // CIoT Optimization Support Indication
+    CIoTOptimizationSupportIndication(CIoTOptimizationSupportIndication),
     ScefPdnConnection(GroupedIe),
     // Header Compression Configuration
     Epco(Epco),
     // Serving PLMN Rate Control
-    // Counter
-    // Mapped UE Usage Type
-    // Secondary UE Usage Type
+    Counter(Counter),
+    MappedUeUsageType(MappedUeUsageType),
+    SecondaryRatUsageDataReport(SecondaryRatUsageDataReport),
     UpFunctionSelectionIndicationFlags(UpFunctionSelectionIndicationFlags),
-    // Max Packet Loss Rate
-    // APN Rate Control Status
+    MaxPacketLossRate(MaxPacketLossRate),
+    ApnRateControlStatus(ApnRateControlStatus),
     // Extended Trace Information
     // Monitoring Event Extension Information
     // Special IE type for IE Type Extension
@@ -263,22 +263,21 @@ impl InformationElement {
             // Millisecond Time Stamp
             // Monitoring Event Information
             // ECGI List
-            // Remote UE Context
             InformationElement::RemoteUeContext(i) => i.marshal(buffer),
             // Remote User ID
             // Remote UE IP Information
-            // CIoT Optimization Support Indication
+            InformationElement::CIoTOptimizationSupportIndication(i) => i.marshal(buffer),
             InformationElement::ScefPdnConnection(i) => i.marshal(buffer),
             // Header Compression Configuration
             InformationElement::Epco(i) => i.marshal(buffer),
             // Extended PCO
             // Serving PLMN Rate Control
-            // Counter
-            // Mapped UE Usage Type
-            // Secondary UE Usage Type
+            InformationElement::Counter(i) => i.marshal(buffer),
+            InformationElement::MappedUeUsageType(i) => i.marshal(buffer),
+            InformationElement::SecondaryRatUsageDataReport(i) => i.marshal(buffer),
             InformationElement::UpFunctionSelectionIndicationFlags(i) => i.marshal(buffer),
-            // Max Packet Loss Rate
-            // APN Rate Control Status
+            InformationElement::MaxPacketLossRate(i) => i.marshal(buffer),
+            InformationElement::ApnRateControlStatus(i) => i.marshal(buffer),
             // Extended Trace Information
             // Monitoring Event Extension Information
             // Special IE type for IE Type Extension
@@ -907,12 +906,27 @@ impl InformationElement {
                     // Millisecond Time Stamp
                     // Monitoring Event Information
                     // ECGI List
-                    // Remote UE Context
+                    191 => {             // Remote UE Context   
+                        match GroupedIe::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::ScefPdnConnection(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Remote User ID
                     // Remote UE IP Information
-                    // CIoT Optimization Support Indication
-                    // SCEF PDN Connection
-                    195 => {
+                    194 => {
+                        match CIoTOptimizationSupportIndication::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::CIoTOptimizationSupportIndication(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    195 => {                // SCEF PDN Connection
                         match GroupedIe::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
@@ -932,9 +946,33 @@ impl InformationElement {
                         }
                     },
                     // Serving PLMN Rate Control
-                    // Counter
-                    // Mapped UE Usage Type
-                    // Secondary UE Usage Type
+                    199 => {
+                        match Counter::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Counter(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    200 => {
+                        match MappedUeUsageType::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::MappedUeUsageType(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    201 => {
+                        match SecondaryRatUsageDataReport::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::SecondaryRatUsageDataReport(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     202 => {
                         match UpFunctionSelectionIndicationFlags::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
@@ -944,8 +982,24 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Max Packet Loss Rate
-                    // APN Rate Control Status
+                    203 => {
+                        match MaxPacketLossRate::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::MaxPacketLossRate(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    204 => {
+                        match ApnRateControlStatus::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::ApnRateControlStatus(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Extended Trace Information
                     // Monitoring Event Extension Information
                     // Special IE type for IE Type Extension

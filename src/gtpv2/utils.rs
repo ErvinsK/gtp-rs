@@ -133,3 +133,23 @@ pub fn check_tliv_ie_buffer (length:u16, buffer:&[u8]) -> bool {
         false
     }
 }
+
+pub trait FromSlice {
+    fn from_slice(i:&[u8]) -> Self;
+}
+
+impl FromSlice for u32 {
+    fn from_slice (i:&[u8]) -> u32 {
+        let mut dst = [0;4];
+        dst.copy_from_slice(&i[..4]);
+        u32::from_be_bytes(dst)
+    }
+}
+
+impl FromSlice for u64 {
+    fn from_slice(i:&[u8]) -> Self {
+        let mut dst = [0;8];
+        dst.copy_from_slice(&i[..8]);
+        u64::from_be_bytes(dst)
+    }
+}
