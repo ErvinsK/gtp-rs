@@ -1,0 +1,69 @@
+// TWAN Identifier Timestamp IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+
+// TWAN Identifier Timestamp IE Type
+
+pub const TWAN_ID_TIMESTAMP:u8 = 179;
+pub const TWAN_ID_TIMESTAMP_LENGTH:usize = 4;
+
+// TWAN Identifier Timestamp IE implementation 
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct TwanIdTimestamp {
+    pub t:u8,
+    pub length:u16,
+    pub ins:u8,
+    pub timestamp:u32,          //  Epoch Era 0 - 00:00:00 on January 1, 1900
+}
+
+impl Default for TwanIdTimestamp {
+    fn default() -> TwanIdTimestamp {
+        TwanIdTimestamp { t: TWAN_ID_TIMESTAMP, length:TWAN_ID_TIMESTAMP_LENGTH as u16, ins:0, timestamp:0 }        
+    }
+}
+
+impl IEs for TwanIdTimestamp {
+    fn marshal (&self, buffer: &mut Vec<u8>) {
+        let mut buffer_ie:Vec<u8> = vec!();  
+        buffer_ie.push(self.t);
+        buffer_ie.extend_from_slice(&self.length.to_be_bytes());
+        buffer_ie.push(self.ins);
+        buffer_ie.extend_from_slice(&u32::to_be_bytes(self.timestamp));
+        set_tliv_ie_length(&mut buffer_ie);
+        buffer.append(&mut buffer_ie);
+    }
+
+    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
+        if buffer.len()>=TWAN_ID_TIMESTAMP_LENGTH+MIN_IE_SIZE {
+            let mut data = TwanIdTimestamp::default();
+            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            data.ins = buffer[3];
+            data.timestamp = u32::from_be_bytes([buffer[4],buffer[5],buffer[6],buffer[7]]);
+            Ok(data)
+        } else {
+            Err(GTPV2Error::IEInvalidLength(TWAN_ID_TIMESTAMP))
+        }
+    }
+    
+    fn len (&self) -> usize {
+       (self.length as usize) + MIN_IE_SIZE 
+    }
+}
+
+#[test]
+fn twan_id_timestamp_ie_unmarshal_test () {
+    let encoded:[u8;8]=[0xb3, 0x00, 0x04, 0x00, 0xee, 0x6b, 0x28, 0x00];
+    let decoded = TwanIdTimestamp { t:TWAN_ID_TIMESTAMP, length: TWAN_ID_TIMESTAMP_LENGTH as u16, ins:0, timestamp: 4000000000 };
+    let i = TwanIdTimestamp::unmarshal(&encoded);
+    assert_eq!(i.unwrap(), decoded);
+}
+
+#[test]
+fn twan_id_timestamp_ie_marshal_test () {
+    let encoded:[u8;8]=[0xb3, 0x00, 0x04, 0x00, 0xee, 0x6b, 0x28, 0x00];
+    let decoded = TwanIdTimestamp { t:TWAN_ID_TIMESTAMP, length: TWAN_ID_TIMESTAMP_LENGTH as u16, ins:0, timestamp: 4000000000 };
+    let mut buffer:Vec<u8>=vec!();
+    decoded.marshal(&mut buffer);
+    assert_eq!(buffer, encoded);
+}

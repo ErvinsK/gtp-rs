@@ -92,29 +92,29 @@ pub enum InformationElement {
     // Additional MM context SRVCC
     // Additional flags SRVCC
     // MDT Configuration
-    // Additional PCO
+    Apco(Apco),
     // Absolute Time of MBMS Data Transfer
-    // H(e)NB Information Reporting
+    HenbInfoReporting(HenbInfoReporting),
     // IPv4 Configuration Parameters (IP4CP)
-    // Change to Report Flags
-    // Action Indication
+    ChangeToReportFlags(ChangeToReportFlags),
+    ActionIndication(ActionIndication),
     // TWAN Identifier
     UliTimestamp(UliTimestamp),
     // MBMS Flags
     // RAN/NAS Cause
-    // CN Operator Selection Entity
+    CnOperatorSelectionEntity(CnOperatorSelectionEntity),
     // Trusted WLAN Mode Indication
     // Node Number
     // Node Identifier
     // Presence Reporting Area Action
     // Presence Reporting Area Information
-    // TWAN Identifier Timestamp
+    TwanIdTimeStamp(TwanIdTimestamp),
     OverloadControlInfo(GroupedIe),
     LoadControlInfo(GroupedIe),
-    // Metric
-    // Sequence Number
-    // APN and Relative Capacity
-    // WLAN Offloadability Indication
+    Metric(Metric),
+    Sqn(Sqn),
+    ApnRelativeCapacity(ApnRelativeCapacity),
+    WlanOffloadIndication(WlanOffloadIndication),
     // Paging and Service Information
     // Integer Number
     // Millisecond Time Stamp
@@ -126,12 +126,12 @@ pub enum InformationElement {
     // CIoT Optimization Support Indication
     ScefPdnConnection(GroupedIe),
     // Header Compression Configuration
-    // Extended PCO
+    Epco(Epco),
     // Serving PLMN Rate Control
     // Counter
     // Mapped UE Usage Type
     // Secondary UE Usage Type
-    // UP Function Selection Indication Flags
+    UpFunctionSelectionIndicationFlags(UpFunctionSelectionIndicationFlags),
     // Max Packet Loss Rate
     // APN Rate Control Status
     // Extended Trace Information
@@ -234,28 +234,29 @@ impl InformationElement {
             // Additional MM context SRVCC
             // Additional flags SRVCC
             // MDT Configuration
-            // Additional PCO
+            InformationElement::Apco(i) => i.marshal(buffer),
             // Absolute Time of MBMS Data Transfer
-            // H(e)NB Information Reporting
+            InformationElement::HenbInfoReporting(i) => i.marshal(buffer),
             // IPv4 Configuration Parameters (IP4CP)
-            // Change to Report Flags
-            // Action Indication
+            InformationElement::ChangeToReportFlags(i) => i.marshal(buffer),
+            InformationElement::ActionIndication(i) => i.marshal(buffer), 
             // TWAN Identifier
             InformationElement::UliTimestamp(i) => i.marshal(buffer),
             // MBMS Flags
             // RAN/NAS Cause
-            // CN Operator Selection Entity
+            InformationElement::CnOperatorSelectionEntity(i) => i.marshal(buffer),
             // Trusted WLAN Mode Indication
             // Node Number
             // Node Identifier
             // Presence Reporting Area Action
             // Presence Reporting Area Information
-            // TWAN Identifier Timestamp
+            InformationElement::TwanIdTimeStamp(i) => i.marshal(buffer),
             InformationElement::OverloadControlInfo(i) => i.marshal(buffer),
             InformationElement::LoadControlInfo(i) => i.marshal(buffer),
-            // Metric
-            // Sequence Number
-            // APN and Relative Capacity
+            InformationElement::Metric(i) => i.marshal(buffer),
+            InformationElement::Sqn(i) => i.marshal(buffer),
+            InformationElement::ApnRelativeCapacity(i) => i.marshal(buffer),
+            InformationElement::WlanOffloadIndication(i) => i.marshal(buffer),
             // WLAN Offloadability Indication
             // Paging and Service Information
             // Integer Number
@@ -269,12 +270,13 @@ impl InformationElement {
             // CIoT Optimization Support Indication
             InformationElement::ScefPdnConnection(i) => i.marshal(buffer),
             // Header Compression Configuration
+            InformationElement::Epco(i) => i.marshal(buffer),
             // Extended PCO
             // Serving PLMN Rate Control
             // Counter
             // Mapped UE Usage Type
             // Secondary UE Usage Type
-            // UP Function Selection Indication Flags
+            InformationElement::UpFunctionSelectionIndicationFlags(i) => i.marshal(buffer),
             // Max Packet Loss Rate
             // APN Rate Control Status
             // Extended Trace Information
@@ -773,12 +775,44 @@ impl InformationElement {
                     // Additional MM context SRVCC
                     // Additional flags SRVCC
                     // MDT Configuration
-                    // Additional PCO
+                    163 => {
+                        match Apco::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Apco(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Absolute Time of MBMS Data Transfer
-                    // H(e)NB Information Reporting
+                    165 => {
+                        match HenbInfoReporting::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::HenbInfoReporting(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // IPv4 Configuration Parameters (IP4CP)
-                    // Change to Report Flags
-                    // Action Indication
+                    167 => {
+                        match ChangeToReportFlags::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::ChangeToReportFlags(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    168 => {
+                        match ActionIndication::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::ActionIndication(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // TWAN Identifier
                     170 => {
                         match UliTimestamp::unmarshal(&buffer[cursor..]) {
@@ -791,15 +825,30 @@ impl InformationElement {
                     },
                     // MBMS Flags
                     // RAN/NAS Cause
-                    // CN Operator Selection Entity
+                    173 => {
+                        match CnOperatorSelectionEntity::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::CnOperatorSelectionEntity(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Trusted WLAN Mode Indication
                     // Node Number
                     // Node Identifier
                     // Presence Reporting Area Action
                     // Presence Reporting Area Information
-                    // TWAN Identifier Timestamp
-                    // Overload Control Information
-                    180 => {
+                    179 => {
+                        match TwanIdTimestamp::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::TwanIdTimeStamp(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    180 => {                                                        // Overload Control Information
                         match GroupedIe::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
@@ -808,7 +857,7 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     }, 
-                    181 => {
+                    181 => {                                                        // Load Control Information
                         match GroupedIe::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
@@ -817,11 +866,42 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Load Control Information
-                    // Metric
-                    // Sequence Number
-                    // APN and Relative Capacity
-                    // WLAN Offloadability Indication
+                    182 => {
+                        match Metric::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Metric(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    183 => {
+                        match Sqn::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Sqn(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    184 => {
+                        match ApnRelativeCapacity::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::ApnRelativeCapacity(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    185 => {
+                        match WlanOffloadIndication::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::WlanOffloadIndication(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Paging and Service Information
                     // Integer Number
                     // Millisecond Time Stamp
@@ -842,12 +922,28 @@ impl InformationElement {
                         }
                     },
                     // Header Compression Configuration
-                    // Extended PCO
+                    197 => {
+                        match Epco::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Epco(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Serving PLMN Rate Control
                     // Counter
                     // Mapped UE Usage Type
                     // Secondary UE Usage Type
-                    // UP Function Selection Indication Flags
+                    202 => {
+                        match UpFunctionSelectionIndicationFlags::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::UpFunctionSelectionIndicationFlags(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Max Packet Loss Rate
                     // APN Rate Control Status
                     // Extended Trace Information

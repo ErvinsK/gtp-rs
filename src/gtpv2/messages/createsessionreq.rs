@@ -69,7 +69,7 @@ pub struct CreateSessionRequest {
     pub ue_tcpport: Option<PortNumber>,
     // pub mappedue_usage_type: Option<MappedUeUsageType>,
     pub uli_for_sgw: Option<Uli>,
-    // pub sgwu_node: Option<Fqdn>,
+    pub sgwu_node: Option<Fqdn>,
     // pub secondary_rat_usage_report: Option<SecondaryRatUsageDataReport>,
     // pub up_function_selection_flags: Option<UpFunctionSelectionIndicationFlags>,
     // pub apn_rate_control_status: Option<ApnRateControlStatus>,
@@ -143,7 +143,7 @@ impl Default for CreateSessionRequest {
             ue_tcpport: None,
             // mapped_ue_usage_type: None,
             uli_for_sgw: None,
-            // sgwu_node: None,
+            sgwu_node: None,
             // secondary_rat_usage_report: None,
             // up_function_selection_flags: None,
             // apn_rate_control_status: None,
@@ -340,7 +340,10 @@ impl CreateSessionRequest {
             Some(i) => elements.push(InformationElement::Uli(i)),
             None => (),
         }
-            // sgwu_node: None,
+        match self.sgwu_node.clone() {
+            Some(i) => elements.push(InformationElement::Fqdn(i)),
+            None => (),
+        }   
             // secondary_rat_usage_report: None,
             // up_function_selection_flags: None,
             // apn_rate_control_status: None,
@@ -522,7 +525,11 @@ impl CreateSessionRequest {
                 // pub serv_plmn_ratecontrol: Option<ServingPlmnRateControl>,
                 // pub mo_exception_data_counter: Option<Counter>,
                 // pub mappedue_usage_type: Option<MappedUeUsageType>,
-                // pub sgwu_node: Option<Fqdn>,
+                InformationElement::Fqdn(j) => {
+                    if j.ins == 0 {
+                        self.sgwu_node = Some(j.clone());
+                    }
+                },
                 // pub secondary_rat_usage_report: Option<SecondaryRatUsageDataReport>,
                 // pub up_function_selection_flags: Option<UpFunctionSelectionIndicationFlags>,
                 // pub apn_rate_control_status: Option<ApnRateControlStatus>,

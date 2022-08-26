@@ -53,6 +53,18 @@ pub use {
     serviceindicator::*,
     datachtype::*,
     ulitimestamp::*,
+    upfsif::*,
+    apco::*,
+    henbinforeporting::*,
+    changetoreportflags::*,
+    actionindication::*,
+    cnose::*,
+    twanidtimestamp::*,
+    metric::*,
+    sqn::*,
+    apnrelativecapacity::*,
+    wlanoffloadindication::*,
+    epco::*,
 };
 
 mod commons;
@@ -109,3 +121,15 @@ mod rfspindex;
 mod serviceindicator;
 mod datachtype;
 mod ulitimestamp;
+mod upfsif;
+mod apco;
+mod henbinforeporting;
+mod changetoreportflags;
+mod actionindication;
+mod cnose;
+mod twanidtimestamp;
+mod metric;
+mod sqn;
+mod apnrelativecapacity;
+mod wlanoffloadindication;
+mod epco;
