@@ -121,7 +121,7 @@ pub enum InformationElement {
     // Monitoring Event Information
     // ECGI List
     RemoteUeContext(GroupedIe),
-    // Remote User ID
+    RemoteUserId(RemoteUserId),
     // Remote UE IP Information
     CIoTOptimizationSupportIndication(CIoTOptimizationSupportIndication),
     ScefPdnConnection(GroupedIe),
@@ -264,7 +264,7 @@ impl InformationElement {
             // Monitoring Event Information
             // ECGI List
             InformationElement::RemoteUeContext(i) => i.marshal(buffer),
-            // Remote User ID
+            InformationElement::RemoteUserId(i) => i.marshal(buffer),
             // Remote UE IP Information
             InformationElement::CIoTOptimizationSupportIndication(i) => i.marshal(buffer),
             InformationElement::ScefPdnConnection(i) => i.marshal(buffer),
@@ -915,7 +915,15 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Remote User ID
+                    192 => {
+                        match RemoteUserId::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::RemoteUserId(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Remote UE IP Information
                     194 => {
                         match CIoTOptimizationSupportIndication::unmarshal(&buffer[cursor..]) {

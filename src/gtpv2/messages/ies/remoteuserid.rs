@@ -42,30 +42,50 @@ impl IEs for RemoteUserId {
                 let i = tbcd_encode(&self.imsi);
                 buffer_ie.push(i.len() as u8);
                 buffer_ie.extend(i);
-                let m = tbcd_encode(&self.msisdn.unwrap());
-                buffer_ie.push(m.len() as u8);
-                buffer_ie.extend(m);
+                match &self.msisdn {
+                    Some(i) => {
+                        let m = tbcd_encode(&i);
+                        buffer_ie.push(m.len() as u8);
+                        buffer_ie.extend(m);
+                    },
+                    None => (),
+                }
             },
             (true, false) => {
                 buffer_ie.push(0x02);
                 let i = tbcd_encode(&self.imsi);
                 buffer_ie.push(i.len() as u8);
                 buffer_ie.extend(i);
-                let m = tbcd_encode(&self.imei.unwrap());
-                buffer_ie.push(m.len() as u8);
-                buffer_ie.extend(m);
+                match &self.imei {
+                    Some(i) => {
+                        let m = tbcd_encode(&i);
+                        buffer_ie.push(m.len() as u8);
+                        buffer_ie.extend(m);
+                    },
+                    None => (),
+                }
             },
             (true, true) => {
                 buffer_ie.push(0x03);
                 let i = tbcd_encode(&self.imsi);
                 buffer_ie.push(i.len() as u8);
                 buffer_ie.extend(i);
-                let m = tbcd_encode(&self.msisdn.unwrap());
-                buffer_ie.push(m.len() as u8);
-                buffer_ie.extend(m);
-                let k = tbcd_encode(&self.imei.unwrap());
-                buffer_ie.push(k.len() as u8);
-                buffer_ie.extend(k);
+                match &self.msisdn {
+                    Some(i) => {
+                        let m = tbcd_encode(&i);
+                        buffer_ie.push(m.len() as u8);
+                        buffer_ie.extend(m);
+                    },
+                    None => (),
+                }
+               match &self.imei {
+                    Some(i) => {
+                        let m = tbcd_encode(&i);
+                        buffer_ie.push(m.len() as u8);
+                        buffer_ie.extend(m);
+                    },
+                    None => (),
+                }
             },
         }
         set_tliv_ie_length(&mut buffer_ie);
@@ -77,54 +97,83 @@ impl IEs for RemoteUserId {
             let mut data = RemoteUserId::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
             data.ins = buffer[3];
-            let mut cursor = 6+(buffer[5] as usize);
+            let mut cursor = 6;
+            let mut l;
             match buffer[4] & 0x03 {
                 0 => {
-                    match buffer[5..=(6+cursor)].try_into() {
-                        Ok(i) => data.imsi = tbcd_decode(i[1..]),
+                    l = buffer[5] as usize;
+                    match buffer[cursor..(cursor+l)].try_into() {
+                        Ok(i) => data.imsi = tbcd_decode(i),
                         Err(_) => return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID)), 
                     }
                     data.msisdn = None;
                     data.imei = None;
                 },
                 1 => {
-                    match buffer[5..=(cursor+1)].try_into() {
-                        Ok(i) => {
-                            data.imsi = tbcd_decode(i[1..=cursor]);
-                            cursor+=i[0] as usize;
-                        },
+                    l = buffer[5] as usize;
+                    match buffer[cursor..(cursor+l)].try_into() {
+                        Ok(i) => data.imsi = tbcd_decode(i),
                         Err(_) => return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID)), 
                     }
-                    match buffer[(cursor+1)..=(6+cursor)].try_into() {
-                        Ok(i) => {
-                            data.imsi = tbcd_decode(i[1..]);
-                            cursor+=i[0] as usize;
-                        },
-                        Err(_) => return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID)), 
+                    cursor += l+1;
+                    if cursor>buffer.len() {
+                        return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID))
                     }
+                    l = buffer[(cursor-1)] as usize;
+                    if (cursor+l)>buffer.len() {
+                        return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID))
+                    }
+                    data.msisdn = Some(tbcd_decode(&buffer[cursor..(cursor+l)]));
+                    data.imei = None;
 
                 },
                 2 => {
-                    if check_tliv_ie_buffer(3, &buffer) {
-                        data.max_packet_loss_ul = None;
-                        data.max_packet_loss_dl = Some(u16::from_be_bytes([buffer[5],buffer[6]]));
-                    } else {
-                        return Err(GTPV2Error::IEInvalidLength(MAX_PACKET_LOSS));
+                    l = buffer[5] as usize;
+                    match buffer[cursor..(cursor+l)].try_into() {
+                        Ok(i) => data.imsi = tbcd_decode(i),
+                        Err(_) => return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID)), 
                     }
+                    cursor += l+1;
+                    if cursor>buffer.len() {
+                        return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID))
+                    }
+                    l = buffer[(cursor-1)] as usize;
+                    if (cursor+l)>buffer.len() {
+                        return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID))
+                    }
+                    data.imei = Some(tbcd_decode(&buffer[cursor..(cursor+l)]));
+                    data.msisdn = None;
                 },
                 3 => {
-                    if check_tliv_ie_buffer(5, &buffer) {
-                        data.max_packet_loss_ul = Some(u16::from_be_bytes([buffer[5],buffer[6]]));
-                        data.max_packet_loss_dl = Some(u16::from_be_bytes([buffer[7],buffer[8]]));
-                    } else {
-                        return Err(GTPV2Error::IEInvalidLength(MAX_PACKET_LOSS));
+                    l = buffer[5] as usize;
+                    match buffer[cursor..(cursor+l)].try_into() {
+                        Ok(i) => data.imsi = tbcd_decode(i),
+                        Err(_) => return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID)), 
                     }
+                    cursor += l+1;
+                    if cursor>buffer.len() {
+                        return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID))
+                    }
+                    l = buffer[(cursor-1)] as usize;
+                    if (cursor+l)>buffer.len() {
+                        return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID))
+                    }
+                    data.msisdn = Some(tbcd_decode(&buffer[cursor..(cursor+l)]));
+                    cursor += l+1;
+                    if cursor>buffer.len() {
+                        return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID))
+                    }
+                    l = buffer[(cursor-1)] as usize;
+                    if (cursor+l)>buffer.len() {
+                        return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID))
+                    }
+                    data.imei = Some(tbcd_decode(&buffer[cursor..(cursor+l)]));
                 },
-                _ => return Err(GTPV2Error::IEIncorrect(MAX_PACKET_LOSS)),
+                _ => return Err(GTPV2Error::IEIncorrect(REMOTE_USR_ID)),
             }
             Ok(data)
         } else {
-            Err(GTPV2Error::IEInvalidLength(MAX_PACKET_LOSS))
+            Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID))
         }
     }
     
@@ -134,18 +183,42 @@ impl IEs for RemoteUserId {
 }
 
 #[test]
-fn max_packet_loss_rate_ie_unmarshal_test () {
-    let encoded:[u8;9]=[0xcb, 0x00, 0x05, 0x00, 0x03, 0x03, 0xe8, 0x03, 0xe7 ];
-    let decoded = MaxPacketLossRate { t:MAX_PACKET_LOSS, length: 5, ins:0, max_packet_loss_ul:Some(0x3e8), max_packet_loss_dl:Some(0x3e7) };
-    let i = MaxPacketLossRate::unmarshal(&encoded);
+fn remote_user_id_ie_unmarshal_test () {
+    let encoded:[u8;32]=[0xc0, 0x00, 0x1c, 0x00, 0x03,
+                            0x08, 0x09, 0x41, 0x50, 0x01, 0x91, 0x16, 0x78, 0xf3,
+                            0x08, 0x88, 0x22, 0x58, 0x01, 0x10, 0x52, 0x11, 0xf2,
+                            0x08, 0x68, 0x67, 0x84, 0x40, 0x10, 0x23, 0x03, 0x30,
+                            ];
+    let decoded = RemoteUserId { t:REMOTE_USR_ID, length: 28, ins:0, 
+                            imsi:"901405101961873".to_string(),
+                            msisdn: Some("882285100125112".to_string()),
+                            imei: Some("8676480401323003".to_string()), };
+    let i = RemoteUserId::unmarshal(&encoded);
     assert_eq!(i.unwrap(), decoded);
 }
 
 #[test]
-fn secondary_rat_udr_ie_marshal_test () {
-    let encoded:[u8;9]=[0xcb, 0x00, 0x05, 0x00, 0x03, 0x03, 0xe8, 0x03, 0xe7 ];
-    let decoded = MaxPacketLossRate { t:MAX_PACKET_LOSS, length: 5, ins:0, max_packet_loss_ul:Some(0x3e8), max_packet_loss_dl:Some(0x3e7) };
+fn remote_user_id_ie_marshal_test () {
+    let encoded:[u8;32]=[0xc0, 0x00, 0x1c, 0x00, 0x03,
+                            0x08, 0x09, 0x41, 0x50, 0x01, 0x91, 0x16, 0x78, 0xf3,
+                            0x08, 0x88, 0x22, 0x58, 0x01, 0x10, 0x52, 0x11, 0xf2,
+                            0x08, 0x68, 0x67, 0x84, 0x40, 0x10, 0x23, 0x03, 0x30,
+                            ];
+    let decoded = RemoteUserId { t:REMOTE_USR_ID, length: 28, ins:0, 
+                            imsi:"901405101961873".to_string(),
+                            msisdn: Some("882285100125112".to_string()),
+                            imei: Some("8676480401323003".to_string()), };
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);
+}
+
+#[test]
+fn remote_user_id_ie_invalid_length_unmarshal_test () {
+    let encoded:[u8;22]=[0xc0, 0x00, 0x1c, 0x00, 0x01,
+                            0x08, 0x09, 0x41, 0x50, 0x01, 0x91, 0x16, 0x78, 0xf3,
+                            0x08, 0x88, 0x22, 0x58, 0x01, 0x10, 0x52, 0x11, 
+                            ];
+    let i = RemoteUserId::unmarshal(&encoded);
+    assert_eq!(i, Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID)));
 }

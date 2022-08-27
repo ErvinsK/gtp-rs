@@ -71,6 +71,8 @@ pub use {
     maxpacketlossrate::*,
     apnratecontrolstatus::*,
     ciotoptimizationssupport::*,
+    remoteuserid::*,
+    remoteueip::*,
 };
 
 mod commons;
@@ -145,3 +147,5 @@ mod secondaryratudr;
 mod maxpacketlossrate;
 mod apnratecontrolstatus;
 mod ciotoptimizationssupport;
+mod remoteuserid;
+mod remoteueip;
