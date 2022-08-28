@@ -63,7 +63,7 @@ fn plmnid_ie_marshal_test() {
 }
 
 #[test]
-fn serving_nw_ie_unmarshal_test() {
+fn plmnid_ie_unmarshal_test() {
     let decoded = PlmnId { t:PLMNID, length: PLMNID_LENGTH as u16, ins:0,  mcc:999, mnc:1};
     let encoded:[u8;7] = [0x78, 0x00, 0x03, 0x00, 0x99, 0xf9, 0x10];
     assert_eq!(PlmnId::unmarshal(&encoded).unwrap(), decoded);
