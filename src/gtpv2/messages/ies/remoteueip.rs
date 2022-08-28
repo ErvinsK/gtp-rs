@@ -74,11 +74,15 @@ impl IEs for RemoteUeIpInformation {
                     },
                     0x02 => {
                         if data.length>=9 {
-                            let mut dst = [0;16];
-                            let mut m = [0;8];
-                            m.copy_from_slice(&buffer[5..13]);
-                            dst.iter().skip(8).zip(m.iter()).map(|(i,j)| j+i);
-                            data.ip = RemoteIpAddress::V6(Ipv6Addr::from(dst));
+                            let mut v = vec!();
+                            v.extend_from_slice(&buffer[5..13]); 
+                            v.append(&mut vec!(0;8));
+                            let v_slice = v.as_slice();  
+                            let array: [u8; 16] = match v_slice.try_into() {
+                                Ok(i) => i,
+                                Err(_) => return Err(GTPV2Error::IEInvalidLength(REMOTE_UE_IP)),
+                            };                        
+                            data.ip = RemoteIpAddress::V6(Ipv6Addr::from(array));
                         } else { 
                             return Err(GTPV2Error::IEInvalidLength(REMOTE_UE_IP));
                         }   
@@ -101,68 +105,51 @@ impl IEs for RemoteUeIpInformation {
 }
 
 #[test]
-fn paa_ie_ipv4_unmarshal_test () {
-    let encoded:[u8;9]=[0x4f,0x00, 0x05, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00];
-    let decoded = PdnAddressAllocation { t:PAA, length:5, ins:0, ip: PdnAddress::V4(Ipv4Addr::new(0,0,0,0)) };
-    let i = PdnAddressAllocation::unmarshal(&encoded);
+fn remote_ue_ip_ie_nonip_unmarshal_test () {
+    let encoded:[u8;5]=[0xc1, 0x00, 0x01, 0x00, 0x00];
+    let decoded = RemoteUeIpInformation { t:REMOTE_UE_IP, length:1, ins:0, ip: RemoteIpAddress::NonIp };
+    let i = RemoteUeIpInformation::unmarshal(&encoded);
     assert_eq!(i.unwrap(), decoded);
 }
 
 #[test]
-fn paa_ie_ipv6_unmarshal_test () {
-    let encoded:[u8;22]=[0x4f, 0x00, 0x12, 0x00, 0x02, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
-    let decoded = PdnAddressAllocation { t:PAA, length:18, ins:0, ip: PdnAddress::V6(Ipv6Addr::new(0,0,0,0,0,0,0,0), 128) };
-    let i = PdnAddressAllocation::unmarshal(&encoded);
+fn remote_ue_ip_ie_ipv4_unmarshal_test () {
+    let encoded:[u8;9]=[0xc1, 0x00, 0x05, 0x00, 0x01, 0x0a, 0xc2, 0xba, 0x34];
+    let decoded = RemoteUeIpInformation { t:REMOTE_UE_IP, length:5, ins:0, ip: RemoteIpAddress::V4(Ipv4Addr::new(10,194,186,52)) };
+    let i = RemoteUeIpInformation::unmarshal(&encoded);
     assert_eq!(i.unwrap(), decoded);
 }
 
 #[test]
-fn paa_ie_ipv46_unmarshal_test () {
-    let encoded:[u8;26]=[0x4f, 0x00, 0x16, 0x00, 0x03, 0x80, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00];
-    let decoded = PdnAddressAllocation { t:PAA, length:22, ins:0, ip: PdnAddress::DualStack(Ipv4Addr::new(1,0,0,0), Ipv6Addr::new(1,0,0,0,0,0,0,0), 128) };
-    let i = PdnAddressAllocation::unmarshal(&encoded);
+fn remote_ue_ip_ie_ipv6_unmarshal_test () {
+    let encoded:[u8;13]=[0xc1, 0x00, 0x09, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+    let decoded = RemoteUeIpInformation { t:REMOTE_UE_IP, length:9, ins:0, ip: RemoteIpAddress::V6(Ipv6Addr::new(0,0,0,0,0,0,0,0)) };
+    let i = RemoteUeIpInformation::unmarshal(&encoded);
     assert_eq!(i.unwrap(), decoded);
 }
 
 #[test]
-fn paa_ie_non_ip_unmarshal_test () {
-    let encoded:[u8;5]=[0x4f, 0x00, 0x01, 0x00, 0x04];
-    let decoded = PdnAddressAllocation { t:PAA, length:1, ins:0, ip: PdnAddress::NonIp };
-    let i = PdnAddressAllocation::unmarshal(&encoded);
-    assert_eq!(i.unwrap(), decoded);
-}
-
-#[test]
-fn paa_ie_ipv4_marshal_test () {
-    let encoded:[u8;9]=[0x4f,0x00, 0x05, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00];
-    let decoded = PdnAddressAllocation { t:PAA, length:5, ins:0, ip: PdnAddress::V4(Ipv4Addr::new(0,0,0,0)) };
+fn remote_ue_ip_ie_ipv4_marshal_test () {
+    let encoded:[u8;9]=[0xc1, 0x00, 0x05, 0x00, 0x01, 0x0a, 0xc2, 0xba, 0x34];
+    let decoded = RemoteUeIpInformation { t:REMOTE_UE_IP, length:5, ins:0, ip: RemoteIpAddress::V4(Ipv4Addr::new(10,194,186,52)) };
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);
 }
 
 #[test]
-fn paa_ie_ipv6_marshal_test () {
-    let encoded:[u8;22]=[0x4f, 0x00, 0x12, 0x00, 0x02, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
-    let decoded = PdnAddressAllocation { t:PAA, length:18, ins:0, ip: PdnAddress::V6(Ipv6Addr::new(0,0,0,0,0,0,0,0), 128) };
+fn remote_ue_ip_ie_ipv6_marshal_test () {
+    let encoded:[u8;13]=[0xc1, 0x00, 0x09, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
+    let decoded = RemoteUeIpInformation { t:REMOTE_UE_IP, length:9, ins:0, ip: RemoteIpAddress::V6(Ipv6Addr::new(0,0,0,0,0,0,0,0)) };
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);
 }
 
 #[test]
-fn paa_ie_ipv46_marshal_test () {
-    let encoded:[u8;26]=[0x4f, 0x00, 0x16, 0x00, 0x03, 0x80, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00];
-    let decoded = PdnAddressAllocation { t:PAA, length:22, ins:0, ip: PdnAddress::DualStack(Ipv4Addr::new(1,0,0,0), Ipv6Addr::new(1,0,0,0,0,0,0,0), 128) };
-    let mut buffer:Vec<u8>=vec!();
-    decoded.marshal(&mut buffer);
-    assert_eq!(buffer, encoded);
-}
-
-#[test]
-fn paa_ie_nonip_marshal_test () {
-    let encoded:[u8;5]=[0x4f, 0x00, 0x01, 0x00, 0x04];
-    let decoded = PdnAddressAllocation { t:PAA, length:1, ins:0, ip: PdnAddress::NonIp };
+fn remote_ue_ip_ie_nonip_marshal_test () {
+    let encoded:[u8;5]=[0xc1, 0x00, 0x01, 0x00, 0x00];
+    let decoded = RemoteUeIpInformation { t:REMOTE_UE_IP, length:1, ins:0, ip: RemoteIpAddress::NonIp };
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);

@@ -73,6 +73,8 @@ pub use {
     ciotoptimizationssupport::*,
     remoteuserid::*,
     remoteueip::*,
+    tmsi::*,
+    globalcnid::*,
 };
 
 mod commons;
@@ -149,3 +151,5 @@ mod apnratecontrolstatus;
 mod ciotoptimizationssupport;
 mod remoteuserid;
 mod remoteueip;
+mod tmsi;
+mod globalcnid;

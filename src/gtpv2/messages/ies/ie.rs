@@ -23,8 +23,8 @@ pub enum InformationElement {
     TrafficAggregateDescription(TrafficAggregateDescription),
     Uli(Uli),
     Fteid(Fteid),
-    // Tmsi(Tmsi),
-    // Global CN-id
+    Tmsi(Tmsi),
+    GlobalCnId(GlobalCnId),
     // S103 PDN Data Forwarding Info
     // S1-U Data Forwarding Info
     DelayValue(DelayValue),
@@ -122,7 +122,7 @@ pub enum InformationElement {
     // ECGI List
     RemoteUeContext(GroupedIe),
     RemoteUserId(RemoteUserId),
-    // Remote UE IP Information
+    RemoteUeIpInformation(RemoteUeIpInformation),
     CIoTOptimizationSupportIndication(CIoTOptimizationSupportIndication),
     ScefPdnConnection(GroupedIe),
     // Header Compression Configuration
@@ -165,8 +165,8 @@ impl InformationElement {
             InformationElement::TrafficAggregateDescription(i) => i.marshal(buffer),
             InformationElement::Uli(i) => i.marshal(buffer),
             InformationElement::Fteid(i) => i.marshal(buffer),
-            // Tmsi(Tmsi),
-            // Global CN-id
+            InformationElement::Tmsi(i) => i.marshal(buffer),
+            InformationElement::GlobalCnId(i) => i.marshal(buffer),
             // S103 PDN Data Forwarding Info
             // S1-U Data Forwarding Info
             InformationElement::DelayValue(i) => i.marshal(buffer), 
@@ -265,12 +265,11 @@ impl InformationElement {
             // ECGI List
             InformationElement::RemoteUeContext(i) => i.marshal(buffer),
             InformationElement::RemoteUserId(i) => i.marshal(buffer),
-            // Remote UE IP Information
+            InformationElement::RemoteUeIpInformation(i) => i.marshal(buffer),
             InformationElement::CIoTOptimizationSupportIndication(i) => i.marshal(buffer),
             InformationElement::ScefPdnConnection(i) => i.marshal(buffer),
             // Header Compression Configuration
             InformationElement::Epco(i) => i.marshal(buffer),
-            // Extended PCO
             // Serving PLMN Rate Control
             InformationElement::Counter(i) => i.marshal(buffer),
             InformationElement::MappedUeUsageType(i) => i.marshal(buffer),
@@ -481,8 +480,24 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Tmsi(Tmsi),
-                    // Global CN-id
+                    88 => {
+                        match Tmsi::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Tmsi(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    89 => {
+                        match GlobalCnId::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::GlobalCnId(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // S103 PDN Data Forwarding Info
                     // S1-U Data Forwarding Info
                     92 => {
@@ -924,7 +939,15 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Remote UE IP Information
+                    193 => {
+                        match RemoteUeIpInformation::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::RemoteUeIpInformation(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     194 => {
                         match CIoTOptimizationSupportIndication::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
@@ -1181,3 +1204,4 @@ impl From<Cause> for InformationElement {
         InformationElement::Cause(i)
     }
 }
+
