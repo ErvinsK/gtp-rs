@@ -1,6 +1,6 @@
 // Charging Characteristics IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Charging Characteristics IE Type
 
@@ -20,6 +20,12 @@ pub struct ChargingCharacteristics {
 impl Default for ChargingCharacteristics {
     fn default() -> Self {
         ChargingCharacteristics { t: CHARGINGCHAR, length:2, ins:0, charging_char:0}
+    }
+}
+
+impl From<ChargingCharacteristics> for InformationElement {
+    fn from(i: ChargingCharacteristics) -> Self {
+        InformationElement::ChargingCharacteristics(i)
     }
 }
 

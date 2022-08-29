@@ -1,6 +1,6 @@
 // Indication IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Indication IE TL
 
@@ -135,6 +135,12 @@ impl Default for Indication {
                     enbcrsi:false,                   // eNB Change Reporting Support Indication
                     tspcmi:false,                    // Triggering SGSN initiated PDP Context Creation/Modification Indication         
                 }
+    }
+}
+
+impl From<Indication> for InformationElement {
+    fn from(i: Indication) -> Self {
+        InformationElement::Indication(i)
     }
 }
 

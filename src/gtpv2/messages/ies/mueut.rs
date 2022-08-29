@@ -1,7 +1,7 @@
 // Mapped UE Usage Type (MUEUT) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 // Mapped UE Usage Type is defined in clause 5.8.1 of 3GPP TS 29.003
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Mapped UE Usage Type (MUEUT) IE TL
 
@@ -21,6 +21,12 @@ pub struct MappedUeUsageType {
 impl Default for MappedUeUsageType {
     fn default() -> MappedUeUsageType {
         MappedUeUsageType { t: MUEUT, length:MUEUT_LENGTH as u16, ins:0, usage_type:0 }        
+    }
+}
+
+impl From<MappedUeUsageType> for InformationElement {
+    fn from(i: MappedUeUsageType) -> Self {
+        InformationElement::MappedUeUsageType(i)
     }
 }
 

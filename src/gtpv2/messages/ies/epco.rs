@@ -1,7 +1,7 @@
 // Extended PCO IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 // Extended Protocol Configuration Options information element is specified as per clause 9.9.4.26 of 3GPP TS 24.301
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Extended PCO IE Type
 
@@ -20,6 +20,12 @@ pub struct Epco {
 impl Default for Epco {
     fn default() -> Self {
         Epco { t: EPCO, length:0, ins:0, epco:vec!()}
+    }
+}
+
+impl From<Epco> for InformationElement {
+    fn from(i: Epco) -> Self {
+        InformationElement::Epco(i)
     }
 }
 

@@ -1,7 +1,7 @@
 // F-TEID IE - according to 3GPP TS 29.247 V15.9.0 (2019-09)
 
 use std::{net::{Ipv4Addr, Ipv6Addr}};
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // F-TEID IE Type
 
@@ -74,6 +74,12 @@ impl Default for Fteid {
             ipv4:Some(Ipv4Addr::new(0,0,0,0)),
             ipv6:None,
         }
+    }
+}
+
+impl From<Fteid> for InformationElement {
+    fn from(i: Fteid) -> Self {
+        InformationElement::Fteid(i)
     }
 }
 

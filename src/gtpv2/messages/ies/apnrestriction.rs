@@ -1,6 +1,6 @@
 // APN Restriction IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // APN Restriction IE Type
 
@@ -53,6 +53,12 @@ pub struct ApnRestriction {
 impl Default for ApnRestriction {
     fn default() -> Self {
         ApnRestriction { t: APNRESTRICTION, length:APNRESTRICTION_LENGTH as u16, ins:0, restriction_type:Restriction::NoApnRestriction}
+    }
+}
+
+impl From<ApnRestriction> for InformationElement {
+    fn from(i: ApnRestriction) -> Self {
+        InformationElement::ApnRestriction(i)
     }
 }
 

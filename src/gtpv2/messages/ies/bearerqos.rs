@@ -1,6 +1,6 @@
 // Bearer Quality of Service (QoS) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{ie::*, commons::*}};
 
 // Bearer QoS IE TL
 
@@ -38,6 +38,12 @@ impl Default for BearerQos {
                     gbr_ul:0,
                     gbr_dl:0,
                  }        
+    }
+}
+
+impl From<BearerQos> for InformationElement {
+    fn from(i: BearerQos) -> Self {
+        InformationElement::BearerQos(i)
     }
 }
 

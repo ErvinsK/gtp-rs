@@ -1,6 +1,6 @@
 // Hop Counter IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Hop Counter IE Type
 
@@ -20,6 +20,12 @@ pub struct HopCounter {
 impl Default for HopCounter {
     fn default() -> Self {
         HopCounter { t: HOP_CNTR, length:HOP_CNTR_LENGTH as u16, ins:0, hop_counter:0}
+    }
+}
+
+impl From<HopCounter> for InformationElement {
+    fn from(i: HopCounter) -> Self {
+        InformationElement::HopCounter(i)
     }
 }
 

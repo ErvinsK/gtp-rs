@@ -1,6 +1,6 @@
 // CN Operator Selection Entity (CNOSE) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // CNOSE IE TV
 
@@ -27,6 +27,12 @@ pub enum SelectionMode {
 impl Default for CnOperatorSelectionEntity {
     fn default() -> CnOperatorSelectionEntity {
         CnOperatorSelectionEntity { t: CNOSE, length:CNOSE_LENGTH as u16, ins:0, selection_entity: SelectionMode::ServingNetworkSelectedbyUE }        
+    }
+}
+
+impl From<CnOperatorSelectionEntity> for InformationElement {
+    fn from(i: CnOperatorSelectionEntity) -> Self {
+        InformationElement::CnOperatorSelectionEntity(i)
     }
 }
 

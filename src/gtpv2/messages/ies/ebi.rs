@@ -1,6 +1,6 @@
 // EPS Bearer ID (EBI) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // EBI IE TL
 
@@ -20,6 +20,12 @@ pub struct Ebi {
 impl Default for Ebi {
     fn default() -> Self {
         Ebi { t: EBI, length:EBI_LENGTH as u16, ins:0, value: 0 }
+    }
+}
+
+impl From<Ebi> for InformationElement {
+    fn from(i: Ebi) -> Self {
+        InformationElement::Ebi(i)
     }
 }
 

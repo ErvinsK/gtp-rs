@@ -1,6 +1,6 @@
 // IMSI IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // IMSI IE Type
 
@@ -26,6 +26,11 @@ impl Default for Imsi {
     }
 }
 
+impl From<Imsi> for InformationElement {
+    fn from(i: Imsi) -> Self {
+        InformationElement::Imsi(i)
+    }
+}
 
 impl IEs for Imsi {
     fn marshal (&self, buffer: &mut Vec<u8>) {

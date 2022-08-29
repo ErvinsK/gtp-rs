@@ -1,6 +1,6 @@
 // Charging ID IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Charging ID IE Type
 
@@ -20,6 +20,12 @@ pub struct ChargingId {
 impl Default for ChargingId {
     fn default() -> Self {
         ChargingId { t: CHARGINGID, length:4, ins:0, charging_id:0}
+    }
+}
+
+impl From<ChargingId> for InformationElement {
+    fn from(i: ChargingId) -> Self {
+        InformationElement::ChargingId(i)
     }
 }
 

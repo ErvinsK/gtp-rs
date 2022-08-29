@@ -1,7 +1,7 @@
 // IP Address IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
 use std::{net::{IpAddr, Ipv4Addr}};
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // IP Address IE Type
 
@@ -25,6 +25,12 @@ impl Default for IpAddress {
             ins:0,
             ip:IpAddr::V4(Ipv4Addr::new(0,0,0,0)),
         }
+    }
+}
+
+impl From<IpAddress> for InformationElement {
+    fn from(i: IpAddress) -> Self {
+        InformationElement::IpAddress(i)
     }
 }
 

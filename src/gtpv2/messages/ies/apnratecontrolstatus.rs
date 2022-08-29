@@ -1,6 +1,6 @@
 // APN Rate Control Status IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // APN Rate Control Status IE TL
 
@@ -23,6 +23,12 @@ pub struct ApnRateControlStatus {
 impl Default for ApnRateControlStatus {
     fn default() -> Self {
         ApnRateControlStatus { t: APN_RATE_CNTRL, length:APN_RATE_CNTR_LENGTH as u16, ins:0, ul_packets_allowed:0, nmbr_add_exception_reports:0, dl_packets_allowed:0, validity_time:0 }        
+    }
+}
+
+impl From<ApnRateControlStatus> for InformationElement {
+    fn from(i: ApnRateControlStatus) -> Self {
+        InformationElement::ApnRateControlStatus(i)
     }
 }
 

@@ -1,6 +1,6 @@
 // MSISDN IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // MSISDN IE Type
 
@@ -19,6 +19,12 @@ pub struct Msisdn {
 impl Default for Msisdn {
     fn default() -> Msisdn {
         Msisdn { t: MSISDN, length: 2,  ins:0, msisdn: "0".to_string(), }        
+    }
+}
+
+impl From<Msisdn> for InformationElement {
+    fn from(i: Msisdn) -> Self {
+        InformationElement::Msisdn(i)
     }
 }
 

@@ -1,6 +1,6 @@
 // EPS Bearer Level Traffic Flow Template (TFT) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // EPS Bearer Level Traffic Flow Template (TFT) IE Type
 
@@ -19,6 +19,12 @@ pub struct BearerTft {
 impl Default for BearerTft {
     fn default() -> Self {
         BearerTft { t: BEARERTFT, length:0, ins:0, tft:vec!()}
+    }
+}
+
+impl From<BearerTft> for InformationElement {
+    fn from(i: BearerTft) -> Self {
+        InformationElement::BearerTft(i)
     }
 }
 

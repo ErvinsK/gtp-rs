@@ -1,6 +1,6 @@
 // Cause IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Cause IE TL
 
@@ -33,6 +33,12 @@ impl Default for Cause {
                 cs: false,
                 offend_ie_type: None,
             }
+    }
+}
+
+impl From<Cause> for InformationElement {
+    fn from(i: Cause) -> Self {
+        InformationElement::Cause(i)
     }
 }
 

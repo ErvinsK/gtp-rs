@@ -1199,9 +1199,5 @@ impl InformationElement {
     } */
 }
 
-impl From<Cause> for InformationElement {
-    fn from(i: Cause) -> Self {
-        InformationElement::Cause(i)
-    }
-}
+
 

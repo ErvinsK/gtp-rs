@@ -1,6 +1,6 @@
 // Mobile Equipment Identity (MEI) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // MEI IE TV
 
@@ -20,6 +20,12 @@ pub struct Mei {
 impl Default for Mei {
     fn default() -> Mei {
         Mei { t: MEI, length:MEI_LENGTH as u16, ins:0, mei: "0".to_string(), }        
+    }
+}
+
+impl From<Mei> for InformationElement {
+    fn from(i: Mei) -> Self {
+        InformationElement::Mei(i)
     }
 }
 

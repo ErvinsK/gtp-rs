@@ -51,7 +51,7 @@ pub use {
     fqdn::*,
     rfspindex::*,
     serviceindicator::*,
-    datachtype::*,
+    detachtype::*,
     ulitimestamp::*,
     upfsif::*,
     apco::*,
@@ -129,7 +129,7 @@ mod rabcontext;
 mod fqdn;
 mod rfspindex;
 mod serviceindicator;
-mod datachtype;
+mod detachtype;
 mod ulitimestamp;
 mod upfsif;
 mod apco;
@@ -153,3 +153,4 @@ mod remoteuserid;
 mod remoteueip;
 mod tmsi;
 mod globalcnid;
+mod bearercontext;

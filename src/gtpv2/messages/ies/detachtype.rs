@@ -1,6 +1,6 @@
 // Detach Type IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Detach Type IE Type
 
@@ -26,6 +26,12 @@ pub struct DetachType {
 impl Default for DetachType {
     fn default() -> Self {
         DetachType { t: DETACHTYPE, length:DETACHTYPE_LENGTH as u16, ins:0, detach_type:0}
+    }
+}
+
+impl From<DetachType> for InformationElement {
+    fn from(i: DetachType) -> Self {
+        InformationElement::DetachType(i)
     }
 }
 

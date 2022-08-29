@@ -1,6 +1,6 @@
 // Change Reporting Action IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Change Reporting Action Type
 
@@ -34,6 +34,12 @@ pub struct ChangeReportingAction {
 impl Default for ChangeReportingAction {
     fn default() -> Self {
         ChangeReportingAction { t: CHANGE_RPRT, length:CHANGE_RPRT_LENGTH as u16, ins:0, action:0}
+    }
+}
+
+impl From<ChangeReportingAction> for InformationElement {
+    fn from(i: ChangeReportingAction) -> Self {
+        InformationElement::ChangeReportingAction(i)
     }
 }
 

@@ -1,6 +1,6 @@
 // Global CN-Id IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) and 3GPP TS 25.413
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Global CN-Id IE TL
 
@@ -22,6 +22,12 @@ pub struct GlobalCnId {
 impl Default for GlobalCnId {
     fn default() -> Self {
         GlobalCnId { t: GLOBAL_CN_ID, length: GLOBAL_CN_ID_LENGTH as u16, ins:0, mcc: 0, mnc: 0, cnid:0 }
+    }
+}
+
+impl From<GlobalCnId> for InformationElement {
+    fn from(i: GlobalCnId) -> Self {
+        InformationElement::GlobalCnId(i)
     }
 }
 

@@ -1,6 +1,6 @@
 // Maximum Packet Loss Rate IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Maximum Packet Loss Rate IE TV
 
@@ -22,6 +22,12 @@ pub struct MaxPacketLossRate {
 impl Default for MaxPacketLossRate {
     fn default() -> Self {
         MaxPacketLossRate { t: MAX_PACKET_LOSS, length:1, ins:0, max_packet_loss_ul:None, max_packet_loss_dl:None }        
+    }
+}
+
+impl From<MaxPacketLossRate> for InformationElement {
+    fn from(i: MaxPacketLossRate) -> Self {
+        InformationElement::MaxPacketLossRate(i)
     }
 }
 

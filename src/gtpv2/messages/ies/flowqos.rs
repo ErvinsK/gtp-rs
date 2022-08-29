@@ -1,6 +1,6 @@
 // Flow Quality of Service (QoS) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Flow QoS IE TL
 
@@ -32,6 +32,12 @@ impl Default for FlowQos {
                     gbr_ul:0,
                     gbr_dl:0,
                  }        
+    }
+}
+
+impl From<FlowQos> for InformationElement {
+    fn from(i: FlowQos) -> Self {
+        InformationElement::FlowQos(i)
     }
 }
 

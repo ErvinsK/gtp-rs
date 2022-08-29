@@ -1,6 +1,6 @@
 // H(e)NB Information Reporting IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // H(e)NB Information Reporting IE TV
 
@@ -24,6 +24,12 @@ pub struct HenbInfoReporting {
 impl Default for HenbInfoReporting {
     fn default() -> HenbInfoReporting {
         HenbInfoReporting { t: HENB_INFO, length:HENB_INFO_LENGTH as u16, ins:0, fti:false }        
+    }
+}
+
+impl From<HenbInfoReporting> for InformationElement {
+    fn from(i: HenbInfoReporting) -> Self {
+        InformationElement::HenbInfoReporting(i)
     }
 }
 

@@ -1,6 +1,6 @@
 // Counter IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Counter IE Type
 
@@ -21,6 +21,12 @@ pub struct Counter {
 impl Default for Counter {
     fn default() -> Self {
         Counter { t: COUNTER, length:COUNTER_LENGTH as u16, ins:0, timestamp:0, counter:0 }        
+    }
+}
+
+impl From<Counter> for InformationElement {
+    fn from(i: Counter) -> Self {
+        InformationElement::Counter(i)
     }
 }
 

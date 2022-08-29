@@ -1,6 +1,6 @@
 // Metric IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Metric IE Type
 
@@ -20,6 +20,12 @@ pub struct Metric {
 impl Default for Metric {
     fn default() -> Self {
         Metric { t: METRIC, length:METRIC_LENGTH as u16, ins:0, metric:0}
+    }
+}
+
+impl From<Metric> for InformationElement {
+    fn from(i: Metric) -> Self {
+        InformationElement::Metric(i)
     }
 }
 

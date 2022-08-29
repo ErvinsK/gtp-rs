@@ -1,7 +1,7 @@
 // Additional PCO IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 // Additional Protocol Configuration Options information element is specified in 3GPP TS 29.275
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Additional PCO IE Type
 
@@ -20,6 +20,12 @@ pub struct Apco {
 impl Default for Apco {
     fn default() -> Self {
         Apco { t: APCO, length:0, ins:0, apco:vec!()}
+    }
+}
+
+impl From<Apco> for InformationElement {
+    fn from(i: Apco) -> Self {
+        InformationElement::Apco(i)
     }
 }
 

@@ -59,7 +59,6 @@ impl IEs for GroupedIe {
     fn len (&self) -> usize {
        (self.length+4) as usize 
     }
-
 }
 
 #[test]

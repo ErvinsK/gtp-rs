@@ -1,6 +1,6 @@
 // APN and Relative Capacity IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // APN and Relative Capacity IE Type
 
@@ -20,6 +20,12 @@ pub struct ApnRelativeCapacity {
 impl Default for ApnRelativeCapacity {
     fn default() -> Self {
         ApnRelativeCapacity { t: APN_REL_CAP, length:2, ins:0, relative_cap:0, name: "".to_string() }
+    }
+}
+
+impl From<ApnRelativeCapacity> for InformationElement {
+    fn from(i: ApnRelativeCapacity) -> Self {
+        InformationElement::ApnRelativeCapacity(i)
     }
 }
 
