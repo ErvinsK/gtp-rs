@@ -27,7 +27,7 @@ pub struct CreateSessionRequest {
     pub linked_ebi: Option<Ebi>,
     // pub twmi: Option<Twmi>
     pub pco: Option<Pco>,
-    pub bearer_ctx_created: GroupedIe,
+    pub bearer_ctx_created: BearerContext,
     // pub bearer_1: Option<BearerContext>
     pub traceinfo: Option<TraceInformation>,
     pub recovery: Option<Recovery>,
@@ -101,7 +101,7 @@ impl Default for CreateSessionRequest {
             linked_ebi: None,
             // twmi: None
             pco: None,
-            bearer_ctx_created: GroupedIe::default(),
+            bearer_ctx_created: BearerContext::default(),
             // pub bearer_1: None,
             traceinfo: None,
             recovery: None,
@@ -695,15 +695,22 @@ fn test_create_session_req_unmarshal () {
                     0x00, 0x10, 0x00),
         });
     decoded.bearer_ctx_created = 
-        GroupedIe { 
+        BearerContext { 
             t: 93, 
             length: 44, 
-            ins: 0, 
-            elements: vec!( 
-                        InformationElement::Ebi(Ebi { t: 73, length: 1, ins: 0, value: 5 }), 
-                        InformationElement::Fteid(Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None }), 
-                        InformationElement::BearerQos(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 1, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 })
-        )};
+            ins: 0,
+            cause: None,
+            tft:None,
+            charging_id:None,
+            bearer_flags:None,
+            pco:None,
+            apco:None,
+            epco:None,
+            max_packet_loss:None, 
+            ebi: Ebi { t: 73, length: 1, ins: 0, value: 5 },
+            fteids: Some(vec!( Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None })),
+            bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 1, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),
+            };
     decoded.recovery = Some (
         Recovery {
             t:RECOVERY,
@@ -879,16 +886,23 @@ fn test_create_session_req_marshal () {
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x00, 0x03, 0x00, 0x00, 0x0a, 0x00, 0x00, 0x05, 0x00, 
                     0x00, 0x10, 0x00),
         });
-    decoded.bearer_ctx_created = 
-        GroupedIe { 
+        decoded.bearer_ctx_created = 
+        BearerContext { 
             t: 93, 
             length: 44, 
-            ins: 0, 
-            elements: vec!( 
-                        InformationElement::Ebi(Ebi { t: 73, length: 1, ins: 0, value: 5 }), 
-                        InformationElement::Fteid(Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None }), 
-                        InformationElement::BearerQos(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 1, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 })
-        )};
+            ins: 0,
+            cause: None,
+            tft:None,
+            charging_id:None,
+            bearer_flags:None,
+            pco:None,
+            apco:None,
+            epco:None,
+            max_packet_loss:None, 
+            ebi: Ebi { t: 73, length: 1, ins: 0, value: 5 },
+            fteids: Some(vec!( Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None })),
+            bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 1, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),
+            };
     decoded.recovery = Some (
         Recovery {
             t:RECOVERY,

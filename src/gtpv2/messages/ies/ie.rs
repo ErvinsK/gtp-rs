@@ -28,7 +28,7 @@ pub enum InformationElement {
     // S103 PDN Data Forwarding Info
     // S1-U Data Forwarding Info
     DelayValue(DelayValue),
-    BearerContext(GroupedIe),
+    BearerContext(BearerContext),
     ChargingId(ChargingId),
     ChargingCharacteristics(ChargingCharacteristics),
     TraceInformation(TraceInformation),
@@ -109,8 +109,8 @@ pub enum InformationElement {
     // Presence Reporting Area Action
     // Presence Reporting Area Information
     TwanIdTimeStamp(TwanIdTimestamp),
-    OverloadControlInfo(GroupedIe),
-    LoadControlInfo(GroupedIe),
+    OverloadControlInfo(OverloadControl),
+    LoadControlInfo(LoadControl),
     Metric(Metric),
     Sqn(Sqn),
     ApnRelativeCapacity(ApnRelativeCapacity),
@@ -120,7 +120,7 @@ pub enum InformationElement {
     // Millisecond Time Stamp
     // Monitoring Event Information
     // ECGI List
-    RemoteUeContext(GroupedIe),
+    RemoteUeContext(RemoteUeContext),
     RemoteUserId(RemoteUserId),
     RemoteUeIpInformation(RemoteUeIpInformation),
     CIoTOptimizationSupportIndication(CIoTOptimizationSupportIndication),
@@ -510,7 +510,7 @@ impl InformationElement {
                         }
                     },
                     93 => {
-                        match GroupedIe::unmarshal(&buffer[cursor..]) {
+                        match BearerContext::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
                                 ies.push(InformationElement::BearerContext(i));
@@ -871,19 +871,19 @@ impl InformationElement {
                         }
                     },
                     180 => {                                                        // Overload Control Information
-                        match GroupedIe::unmarshal(&buffer[cursor..]) {
+                        match OverloadControl::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::BearerContext(i));
+                                ies.push(InformationElement::OverloadControlInfo(i));
                             },
                             Err(j) => return Err(j),
                         }
                     }, 
                     181 => {                                                        // Load Control Information
-                        match GroupedIe::unmarshal(&buffer[cursor..]) {
+                        match LoadControl::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::BearerContext(i));
+                                ies.push(InformationElement::LoadControlInfo(i));
                             },
                             Err(j) => return Err(j),
                         }
@@ -930,10 +930,10 @@ impl InformationElement {
                     // Monitoring Event Information
                     // ECGI List
                     191 => {             // Remote UE Context   
-                        match GroupedIe::unmarshal(&buffer[cursor..]) {
+                        match RemoteUeContext::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::ScefPdnConnection(i));
+                                ies.push(InformationElement::RemoteUeContext(i));
                             },
                             Err(j) => return Err(j),
                         }
