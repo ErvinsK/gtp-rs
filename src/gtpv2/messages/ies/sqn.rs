@@ -1,6 +1,6 @@
 // Sequence Number IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Sequence Number IE Type
 
@@ -20,6 +20,12 @@ pub struct Sqn {
 impl Default for Sqn {
     fn default() -> Self {
         Sqn { t: SQN, length:SQN_LENGTH as u16, ins:0, sqn:0}
+    }
+}
+
+impl From<Sqn> for InformationElement {
+    fn from(i: Sqn) -> Self {
+        InformationElement::Sqn(i)
     }
 }
 

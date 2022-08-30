@@ -1,6 +1,6 @@
 // Procedure Transaction ID (PTI) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // PTI IE Type
 
@@ -20,6 +20,12 @@ pub struct Pti {
 impl Default for Pti {
     fn default() -> Self {
         Pti { t: PTI, length:PTI_LENGTH as u16, ins:0, pti:0}
+    }
+}
+
+impl From<Pti> for InformationElement {
+    fn from(i: Pti) -> Self {
+        InformationElement::Pti(i)
     }
 }
 

@@ -1,6 +1,6 @@
 // Remote User ID IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Remote User ID IE TV
 
@@ -21,6 +21,12 @@ pub struct RemoteUserId {
 impl Default for RemoteUserId {
     fn default() -> Self {
         RemoteUserId { t: REMOTE_USR_ID, length:1, ins:0, imsi:"".to_string(), msisdn:None, imei:None }        
+    }
+}
+
+impl From<RemoteUserId> for InformationElement {
+    fn from(i: RemoteUserId) -> Self {
+        InformationElement::RemoteUserId(i)
     }
 }
 

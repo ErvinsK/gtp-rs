@@ -1,6 +1,6 @@
 // Selection Mode IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Selection Mode IE Type
 
@@ -20,6 +20,12 @@ pub struct SelectionMode {
 impl Default for SelectionMode {
     fn default() -> Self {
         SelectionMode { t: SELECTION_MODE, length:SELECTION_MODE_LENGTH as u16, ins:0, mode:0}
+    }
+}
+
+impl From<SelectionMode> for InformationElement {
+    fn from(i: SelectionMode) -> Self {
+        InformationElement::SelectionMode(i)
     }
 }
 

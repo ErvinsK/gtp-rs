@@ -1,6 +1,6 @@
 // TWAN Identifier Timestamp IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // TWAN Identifier Timestamp IE Type
 
@@ -20,6 +20,12 @@ pub struct TwanIdTimestamp {
 impl Default for TwanIdTimestamp {
     fn default() -> TwanIdTimestamp {
         TwanIdTimestamp { t: TWAN_ID_TIMESTAMP, length:TWAN_ID_TIMESTAMP_LENGTH as u16, ins:0, timestamp:0 }        
+    }
+}
+
+impl From<TwanIdTimestamp> for InformationElement {
+    fn from(i: TwanIdTimestamp) -> Self {
+        InformationElement::TwanIdTimeStamp(i)
     }
 }
 

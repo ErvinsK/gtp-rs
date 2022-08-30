@@ -1,6 +1,6 @@
 // Packet Flow ID IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Packet Flow ID TL
 
@@ -21,6 +21,12 @@ pub struct PacketFlowId {
 impl Default for PacketFlowId {
     fn default() -> Self {
         PacketFlowId { t: PCKTFLOW, length: PCKTFLOW_LENGTH as u16, ins:0, ebi: 0, flow_id:0 }
+    }
+}
+
+impl From<PacketFlowId> for InformationElement {
+    fn from(i: PacketFlowId) -> Self {
+        InformationElement::PacketFlowId(i)
     }
 }
 

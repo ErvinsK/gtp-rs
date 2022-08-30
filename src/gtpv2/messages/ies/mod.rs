@@ -75,6 +75,11 @@ pub use {
     remoteueip::*,
     tmsi::*,
     globalcnid::*,
+    bearercontext::*,
+    loadcontrolinfo::*,
+    epctimer::*,
+    overloadcontrolinfo::*,
+    remoteuecontext::*,
 };
 
 mod commons;
@@ -154,3 +159,7 @@ mod remoteueip;
 mod tmsi;
 mod globalcnid;
 mod bearercontext;
+mod loadcontrolinfo;
+mod epctimer;
+mod overloadcontrolinfo;
+mod remoteuecontext;

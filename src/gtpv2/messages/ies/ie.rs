@@ -86,7 +86,7 @@ pub enum InformationElement {
     // MBMS Time to Data Transfer
     // Throttling
     // Allocation/Retention Priority
-    // EPC Timer
+    EpcTimer(EpcTimer),
     // Signalling Priority Indication
     // Temporary Mobile Group Identity
     // Additional MM context SRVCC
@@ -228,7 +228,7 @@ impl InformationElement {
             // MBMS Time to Data Transfer
             // Throttling
             // Allocation/Retention Priority
-            // EPC Timer
+            InformationElement::EpcTimer(i) => i.marshal(buffer),
             // Signalling Priority Indication
             // Temporary Mobile Group Identity
             // Additional MM context SRVCC
@@ -783,7 +783,15 @@ impl InformationElement {
                     // MBMS Time to Data Transfer
                     // Throttling
                     // Allocation/Retention Priority
-                    // EPC Timer
+                    156 => {
+                        match EpcTimer::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::EpcTimer(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Signalling Priority Indication
                     // Temporary Mobile Group Identity
                     // Additional MM context SRVCC

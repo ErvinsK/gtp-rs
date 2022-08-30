@@ -1,7 +1,7 @@
 // Trace Information IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
 use std::net::Ipv4Addr;
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Trace Information IE TL
 
@@ -28,6 +28,12 @@ pub struct TraceInformation {
 impl Default for TraceInformation {
     fn default() -> Self {
         TraceInformation { t: TRACEINFO, length: TRACEINFO_LENGTH as u16, ins:0, mcc: 0, mnc: 0, trace_id:0, trigger_events:vec!(),list_ne_types:0, trace_depth:0, list_interfaces: vec!(), trace_collection_ip:Ipv4Addr::new(0,0,0,0) }
+    }
+}
+
+impl From<TraceInformation> for InformationElement {
+    fn from(i: TraceInformation) -> Self {
+        InformationElement::TraceInformation(i)
     }
 }
 

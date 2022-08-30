@@ -1,6 +1,6 @@
 // Private Extension IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) and 3GPP TS 24.008 V16.0.0 (2019-03)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Private Extension IE Type
 
@@ -20,6 +20,12 @@ pub struct PrivateExtension {
 impl Default for PrivateExtension {
     fn default() -> Self {
         PrivateExtension { t: PRIVATE_EXT, length:0, ins:0, enterprise_id:0, value:vec!()}
+    }
+}
+
+impl From<PrivateExtension> for InformationElement {
+    fn from(i: PrivateExtension) -> Self {
+        InformationElement::PrivateExtension(i)
     }
 }
 

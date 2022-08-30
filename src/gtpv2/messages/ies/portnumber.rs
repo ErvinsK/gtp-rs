@@ -1,6 +1,6 @@
 // Port Number IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Port Number IE Type
 
@@ -20,6 +20,12 @@ pub struct PortNumber {
 impl Default for PortNumber {
     fn default() -> Self {
         PortNumber { t: PORT_NBR, length:PORT_NBR_LENGTH as u16, ins:0, port:0}
+    }
+}
+
+impl From<PortNumber> for InformationElement {
+    fn from(i: PortNumber) -> Self {
+        InformationElement::PortNumber(i)
     }
 }
 

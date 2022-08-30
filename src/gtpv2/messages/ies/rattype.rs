@@ -1,6 +1,6 @@
 // RAT Type IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // RAT Type IE Type
 
@@ -67,6 +67,12 @@ pub struct RatType {
 impl Default for RatType {
     fn default() -> Self {
         RatType { t: RATTYPE, length:RATTYPE_LENGTH as u16, ins:0, rat_type:Rat::Eutran}
+    }
+}
+
+impl From<RatType> for InformationElement {
+    fn from(i: RatType) -> Self {
+        InformationElement::RatType(i)
     }
 }
 

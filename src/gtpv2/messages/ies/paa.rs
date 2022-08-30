@@ -1,7 +1,7 @@
 // PDN Address Allocation IE - according to 3GPP TS 29.247 V15.9.0 (2019-09)
 
 use std::{net::{Ipv4Addr, Ipv6Addr}};
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // PAA IE Type
 
@@ -35,6 +35,12 @@ impl Default for PdnAddressAllocation {
             ins:0,
             ip:PdnAddress::V4(Ipv4Addr::new(0,0,0,0)),
         }
+    }
+}
+
+impl From<PdnAddressAllocation> for InformationElement {
+    fn from(i: PdnAddressAllocation) -> Self {
+        InformationElement::PdnAddressAllocation(i)
     }
 }
 

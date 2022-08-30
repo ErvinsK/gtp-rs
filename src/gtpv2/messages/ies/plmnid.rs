@@ -1,6 +1,6 @@
 // PLMN ID IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // PLMN ID IE TL
 
@@ -21,6 +21,12 @@ pub struct PlmnId {
 impl Default for PlmnId {
     fn default() -> Self {
         PlmnId { t: PLMNID, length: PLMNID_LENGTH as u16, ins:0, mcc: 0, mnc: 0 }
+    }
+}
+
+impl From<PlmnId> for InformationElement {
+    fn from(i: PlmnId) -> Self {
+        InformationElement::PlmnId(i)
     }
 }
 

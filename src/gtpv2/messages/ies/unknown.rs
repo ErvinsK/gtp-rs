@@ -1,6 +1,6 @@
 // Unknown IE - for internal message handling purposes
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Unknown IE implementation
 
@@ -15,6 +15,12 @@ pub struct Unknown {
 impl Default for Unknown {
     fn default() -> Self {
         Unknown { t: 0, length: 0, ins:0, value:vec!() }
+    }
+}
+
+impl From<Unknown> for InformationElement {
+    fn from(i: Unknown) -> Self {
+        InformationElement::Unknown(i)
     }
 }
 

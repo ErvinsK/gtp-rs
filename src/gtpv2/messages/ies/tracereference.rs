@@ -1,6 +1,6 @@
 // Trace Reference IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Trace Reference IE TL
 
@@ -22,6 +22,12 @@ pub struct TraceReference {
 impl Default for TraceReference {
     fn default() -> Self {
         TraceReference { t: TRACEREF, length: TRACEREF_LENGTH as u16, ins:0, mcc: 0, mnc: 0, trace_id:0 }
+    }
+}
+
+impl From<TraceReference> for InformationElement {
+    fn from(i: TraceReference) -> Self {
+        InformationElement::TraceReference(i)
     }
 }
 

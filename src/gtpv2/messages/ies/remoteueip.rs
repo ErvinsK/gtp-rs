@@ -1,7 +1,7 @@
 // Remote UE IP IE - according to 3GPP TS 29.247 V15.9.0 (2019-09) and 3GPP TS 24.301 9.9.4.20
 
 use std::{net::{Ipv4Addr, Ipv6Addr}};
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Remote UE IP IE Type
 
@@ -34,6 +34,12 @@ impl Default for RemoteUeIpInformation {
             ins:0,
             ip:RemoteIpAddress::V4(Ipv4Addr::new(0,0,0,0)),
         }
+    }
+}
+
+impl From<RemoteUeIpInformation> for InformationElement {
+    fn from(i: RemoteUeIpInformation) -> Self {
+        InformationElement::RemoteUeIpInformation(i)
     }
 }
 

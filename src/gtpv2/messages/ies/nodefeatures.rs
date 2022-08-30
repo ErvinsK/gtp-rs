@@ -1,6 +1,6 @@
 // Node Features IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Node Features IE TL
 
@@ -33,6 +33,12 @@ impl Default for NodeFeatures {
                     ciot:false,                       
                     s1un:false,                             
                 }
+    }
+}
+
+impl From<NodeFeatures> for InformationElement {
+    fn from(i: NodeFeatures) -> Self {
+        InformationElement::NodeFeatures(i)
     }
 }
 

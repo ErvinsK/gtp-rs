@@ -1,6 +1,6 @@
 // UE Time Zone IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // UE Time Zone IE Type
 
@@ -21,6 +21,12 @@ pub struct UeTimeZone {
 impl Default for UeTimeZone {
     fn default() -> Self {
         UeTimeZone { t: UETIMEZONE, length:UETIMEZONE_LENGTH as u16, ins:0, time_zone:0x00, dst:0x00}
+    }
+}
+
+impl From<UeTimeZone> for InformationElement {
+    fn from(i: UeTimeZone) -> Self {
+        InformationElement::UeTimeZone(i)
     }
 }
 

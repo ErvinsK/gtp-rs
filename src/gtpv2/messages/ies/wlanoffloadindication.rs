@@ -1,6 +1,6 @@
 // WLAN Offloadability Indication IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // WLAN Offloadability Indication IE TV
 
@@ -26,6 +26,12 @@ pub struct WlanOffloadIndication {
 impl Default for WlanOffloadIndication {
     fn default() -> Self {
         WlanOffloadIndication { t: WLAN_OFFLOAD_IND, length:WLAN_OFFLOAD_IND_LENGTH as u16, ins:0, eutran_ind:false, utran_ind:false }        
+    }
+}
+
+impl From<WlanOffloadIndication> for InformationElement {
+    fn from(i: WlanOffloadIndication) -> Self {
+        InformationElement::WlanOffloadIndication(i)
     }
 }
 

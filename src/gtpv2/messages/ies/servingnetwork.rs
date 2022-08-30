@@ -1,6 +1,6 @@
 // Serving Network IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Serving Network IE TL
 
@@ -21,6 +21,12 @@ pub struct ServingNetwork {
 impl Default for ServingNetwork {
     fn default() -> Self {
         ServingNetwork { t: SERVINGNW, length: SERVINGNW_LENGTH as u16, ins:0, mcc: 0, mnc: 0 }
+    }
+}
+
+impl From<ServingNetwork> for InformationElement {
+    fn from(i: ServingNetwork) -> Self {
+        InformationElement::ServingNetwork(i)
     }
 }
 

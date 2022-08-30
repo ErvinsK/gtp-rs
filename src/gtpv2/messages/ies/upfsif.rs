@@ -1,6 +1,6 @@
 // UP Function Selection Indication Flags (UPFSIF) IE - according to 3GPP TS 29.274 V15.5.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // UPFSIF IE TV
 
@@ -20,6 +20,12 @@ pub struct UpFunctionSelectionIndicationFlags {
 impl Default for UpFunctionSelectionIndicationFlags {
     fn default() -> UpFunctionSelectionIndicationFlags {
         UpFunctionSelectionIndicationFlags { t: UPFSIF, length:UPFSIF_LENGTH as u16, ins:0, dcnr:false }        
+    }
+}
+
+impl From<UpFunctionSelectionIndicationFlags> for InformationElement {
+    fn from(i: UpFunctionSelectionIndicationFlags) -> Self {
+        InformationElement::UpFunctionSelectionIndicationFlags(i)
     }
 }
 

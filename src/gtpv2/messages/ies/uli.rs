@@ -1,6 +1,6 @@
 // User Location Information (ULI) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // User Location Information (ULI) IE Type
 
@@ -316,6 +316,12 @@ pub struct Uli {
 impl Default for Uli {
     fn default() -> Self {
         Uli { t: ULI, length: 0, ins:0, loc: vec!() }
+    }
+}
+
+impl From<Uli> for InformationElement {
+    fn from(i: Uli) -> Self {
+        InformationElement::Uli(i)
     }
 }
 

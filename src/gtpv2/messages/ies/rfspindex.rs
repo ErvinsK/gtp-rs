@@ -1,6 +1,6 @@
 // RFSP IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // RFSP IE Type
 
@@ -20,6 +20,12 @@ pub struct RfspIndex {
 impl Default for RfspIndex {
     fn default() -> Self {
         RfspIndex { t: RFSP, length:RFSP_LENGTH as u16, ins:0, spid:1}
+    }
+}
+
+impl From<RfspIndex> for InformationElement {
+    fn from(i: RfspIndex) -> Self {
+        InformationElement::RfspIndex(i)
     }
 }
 

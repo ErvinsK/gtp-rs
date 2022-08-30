@@ -192,7 +192,7 @@ impl CreateSessionRequest {
     fn to_vec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
         match self.imsi.clone() {
-            Some(i) => elements.push(InformationElement::Imsi(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.msisdn.clone() {

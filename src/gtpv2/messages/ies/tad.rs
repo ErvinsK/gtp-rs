@@ -1,6 +1,6 @@
 // Traffic Aggregate Descriptor (TAD) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // TAD IE Type
 
@@ -19,6 +19,12 @@ pub struct TrafficAggregateDescription {
 impl Default for TrafficAggregateDescription {
     fn default() -> Self {
         TrafficAggregateDescription { t: TAD, length:0, ins:0, tad:vec!()}
+    }
+}
+
+impl From<TrafficAggregateDescription> for InformationElement {
+    fn from(i: TrafficAggregateDescription) -> Self {
+        InformationElement::TrafficAggregateDescription(i)
     }
 }
 

@@ -1,6 +1,6 @@
 // P-TMSI Signature IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // P-TMSI Signature Type
 
@@ -20,6 +20,12 @@ pub struct PtmsiSignature {
 impl Default for PtmsiSignature {
     fn default() -> Self {
         PtmsiSignature { t: PTMSI_SIG, length:PTMSI_SIG_LENGTH as u16, ins:0, ptmsi_sig:0}
+    }
+}
+
+impl From<PtmsiSignature> for InformationElement {
+    fn from(i: PtmsiSignature) -> Self {
+        InformationElement::PtmsiSignature(i)
     }
 }
 

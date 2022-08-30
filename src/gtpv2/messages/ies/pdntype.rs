@@ -1,6 +1,6 @@
 // PDN Type IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // PDN Type IE Type
 
@@ -50,6 +50,12 @@ pub struct PdnType {
 impl Default for PdnType {
     fn default() -> Self {
         PdnType { t: PDNTYPE, length:PDNTYPE_LENGTH as u16, ins:0, pdn_type:Pdn::Ipv4}
+    }
+}
+
+impl From<PdnType> for InformationElement {
+    fn from(i: PdnType) -> Self {
+        InformationElement::PdnType(i)
     }
 }
 

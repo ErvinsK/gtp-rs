@@ -1,6 +1,6 @@
 // PDU Numbers IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // PDU Numbers IE Type
 
@@ -24,6 +24,12 @@ pub struct PduNumbers {
 impl Default for PduNumbers {
     fn default() -> Self {
         PduNumbers { t: PDUNMBRS, length:PDUNMBRS_LENGTH as u16, ins:0, nsapi:0, dl_gtpu_sqn:0, ul_gtpu_sqn:0, send_npdu:0, receive_npdu:0}
+    }
+}
+
+impl From<PduNumbers> for InformationElement {
+    fn from(i: PduNumbers) -> Self {
+        InformationElement::PduNumbers(i)
     }
 }
 

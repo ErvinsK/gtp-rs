@@ -1,6 +1,6 @@
 // Secondary RAT Usage Data Report IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // Secondary RAT Usage Data Report IE TV
 
@@ -30,6 +30,12 @@ pub struct SecondaryRatUsageDataReport {
 impl Default for SecondaryRatUsageDataReport {
     fn default() -> Self {
         SecondaryRatUsageDataReport { t: SCND_RAT_UDR, length:SCND_RAT_UDR_LENGTH as u16, ins:0, irsgw:false, irpgw:false, rat_type:0, ebi:0, start_timestamp:0, end_timestamp:0, usg_data_dl:0, usg_data_ul:0 }        
+    }
+}
+
+impl From<SecondaryRatUsageDataReport> for InformationElement {
+    fn from(i: SecondaryRatUsageDataReport) -> Self {
+        InformationElement::SecondaryRatUsageDataReport(i)
     }
 }
 

@@ -2,13 +2,6 @@
 
 use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::*};
 
-// Grouped IE Types
-
-pub const BEARERCTX:u8 = 93;
-pub const OVERLOADCTRLINFO:u8 = 180;
-pub const LOADCTRLINFO:u8 = 181;
-pub const REMOTEUECTX:u8 = 191;
-
 // Grouped IE implementation
 
 #[derive(Debug, Clone, PartialEq)]
@@ -21,7 +14,7 @@ pub struct GroupedIe {
 
 impl Default for GroupedIe {
     fn default() -> Self {
-        GroupedIe { t: BEARERCTX, length:0, ins:0, elements:vec!()}
+        GroupedIe { t: BEARER_CTX, length:0, ins:0, elements:vec!()}
     }
 }
 
