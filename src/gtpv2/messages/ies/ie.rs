@@ -56,14 +56,14 @@ pub enum InformationElement {
     // Target Identification
     PacketFlowId(PacketFlowId),
     RabContext(RabContext), 
-    // Source RNC PDCP Context Info
+    SrcRncPdcpCtxInfo(SrcRncPdcpCtxInfo),
     PortNumber(PortNumber),
     ApnRestriction(ApnRestriction),
     SelectionMode(SelectionMode),
     // Source Identification
     ChangeReportingAction(ChangeReportingAction),
-    // FQ-CSID
-    // Channel Needed
+    Fqcsid(Fqcsid),
+    ChannelNeeded(ChannelNeeded),
     // eMLPP Priority
     NodeType(NodeType),
     Fqdn(Fqdn),
@@ -81,13 +81,13 @@ pub enum InformationElement {
     // CSG Membership Indication
     ServiceIndicator(ServiceIndicator),
     DetachType(DetachType),
-    // Local Distiguished Name
+    Ldn(Ldn),
     NodeFeatures(NodeFeatures),
     // MBMS Time to Data Transfer
-    // Throttling
-    // Allocation/Retention Priority
+    Throttling(Throttling),
+    Arp(Arp),
     EpcTimer(EpcTimer),
-    // Signalling Priority Indication
+    Spi(Spi),
     // Temporary Mobile Group Identity
     // Additional MM context SRVCC
     // Additional flags SRVCC
@@ -105,19 +105,19 @@ pub enum InformationElement {
     CnOperatorSelectionEntity(CnOperatorSelectionEntity),
     // Trusted WLAN Mode Indication
     // Node Number
-    // Node Identifier
+    NodeIdentifier(NodeIdentifier),
     // Presence Reporting Area Action
     // Presence Reporting Area Information
     TwanIdTimeStamp(TwanIdTimestamp),
-    OverloadControlInfo(OverloadControl),
+    OverloadControlInfo(OverloadControlInfo),
     LoadControlInfo(LoadControl),
     Metric(Metric),
     Sqn(Sqn),
     ApnRelativeCapacity(ApnRelativeCapacity),
     WlanOffloadIndication(WlanOffloadIndication),
     // Paging and Service Information
-    // Integer Number
-    // Millisecond Time Stamp
+    IntegerNumber(IntegerNumber),
+    MilliSecondTimestamp(MilliSecondTimestamp),
     // Monitoring Event Information
     // ECGI List
     RemoteUeContext(RemoteUeContext),
@@ -127,7 +127,7 @@ pub enum InformationElement {
     ScefPdnConnection(GroupedIe),
     // Header Compression Configuration
     Epco(Epco),
-    // Serving PLMN Rate Control
+    ServingPlmnRateControl(ServingPlmnRateControl),
     Counter(Counter),
     MappedUeUsageType(MappedUeUsageType),
     SecondaryRatUsageDataReport(SecondaryRatUsageDataReport),
@@ -198,14 +198,14 @@ impl InformationElement {
             // Target Identification
             InformationElement::PacketFlowId(i) => i.marshal(buffer),
             InformationElement::RabContext(i) => i.marshal(buffer),
-            // Source RNC PDCP Context Info
+            InformationElement::SrcRncPdcpCtxInfo(i) => i.marshal(buffer),
             InformationElement::PortNumber(i) => i.marshal(buffer),
             InformationElement::ApnRestriction(i) => i.marshal(buffer),
             InformationElement::SelectionMode(i) => i.marshal(buffer),
             // Source Identification
             InformationElement::ChangeReportingAction(i) => i.marshal(buffer),
-            // FQ-CSID
-            // Channel Needed
+            InformationElement::Fqcsid(i) => i.marshal(buffer),
+            InformationElement::ChannelNeeded(i) => i.marshal(buffer),
             // eMLPP Priority
             InformationElement::NodeType(i) => i.marshal(buffer),
             InformationElement::Fqdn(i) => i.marshal(buffer),
@@ -223,13 +223,13 @@ impl InformationElement {
             // CSG Membership Indication
             InformationElement::ServiceIndicator(i) => i.marshal(buffer),
             InformationElement::DetachType(i) => i.marshal(buffer),
-            // Local Distiguished Name
+            InformationElement::Ldn(i) => i.marshal(buffer),
             InformationElement::NodeFeatures(i) => i.marshal(buffer),
             // MBMS Time to Data Transfer
-            // Throttling
-            // Allocation/Retention Priority
+            InformationElement::Throttling(i) => i.marshal(buffer),
+            InformationElement::Arp(i) => i.marshal(buffer),
             InformationElement::EpcTimer(i) => i.marshal(buffer),
-            // Signalling Priority Indication
+            InformationElement::Spi(i) => i.marshal(buffer),
             // Temporary Mobile Group Identity
             // Additional MM context SRVCC
             // Additional flags SRVCC
@@ -247,7 +247,7 @@ impl InformationElement {
             InformationElement::CnOperatorSelectionEntity(i) => i.marshal(buffer),
             // Trusted WLAN Mode Indication
             // Node Number
-            // Node Identifier
+            InformationElement::NodeIdentifier(i) => i.marshal(buffer),
             // Presence Reporting Area Action
             // Presence Reporting Area Information
             InformationElement::TwanIdTimeStamp(i) => i.marshal(buffer),
@@ -259,8 +259,8 @@ impl InformationElement {
             InformationElement::WlanOffloadIndication(i) => i.marshal(buffer),
             // WLAN Offloadability Indication
             // Paging and Service Information
-            // Integer Number
-            // Millisecond Time Stamp
+            InformationElement::IntegerNumber(i) => i.marshal(buffer),
+            InformationElement::MilliSecondTimestamp(i) => i.marshal(buffer),
             // Monitoring Event Information
             // ECGI List
             InformationElement::RemoteUeContext(i) => i.marshal(buffer),
@@ -270,7 +270,7 @@ impl InformationElement {
             InformationElement::ScefPdnConnection(i) => i.marshal(buffer),
             // Header Compression Configuration
             InformationElement::Epco(i) => i.marshal(buffer),
-            // Serving PLMN Rate Control
+            InformationElement::ServingPlmnRateControl(i) => i.marshal(buffer),
             InformationElement::Counter(i) => i.marshal(buffer),
             InformationElement::MappedUeUsageType(i) => i.marshal(buffer),
             InformationElement::SecondaryRatUsageDataReport(i) => i.marshal(buffer),
@@ -664,8 +664,24 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // RAB Context
-                    // Source RNC PDCP Context Info
+                    124 => {
+                        match RabContext::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::RabContext(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    125 => {
+                        match SrcRncPdcpCtxInfo::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::SrcRncPdcpCtxInfo(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     126 => {
                         match PortNumber::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
@@ -703,8 +719,24 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // FQ-CSID
-                    // Channel Needed
+                    132 => {
+                        match Fqcsid::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Fqcsid(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    133 => {
+                        match ChannelNeeded::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::ChannelNeeded(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // eMLPP Priority
                     135 => {
                         match NodeType::unmarshal(&buffer[cursor..]) {
@@ -778,11 +810,35 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Local Distiguished Name
+                    151 => {
+                        match Ldn::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Ldn(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Node Features
                     // MBMS Time to Data Transfer
-                    // Throttling
-                    // Allocation/Retention Priority
+                    154 => {
+                        match Throttling::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Throttling(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    155 => {
+                        match Arp::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Arp(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     156 => {
                         match EpcTimer::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
@@ -792,7 +848,15 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Signalling Priority Indication
+                    157 => {
+                        match Spi::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::Spi(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Temporary Mobile Group Identity
                     // Additional MM context SRVCC
                     // Additional flags SRVCC
@@ -858,7 +922,15 @@ impl InformationElement {
                     },
                     // Trusted WLAN Mode Indication
                     // Node Number
-                    // Node Identifier
+                    176 => {
+                        match NodeIdentifier::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::NodeIdentifier(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Presence Reporting Area Action
                     // Presence Reporting Area Information
                     179 => {
@@ -871,7 +943,7 @@ impl InformationElement {
                         }
                     },
                     180 => {                                                        // Overload Control Information
-                        match OverloadControl::unmarshal(&buffer[cursor..]) {
+                        match OverloadControlInfo::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
                                 ies.push(InformationElement::OverloadControlInfo(i));
@@ -925,8 +997,24 @@ impl InformationElement {
                         }
                     },
                     // Paging and Service Information
-                    // Integer Number
-                    // Millisecond Time Stamp
+                    187 => {
+                        match IntegerNumber::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::IntegerNumber(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    188 => {
+                        match MilliSecondTimestamp::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // Monitoring Event Information
                     // ECGI List
                     191 => {             // Remote UE Context   
@@ -984,7 +1072,15 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Serving PLMN Rate Control
+                    198 => {
+                        match ServingPlmnRateControl::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(InformationElement::ServingPlmnRateControl(i));
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     199 => {
                         match Counter::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {

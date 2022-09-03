@@ -1,6 +1,6 @@
 // Delay Value IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::commons::*};
+use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // Delay Value IE Type
 
@@ -20,6 +20,12 @@ pub struct DelayValue {
 impl Default for DelayValue {
     fn default() -> Self {
         DelayValue { t: DELAY_VALUE, length:DELAY_VALUE_LENGTH as u16, ins:0, value:0}
+    }
+}
+
+impl From<DelayValue> for InformationElement {
+    fn from(i: DelayValue) -> Self {
+        InformationElement::DelayValue(i)
     }
 }
 

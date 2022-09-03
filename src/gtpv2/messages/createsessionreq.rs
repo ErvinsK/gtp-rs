@@ -27,53 +27,47 @@ pub struct CreateSessionRequest {
     pub linked_ebi: Option<Ebi>,
     // pub twmi: Option<Twmi>
     pub pco: Option<Pco>,
-    pub bearer_ctx_created: BearerContext,
-    // pub bearer_1: Option<BearerContext>
+    pub bearer_ctxs: Vec<BearerContext>,
     pub traceinfo: Option<TraceInformation>,
     pub recovery: Option<Recovery>,
-    // pub mme_fqcsid: Option<Fqcsid>,
-    // pub sgw_fqcsid: Option<Fqcsid>,
-    // pub epdg_fqcsid: Option<Fqcsid>,
-    // pub twan_fqcsid: Option<Fqcsid>,
+    pub mme_fqcsid: Option<Fqcsid>,
+    pub sgw_fqcsid: Option<Fqcsid>,
+    pub epdg_fqcsid: Option<Fqcsid>,
+    pub twan_fqcsid: Option<Fqcsid>,
     pub uetimezone: Option<UeTimeZone>,
     pub uci: Option<Uci>,
     pub chargingchar: Option<ChargingCharacteristics>,
-    // pub mme_ldn: Option<Ldn>,
-    // pub sgw_ldn: Option<Ldn>,
-    // pub epdg_ldn: Option<Ldn>,
-    // pub twan_ldn: Option<Ldn>,
-    // pub spi: Option<Spi>,
+    pub ldns: Vec<Ldn>,
+    pub spi: Option<Spi>,
     pub ue_localip: Option<IpAddress>,
     pub ue_udpport: Option<PortNumber>,
-    // pub apco: Option<AddPco>,
+    pub apco: Option<Apco>,
     pub henb_localip: Option<IpAddress>,
     pub henb_udpport: Option<PortNumber>,
     pub mme_id: Option<IpAddress>,
     // pub twan_id: Option<TwanIdentifier>,
     pub epdg_ip: Option<IpAddress>,
-    // pub cnose: Option<CNOperatorSelectionEntity>,
+    pub cnose: Option<CnOperatorSelectionEntity>,
     // pub presence_reporting: Option<PresenceReportingAreaInformation>,
-    // pub mme_overload: Option<OverloadControlInfo>,
-    // pub sgw_overload: Option<OverloadControlInfo>,
-    // pub twan_epdg_overload: Option<OverloadControlInfo>,
-    // pub origination_timestamp: Option<MillisecondTimeStamp>,
-    // pub max_waittime: Option<IntegerNumber>,
+    pub overload_info: Vec<OverloadControlInfo>,
+    pub origination_timestamp: Option<MilliSecondTimestamp>,
+    pub max_waittime: Option<IntegerNumber>,
     // pub wlan_loc: Option<TwanId>,
     // pub wlan_loc_timestamp: Option<TwanIdTimeStamp>,
     // pub nbifom: Option<Fcontainer>,
-    // pub remote_ue_ctx_connected: Option<RemoteUeContext>,
-    // pub aaaserver_id: Option<NodeIdentifier>,
-    // pub epco: Option<Epco>,
-    // pub serv_plmn_ratecontrol: Option<ServingPlmnRateControl>,
-    // pub mo_exception_data_counter: Option<Counter>,
+    pub remote_ue_ctx_connected: Vec<RemoteUeContext>,
+    pub aaaserver_id: Option<NodeIdentifier>,
+    pub epco: Option<Epco>,
+    pub srv_plmn_rate_cntrl: Option<ServingPlmnRateControl>,
+    pub mo_exception_data_counter: Option<Counter>,
     pub ue_tcpport: Option<PortNumber>,
-    // pub mappedue_usage_type: Option<MappedUeUsageType>,
+    pub mapped_ue_usage_type: Option<MappedUeUsageType>,
     pub uli_for_sgw: Option<Uli>,
     pub sgwu_node: Option<Fqdn>,
-    // pub secondary_rat_usage_report: Option<SecondaryRatUsageDataReport>,
-    // pub up_function_selection_flags: Option<UpFunctionSelectionIndicationFlags>,
-    // pub apn_rate_control_status: Option<ApnRateControlStatus>,
-    pub private_ext:Option<PrivateExtension>,
+    pub secondary_rat_usage_report: Vec<SecondaryRatUsageDataReport>,
+    pub up_function_selection_flags: Option<UpFunctionSelectionIndicationFlags>,
+    pub apn_rate_control_status: Option<ApnRateControlStatus>,
+    pub private_ext:Vec<PrivateExtension>,
 }
 
 impl Default for CreateSessionRequest {
@@ -101,53 +95,47 @@ impl Default for CreateSessionRequest {
             linked_ebi: None,
             // twmi: None
             pco: None,
-            bearer_ctx_created: BearerContext::default(),
-            // pub bearer_1: None,
+            bearer_ctxs: vec!(),
             traceinfo: None,
             recovery: None,
-            // mme_fqcsid: None,
-            // sgw_fqcsid: None,
-            // epdg_fqcsid: None,
-            // twan_fqcsid: None,
+            mme_fqcsid: None,
+            sgw_fqcsid: None,
+            epdg_fqcsid: None,
+            twan_fqcsid: None,
             uetimezone: None,
             uci: None,
             chargingchar: None,
-            // mme_ldn: None,
-            // sgw_ldn: None,
-            // epdg_ldn: None,
-            // twan_ldn: None,
-            // spi: None,
+            ldns: vec!(),
+            spi: None,
             ue_localip: None,
             ue_udpport: None,
-            // apco: None,
+            apco: None,
             henb_localip: None,
             henb_udpport: None,
             mme_id: None,
             // twan_id: None,
             epdg_ip: None,
-            // cnose: None,
+            cnose: None,
             // presence_reporting: None,
-            // mme_overload: None,
-            // sgw_overload: None,
-            // twan_epdg_overload: None,
-            // origination_timestamp: None,
-            // max_waittime: None,
+            overload_info:vec!(),
+            origination_timestamp: None,
+            max_waittime: None,
             // wlan_loc: None,
             // wlan_loc_timestamp: None,
             // nbifom: None,
-            // remote_ue_ctx_connected: None,
-            // aaaserver_id: None,
-            // epco: None,
-            // serv_plmn_ratecontrol: None,
-            // mo_exception_data_counter: None,
+            remote_ue_ctx_connected: vec!(),
+            aaaserver_id: None,
+            epco: None,
+            srv_plmn_rate_cntrl: None,
+            mo_exception_data_counter: None,
             ue_tcpport: None,
-            // mapped_ue_usage_type: None,
+            mapped_ue_usage_type: None,
             uli_for_sgw: None,
             sgwu_node: None,
-            // secondary_rat_usage_report: None,
-            // up_function_selection_flags: None,
-            // apn_rate_control_status: None,
-            private_ext: None,
+            secondary_rat_usage_report: vec!(),
+            up_function_selection_flags: None,
+            apn_rate_control_status: None,
+            private_ext: vec!(),
         }
     }
 }
@@ -258,9 +246,8 @@ impl CreateSessionRequest {
             None => (),
         }    
         
-        elements.push(InformationElement::BearerContext(self.bearer_ctx_created.clone()));
-        
-            // pub bearer_1: None,
+        self.bearer_ctxs.iter().for_each(|x| elements.push(InformationElement::BearerContext(x.clone())));
+
         match self.traceinfo.clone() {
             Some(i) => elements.push(InformationElement::TraceInformation(i)),
             None => (),
@@ -269,10 +256,22 @@ impl CreateSessionRequest {
             Some(i) => elements.push(InformationElement::Recovery(i)),
             None => (),
         }
-            // mme_fqcsid: None,
-            // sgw_fqcsid: None,
-            // epdg_fqcsid: None,
-            // twan_fqcsid: None,
+        match self.mme_fqcsid.clone() {
+            Some(i) => elements.push(i.into()),
+            None => ()
+        }
+        match self.sgw_fqcsid.clone() {
+            Some(i) => elements.push(i.into()),
+            None => ()
+        }
+        match self.epdg_fqcsid.clone() {
+            Some(i) => elements.push(i.into()),
+            None => ()
+        }
+        match self.twan_fqcsid.clone() {
+            Some(i) => elements.push(i.into()),
+            None => ()
+        }
         match self.uetimezone.clone() {
             Some(i) => elements.push(InformationElement::UeTimeZone(i)),
             None => (),
@@ -285,11 +284,13 @@ impl CreateSessionRequest {
             Some(i) => elements.push(InformationElement::ChargingCharacteristics(i)),
             None => (),
         }
-            // mme_ldn: None,
-            // sgw_ldn: None,
-            // epdg_ldn: None,
-            // twan_ldn: None,
-            // spi: None,
+
+        self.ldns.iter().for_each(|x| elements.push(InformationElement::Ldn(x.clone())));
+        
+        match self.spi.clone() {
+            Some(i) => elements.push(InformationElement::Spi(i)),
+            None => (),
+        }
         match self.ue_localip.clone() {
             Some(i) => elements.push(InformationElement::IpAddress(i)),
             None => (),
@@ -298,7 +299,10 @@ impl CreateSessionRequest {
             Some(i) => elements.push(InformationElement::PortNumber(i)),
             None => (),
         }
-            // apco: None,
+        match self.apco.clone() {
+            Some(i) => elements.push(i.into()),
+            None => (),
+        }
         match self.henb_localip.clone() {
             Some(i) => elements.push(InformationElement::IpAddress(i)),
             None => (),
@@ -316,26 +320,49 @@ impl CreateSessionRequest {
             Some(i) => elements.push(InformationElement::IpAddress(i)),
             None => (),
         }
-            // cnose: None,
+        match self.cnose.clone() {
+            Some(i) => elements.push(i.into()),
+            None => (),
+
+        }
             // presence_reporting: None,
-            // mme_overload: None,
-            // sgw_overload: None,
-            // twan_epdg_overload: None,
-            // origination_timestamp: None,
-            // max_waittime: None,
+        self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
+        match self.origination_timestamp.clone() {
+            Some(i) => elements.push(i.into()),
+            None => (),
+        }
+        match self.max_waittime.clone() {
+            Some(i) => elements.push(i.into()),
+            None => (),
+        }
             // wlan_loc: None,
             // wlan_loc_timestamp: None,
             // nbifom: None,
-            // remote_ue_ctx_connected: None,
-            // aaaserver_id: None,
-            // epco: None,
-            // serv_plmn_ratecontrol: None,
-            // mo_exception_data_counter: None,
+        self.remote_ue_ctx_connected.iter().for_each(|x| elements.push(InformationElement::RemoteUeContext(x.clone())));
+        match self.aaaserver_id.clone() {
+            Some(i) => elements.push(InformationElement::NodeIdentifier(i)),
+            None => (),
+        }
+        match self.epco.clone() {
+            Some(i) => elements.push(InformationElement::Epco(i)),
+            None => (),
+        }
+        match self.srv_plmn_rate_cntrl.clone() {
+            Some(i) => elements.push(InformationElement::ServingPlmnRateControl(i)),
+            None => (),
+        }
+        match self.mo_exception_data_counter.clone() {
+            Some(i) => elements.push(InformationElement::Counter(i)),
+            None => (),
+        }
         match self.ue_tcpport.clone() {
             Some(i) => elements.push(InformationElement::PortNumber(i)),
             None => (),
         }
-            // mapped_ue_usage_type: None,
+        match self.mapped_ue_usage_type.clone() {
+            Some(i) => elements.push(InformationElement::MappedUeUsageType(i)),
+            None => (),
+        }
         match self.uli_for_sgw.clone() {
             Some(i) => elements.push(InformationElement::Uli(i)),
             None => (),
@@ -343,15 +370,18 @@ impl CreateSessionRequest {
         match self.sgwu_node.clone() {
             Some(i) => elements.push(InformationElement::Fqdn(i)),
             None => (),
-        }   
-            // secondary_rat_usage_report: None,
-            // up_function_selection_flags: None,
-            // apn_rate_control_status: None,
-        match self.private_ext.clone() {
-            Some(i) => elements.push(InformationElement::PrivateExtension(i)),
+        } 
+        self.secondary_rat_usage_report.iter().for_each(|x| elements.push(InformationElement::SecondaryRatUsageDataReport(x.clone())));
+        match self.up_function_selection_flags.clone() {
+            Some(i) => elements.push(i.into()),
             None => (),
-        }
-    elements
+        }             
+        match self.apn_rate_control_status.clone() {
+            Some(i) => elements.push(i.into()),
+            None => (),
+        } 
+        self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));    
+        elements
     }
     
     fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
@@ -359,189 +389,289 @@ impl CreateSessionRequest {
         for e in elements.iter() {
             match e {
                 InformationElement::Imsi(j) => {
-                    if j.ins == 0 {
-                        self.imsi = Some(j.clone());
+                    match (j.ins, self.imsi.is_none()) {
+                        (0, true) => self.imsi = Some(j.clone()),
+                        (_,_) => (),
                     }
                 },
                 InformationElement::Msisdn(j) => {
-                    if j.ins == 0 {
-                        self.msisdn = Some(j.clone());
+                    match (j.ins, self.msisdn.is_none()) {
+                        (0, true) => self.msisdn = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 InformationElement::Mei(j) => {
-                    if j.ins == 0 {
-                        self.mei = Some(j.clone());
+                    match (j.ins, self.mei.is_none()) {
+                        (0, true) => self.mei = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 InformationElement::Uli(j) => { // Two instances
-                    match j.ins {
-                        0 => self.uli = Some(j.clone()),
-                        1 => self.uli_for_sgw = Some(j.clone()),
+                    match (j.ins, self.uli.is_none(), self.uli_for_sgw.is_none()) {
+                        (0, true, _) => self.uli = Some(j.clone()),
+                        (1, _, true) => self.uli_for_sgw = Some(j.clone()),
                         _ => (),
                     }
                 }, 
                 InformationElement::ServingNetwork(j) => {
-                    if j.ins == 0 {
-                        self.servingnetwork = Some(j.clone());
+                    match (j.ins, self.servingnetwork.is_none()) {
+                        (0, true) => self.servingnetwork = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 InformationElement::RatType(j) => {
-                    if j.ins == 0 {
-                        mandatory.push(j.t);
-                        self.rattype = j.clone();
+                    match (j.ins, mandatory.iter().find(|&&x| x==RATTYPE )) {
+                        (0, None) => {
+                            mandatory.push(j.t);
+                            self.rattype = j.clone();
+                        },
+                        _ => (),
                     }
                 },
                 InformationElement::Indication(j) => {
-                    if j.ins == 0 {
-                        self.indication = Some(j.clone());
+                    match (j.ins, self.indication.is_none()) {
+                        (0, true) => self.indication = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 InformationElement::Fteid(j) => {  // 2 instances
-                    match j.ins {
-                        0 => {
+                    match (j.ins, mandatory.iter().find(|&&x| x==FTEID ), self.pgw_addr_control.is_none())  {
+                        (0, None, _) => {
                             mandatory.push(j.t);
                             self.fteid_control = j.clone();
                         },
-                        1 => self.pgw_addr_control = Some(j.clone()),
+                        (1, _, true) => self.pgw_addr_control = Some(j.clone()),
                         _ => (),
                     }
                 }, 
                 InformationElement::Apn(j) => {
-                    if j.ins == 0 {
-                        mandatory.push(j.t);
-                        self.apn = j.clone();
+                    match (j.ins, mandatory.iter().find(|&&x| x==APN )) {
+                        (0, None) => {
+                            mandatory.push(j.t);
+                            self.apn = j.clone();
+                        },
+                        _ => (),
                     }
                 },
                 InformationElement::SelectionMode(j) => {
-                    if j.ins == 0 {
-                        self.selectionmode = Some(j.clone());
+                    match (j.ins, self.selectionmode.is_none()) {
+                        (0, true) => self.selectionmode = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 InformationElement::PdnType(j) => {
-                    if j.ins == 0 {
-                        self.pdntype = Some(j.clone());
+                    match (j.ins, self.pdntype.is_none()) {
+                        (0, true) => self.pdntype = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 InformationElement::PdnAddressAllocation(j) => {
-                    if j.ins == 0 {
-                        self.paa = Some(j.clone());
+                    match (j.ins, self.paa.is_none()) {
+                        (0, true) => self.paa = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 InformationElement::ApnRestriction(j) => {
-                    if j.ins == 0 {
-                        self.max_apnrestriction = Some(j.clone());
+                    match (j.ins, self.max_apnrestriction.is_none()) {
+                        (0, true) => self.max_apnrestriction = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 InformationElement::ApnAmbr(j) => {
-                    if j.ins == 0 {
-                        self.apnambr = Some(j.clone());
+                    match (j.ins, self.apnambr.is_none()) {
+                        (0, true) => self.apnambr = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 InformationElement::Ebi(j) => {
-                    if j.ins == 0 {
-                        self.linked_ebi = Some(j.clone());
+                    match (j.ins, self.linked_ebi.is_none()) {
+                        (0, true) => self.linked_ebi = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 // pub twmi: Option<Twmi>
                 InformationElement::Pco(j) => {
-                    if j.ins == 0 {
-                        self.pco = Some(j.clone());
+                    match (j.ins, self.pco.is_none()) {
+                        (0, true) => self.pco = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 InformationElement::BearerContext(j) => {
                     match j.ins {
-                        0 => self.bearer_ctx_created = j.clone(),
+                        0 => {
+                            mandatory.push(j.t);
+                            self.bearer_ctxs.push(j.clone());
+                        },
+                        1 => self.bearer_ctxs.push(j.clone()),
                         _ => (),
                     }
                 }
-                // pub bearer_0: BearerContext
-                // pub bearer_1: Option<BearerContext>
                 InformationElement::TraceInformation(j) => {
-                    if j.ins == 0 {
-                        self.traceinfo = Some(j.clone());
+                    match (j.ins, self.traceinfo.is_none()) {
+                        (0, true) => self.traceinfo = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 InformationElement::Recovery(j) => {
-                    if j.ins == 0 {
-                        self.recovery = Some(j.clone());
+                    match (j.ins, self.recovery.is_none()) {
+                        (0, true) => self.recovery = Some(j.clone()),
+                        _ => (),
                     }
                 },
-                // pub mme_fqcsid: Option<Fqcsid>,
-                // pub sgw_fqcsid: Option<Fqcsid>,
-                // pub epdg_fqcsid: Option<Fqcsid>,
-                // pub twan_fqcsid: Option<Fqcsid>,
+                InformationElement::Fqcsid(j) => {  // 4 instances
+                    match (j.ins, self.mme_fqcsid.is_none(), self.sgw_fqcsid.is_none(), self.epdg_fqcsid.is_none(), self.twan_fqcsid.is_none()) {
+                        (0, true, _, _, _) => self.mme_fqcsid = Some(j.clone()),
+                        (1, _, true, _, _) => self.sgw_fqcsid = Some(j.clone()),
+                        (2, _, _, true,_) => self.epdg_fqcsid = Some(j.clone()),
+                        (3, _, _, _, true) => self.twan_fqcsid = Some(j.clone()),
+                        _ => (),
+                    }
+                }, 
                 InformationElement::UeTimeZone(j) => {
-                    if j.ins == 0 {
-                        self.uetimezone = Some(j.clone());
+                    match (j.ins, self.uetimezone.is_none()) {
+                        (0, true) => self.uetimezone = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 InformationElement::Uci(j) => {
-                    if j.ins == 0 {
-                        self.uci = Some(j.clone());
+                    match (j.ins, self.uci.is_none()) {
+                        (0, true) => self.uci = Some(j.clone()),
+                        _ => (),
                     }
                 },
                 InformationElement::ChargingCharacteristics(j) => {
-                    if j.ins == 0 {
-                        self.chargingchar = Some(j.clone());
+                    match (j.ins, self.chargingchar.is_none()) {
+                        (0, true) => self.chargingchar = Some(j.clone()),
+                        _ => (),
                     }
                 },
-                // pub mme_ldn: Option<Ldn>,
-                // pub sgw_ldn: Option<Ldn>,
-                // pub epdg_ldn: Option<Ldn>,
-                // pub twan_ldn: Option<Ldn>,
-                // pub spi: Option<Spi>,
+                InformationElement::Ldn(j) => self.ldns.push(j.clone()),
+                InformationElement::Spi(j) => {
+                    match (j.ins, self.spi.is_none()) {
+                        (0, true) => self.spi = Some(j.clone()),
+                        _ => (),
+                    }
+                },
                 InformationElement::IpAddress(j) => {   // four ins
-                    match j.ins {
-                        0 => self.ue_localip = Some(j.clone()),
-                        1 => self.henb_localip = Some(j.clone()),
-                        2 => self.mme_id = Some(j.clone()),
-                        3 => self.epdg_ip = Some(j.clone()),
+                    match (j.ins, self.ue_localip.is_none(), self.henb_localip.is_none(), self.mme_id.is_none(), self.epdg_ip.is_none()) {
+                        (0, true, _, _, _) => self.ue_localip = Some(j.clone()),
+                        (1, _, true, _, _) => self.henb_localip = Some(j.clone()),
+                        (2, _, _, true, _) => self.mme_id = Some(j.clone()),
+                        (3, _, _, _, true) => self.epdg_ip = Some(j.clone()),
                         _ => (),
                     }
                 }, 
                 InformationElement::PortNumber(j) => {  // three ins
-                    match j.ins {
-                        0 => self.ue_udpport = Some(j.clone()),
-                        1 => self.henb_udpport = Some(j.clone()),
-                        2 => self.ue_tcpport = Some(j.clone()),
+                    match (j.ins, self.ue_udpport.is_none(), self.henb_udpport.is_none(), self.ue_tcpport.is_none()) {
+                        (0, true, _, _) => self.ue_udpport = Some(j.clone()),
+                        (1, _, true, _) => self.henb_udpport = Some(j.clone()),
+                        (2, _, _, true) => self.ue_tcpport = Some(j.clone()),
                         _ => (),
                     }
                 }, 
-                // pub apco: Option<AddPco>,
+                InformationElement::Apco(j) => {  
+                    match (j.ins, self.apco.is_none()) {
+                        (0, true) => self.apco = Some(j.clone()),
+                        _ => (),
+                    }
+                }, 
                 // pub twan_id: Option<TwanIdentifier>,
-                // pub cnose: Option<CNOperatorSelectionEntity>,
+                InformationElement::CnOperatorSelectionEntity(j) => {  
+                    match (j.ins, self.cnose.is_none()) {
+                        (0, true) => self.cnose = Some(j.clone()),
+                        _ => (),
+                    }
+                }, 
                 // pub presence_reporting: Option<PresenceReportingAreaInformation>,
-                // pub mme_overload: Option<OverloadControlInfo>,
-                // pub sgw_overload: Option<OverloadControlInfo>,
-                // pub twan_epdg_overload: Option<OverloadControlInfo>,
-                // pub origination_timestamp: Option<MillisecondTimeStamp>,
-                // pub max_waittime: Option<IntegerNumber>,
+                InformationElement::OverloadControlInfo(j) => {  
+                    match j.ins {
+                        k if k<3 => self.overload_info.push(j.clone()),
+                        _ => (),
+                    }
+                }, 
+                InformationElement::MilliSecondTimestamp(j) => {  
+                    match (j.ins, self.origination_timestamp.is_none()) {
+                        (0, true) => self.origination_timestamp = Some(j.clone()),
+                        _ => (),
+                    }
+                },
+                InformationElement::IntegerNumber(j) => {  
+                    match (j.ins, self.max_waittime.is_none()) {
+                        (0, true) => self.max_waittime = Some(j.clone()),
+                        _ => (),
+                    }
+                },
                 // pub wlan_loc: Option<TwanId>,
                 // pub wlan_loc_timestamp: Option<TwanIdTimeStamp>,
                 // pub nbifom: Option<Fcontainer>,
-                // pub remote_ue_ctx_connected: Option<RemoteUeContext>,
-                // pub aaaserver_id: Option<NodeIdentifier>,
-                // pub epco: Option<Epco>,
-                // pub serv_plmn_ratecontrol: Option<ServingPlmnRateControl>,
-                // pub mo_exception_data_counter: Option<Counter>,
-                // pub mappedue_usage_type: Option<MappedUeUsageType>,
-                InformationElement::Fqdn(j) => {
+                InformationElement::RemoteUeContext(j) => {  
                     if j.ins == 0 {
-                        self.sgwu_node = Some(j.clone());
+                        self.remote_ue_ctx_connected.push(j.clone());
+                    }
+                }, 
+                InformationElement::NodeIdentifier(j) => {  
+                    match (j.ins, self.aaaserver_id.is_none()) {
+                        (0, true) => self.aaaserver_id = Some(j.clone()),
+                        _ => (),
                     }
                 },
-                // pub secondary_rat_usage_report: Option<SecondaryRatUsageDataReport>,
-                // pub up_function_selection_flags: Option<UpFunctionSelectionIndicationFlags>,
-                // pub apn_rate_control_status: Option<ApnRateControlStatus>,
-                InformationElement::PrivateExtension(j) => self.private_ext = Some(j.clone()),
+                InformationElement::Epco(j) => {  
+                    match (j.ins, self.epco.is_none()) {
+                        (0, true) => self.epco = Some(j.clone()),
+                        _ => (),
+                    }
+                },
+                InformationElement::ServingPlmnRateControl(j) => {  
+                    match (j.ins, self.srv_plmn_rate_cntrl.is_none()) {
+                        (0, true) => self.srv_plmn_rate_cntrl = Some(j.clone()),
+                        _ => (),
+                    }
+                }, 
+                InformationElement::Counter(j) => {  
+                    match (j.ins, self.mo_exception_data_counter.is_none()) {
+                        (0, true) => self.mo_exception_data_counter = Some(j.clone()),
+                        _ => (),
+                    }
+                }, 
+                InformationElement::MappedUeUsageType(j) => {  
+                    match (j.ins, self.mapped_ue_usage_type.is_none()) {
+                        (0, true) => self.mapped_ue_usage_type = Some(j.clone()),
+                        _ => (),
+                    }
+                }, 
+                InformationElement::Fqdn(j) => {
+                    match (j.ins, self.sgwu_node.is_none()) {
+                        (0, true) => self.sgwu_node = Some(j.clone()),
+                        _ => (),
+                    }
+                },
+                InformationElement::SecondaryRatUsageDataReport(j) => {
+                    if j.ins == 0 {
+                        self.secondary_rat_usage_report.push(j.clone());
+                    }
+                },
+                InformationElement::UpFunctionSelectionIndicationFlags(j) => {
+                    match (j.ins, self.up_function_selection_flags.is_none()) {
+                        (0, true) => self.up_function_selection_flags = Some(j.clone()),
+                        _ => (),
+                    }
+                },
+                InformationElement::ApnRateControlStatus(j) => {
+                    match (j.ins, self.apn_rate_control_status.is_none()) {
+                        (0, true) => self.apn_rate_control_status = Some(j.clone()),
+                        _ => (),
+                    }
+                },
+                InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),
                 _ => (),
             }
         }
-        match ( mandatory.iter().find(|&&x| x==RATTYPE ), mandatory.iter().find(|&&x| x==FTEID ), mandatory.iter().find(|&&x| x==APN)) {
-            (None, _, _) => Err(GTPV2Error::MessageMandatoryIEMissing(RATTYPE)),
-            (_, None, _) => Err(GTPV2Error::MessageMandatoryIEMissing(FTEID)),
-            (_, _, None) => Err(GTPV2Error::MessageMandatoryIEMissing(APN)),
-            (Some(_),Some(_),Some(_)) => Ok(true),
+        match ( mandatory.iter().find(|&&x| x==RATTYPE ), mandatory.iter().find(|&&x| x==FTEID ), mandatory.iter().find(|&&x| x==APN), mandatory.iter().find(|&&x| x==BEARER_CTX)) {
+            (None,_,_,_) => Err(GTPV2Error::MessageMandatoryIEMissing(RATTYPE)),
+            (_,None,_,_) => Err(GTPV2Error::MessageMandatoryIEMissing(FTEID)),
+            (_,_,None,_) => Err(GTPV2Error::MessageMandatoryIEMissing(APN)),
+            (_,_,_,None) => Err(GTPV2Error::MessageMandatoryIEMissing(BEARER_CTX)), 
+            (Some(_),Some(_),Some(_),Some(_)) => Ok(true),
         }
     }
 }
@@ -694,7 +824,7 @@ fn test_create_session_req_unmarshal () {
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x00, 0x03, 0x00, 0x00, 0x0a, 0x00, 0x00, 0x05, 0x00, 
                     0x00, 0x10, 0x00),
         });
-    decoded.bearer_ctx_created = 
+    decoded.bearer_ctxs = vec!(
         BearerContext { 
             t: 93, 
             length: 44, 
@@ -710,7 +840,7 @@ fn test_create_session_req_unmarshal () {
             ebi: Ebi { t: 73, length: 1, ins: 0, value: 5 },
             fteids: Some(vec!( Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None })),
             bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 1, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),
-            };
+            });
     decoded.recovery = Some (
         Recovery {
             t:RECOVERY,
@@ -886,7 +1016,7 @@ fn test_create_session_req_marshal () {
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x00, 0x03, 0x00, 0x00, 0x0a, 0x00, 0x00, 0x05, 0x00, 
                     0x00, 0x10, 0x00),
         });
-        decoded.bearer_ctx_created = 
+        decoded.bearer_ctxs = vec!( 
         BearerContext { 
             t: 93, 
             length: 44, 
@@ -902,7 +1032,7 @@ fn test_create_session_req_marshal () {
             ebi: Ebi { t: 73, length: 1, ins: 0, value: 5 },
             fteids: Some(vec!( Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None })),
             bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 1, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),
-            };
+            });
     decoded.recovery = Some (
         Recovery {
             t:RECOVERY,

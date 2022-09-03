@@ -7,7 +7,7 @@ use crate::gtpv2::{errors::GTPV2Error, messages::ies::*};
 pub const OVERLOAD_CNTRL:u8 = 180;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct OverloadControl {
+pub struct OverloadControlInfo {
     pub t:u8,
     pub length:u16,
     pub ins:u8,
@@ -17,9 +17,9 @@ pub struct OverloadControl {
     pub list:Option<Vec<Apn>>,
 }
 
-impl Default for OverloadControl {
+impl Default for OverloadControlInfo {
     fn default() -> Self {
-        OverloadControl { t: OVERLOAD_CNTRL, 
+        OverloadControlInfo { t: OVERLOAD_CNTRL, 
                         length: 17,
                         ins:0,
                         sqn:Sqn::default(),
@@ -30,8 +30,8 @@ impl Default for OverloadControl {
     }
 }
 
-impl From<OverloadControl> for GroupedIe {
-    fn from(i: OverloadControl) -> Self {
+impl From<OverloadControlInfo> for GroupedIe {
+    fn from(i: OverloadControlInfo) -> Self {
         GroupedIe { t: OVERLOAD_CNTRL,
                     length: 0, 
                     ins: 0, 
@@ -40,9 +40,9 @@ impl From<OverloadControl> for GroupedIe {
     }
 } 
 
-impl From<GroupedIe> for OverloadControl {
+impl From<GroupedIe> for OverloadControlInfo {
     fn from(i: GroupedIe) -> Self {
-       let mut data = OverloadControl::default();
+       let mut data = OverloadControlInfo::default();
        (data.t, data.length, data.ins) = (i.t, i.length, i.ins);
        for j in i.elements.into_iter() {
             let mut apns:Vec<Apn>=vec!();
@@ -61,16 +61,16 @@ impl From<GroupedIe> for OverloadControl {
     }
 }
 
-impl IEs for OverloadControl {
+impl IEs for OverloadControlInfo {
     fn marshal (&self, buffer: &mut Vec<u8>) {
         let g_ie = GroupedIe::from(self.clone());
         g_ie.marshal(buffer);
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        let data:OverloadControl;
+        let data:OverloadControlInfo;
         match GroupedIe::unmarshal(buffer) {
-            Ok(i) => data = OverloadControl::from(i),
+            Ok(i) => data = OverloadControlInfo::from(i),
             Err(j) => return Err(j),
         }
         match data.list.clone() {
@@ -89,7 +89,7 @@ impl IEs for OverloadControl {
     }
 }
 
-impl OverloadControl {
+impl OverloadControlInfo {
     fn to_vec(&self) -> Vec<InformationElement> {
         let mut v:Vec<InformationElement> = vec!();        
         v.push(self.sqn.clone().into());
@@ -116,7 +116,7 @@ fn overload_control_ie_unmarshal_test () {
         0x9c, 0x00, 0x01, 0x00, 0x7f,
         0x47, 0x00, 0x0d, 0x00, 0x04, 0x74, 0x65, 0x73, 0x74, 0x03, 0x6e, 0x65, 0x74, 0x03, 0x63, 0x6f, 0x6d,   
     ];
-   let decoded = OverloadControl { 
+   let decoded = OverloadControlInfo { 
     t: OVERLOAD_CNTRL, 
     length: 35, 
     ins: 0, 
@@ -127,7 +127,7 @@ fn overload_control_ie_unmarshal_test () {
         Apn { t:APN, length: 13, ins:0, name: "test.net.com".to_string() }
     )),
     };
-    let i = OverloadControl::unmarshal(&encoded);
+    let i = OverloadControlInfo::unmarshal(&encoded);
     assert_eq!(i.unwrap(), decoded);
 }
 
@@ -140,7 +140,7 @@ fn overload_control_ie_marshal_test () {
         0x9c, 0x00, 0x01, 0x00, 0x7f,
         0x47, 0x00, 0x0d, 0x00, 0x04, 0x74, 0x65, 0x73, 0x74, 0x03, 0x6e, 0x65, 0x74, 0x03, 0x63, 0x6f, 0x6d,   
     ];
-   let decoded = OverloadControl { 
+   let decoded = OverloadControlInfo { 
     t: LOAD_CNTRL, 
     length: 35, 
     ins: 0, 
