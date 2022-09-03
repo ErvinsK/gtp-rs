@@ -19,9 +19,9 @@ pub struct Imsi {
 impl Default for Imsi {
     fn default() -> Imsi {
         Imsi {  t: IMSI,
-                length: 1,
+                length: 0,
                 ins: 0, 
-                imsi: "0".to_string(),
+                imsi: "".to_string(),
             }        
     }
 }
@@ -48,7 +48,7 @@ impl IEs for Imsi {
             let mut data = Imsi::default();
             data.length = u16::from_be_bytes([buffer[1],buffer[2]]);
             data.ins = buffer[3] & 0x0f;
-            if (data.length as usize)+MIN_IE_SIZE <= buffer.len() {
+            if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4..=(data.length as usize)+3].try_into() {
                 Ok(i) => data.imsi = tbcd_decode(i),
                 Err(_) => return Err(GTPV2Error::IEIncorrect(IMSI)), 

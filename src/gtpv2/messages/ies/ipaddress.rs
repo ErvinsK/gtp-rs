@@ -77,7 +77,7 @@ impl IEs for IpAddress {
     }
     
     fn len(&self) -> usize {
-        (self.length+3) as usize
+        (self.length as usize) + MIN_IE_SIZE
     }
 }
 

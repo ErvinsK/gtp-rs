@@ -25,7 +25,7 @@ pub struct CreateSessionRequest {
     pub max_apnrestriction: Option<ApnRestriction>,
     pub apnambr: Option<ApnAmbr>,
     pub linked_ebi: Option<Ebi>,
-    // pub twmi: Option<Twmi>
+    pub twmi: Option<Twmi>,
     pub pco: Option<Pco>,
     pub bearer_ctxs: Vec<BearerContext>,
     pub traceinfo: Option<TraceInformation>,
@@ -50,11 +50,11 @@ pub struct CreateSessionRequest {
     pub cnose: Option<CnOperatorSelectionEntity>,
     // pub presence_reporting: Option<PresenceReportingAreaInformation>,
     pub overload_info: Vec<OverloadControlInfo>,
-    pub origination_timestamp: Option<MilliSecondTimestamp>,
+    pub origination_timestamp: Option<MilliSecondTimeStamp>,
     pub max_waittime: Option<IntegerNumber>,
     // pub wlan_loc: Option<TwanId>,
-    // pub wlan_loc_timestamp: Option<TwanIdTimeStamp>,
-    // pub nbifom: Option<Fcontainer>,
+    pub wlan_loc_timestamp: Option<TwanIdTimeStamp>,
+    pub nbifom: Option<Fcontainer>,
     pub remote_ue_ctx_connected: Vec<RemoteUeContext>,
     pub aaaserver_id: Option<NodeIdentifier>,
     pub epco: Option<Epco>,
@@ -93,7 +93,7 @@ impl Default for CreateSessionRequest {
             max_apnrestriction: None,
             apnambr: None,
             linked_ebi: None,
-            // twmi: None
+            twmi: None,
             pco: None,
             bearer_ctxs: vec!(),
             traceinfo: None,
@@ -121,8 +121,8 @@ impl Default for CreateSessionRequest {
             origination_timestamp: None,
             max_waittime: None,
             // wlan_loc: None,
-            // wlan_loc_timestamp: None,
-            // nbifom: None,
+            wlan_loc_timestamp: None,
+            nbifom: None,
             remote_ue_ctx_connected: vec!(),
             aaaserver_id: None,
             epco: None,
@@ -237,10 +237,13 @@ impl CreateSessionRequest {
             None => (),
         }
         match self.linked_ebi.clone() {
-            Some(i) => elements.push(InformationElement::Ebi(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
-            // twmi: None
+        match self.twmi.clone() {
+            Some(i) => elements.push(i.into()),
+            None => (),
+        }
         match self.pco.clone() {
             Some(i) => elements.push(InformationElement::Pco(i)),
             None => (),
@@ -336,8 +339,14 @@ impl CreateSessionRequest {
             None => (),
         }
             // wlan_loc: None,
-            // wlan_loc_timestamp: None,
-            // nbifom: None,
+        match self.wlan_loc_timestamp.clone() {
+            Some(i) => elements.push(i.into()),
+            None => (),
+        }
+        match self.nbifom.clone() {
+            Some(i) => elements.push(i.into()),
+            None => (),
+        }
         self.remote_ue_ctx_connected.iter().for_each(|x| elements.push(InformationElement::RemoteUeContext(x.clone())));
         match self.aaaserver_id.clone() {
             Some(i) => elements.push(InformationElement::NodeIdentifier(i)),
@@ -489,7 +498,12 @@ impl CreateSessionRequest {
                         _ => (),
                     }
                 },
-                // pub twmi: Option<Twmi>
+                InformationElement::Twmi(j) => {
+                    match (j.ins, self.twmi.is_none()) {
+                        (0, true) => self.twmi = Some(j.clone()),
+                        _ => (),
+                    }
+                },
                 InformationElement::Pco(j) => {
                     match (j.ins, self.pco.is_none()) {
                         (0, true) => self.pco = Some(j.clone()),
@@ -589,7 +603,7 @@ impl CreateSessionRequest {
                         _ => (),
                     }
                 }, 
-                InformationElement::MilliSecondTimestamp(j) => {  
+                InformationElement::MilliSecondTimeStamp(j) => {  
                     match (j.ins, self.origination_timestamp.is_none()) {
                         (0, true) => self.origination_timestamp = Some(j.clone()),
                         _ => (),
@@ -602,8 +616,18 @@ impl CreateSessionRequest {
                     }
                 },
                 // pub wlan_loc: Option<TwanId>,
-                // pub wlan_loc_timestamp: Option<TwanIdTimeStamp>,
-                // pub nbifom: Option<Fcontainer>,
+                InformationElement::TwanIdTimeStamp(j) => {  
+                    match (j.ins, self.wlan_loc_timestamp.is_none()) {
+                        (0, true) => self.wlan_loc_timestamp = Some(j.clone()),
+                        _ => (),
+                    }
+                },
+                InformationElement::Fcontainer(j) => {  
+                    match (j.ins, self.nbifom.is_none()) {
+                        (0, true) => self.nbifom = Some(j.clone()),
+                        _ => (),
+                    }
+                },
                 InformationElement::RemoteUeContext(j) => {  
                     if j.ins == 0 {
                         self.remote_ue_ctx_connected.push(j.clone());

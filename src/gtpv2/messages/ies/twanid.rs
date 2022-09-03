@@ -1,35 +1,40 @@
-// TWAN Identifier Timestamp IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+// TWAN Identifier IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
 use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
-// TWAN Identifier Timestamp IE Type
+// TWAN Identifier IE Type
 
-pub const TWAN_ID_TIMESTAMP:u8 = 179;
-pub const TWAN_ID_TIMESTAMP_LENGTH:usize = 4;
+pub const TWAN_ID:u8 = 169;
 
-// TWAN Identifier Timestamp IE implementation 
+// TWAN Identifier IE implementation 
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct TwanIdTimeStamp {
+pub struct TwanId {
     pub t:u8,
     pub length:u16,
     pub ins:u8,
-    pub timestamp:u32,          //  Epoch Era 0 - 00:00:00 on January 1, 1900
+    pub ssid: Vec<u8>,
+    pub bssid: Option<Vec<u8>>,
+    pub civic_address: Option<Vec<u8>>,
+    pub twan_plmnid: Option<Vec<u8>>,
+    pub twan_op_name: Option<Vec<u8>>,
+    pub relay_id: Option<u8,Vec<u8>>,
+    pub circuit_id: Option<Vec<u8>>,       
 }
 
-impl Default for TwanIdTimeStamp {
-    fn default() -> TwanIdTimeStamp {
-        TwanIdTimeStamp { t: TWAN_ID_TIMESTAMP, length:TWAN_ID_TIMESTAMP_LENGTH as u16, ins:0, timestamp:0 }        
+impl Default for TwanId {
+    fn default() -> TwanId {
+        TwanId { t: TWAN_ID, length:1, ins:0, ssid:vec!(), bssid:None, civic_address:None, twan_plmnid:None, twan_op_name:None, relay_id:None, circuit_id:None }        
     }
 }
 
-impl From<TwanIdTimeStamp> for InformationElement {
-    fn from(i: TwanIdTimeStamp) -> Self {
-        InformationElement::TwanIdTimeStamp(i)
+impl From<TwanId> for InformationElement {
+    fn from(i: TwanId) -> Self {
+        InformationElement::TwanId(i)
     }
 }
 
-impl IEs for TwanIdTimeStamp {
+impl IEs for TwanId {
     fn marshal (&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie:Vec<u8> = vec!();  
         buffer_ie.push(self.t);

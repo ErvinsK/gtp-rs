@@ -50,7 +50,7 @@ pub enum InformationElement {
     TraceReference(TraceReference),
     // Complete Request Message
     // GUTI
-    // F-Container
+    Fcontainer(Fcontainer),
     // F-Cause
     PlmnId(PlmnId),
     // Target Identification
@@ -95,7 +95,7 @@ pub enum InformationElement {
     Apco(Apco),
     // Absolute Time of MBMS Data Transfer
     HenbInfoReporting(HenbInfoReporting),
-    // IPv4 Configuration Parameters (IP4CP)
+    Ip4Cp(Ip4Cp),
     ChangeToReportFlags(ChangeToReportFlags),
     ActionIndication(ActionIndication),
     // TWAN Identifier
@@ -103,21 +103,21 @@ pub enum InformationElement {
     // MBMS Flags
     // RAN/NAS Cause
     CnOperatorSelectionEntity(CnOperatorSelectionEntity),
-    // Trusted WLAN Mode Indication
-    // Node Number
+    Twmi(Twmi),
+    NodeNumber(NodeNumber),
     NodeIdentifier(NodeIdentifier),
     // Presence Reporting Area Action
     // Presence Reporting Area Information
-    TwanIdTimeStamp(TwanIdTimestamp),
+    TwanIdTimeStamp(TwanIdTimeStamp),
     OverloadControlInfo(OverloadControlInfo),
     LoadControlInfo(LoadControl),
     Metric(Metric),
     Sqn(Sqn),
     ApnRelativeCapacity(ApnRelativeCapacity),
     WlanOffloadIndication(WlanOffloadIndication),
-    // Paging and Service Information
+    PagingServiceInfo(PagingServiceInfo),
     IntegerNumber(IntegerNumber),
-    MilliSecondTimestamp(MilliSecondTimestamp),
+    MilliSecondTimeStamp(MilliSecondTimeStamp),
     // Monitoring Event Information
     // ECGI List
     RemoteUeContext(RemoteUeContext),
@@ -192,7 +192,7 @@ impl InformationElement {
             InformationElement::TraceReference(i) => i.marshal(buffer),
             // Complete Request Message
             // GUTI
-            // F-Container
+            InformationElement::Fcontainer(i) => i.marshal(buffer),
             // F-Cause
             InformationElement::PlmnId(i) => i.marshal(buffer),
             // Target Identification
@@ -237,7 +237,7 @@ impl InformationElement {
             InformationElement::Apco(i) => i.marshal(buffer),
             // Absolute Time of MBMS Data Transfer
             InformationElement::HenbInfoReporting(i) => i.marshal(buffer),
-            // IPv4 Configuration Parameters (IP4CP)
+            InformationElement::Ip4Cp(i) => i.marshal(buffer),
             InformationElement::ChangeToReportFlags(i) => i.marshal(buffer),
             InformationElement::ActionIndication(i) => i.marshal(buffer), 
             // TWAN Identifier
@@ -245,8 +245,8 @@ impl InformationElement {
             // MBMS Flags
             // RAN/NAS Cause
             InformationElement::CnOperatorSelectionEntity(i) => i.marshal(buffer),
-            // Trusted WLAN Mode Indication
-            // Node Number
+            InformationElement::Twmi(i) => i.marshal(buffer),
+            InformationElement::NodeNumber(i) => i.marshal(buffer),
             InformationElement::NodeIdentifier(i) => i.marshal(buffer),
             // Presence Reporting Area Action
             // Presence Reporting Area Information
@@ -257,10 +257,9 @@ impl InformationElement {
             InformationElement::Sqn(i) => i.marshal(buffer),
             InformationElement::ApnRelativeCapacity(i) => i.marshal(buffer),
             InformationElement::WlanOffloadIndication(i) => i.marshal(buffer),
-            // WLAN Offloadability Indication
-            // Paging and Service Information
+            InformationElement::PagingServiceInfo(i) => i.marshal(buffer),
             InformationElement::IntegerNumber(i) => i.marshal(buffer),
-            InformationElement::MilliSecondTimestamp(i) => i.marshal(buffer),
+            InformationElement::MilliSecondTimeStamp(i) => i.marshal(buffer),
             // Monitoring Event Information
             // ECGI List
             InformationElement::RemoteUeContext(i) => i.marshal(buffer),
@@ -636,20 +635,28 @@ impl InformationElement {
                         match TraceReference::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::TraceReference(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
                     },
                     // Complete Request Message
                     // GUTI
-                    // F-Container
+                    118 => {
+                        match Fcontainer::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // F-Cause
                     120 => {
                         match PlmnId::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::PlmnId(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -819,7 +826,15 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Node Features
+                    152 => {
+                        match NodeFeatures::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // MBMS Time to Data Transfer
                     154 => {
                         match Throttling::unmarshal(&buffer[cursor..]) {
@@ -875,17 +890,25 @@ impl InformationElement {
                         match HenbInfoReporting::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::HenbInfoReporting(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
                     },
-                    // IPv4 Configuration Parameters (IP4CP)
+                    166 => {
+                        match Ip4Cp::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     167 => {
                         match ChangeToReportFlags::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::ChangeToReportFlags(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -920,8 +943,24 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Trusted WLAN Mode Indication
-                    // Node Number
+                    174 => {
+                        match Twmi::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    175 => {
+                        match NodeNumber::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     176 => {
                         match NodeIdentifier::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
@@ -934,7 +973,7 @@ impl InformationElement {
                     // Presence Reporting Area Action
                     // Presence Reporting Area Information
                     179 => {
-                        match TwanIdTimestamp::unmarshal(&buffer[cursor..]) {
+                        match TwanIdTimeStamp::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
                                 ies.push(InformationElement::TwanIdTimeStamp(i));
@@ -996,7 +1035,15 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Paging and Service Information
+                    186 => {
+                        match PagingServiceInfo::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     187 => {
                         match IntegerNumber::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
@@ -1007,7 +1054,7 @@ impl InformationElement {
                         }
                     },
                     188 => {
-                        match MilliSecondTimestamp::unmarshal(&buffer[cursor..]) {
+                        match MilliSecondTimeStamp::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
                                 ies.push(i.into());

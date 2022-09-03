@@ -91,6 +91,11 @@ pub use {
     nodeidentifier::*,
     millisecondtimestamp::*,
     integernumber::*,
+    twmi::*,
+    nodenumber::*,
+    pagingserviceinfo::*,
+    ip4cp::*,
+    fcontainer::*,
 };
 
 mod commons;
@@ -185,3 +190,8 @@ mod servingplmnratecontrol;
 mod nodeidentifier;
 mod millisecondtimestamp;
 mod integernumber;
+mod twmi;
+mod nodenumber;
+mod pagingserviceinfo;
+mod ip4cp;
+mod fcontainer;
