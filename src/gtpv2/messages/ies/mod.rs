@@ -96,6 +96,7 @@ pub use {
     pagingserviceinfo::*,
     ip4cp::*,
     fcontainer::*,
+    twanid::*,
 };
 
 mod commons;
@@ -195,3 +196,4 @@ mod nodenumber;
 mod pagingserviceinfo;
 mod ip4cp;
 mod fcontainer;
+mod twanid;

@@ -98,7 +98,7 @@ pub enum InformationElement {
     Ip4Cp(Ip4Cp),
     ChangeToReportFlags(ChangeToReportFlags),
     ActionIndication(ActionIndication),
-    // TWAN Identifier
+    TwanId(TwanId),
     UliTimestamp(UliTimestamp),
     // MBMS Flags
     // RAN/NAS Cause
@@ -240,7 +240,7 @@ impl InformationElement {
             InformationElement::Ip4Cp(i) => i.marshal(buffer),
             InformationElement::ChangeToReportFlags(i) => i.marshal(buffer),
             InformationElement::ActionIndication(i) => i.marshal(buffer), 
-            // TWAN Identifier
+            InformationElement::TwanId(i) => i.marshal(buffer),
             InformationElement::UliTimestamp(i) => i.marshal(buffer),
             // MBMS Flags
             // RAN/NAS Cause
@@ -917,17 +917,25 @@ impl InformationElement {
                         match ActionIndication::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::ActionIndication(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
                     },
-                    // TWAN Identifier
+                    169 => {
+                        match ActionIndication::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     170 => {
                         match UliTimestamp::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::UliTimestamp(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -938,7 +946,7 @@ impl InformationElement {
                         match CnOperatorSelectionEntity::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::CnOperatorSelectionEntity(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -965,7 +973,7 @@ impl InformationElement {
                         match NodeIdentifier::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::NodeIdentifier(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
