@@ -1,5 +1,7 @@
 // TWAN Identifier IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
+use std::str::from_utf8;
+
 use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
 
 // TWAN Identifier IE Type
@@ -16,8 +18,8 @@ pub struct TwanId {
     pub ssid: Vec<u8>,
     pub bssid: Option<Vec<u8>>,
     pub civic_address: Option<Vec<u8>>,
-    pub twan_plmnid: Option<Vec<u8>>,
-    pub twan_op_name: Option<Vec<u8>>,
+    pub twan_plmnid: Option<(u16,u16)>, // MCC and MNC
+    pub twan_op_name: Option<String>,
     pub relay_id: Option<(u8,Vec<u8>)>,
     pub circuit_id: Option<Vec<u8>>,       
 }
@@ -56,13 +58,14 @@ impl IEs for TwanId {
             None => (),
         }
         match &self.twan_plmnid {
-            Some(i) => buffer_ie.extend_from_slice(&i[..]),
+            Some((i,j)) => buffer_ie.append(&mut mcc_mnc_encode(*i, *j)),
             None => (),
         }
         match &self.twan_op_name {
             Some(i) => {
-                buffer_ie.push(i.len() as u8);
-                buffer_ie.extend_from_slice(&i[..]);
+                let b = i.as_bytes();
+                buffer_ie.push(b.len() as u8);
+                buffer_ie.extend_from_slice(&b[..]);
             },
             None => (),
         }
@@ -126,7 +129,7 @@ impl IEs for TwanId {
             match (flags >> 2) & 0x01 {
                 1 => {
                     match buffer[cursor..cursor+3].try_into() {
-                            Ok(i) => data.twan_plmnid = Some(i),
+                            Ok(i) => data.twan_plmnid = Some(mcc_mnc_decode(i)),
                             Err(_) => return Err(GTPV2Error::IEInvalidLength(TWAN_ID)),
                         }
                     cursor+=3;
@@ -139,7 +142,12 @@ impl IEs for TwanId {
                         let field = buffer[cursor] as usize;
                         cursor+=1;
                         match buffer[cursor..cursor+field].try_into() {
-                            Ok(i) => data.twan_op_name = Some(i),
+                            Ok(i) => {
+                                match from_utf8(i) {
+                                    Ok(j) => data.twan_op_name = Some(j.to_string()),
+                                    Err(_) => return Err(GTPV2Error::IEIncorrect(TWAN_ID)),
+                                } 
+                            },
                             Err(_) => return Err(GTPV2Error::IEInvalidLength(TWAN_ID)),
                         }
                         cursor+=field;
@@ -151,9 +159,9 @@ impl IEs for TwanId {
             }
             match (flags >> 4) & 0x01 {
                 1 => {
-                    if cursor+2 <= buffer.len() {
-                        let relay_id = buffer[cursor+1];
-                        let field = buffer[cursor+2] as usize;
+                    if cursor+1 <= buffer.len() {
+                        let relay_id = buffer[cursor];
+                        let field = buffer[cursor+1] as usize;
                         cursor+=2;
                         match buffer[cursor..cursor+field].try_into() {
                             Ok(i) => data.relay_id = Some((relay_id,i)),
@@ -192,19 +200,30 @@ impl IEs for TwanId {
 
 #[test]
 fn twan_id_ie_unmarshal_test () {
-    let encoded:[u8;19]=[0xa9, 0x00, 0x0f, 0x00, 0x03, 0x03, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x03, 0x00, 0x00, 0x00];
-    let decoded = TwanId { t:TWAN_ID, length: 15, ins:0,
+    let encoded:[u8;37]=[0xa9, 0x00, 0x21, 0x00, 0x1f, 0x03, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x03, 0x00, 0x00, 0x00, 0x99, 0xf9, 0x10, 0x04, 0x74, 0x65, 0x73, 0x74, 0x00, 0x04, 0xff, 0xff, 0xff, 0xff, 0x03, 0xaa, 0xaa, 0xaa];
+    let decoded = TwanId { t:TWAN_ID, length: 33, ins:0,
          ssid:vec!(0x00, 0x00, 0x00), 
          bssid:Some(vec!(0xff, 0xff, 0xff, 0xff, 0xff, 0xff)), 
-         civic_address:Some(vec!(0x00, 0x00, 0x00)), twan_plmnid:None, twan_op_name:None, relay_id:None, circuit_id:None };
+         civic_address:Some(vec!(0x00, 0x00, 0x00)), 
+         twan_plmnid:Some((999,1)), 
+         twan_op_name:Some("test".to_string()), 
+         relay_id:Some((0, vec!(0xff,0xff,0xff, 0xff))), 
+         circuit_id:Some(vec!(0xaa, 0xaa, 0xaa)) };
     let i = TwanId::unmarshal(&encoded);
     assert_eq!(i.unwrap(), decoded);
 }
 
 #[test]
 fn twan_id_ie_marshal_test () {
-    let encoded:[u8;9]=[0xa9, 0x00, 0x05, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00];
-    let decoded = TwanId { t:TWAN_ID, length: 5, ins:0, ssid:vec!(0x00, 0x00, 0x00), bssid:None, civic_address:None, twan_plmnid:None, twan_op_name:None, relay_id:None, circuit_id:None };
+    let encoded:[u8;37]=[0xa9, 0x00, 0x21, 0x00, 0x1f, 0x03, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x03, 0x00, 0x00, 0x00, 0x99, 0xf9, 0x10, 0x04, 0x74, 0x65, 0x73, 0x74, 0x00, 0x04, 0xff, 0xff, 0xff, 0xff, 0x03, 0xaa, 0xaa, 0xaa];
+    let decoded = TwanId { t:TWAN_ID, length: 33, ins:0,
+         ssid:vec!(0x00, 0x00, 0x00), 
+         bssid:Some(vec!(0xff, 0xff, 0xff, 0xff, 0xff, 0xff)), 
+         civic_address:Some(vec!(0x00, 0x00, 0x00)), 
+         twan_plmnid:Some((999,1)), 
+         twan_op_name:Some("test".to_string()), 
+         relay_id:Some((0, vec!(0xff,0xff,0xff, 0xff))), 
+         circuit_id:Some(vec!(0xaa, 0xaa, 0xaa)) };
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);

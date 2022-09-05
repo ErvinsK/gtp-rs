@@ -45,14 +45,14 @@ pub struct CreateSessionRequest {
     pub henb_localip: Option<IpAddress>,
     pub henb_udpport: Option<PortNumber>,
     pub mme_id: Option<IpAddress>,
-    // pub twan_id: Option<TwanIdentifier>,
+    pub twan_id: Option<TwanId>,
     pub epdg_ip: Option<IpAddress>,
     pub cnose: Option<CnOperatorSelectionEntity>,
-    // pub presence_reporting: Option<PresenceReportingAreaInformation>,
+    pub prai: Option<PresenceReportingAreaInformation>,
     pub overload_info: Vec<OverloadControlInfo>,
     pub origination_timestamp: Option<MilliSecondTimeStamp>,
     pub max_waittime: Option<IntegerNumber>,
-    // pub wlan_loc: Option<TwanId>,
+    pub wlan_loc: Option<TwanId>,
     pub wlan_loc_timestamp: Option<TwanIdTimeStamp>,
     pub nbifom: Option<Fcontainer>,
     pub remote_ue_ctx_connected: Vec<RemoteUeContext>,
@@ -113,14 +113,14 @@ impl Default for CreateSessionRequest {
             henb_localip: None,
             henb_udpport: None,
             mme_id: None,
-            // twan_id: None,
+            twan_id: None,
             epdg_ip: None,
             cnose: None,
-            // presence_reporting: None,
+            prai: None,
             overload_info:vec!(),
             origination_timestamp: None,
             max_waittime: None,
-            // wlan_loc: None,
+            wlan_loc: None,
             wlan_loc_timestamp: None,
             nbifom: None,
             remote_ue_ctx_connected: vec!(),
@@ -318,7 +318,10 @@ impl CreateSessionRequest {
             Some(i) => elements.push(InformationElement::IpAddress(i)),
             None => (),
         }
-            // twan_id: None,
+        match self.twan_id.clone() {
+            Some(i) => elements.push(InformationElement::TwanId(i)),
+            None => (),
+        }
         match self.epdg_ip.clone() {
             Some(i) => elements.push(InformationElement::IpAddress(i)),
             None => (),
@@ -328,7 +331,11 @@ impl CreateSessionRequest {
             None => (),
 
         }
-            // presence_reporting: None,
+        match self.prai.clone() {
+            Some(i) => elements.push(i.into()),
+            None => (),
+
+        }
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
         match self.origination_timestamp.clone() {
             Some(i) => elements.push(i.into()),
@@ -338,7 +345,10 @@ impl CreateSessionRequest {
             Some(i) => elements.push(i.into()),
             None => (),
         }
-            // wlan_loc: None,
+        match self.wlan_loc.clone() {
+            Some(i) => elements.push(i.into()),
+            None => (),
+        }
         match self.wlan_loc_timestamp.clone() {
             Some(i) => elements.push(i.into()),
             None => (),
@@ -588,15 +598,26 @@ impl CreateSessionRequest {
                         (0, true) => self.apco = Some(j.clone()),
                         _ => (),
                     }
-                }, 
-                // pub twan_id: Option<TwanIdentifier>,
+                },
+                InformationElement::TwanId(j) => {  
+                    match (j.ins, self.twan_id.is_none(), self.wlan_loc.is_none()) {
+                        (0, true, _) => self.twan_id = Some(j.clone()),
+                        (1, _, true) => self.wlan_loc = Some(j.clone()),
+                        _ => (),
+                    }
+                },  
                 InformationElement::CnOperatorSelectionEntity(j) => {  
                     match (j.ins, self.cnose.is_none()) {
                         (0, true) => self.cnose = Some(j.clone()),
                         _ => (),
                     }
                 }, 
-                // pub presence_reporting: Option<PresenceReportingAreaInformation>,
+                InformationElement::PresenceReportingAreaInformation(j) => {  
+                    match (j.ins, self.prai.is_none()) {
+                        (0, true) => self.prai = Some(j.clone()),
+                        _ => (),
+                    }
+                }, 
                 InformationElement::OverloadControlInfo(j) => {  
                     match j.ins {
                         k if k<3 => self.overload_info.push(j.clone()),
@@ -615,7 +636,6 @@ impl CreateSessionRequest {
                         _ => (),
                     }
                 },
-                // pub wlan_loc: Option<TwanId>,
                 InformationElement::TwanIdTimeStamp(j) => {  
                     match (j.ins, self.wlan_loc_timestamp.is_none()) {
                         (0, true) => self.wlan_loc_timestamp = Some(j.clone()),

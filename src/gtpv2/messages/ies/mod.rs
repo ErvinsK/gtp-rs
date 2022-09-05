@@ -97,6 +97,8 @@ pub use {
     ip4cp::*,
     fcontainer::*,
     twanid::*,
+    prai::*,
+    praa::*,
 };
 
 mod commons;
@@ -197,3 +199,5 @@ mod pagingserviceinfo;
 mod ip4cp;
 mod fcontainer;
 mod twanid;
+mod prai;
+mod praa;

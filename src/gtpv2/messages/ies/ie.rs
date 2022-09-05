@@ -106,8 +106,8 @@ pub enum InformationElement {
     Twmi(Twmi),
     NodeNumber(NodeNumber),
     NodeIdentifier(NodeIdentifier),
-    // Presence Reporting Area Action
-    // Presence Reporting Area Information
+    PresenceReportingAreaAction(PresenceReportingAreaAction),
+    PresenceReportingAreaInformation(PresenceReportingAreaInformation),
     TwanIdTimeStamp(TwanIdTimeStamp),
     OverloadControlInfo(OverloadControlInfo),
     LoadControlInfo(LoadControl),
@@ -248,8 +248,8 @@ impl InformationElement {
             InformationElement::Twmi(i) => i.marshal(buffer),
             InformationElement::NodeNumber(i) => i.marshal(buffer),
             InformationElement::NodeIdentifier(i) => i.marshal(buffer),
-            // Presence Reporting Area Action
-            // Presence Reporting Area Information
+            InformationElement::PresenceReportingAreaAction(i) => i.marshal(buffer),
+            InformationElement::PresenceReportingAreaInformation(i) => i.marshal(buffer),
             InformationElement::TwanIdTimeStamp(i) => i.marshal(buffer),
             InformationElement::OverloadControlInfo(i) => i.marshal(buffer),
             InformationElement::LoadControlInfo(i) => i.marshal(buffer),
@@ -978,13 +978,29 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Presence Reporting Area Action
-                    // Presence Reporting Area Information
+                    177 => {
+                        match PresenceReportingAreaAction::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    178 => {
+                        match PresenceReportingAreaInformation::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     179 => {
                         match TwanIdTimeStamp::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::TwanIdTimeStamp(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
