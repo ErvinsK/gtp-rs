@@ -141,6 +141,7 @@ pub enum InformationElement {
     Unknown(Unknown),
 }
 
+
 impl InformationElement {
     pub fn marshal (self, buffer: &mut Vec<u8>) {
         match self {

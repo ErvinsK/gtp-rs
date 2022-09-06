@@ -142,7 +142,7 @@ impl Default for CreateSessionRequest {
 
 impl Messages for CreateSessionRequest {
 
-    fn marshal (self, buffer: &mut Vec<u8>) {
+    fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
         let elements = self.to_vec();
         elements.into_iter().for_each(|k| k.marshal(buffer));
@@ -174,9 +174,7 @@ impl Messages for CreateSessionRequest {
             Err(GTPV2Error::MessageInvalidMessageFormat)
         }
     }
-}
 
-impl CreateSessionRequest {
     fn to_vec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
         match self.imsi.clone() {

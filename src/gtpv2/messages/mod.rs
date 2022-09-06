@@ -5,6 +5,7 @@ pub use {
     echoresp::*,
     versionnotsupported::*,
     createsessionreq::*,
+    createsessionresp::*,
 };
 
 mod ies;
@@ -13,3 +14,4 @@ mod echoreq;
 mod echoresp;
 mod versionnotsupported;
 mod createsessionreq;
+mod createsessionresp;

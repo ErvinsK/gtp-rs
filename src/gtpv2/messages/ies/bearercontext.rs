@@ -114,14 +114,16 @@ impl BearerContext {
             None => (),
         }
         v.push(self.ebi.clone().into());
+        
         match self.tft.clone() {
             Some(i) => v.push(i.into()),
             None => (),
         }
+
         match self.fteids.clone() {
             Some(i) => {
                 for j in i.into_iter() {
-                    v.push(j.into())
+                    v.push(j.into());
                 }
             },
             None => (),

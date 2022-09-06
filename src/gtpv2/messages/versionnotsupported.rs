@@ -1,4 +1,4 @@
-use crate::gtpv2::{header::*, messages::{commons::*}, errors::*, utils::*};
+use crate::gtpv2::{header::*, messages::{commons::*, ies::*}, errors::*, utils::*};
 
 // According to 3GPP TS 29.274 V15.9.0 (2019-09)
 
@@ -23,7 +23,7 @@ impl Default for VersionNotSupported {
 
 impl Messages for VersionNotSupported {
 
-    fn marshal (self, buffer: &mut Vec<u8>) {
+    fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
         set_msg_length(buffer);
     }
@@ -38,6 +38,14 @@ impl Messages for VersionNotSupported {
             return Err(GTPV2Error::MessageIncorrectMessageType);
         }
         Ok(message)            
+    }
+
+    fn to_vec (&self) -> Vec<InformationElement> {
+        vec!()
+    }
+
+    fn from_vec (&mut self, _:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+        Ok(true)
     }
 }
 
