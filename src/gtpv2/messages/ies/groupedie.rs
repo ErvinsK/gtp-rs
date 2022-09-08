@@ -58,7 +58,7 @@ impl IEs for GroupedIe {
 fn grouped_ie_marshal_test () {
     use std::net::Ipv4Addr;
     let encoded:[u8;48]=[
-        0x5d, 0x00, 0x2c, 0x00, 0x49, /* ...].,.I */
+        0x5d, 0x00, 0x2c, 0x01, 0x49, /* ...].,.I */
         0x00, 0x01, 0x00, 0x05, 0x57, 0x00, 0x09, 0x02, /* ....W... */
         0x84, 0x06, 0xd1, 0x82, 0x4c, 0xc1, 0xfe, 0x8b, /* ....L... */
         0x2d, 0x50, 0x00, 0x16, 0x00, 0x6c, 0x09, 0x00, /* -P...l.. */
@@ -69,7 +69,7 @@ fn grouped_ie_marshal_test () {
    let decoded = GroupedIe { 
     t: 93, 
     length: 44, 
-    ins: 0, 
+    ins: 1, 
     elements: vec!( 
                     InformationElement::Ebi(Ebi { t: 73, length: 1, ins: 0, value: 5 }), 
                     InformationElement::Fteid(Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None }), 
@@ -84,7 +84,7 @@ fn grouped_ie_marshal_test () {
 fn grouped_ie_unmarshal_test () {
     use std::net::Ipv4Addr;
     let encoded:[u8;48]=[
-        0x5d, 0x00, 0x2c, 0x00, 0x49, /* ...].,.I */
+        0x5d, 0x00, 0x2c, 0x01, 0x49, /* ...].,.I */
         0x00, 0x01, 0x00, 0x05, 0x57, 0x00, 0x09, 0x02, /* ....W... */
         0x84, 0x06, 0xd1, 0x82, 0x4c, 0xc1, 0xfe, 0x8b, /* ....L... */
         0x2d, 0x50, 0x00, 0x16, 0x00, 0x6c, 0x09, 0x00, /* -P...l.. */
@@ -95,7 +95,7 @@ fn grouped_ie_unmarshal_test () {
    let decoded = GroupedIe { 
     t: 93, 
     length: 44, 
-    ins: 0, 
+    ins: 1, 
     elements: vec!( 
                     InformationElement::Ebi(Ebi { t: 73, length: 1, ins: 0, value: 5 }), 
                     InformationElement::Fteid(Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None }), 

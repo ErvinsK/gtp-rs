@@ -31,8 +31,8 @@ impl Default for LoadControl {
 impl From<LoadControl> for GroupedIe {
     fn from(i: LoadControl) -> Self {
         GroupedIe { t: LOAD_CNTRL,
-                    length: 0, 
-                    ins: 0, 
+                    length: i.length, 
+                    ins: i.ins, 
                     elements: i.to_vec(), 
                 }
     }

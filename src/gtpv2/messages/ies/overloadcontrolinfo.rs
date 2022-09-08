@@ -33,8 +33,8 @@ impl Default for OverloadControlInfo {
 impl From<OverloadControlInfo> for GroupedIe {
     fn from(i: OverloadControlInfo) -> Self {
         GroupedIe { t: OVERLOAD_CNTRL,
-                    length: 0, 
-                    ins: 0, 
+                    length: i.length, 
+                    ins: i.ins, 
                     elements: i.to_vec(), 
                 }
     }
@@ -63,7 +63,7 @@ impl From<GroupedIe> for OverloadControlInfo {
 
 impl IEs for OverloadControlInfo {
     fn marshal (&self, buffer: &mut Vec<u8>) {
-        let g_ie = GroupedIe::from(self.clone());
+        let g_ie: GroupedIe = self.clone().into();
         g_ie.marshal(buffer);
     }
 
@@ -110,7 +110,7 @@ impl OverloadControlInfo {
 #[test]
 fn overload_control_ie_unmarshal_test () {
     let encoded:[u8;39]=[
-        0xb4, 0x00, 0x23, 0x00, 
+        0xb4, 0x00, 0x23, 0x01, 
         0xb7, 0x00, 0x04, 0x00, 0xff, 0xaa, 0xee, 0x11,
         0xb6, 0x00, 0x01, 0x00, 0x60,
         0x9c, 0x00, 0x01, 0x00, 0x7f,
@@ -119,7 +119,7 @@ fn overload_control_ie_unmarshal_test () {
    let decoded = OverloadControlInfo { 
     t: OVERLOAD_CNTRL, 
     length: 35, 
-    ins: 0, 
+    ins: 1, 
     sqn: Sqn { t:SQN, length: SQN_LENGTH as u16, ins:0, sqn: 0xffaaee11 },
     metric: Metric { t:METRIC, length: METRIC_LENGTH as u16, ins:0, metric: 0x60 },
     validity: EpcTimer { t:EPC_TIMER, length: EPC_TIMER_LENGTH as u16, ins:0, timer_unit:3, timer_value:31 },
@@ -134,7 +134,7 @@ fn overload_control_ie_unmarshal_test () {
 #[test]
 fn overload_control_ie_marshal_test () {
     let encoded:[u8;39]=[
-        0xb4, 0x00, 0x23, 0x00, 
+        0xb4, 0x00, 0x23, 0x01, 
         0xb7, 0x00, 0x04, 0x00, 0xff, 0xaa, 0xee, 0x11,
         0xb6, 0x00, 0x01, 0x00, 0x60,
         0x9c, 0x00, 0x01, 0x00, 0x7f,
@@ -143,7 +143,7 @@ fn overload_control_ie_marshal_test () {
    let decoded = OverloadControlInfo { 
     t: LOAD_CNTRL, 
     length: 35, 
-    ins: 0, 
+    ins: 1, 
     sqn: Sqn { t:SQN, length: SQN_LENGTH as u16, ins:0, sqn: 0xffaaee11 },
     metric: Metric { t:METRIC, length: METRIC_LENGTH as u16, ins:0, metric: 0x60 },
     validity: EpcTimer { t:EPC_TIMER, length: EPC_TIMER_LENGTH as u16, ins:0, timer_unit:3, timer_value:31 },

@@ -49,8 +49,8 @@ impl Default for BearerContext {
 impl From<BearerContext> for GroupedIe {
     fn from(i: BearerContext) -> Self {
         GroupedIe { t: BEARER_CTX,
-                    length: 0, 
-                    ins: 0, 
+                    length: i.length, 
+                    ins: i.ins, 
                     elements: i.to_vec(), 
                 }
     }

@@ -29,8 +29,8 @@ impl Default for RemoteUeContext {
 impl From<RemoteUeContext> for GroupedIe {
     fn from(i: RemoteUeContext) -> Self {
         GroupedIe { t: REMOTE_UE_CTX,
-                    length: 0, 
-                    ins: 0, 
+                    length: i.length, 
+                    ins: i.ins, 
                     elements: i.to_vec(), 
                 }
     }

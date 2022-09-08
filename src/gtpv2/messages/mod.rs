@@ -6,6 +6,10 @@ pub use {
     versionnotsupported::*,
     createsessionreq::*,
     createsessionresp::*,
+    createbearerreq::*,
+    createbearerresp::*,
+    bearerresourcecommand::*,
+    bearerresourcefailureind::*
 };
 
 mod ies;
@@ -15,3 +19,7 @@ mod echoresp;
 mod versionnotsupported;
 mod createsessionreq;
 mod createsessionresp;
+mod createbearerreq;
+mod createbearerresp;
+mod bearerresourcecommand;
+mod bearerresourcefailureind;
