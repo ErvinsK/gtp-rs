@@ -182,56 +182,56 @@ impl Messages for CreateSessionRequest {
             None => (),
         }
         match self.msisdn.clone() {
-            Some(i) => elements.push(InformationElement::Msisdn(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.mei.clone() {
-            Some(i) => elements.push(InformationElement::Mei(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.uli.clone() {
-            Some(i) => elements.push(InformationElement::Uli(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.servingnetwork.clone() {
-            Some(i) => elements.push(InformationElement::ServingNetwork(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
 
         elements.push(InformationElement::RatType(self.rattype.clone()));
         
         match self.indication.clone() {
-            Some(i) => elements.push(InformationElement::Indication(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         
         elements.push(InformationElement::Fteid(self.fteid_control.clone()));
 
         match self.pgw_addr_control.clone() {
-            Some(i) => elements.push(InformationElement::Fteid(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         
         elements.push(InformationElement::Apn(self.apn.clone()));
 
         match self.selectionmode.clone() {
-            Some(i) => elements.push(InformationElement::SelectionMode(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.pdntype.clone() {
-            Some(i) => elements.push(InformationElement::PdnType(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.paa.clone() {
-            Some(i) => elements.push(InformationElement::PdnAddressAllocation(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.max_apnrestriction.clone() {
-            Some(i) => elements.push(InformationElement::ApnRestriction(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.apnambr.clone() {
-            Some(i) => elements.push(InformationElement::ApnAmbr(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.linked_ebi.clone() {
@@ -243,18 +243,18 @@ impl Messages for CreateSessionRequest {
             None => (),
         }
         match self.pco.clone() {
-            Some(i) => elements.push(InformationElement::Pco(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }    
         
         self.bearer_ctxs.iter().for_each(|x| elements.push(InformationElement::BearerContext(x.clone())));
 
         match self.traceinfo.clone() {
-            Some(i) => elements.push(InformationElement::TraceInformation(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.recovery.clone() {
-            Some(i) => elements.push(InformationElement::Recovery(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.mme_fqcsid.clone() {
@@ -274,30 +274,30 @@ impl Messages for CreateSessionRequest {
             None => ()
         }
         match self.uetimezone.clone() {
-            Some(i) => elements.push(InformationElement::UeTimeZone(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.uci.clone() {
-            Some(i) => elements.push(InformationElement::Uci(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.chargingchar.clone() {
-            Some(i) => elements.push(InformationElement::ChargingCharacteristics(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
 
         self.ldns.iter().for_each(|x| elements.push(InformationElement::Ldn(x.clone())));
         
         match self.spi.clone() {
-            Some(i) => elements.push(InformationElement::Spi(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.ue_localip.clone() {
-            Some(i) => elements.push(InformationElement::IpAddress(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.ue_udpport.clone() {
-            Some(i) => elements.push(InformationElement::PortNumber(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.apco.clone() {
@@ -305,23 +305,23 @@ impl Messages for CreateSessionRequest {
             None => (),
         }
         match self.henb_localip.clone() {
-            Some(i) => elements.push(InformationElement::IpAddress(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.henb_udpport.clone() {
-            Some(i) => elements.push(InformationElement::PortNumber(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.mme_id.clone() {
-            Some(i) => elements.push(InformationElement::IpAddress(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.twan_id.clone() {
-            Some(i) => elements.push(InformationElement::TwanId(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.epdg_ip.clone() {
-            Some(i) => elements.push(InformationElement::IpAddress(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.cnose.clone() {
@@ -357,35 +357,35 @@ impl Messages for CreateSessionRequest {
         }
         self.remote_ue_ctx_connected.iter().for_each(|x| elements.push(InformationElement::RemoteUeContext(x.clone())));
         match self.aaaserver_id.clone() {
-            Some(i) => elements.push(InformationElement::NodeIdentifier(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.epco.clone() {
-            Some(i) => elements.push(InformationElement::Epco(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.srv_plmn_rate_cntrl.clone() {
-            Some(i) => elements.push(InformationElement::ServingPlmnRateControl(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.mo_exception_data_counter.clone() {
-            Some(i) => elements.push(InformationElement::Counter(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.ue_tcpport.clone() {
-            Some(i) => elements.push(InformationElement::PortNumber(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.mapped_ue_usage_type.clone() {
-            Some(i) => elements.push(InformationElement::MappedUeUsageType(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.uli_for_sgw.clone() {
-            Some(i) => elements.push(InformationElement::Uli(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         }
         match self.sgwu_node.clone() {
-            Some(i) => elements.push(InformationElement::Fqdn(i)),
+            Some(i) => elements.push(i.into()),
             None => (),
         } 
         self.secondary_rat_usage_report.iter().for_each(|x| elements.push(InformationElement::SecondaryRatUsageDataReport(x.clone())));

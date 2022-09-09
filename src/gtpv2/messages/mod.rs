@@ -9,7 +9,9 @@ pub use {
     createbearerreq::*,
     createbearerresp::*,
     bearerresourcecommand::*,
-    bearerresourcefailureind::*
+    bearerresourcefailureind::*,
+    modifybearerreq::*,
+    modifybearerresp::*,
 };
 
 mod ies;
@@ -23,3 +25,5 @@ mod createbearerreq;
 mod createbearerresp;
 mod bearerresourcecommand;
 mod bearerresourcefailureind;
+mod modifybearerreq;
+mod modifybearerresp;

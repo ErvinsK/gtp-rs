@@ -271,6 +271,12 @@ impl Messages for CreateSessionResponse {
                         _ => (),
                     }
                 },
+                InformationElement::CSGInformationReportingAction(j) => {
+                    match (j.ins, self.csg_ira.is_none()) {
+                        (0, true) => self.csg_ira = Some(j.clone()),
+                        _ => (),
+                    }
+                },
                 InformationElement::HenbInfoReporting(j) => {
                     match (j.ins, self.henb_info_report.is_none()) {
                         (0, true) => self.henb_info_report = Some(j.clone()),

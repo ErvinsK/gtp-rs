@@ -273,6 +273,5 @@ fn test_bearer_failure_ind_marshal () {
     );
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
-    //buffer.iter().for_each( |x| print!("{:#04x},", x));
     assert_eq!(buffer,encoded);
 }
