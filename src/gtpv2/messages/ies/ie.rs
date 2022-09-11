@@ -101,7 +101,7 @@ pub enum InformationElement {
     TwanId(TwanId),
     UliTimestamp(UliTimestamp),
     // MBMS Flags
-    // RAN/NAS Cause
+    RanNasCause(RanNasCause),
     CnOperatorSelectionEntity(CnOperatorSelectionEntity),
     Twmi(Twmi),
     NodeNumber(NodeNumber),
@@ -244,7 +244,7 @@ impl InformationElement {
             InformationElement::TwanId(i) => i.marshal(buffer),
             InformationElement::UliTimestamp(i) => i.marshal(buffer),
             // MBMS Flags
-            // RAN/NAS Cause
+            InformationElement::RanNasCause(i) => i.marshal(buffer),
             InformationElement::CnOperatorSelectionEntity(i) => i.marshal(buffer),
             InformationElement::Twmi(i) => i.marshal(buffer),
             InformationElement::NodeNumber(i) => i.marshal(buffer),
@@ -942,7 +942,15 @@ impl InformationElement {
                         }
                     },
                     // MBMS Flags
-                    // RAN/NAS Cause
+                    172 => {
+                        match RanNasCause::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     173 => {
                         match CnOperatorSelectionEntity::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {

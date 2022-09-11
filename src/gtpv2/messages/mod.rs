@@ -12,6 +12,8 @@ pub use {
     bearerresourcefailureind::*,
     modifybearerreq::*,
     modifybearerresp::*,
+    deletesessionreq::*,
+    deletebearerreq::*,
 };
 
 mod ies;
@@ -27,3 +29,5 @@ mod bearerresourcecommand;
 mod bearerresourcefailureind;
 mod modifybearerreq;
 mod modifybearerresp;
+mod deletesessionreq;
+mod deletebearerreq;
