@@ -15,6 +15,7 @@ pub use {
     deletesessionreq::*,
     deletebearerreq::*,
     deletesessionresp::*,
+    deletebearerresp::*,
 };
 
 mod ies;
@@ -33,3 +34,4 @@ mod modifybearerresp;
 mod deletesessionreq;
 mod deletebearerreq;
 mod deletesessionresp;
+mod deletebearerresp;

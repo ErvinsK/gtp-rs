@@ -22,10 +22,9 @@ pub struct CreateBearerResponse {
     pub twan_id: Option<TwanId>,
     pub overload_info:Vec<OverloadControlInfo>,
     pub prai:Option<PresenceReportingAreaInformation>,
-    pub mme_id: Option<IpAddress>,
+    pub ip: Option<IpAddress>,   // Either MME ID IE (S11/S4/S5/S8) or UE Local IP IE (S2b) 
     pub wlan_loc: Option<TwanId>,
     pub wlan_loc_timestamp: Option<TwanIdTimeStamp>,
-    pub ue_localip: Option<IpAddress>,
     pub ue_udpport: Option<PortNumber>,
     pub nbifom:Option<Fcontainer>,
     pub ue_tcpport: Option<PortNumber>,
@@ -52,10 +51,9 @@ impl Default for CreateBearerResponse {
             twan_id:None,
             overload_info:vec!(),
             prai:None,
-            mme_id:None,
+            ip:None,
             wlan_loc:None,
             wlan_loc_timestamp:None,
-            ue_localip:None,
             ue_udpport:None,
             nbifom:None,
             ue_tcpport:None,
@@ -150,7 +148,7 @@ impl Messages for CreateBearerResponse {
             Some(i) => elements.push(i.into()),
             None => (),
         }
-        match self.mme_id.clone() {
+        match self.ip.clone() {
             Some(i) => elements.push(i.into()),
             None => (),
         }        
@@ -159,10 +157,6 @@ impl Messages for CreateBearerResponse {
             None => (),
         }
         match self.wlan_loc_timestamp.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.ue_localip.clone() {
             Some(i) => elements.push(i.into()),
             None => (),
         }
@@ -256,8 +250,8 @@ impl Messages for CreateBearerResponse {
                     }
                 },
                 InformationElement::IpAddress(j) => {
-                    match (j.ins, self.mme_id.is_none()) {
-                        (0, true) => self.mme_id = Some(j.clone()),
+                    match (j.ins, self.ip.is_none()) {
+                        (0, true) => self.ip = Some(j.clone()),
                         _ => (),
                     }
                 },

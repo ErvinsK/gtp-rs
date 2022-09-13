@@ -24,10 +24,9 @@ pub struct DeleteBearerResponse {
     pub twan_id: Option<TwanId>,
     pub twan_id_timestamp:Option<TwanIdTimeStamp>,
     pub overload_info:Vec<OverloadControlInfo>,
-    pub mme_id: Option<IpAddress>,
+    pub ip: Option<IpAddress>,  // Either MME Id IE (S11/S8/S5) or UE Local IP IE (S2b)
     pub wlan_loc: Option<TwanId>,
     pub wlan_loc_timestamp: Option<TwanIdTimeStamp>,
-    pub ue_localip: Option<IpAddress>,
     pub ue_udpport: Option<PortNumber>,
     pub nbifom:Option<Fcontainer>,
     pub ue_tcpport: Option<PortNumber>,
@@ -57,10 +56,9 @@ impl Default for DeleteBearerResponse {
             twan_id:None,
             twan_id_timestamp:None,
             overload_info:vec!(),
-            mme_id:None,
+            ip:None,
             wlan_loc:None,
             wlan_loc_timestamp:None,
-            ue_localip:None,
             ue_udpport:None,
             nbifom:None,
             ue_tcpport:None,
@@ -165,7 +163,7 @@ impl Messages for DeleteBearerResponse {
 
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
-        match self.mme_id.clone() {
+        match self.ip.clone() {
             Some(i) => elements.push(i.into()),
             None => (),
         }        
@@ -174,10 +172,6 @@ impl Messages for DeleteBearerResponse {
             None => (),
         }
         match self.wlan_loc_timestamp.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.ue_localip.clone() {
             Some(i) => elements.push(i.into()),
             None => (),
         }
@@ -194,7 +188,7 @@ impl Messages for DeleteBearerResponse {
             None => ()
         } 
 
-        self.private_ext.iter().for_each(|x| elements.push(InformationElement::SecondaryRatUsageDataReport(x.clone())));  
+        self.secondary_rat_usage_report.iter().for_each(|x| elements.push(InformationElement::SecondaryRatUsageDataReport(x.clone())));  
 
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));  
 
@@ -207,7 +201,7 @@ impl Messages for DeleteBearerResponse {
             match e {
                 InformationElement::Cause(j) => {
                     match (j.ins, mandatory) {
-                        (0, false) => (self.cause, mandatory[0]) = (j, true),
+                        (0, false) => (self.cause, mandatory) = (j, true),
                         _ => (),
                     }
                 },
@@ -280,81 +274,63 @@ impl Messages for DeleteBearerResponse {
                 },
                 InformationElement::OverloadControlInfo(j) => {  
                     match j.ins {
-                        k if k<3 => self.overload_info.push(j.clone()),
+                        k if k<3 => self.overload_info.push(j),
                         _ => (),
                     }
                 }, 
-                InformationElement::PresenceReportingAreaInformation(j) => {
-                    match (j.ins, self.prai.is_none()) {
-                        (0, true) => self.prai = Some(j.clone()),
-                        _ => (),
-                    }
-                },
                 InformationElement::IpAddress(j) => {
-                    match (j.ins, self.mme_id.is_none()) {
-                        (0, true) => self.mme_id = Some(j.clone()),
+                    match (j.ins, self.ip.is_none()) {
+                        (0, true) => self.ip = Some(j),
                         _ => (),
                     }
                 },
-                InformationElement::TwanIdTimeStamp(j) => {
-                    match (j.ins, self.wlan_loc_timestamp.is_none()) {
-                        (1, true) => self.wlan_loc_timestamp = Some(j.clone()),
-                        _ => (),
-                    }
-                },
-                InformationElement::PortNumber(j) => {
+                InformationElement::PortNumber(j) => { // 2 instances
                     match (j.ins, self.ue_udpport.is_none(), self.ue_tcpport.is_none()) {
-                        (0, true, _) => self.ue_udpport = Some(j.clone()),
-                        (1, _, true) => self.ue_tcpport = Some(j.clone()),
+                        (0, true, _) => self.ue_udpport = Some(j),
+                        (1, _, true) => self.ue_tcpport = Some(j),
                         _ => (),
                     }
                 },
                 InformationElement::Fcontainer(j) => {  
                     match (j.ins, self.nbifom.is_none()) {
-                        (0, true) => self.nbifom = Some(j.clone()),
+                        (0, true) => self.nbifom = Some(j),
                         _ => (),
                     }
                 },
+
+                InformationElement::SecondaryRatUsageDataReport(j) => self.secondary_rat_usage_report.push(j.clone()),
+
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),
                 _ => (),
             }
         }
-        match (mandatory[0], mandatory[1]) {
-            (false,false) => Err(GTPV2Error::MessageMandatoryIEMissing(CAUSE)),
-            (false,true) => Err(GTPV2Error::MessageMandatoryIEMissing(CAUSE)),
-            (true,false) => Err(GTPV2Error::MessageMandatoryIEMissing(BEARER_CTX)), 
-            (true,true) => Ok(true),
+        if mandatory {
+            Ok(true)
+        } else {
+            Err(GTPV2Error::MessageMandatoryIEMissing(CAUSE))
         }
     }
 }
 
 #[test]
-fn test_create_bearer_resp_unmarshal () {
-    use std::net::Ipv4Addr;
-    let encoded:[u8;109] = [
-        0x48,0x60,0x00,0x69,0x09,0x09,0xa4,0x56,
-        0x00,0x00,0x2f,0x00,0x02,0x00,0x02,0x00,
-        0x10,0x00,0x5d,0x00,0x3a,0x00,0x02,0x00,
-        0x02,0x00,0x10,0x00,0x49,0x00,0x01,0x00,
-        0x05,0x57,0x00,0x09,0x02,0x85,0x3b,0x95,
-        0x98,0x5a,0x3e,0x99,0x89,0x55,0x50,0x00,
-        0x16,0x00,0x2c,0x09,0x00,0x00,0x00,0x00,
-        0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-        0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-        0x5e,0x00,0x04,0x00,0x01,0x62,0x9c,0xc4,
-        0x03,0x00,0x01,0x00,0x11,0x4e,0x00,0x14,
-        0x00,0x80,0x80,0x21,0x10,0x02,0x00,0x00,
-        0x10,0x81,0x06,0x08,0x08,0x08,0x08,0x83,
-        0x06,0x0a,0x40,0xd0,0x61,
+fn test_delete_bearer_resp_unmarshal () {
+    let encoded:[u8;54] = [
+        0x48, 0x64, 0x00, 0x32, 0x78, 0x7d, 0xaf, 0x3c, 
+        0x1b, 0x7a, 0xae, 0x00, 0x02, 0x00, 0x02, 0x00, 
+        0x10, 0x00, 0x49, 0x00, 0x01, 0x00, 0x05, 0x72, 
+        0x00, 0x02, 0x00, 0x80, 0x00, 0x56, 0x00, 0x0d, 
+        0x00, 0x18, 0x42, 0xf7, 0x10, 0xab, 0xea, 0x42, 
+        0xf7, 0x10, 0x00, 0x2a, 0x46, 0x10, 0xaa, 0x00, 
+        0x04, 0x00, 0xe5, 0xce, 0x77, 0xef,
     ];
-    let mut decoded = CreateBearerResponse::default();
+    let mut decoded = DeleteBearerResponse::default();
     decoded.header = Gtpv2Header {
-            msgtype:CREATE_BEARER_RESP,
+            msgtype:DELETE_BEARER_RESP,
             piggyback:false,
             message_prio:None, 
-            length:105, 
-            teid:Some(0x0909a456), 
-            sqn:0x2f };
+            length:50, 
+            teid:Some(0x787daf3c), 
+            sqn:0x1b7aae };
     decoded.cause = Cause{
         t:CAUSE,
         length:2,
@@ -365,90 +341,56 @@ fn test_create_bearer_resp_unmarshal () {
         cs:false,
         offend_ie_type:None,
     };
-    decoded.recovery = Some (
-        Recovery {
-            t:RECOVERY,
+    decoded.linked_ebi = Some (
+        Ebi {
+            t:EBI,
             length:1,
             ins:0,
-            recovery:17,
+            value:5,
         }    
     );
-    decoded.pco = Some (
-        Pco {
-            t:PCO,
-            length:20,
+    decoded.uli = Some (
+        Uli {
+            t:ULI,
+            length:13,
             ins:0,
-            pco: vec!(0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08, 0x83, 0x06, 
-                    0x0a, 0x40, 0xd0, 0x61),
+            loc: vec!(Location::Tai(Tai { mcc: 247, mnc:1, tac:0xabea}),Location::Ecgi(Ecgi{ mcc: 247, mnc:1, eci:2770448})),
         });
-    
-    decoded.bearer_ctxs = vec!(
-        BearerContext { 
-            t: 93, 
-            length: 58, 
+    decoded.uli_timestamp = Some (
+        UliTimestamp { 
+            t: ULI_TIMESTAMP, 
+            length: 4,
             ins: 0,
-            cause: Some(
-                Cause {
-                    t:CAUSE,
-                    length:2,
-                    ins:0,
-                    value:16,
-                    pce:false,
-                    bce:false,
-                    cs:false,
-                    offend_ie_type:None,
-                }
-            ),
-            tft:None,
-            charging_id:Some(
-                ChargingId {
-                    t: CHARGINGID,
-                    length:4,
-                    ins: 0,
-                    charging_id: 23239876,
-                }
-            ),
-            bearer_flags:None,
-            pco:None,
-            apco:None,
-            epco:None,
-            max_packet_loss:None, 
-            ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
-            fteids: Some(vec!( Fteid { t: 87, length: 9, ins: 2, interface: 5, teid: 0x3b95985a, ipv4: Some(Ipv4Addr::new(62,153,137,85)), ipv6: None })),
-            bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 0, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),
-            });
+            timestamp: 0xe5ce77ef }
+    );
+    decoded.uetimezone = Some (
+        UeTimeZone { t: UETIMEZONE, length: 2, ins: 0, time_zone: 2, dst: 0 }
+    );
+   
     
-    let message = CreateBearerResponse::unmarshal(&encoded).unwrap();
+    let message = DeleteBearerResponse::unmarshal(&encoded).unwrap();
     assert_eq!(message,decoded);
 }
 
 #[test]
-fn test_create_bearer_resp_marshal () {
-    use std::net::Ipv4Addr;
-    let encoded:[u8;109] = [
-        0x48,0x60,0x00,0x69,0x09,0x09,0xa4,0x56,
-        0x00,0x00,0x2f,0x00,0x02,0x00,0x02,0x00,
-        0x10,0x00,0x5d,0x00,0x3a,0x00,0x02,0x00,
-        0x02,0x00,0x10,0x00,0x49,0x00,0x01,0x00,
-        0x05,0x57,0x00,0x09,0x02,0x85,0x3b,0x95,
-        0x98,0x5a,0x3e,0x99,0x89,0x55,0x50,0x00,
-        0x16,0x00,0x2c,0x09,0x00,0x00,0x00,0x00,
-        0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-        0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-        0x5e,0x00,0x04,0x00,0x01,0x62,0x9c,0xc4,
-        0x03,0x00,0x01,0x00,0x11,0x4e,0x00,0x14,
-        0x00,0x80,0x80,0x21,0x10,0x02,0x00,0x00,
-        0x10,0x81,0x06,0x08,0x08,0x08,0x08,0x83,
-        0x06,0x0a,0x40,0xd0,0x61,
+fn test_delete_bearer_resp_marshal () {
+    let encoded:[u8;54] = [
+        0x48, 0x64, 0x00, 0x32, 0x78, 0x7d, 0xaf, 0x3c, 
+        0x1b, 0x7a, 0xae, 0x00, 0x02, 0x00, 0x02, 0x00, 
+        0x10, 0x00, 0x49, 0x00, 0x01, 0x00, 0x05, 0x72, 
+        0x00, 0x02, 0x00, 0x80, 0x00, 0x56, 0x00, 0x0d, 
+        0x00, 0x18, 0x42, 0xf7, 0x10, 0xab, 0xea, 0x42, 
+        0xf7, 0x10, 0x00, 0x2a, 0x46, 0x10, 0xaa, 0x00, 
+        0x04, 0x00, 0xe5, 0xce, 0x77, 0xef,
     ];
-    let mut decoded = CreateBearerResponse::default();
+    let mut decoded = DeleteBearerResponse::default();
     decoded.header = Gtpv2Header {
-            msgtype:CREATE_BEARER_RESP,
+            msgtype:DELETE_BEARER_RESP,
             piggyback:false,
             message_prio:None, 
-            length:105, 
-            teid:Some(0x0909a456), 
-            sqn:0x2f };
+            length:50, 
+            teid:Some(0x787daf3c), 
+            sqn:0x1b7aae };
     decoded.cause = Cause{
         t:CAUSE,
         length:2,
@@ -459,59 +401,33 @@ fn test_create_bearer_resp_marshal () {
         cs:false,
         offend_ie_type:None,
     };
-    decoded.recovery = Some (
-        Recovery {
-            t:RECOVERY,
+    decoded.linked_ebi = Some (
+        Ebi {
+            t:EBI,
             length:1,
             ins:0,
-            recovery:17,
+            value:5,
         }    
     );
-    decoded.pco = Some (
-        Pco {
-            t:PCO,
-            length:20,
+    decoded.uli = Some (
+        Uli {
+            t:ULI,
+            length:13,
             ins:0,
-            pco: vec!(0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08, 0x83, 0x06, 
-                    0x0a, 0x40, 0xd0, 0x61),
+            loc: vec!(Location::Tai(Tai { mcc: 247, mnc:1, tac:0xabea}),Location::Ecgi(Ecgi{ mcc: 247, mnc:1, eci:2770448})),
         });
-    
-    decoded.bearer_ctxs = vec!(
-        BearerContext { 
-            t: 93, 
-            length: 58, 
+    decoded.uli_timestamp = Some (
+        UliTimestamp { 
+            t: ULI_TIMESTAMP, 
+            length: 4,
             ins: 0,
-            cause: Some(
-                Cause {
-                    t:CAUSE,
-                    length:2,
-                    ins:0,
-                    value:16,
-                    pce:false,
-                    bce:false,
-                    cs:false,
-                    offend_ie_type:None,
-                }
-            ),
-            tft:None,
-            charging_id:Some(
-                ChargingId {
-                    t: CHARGINGID,
-                    length:4,
-                    ins: 0,
-                    charging_id: 23239876,
-                }
-            ),
-            bearer_flags:None,
-            pco:None,
-            apco:None,
-            epco:None,
-            max_packet_loss:None, 
-            ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
-            fteids: Some(vec!( Fteid { t: 87, length: 9, ins: 2, interface: 5, teid: 0x3b95985a, ipv4: Some(Ipv4Addr::new(62,153,137,85)), ipv6: None })),
-            bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 0, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),
-            });
+            timestamp: 0xe5ce77ef }
+    );
+    decoded.uetimezone = Some (
+        UeTimeZone { t: UETIMEZONE, length: 2, ins: 0, time_zone: 2, dst: 0 }
+    );
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);
+    //buffer.iter().for_each( |x| print!(" {:#04x},", x));
     assert_eq!(buffer,encoded);
 }
