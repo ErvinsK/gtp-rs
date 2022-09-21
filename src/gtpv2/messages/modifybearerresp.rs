@@ -419,7 +419,7 @@ fn test_modify_bearer_resp_unmarshal () {
             epco:None,
             max_packet_loss:None, 
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
-            fteids: None,
+            fteids: vec!(),
             bearer_qos:None,
             });
     decoded.apn_restriction = Some (
@@ -520,7 +520,7 @@ fn test_modify_bearer_resp_marshal () {
             epco:None,
             max_packet_loss:None, 
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
-            fteids: None,
+            fteids: vec!(),
             bearer_qos:None,
             });
     decoded.apn_restriction = Some (

@@ -880,7 +880,7 @@ fn test_create_session_req_unmarshal () {
             epco:None,
             max_packet_loss:None, 
             ebi: Ebi { t: 73, length: 1, ins: 0, value: 5 },
-            fteids: Some(vec!( Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None })),
+            fteids: vec!( Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None }),
             bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 1, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),
             });
     decoded.recovery = Some (
@@ -1072,7 +1072,7 @@ fn test_create_session_req_marshal () {
             epco:None,
             max_packet_loss:None, 
             ebi: Ebi { t: 73, length: 1, ins: 0, value: 5 },
-            fteids: Some(vec!( Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None })),
+            fteids: vec!( Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None }),
             bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 1, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),
             });
     decoded.recovery = Some (

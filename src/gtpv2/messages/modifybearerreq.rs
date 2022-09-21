@@ -525,7 +525,7 @@ fn test_modify_bearer_req_unmarshal () {
             epco:None,
             max_packet_loss:None, 
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
-            fteids: Some(vec!( Fteid { t: FTEID, length: 25, ins: 1, interface: 4, teid: 0x23ed3825, ipv4: Some(Ipv4Addr::new(217,171,141,243)), ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x28)) })),
+            fteids: vec!( Fteid { t: FTEID, length: 25, ins: 1, interface: 4, teid: 0x23ed3825, ipv4: Some(Ipv4Addr::new(217,171,141,243)), ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x28)) }),
             bearer_qos: None,
             });
     decoded.private_ext = vec!(
@@ -646,7 +646,7 @@ fn test_modify_bearer_req_marshal () {
             epco:None,
             max_packet_loss:None, 
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
-            fteids: Some(vec!( Fteid { t: FTEID, length: 25, ins: 1, interface: 4, teid: 0x15e9e7cc, ipv4: Some(Ipv4Addr::new(213,181,60,112)), ipv6: None })),
+            fteids: vec!( Fteid { t: FTEID, length: 25, ins: 1, interface: 4, teid: 0x15e9e7cc, ipv4: Some(Ipv4Addr::new(213,181,60,112)), ipv6: None }),
             bearer_qos: None,
             });
     decoded.private_ext = vec!(

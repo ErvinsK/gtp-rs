@@ -303,7 +303,7 @@ fn test_delete_bearer_req_unmarshal () {
             epco:None,
             max_packet_loss:None, 
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
-            fteids: None,
+            fteids: vec!(),
             bearer_qos:None,
             });
     let message = DeleteBearerRequest::unmarshal(&encoded).unwrap();
@@ -380,7 +380,7 @@ fn test_delete_bearer_req_marshal () {
             epco:None,
             max_packet_loss:None, 
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
-            fteids: None,
+            fteids: vec!(),
             bearer_qos:None,
             });
     let mut buffer:Vec<u8>=vec!();

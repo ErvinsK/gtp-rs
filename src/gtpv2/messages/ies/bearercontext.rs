@@ -14,7 +14,7 @@ pub struct BearerContext {
     pub ebi:Ebi,
     pub cause:Option<Cause>,
     pub tft:Option<BearerTft>,
-    pub fteids:Option<Vec<Fteid>>,
+    pub fteids:Vec<Fteid>,
     pub bearer_qos:Option<BearerQos>,
     pub charging_id:Option<ChargingId>,
     pub bearer_flags:Option<BearerFlags>,
@@ -33,7 +33,7 @@ impl Default for BearerContext {
                         ebi:Ebi::default(),
                         cause:None,
                         tft:None,
-                        fteids:None,
+                        fteids:vec!(),
                         bearer_qos:None,
                         charging_id:None,
                         bearer_flags:None,
@@ -60,25 +60,72 @@ impl From<GroupedIe> for BearerContext {
     fn from(i: GroupedIe) -> Self {
        let mut bearer = BearerContext::default();
        (bearer.t, bearer.length, bearer.ins) = (i.t, i.length, i.ins);
+       let mut mandatory = false;
        for j in i.elements.into_iter() {
-            let mut fteids:Vec<Fteid>=vec!();
             match j {
-                InformationElement::Ebi(k) => bearer.ebi=k,
-                InformationElement::Cause(k) => bearer.cause=Some(k),
-                InformationElement::BearerTft(k) => bearer.tft=Some(k),
-                InformationElement::Fteid(k) => fteids.push(k),
-                InformationElement::BearerQos(k) => bearer.bearer_qos=Some(k),
-                InformationElement::ChargingId(k) => bearer.charging_id=Some(k),
-                InformationElement::BearerFlags(k) => bearer.bearer_flags=Some(k), 
-                InformationElement::Pco(k) => bearer.pco=Some(k),
-                InformationElement::Apco(k) => bearer.apco=Some(k),
-                InformationElement::Epco(k) => bearer.epco=Some(k),
-                InformationElement::MaxPacketLossRate(k) => bearer.max_packet_loss=Some(k),
+                InformationElement::Ebi(k) => {
+                    match (k.ins, mandatory) {
+                        (0, false) => (bearer.ebi, mandatory) = (k, true),
+                        _ => (),
+                    }
+                },
+                InformationElement::Cause(k) => {
+                    match (k.ins, bearer.cause.is_none()) {
+                        (0, true) => bearer.cause=Some(k),
+                        _ => (),
+                    }
+                },
+                InformationElement::BearerTft(k) => {
+                    match (k.ins, bearer.tft.is_none()) {
+                        (0, true) => bearer.tft=Some(k),
+                        _ => (),
+                    }
+                },
+                InformationElement::Fteid(k) => bearer.fteids.push(k),
+                InformationElement::BearerQos(k) => {
+                    match (k.ins, bearer.bearer_qos.is_none()) {
+                        (0, true) => bearer.bearer_qos=Some(k),
+                        _ => (),
+                    }
+                },
+                InformationElement::ChargingId(k) => {
+                    match (k.ins, bearer.charging_id.is_none()) {
+                        (0, true) => bearer.charging_id=Some(k),
+                        _ => (),
+                    }
+                },
+                InformationElement::BearerFlags(k) => {
+                    match (k.ins, bearer.bearer_flags.is_none()) {
+                        (0, true) => bearer.bearer_flags=Some(k),
+                        _ => (),
+                    }
+                }, 
+                InformationElement::Pco(k) => {
+                    match (k.ins, bearer.pco.is_none()) {
+                        (0, true) => bearer.pco=Some(k),
+                        _ => (),
+                    }
+                },
+                InformationElement::Apco(k) => {
+                    match (k.ins, bearer.apco.is_none()) {
+                        (0, true) => bearer.apco=Some(k),
+                        _ => (),
+                    }
+                },
+                InformationElement::Epco(k) => {
+                    match (k.ins, bearer.epco.is_none()) {
+                        (0, true) => bearer.epco=Some(k),
+                        _ => (),
+                    }
+                },
+                InformationElement::MaxPacketLossRate(k) => {
+                    match (k.ins, bearer.max_packet_loss.is_none()) {
+                        (0, true) => bearer.max_packet_loss=Some(k),
+                        _ => (),
+                    }
+                },
                 // InformationElement::RanNasCause(k) => bearer.ran_nas_cause=Some(k),
                 _ => (),       
-            } 
-            if !fteids.is_empty() {
-                bearer.fteids = Some(fteids);
             } 
        }
        bearer 
@@ -120,14 +167,8 @@ impl BearerContext {
             None => (),
         }
 
-        match self.fteids.clone() {
-            Some(i) => {
-                for j in i.into_iter() {
-                    v.push(j.into());
-                }
-            },
-            None => (),
-        }
+        self.fteids.iter().for_each(|x| v.push(InformationElement::Fteid(x.clone())));
+       
         match self.bearer_qos.clone() {
             Some(i) => v.push(i.into()),
             None => (),
@@ -185,9 +226,9 @@ fn bearer_context_ie_unmarshal_test () {
     ebi: Ebi { t: 73, length: 1, ins: 0, value: 5 },
     cause: Some( Cause{ t: CAUSE, length:2, ins:0, value:16, pce:false, bce:false, cs:false, offend_ie_type:None}),
     tft:None,
-    fteids:Some(vec!(
+    fteids:vec!(
         Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None }
-    )),
+    ),
     bearer_qos: Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 1, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),
     charging_id: Some(ChargingId{ t: CHARGINGID, length:4, ins:0, charging_id: 0x54367df}),
     bearer_flags:None,
@@ -219,9 +260,9 @@ fn bearer_context_ie_marshal_test () {
     ebi: Ebi { t: 73, length: 1, ins: 0, value: 5 },
     cause: Some( Cause{ t: CAUSE, length:2, ins:0, value:16, pce:false, bce:false, cs:false, offend_ie_type:None}),
     tft:None,
-    fteids:Some(vec!(
+    fteids:vec!(
         Fteid { t: 87, length: 9, ins: 2, interface: 4, teid: 114393676, ipv4: Some(Ipv4Addr::new(193,254,139,45)), ipv6: None }
-    )),
+    ),
     bearer_qos: Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 1, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),
     charging_id: Some(ChargingId{ t: CHARGINGID, length:4, ins:0, charging_id: 0x54367df}),
     bearer_flags:None,
