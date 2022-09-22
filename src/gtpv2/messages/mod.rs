@@ -18,6 +18,8 @@ pub use {
     deletebearerresp::*,
     modifybearercommand::*,
     modifybearerfailureind::*,
+    updatebearerreq::*,
+    updatebearerresp::*,
 };
 
 mod ies;
@@ -39,3 +41,5 @@ mod deletesessionresp;
 mod deletebearerresp;
 mod modifybearercommand;
 mod modifybearerfailureind;
+mod updatebearerreq;
+mod updatebearerresp;
