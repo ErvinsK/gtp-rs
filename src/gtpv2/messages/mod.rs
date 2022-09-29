@@ -20,6 +20,18 @@ pub use {
     modifybearerfailureind::*,
     updatebearerreq::*,
     updatebearerresp::*,
+    deletebearercommand::*,
+    deletebearerfailureind::*,
+    changenotificationreq::*,
+    changenotificationresp::*,
+    suspendnotification::*,
+    suspendacknowledge::*,
+    resumenotification::*,
+    resumeacknowledge::*,
+    alertmmenotification::*,
+    alertmmeacknowledge::*,
+    ueactivitynotification::*,
+    ueactivityacknowledge::*,
 };
 
 mod ies;
@@ -43,3 +55,15 @@ mod modifybearercommand;
 mod modifybearerfailureind;
 mod updatebearerreq;
 mod updatebearerresp;
+mod deletebearercommand;
+mod deletebearerfailureind;
+mod changenotificationreq;
+mod changenotificationresp;
+mod suspendnotification;
+mod suspendacknowledge;
+mod resumenotification;
+mod resumeacknowledge;
+mod alertmmenotification;
+mod alertmmeacknowledge;
+mod ueactivitynotification;
+mod ueactivityacknowledge;
