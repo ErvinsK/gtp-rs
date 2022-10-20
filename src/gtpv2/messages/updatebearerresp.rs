@@ -85,14 +85,14 @@ impl Messages for UpdateBearerResponse {
         }
 
         if (message.header.length as usize)+4<=buffer.len() {
-            let ies:Vec<InformationElement>;
             match InformationElement::decoder(&buffer[12..]) {
-                Ok(i) => ies = i,
+                Ok(i) => {
+                    match message.from_vec(i) {
+                        Ok(_) => Ok(message),
+                        Err(j) => Err(j),
+                    }
+                },
                 Err(j) => return Err(j),
-            }
-            match message.from_vec(ies) {
-                Ok(_) => Ok(message),
-                Err(j) => Err(j),
             }
         } else {
             Err(GTPV2Error::MessageInvalidMessageFormat)
