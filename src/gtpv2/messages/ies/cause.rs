@@ -10,7 +10,7 @@ pub const LONG_CAUSE_LENGTH:usize = 6;
 
 // Cause IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Cause {
     pub t:u8,
     pub length:u16,
@@ -65,7 +65,7 @@ impl IEs for Cause {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() > MIN_IE_SIZE {
-            let to_bool = |i:u8| -> bool { if i == 1 { true } else {false}};
+            let to_bool = |i:u8| -> bool { i == 1};
             let mut data = Cause::default();
             data.length = u16::from_be_bytes([buffer[1],buffer[2]]);
             data.ins = buffer[3] & 0x0f;
@@ -93,7 +93,7 @@ impl IEs for Cause {
                         Err(GTPV2Error::IEIncorrect(CAUSE))
                     }
                 },
-                _ => return Err(GTPV2Error::IEIncorrect(CAUSE)),
+                _ => Err(GTPV2Error::IEIncorrect(CAUSE)),
             }
         } else {
             Err(GTPV2Error::IEInvalidLength(CAUSE))

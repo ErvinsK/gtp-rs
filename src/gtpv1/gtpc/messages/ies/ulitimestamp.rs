@@ -9,7 +9,7 @@ pub const ULI_TIMESTAMP_LENGTH:u16 = 4;
 
 // ULI Timestamp IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UliTimestamp {
     pub t:u8,
     pub length:u16,

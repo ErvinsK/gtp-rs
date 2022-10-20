@@ -9,7 +9,7 @@ pub const MS_TIMESTAMP_LENGTH:usize = 6;
 
 // Millisecond Timestamp IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MilliSecondTimeStamp {
     pub t:u8,
     pub length:u16,
@@ -35,7 +35,7 @@ impl IEs for MilliSecondTimeStamp {
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.extend_from_slice(&u64::to_be_bytes(self.timestamp));
+        buffer_ie.extend_from_slice(&u64::to_be_bytes(self.timestamp)[2..]);
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
     }

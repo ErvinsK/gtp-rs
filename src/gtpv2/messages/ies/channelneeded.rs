@@ -9,7 +9,7 @@ pub const CHNL_NEEDED_LENGTH:usize = 1;
 
 // Channel needed IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChannelNeeded {
     pub t:u8,
     pub length:u16,

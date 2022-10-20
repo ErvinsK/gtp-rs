@@ -9,7 +9,7 @@ pub const FQCSID:u8 = 132;
 
 // Node-ID Enum
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum NodeId {
     V4(Ipv4Addr),
     V6(Ipv6Addr),
@@ -36,7 +36,7 @@ impl From<u32> for NodeId {
 
 // FQ-CSID IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Fqcsid {
     pub t:u8,
     pub length:u16,
@@ -83,13 +83,13 @@ impl IEs for Fqcsid {
                 buffer_ie.extend_from_slice(&i.to_be_bytes());
             },
         }
-        buffer_ie.append(&mut self.csid.clone().iter().map(|x| x.to_be_bytes()).flatten().collect());
+        buffer_ie.append(&mut self.csid.clone().iter().flat_map(|x| x.to_be_bytes()).collect());
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>=MIN_IE_SIZE+1 {
+        if buffer.len() > MIN_IE_SIZE {
             let mut data = Fqcsid::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
             if !check_tliv_ie_buffer(data.length, buffer) {

@@ -8,7 +8,7 @@ pub const NODE_ID:u8 = 176;
 
 // Node Identfier IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NodeIdentifier {
     pub t:u8,
     pub length:u16,
@@ -46,7 +46,7 @@ impl IEs for NodeIdentifier {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>=MIN_IE_SIZE+1 {
+        if buffer.len() > MIN_IE_SIZE {
             let mut data=NodeIdentifier::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
             data.ins = buffer[3];

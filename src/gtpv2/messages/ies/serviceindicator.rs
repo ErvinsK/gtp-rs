@@ -15,7 +15,7 @@ pub const SRVCIND_LENGTH:usize = 1;
 //   SMS indicator              2
 //      <spare>               3-255
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ServiceIndicator {
     pub t:u8,
     pub length:u16,

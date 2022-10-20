@@ -9,7 +9,7 @@ pub const ARP_LENGTH:usize = 1;
 
 // ARP IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Arp {
     pub t:u8,
     pub length:u16,

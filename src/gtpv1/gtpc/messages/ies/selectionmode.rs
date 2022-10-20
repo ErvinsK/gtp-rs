@@ -9,7 +9,7 @@ pub const SELECTION_MODE_LENGTH:usize = 1;
 
 // Selection Mode IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SelectionMode {
     pub t:u8,
     pub value:u8,
@@ -28,7 +28,7 @@ impl IEs for SelectionMode {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result <Self, GTPV1Error> where Self:Sized {
-        if buffer.len()>=SELECTION_MODE_LENGTH+1 {
+        if buffer.len() > SELECTION_MODE_LENGTH {
             let mut data=SelectionMode::default();
             data.value = buffer[1] & 0b11;
             Ok(data) 

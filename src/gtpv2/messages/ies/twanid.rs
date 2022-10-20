@@ -10,7 +10,7 @@ pub const TWAN_ID:u8 = 169;
 
 // TWAN Identifier IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TwanId {
     pub t:u8,
     pub length:u16,
@@ -65,7 +65,7 @@ impl IEs for TwanId {
             Some(i) => {
                 let b = i.as_bytes();
                 buffer_ie.push(b.len() as u8);
-                buffer_ie.extend_from_slice(&b[..]);
+                buffer_ie.extend_from_slice(b);
             },
             None => (),
         }
@@ -159,7 +159,7 @@ impl IEs for TwanId {
             }
             match (flags >> 4) & 0x01 {
                 1 => {
-                    if cursor+1 <= buffer.len() {
+                    if cursor < buffer.len() {
                         let relay_id = buffer[cursor];
                         let field = buffer[cursor+1] as usize;
                         cursor+=2;

@@ -9,7 +9,7 @@ pub const TWAN_ID_TIMESTAMP_LENGTH:usize = 4;
 
 // TWAN Identifier Timestamp IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TwanIdTimeStamp {
     pub t:u8,
     pub length:u16,

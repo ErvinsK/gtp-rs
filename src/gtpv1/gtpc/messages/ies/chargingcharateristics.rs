@@ -9,7 +9,7 @@ pub const CHARGING_CHARACTERISTICS_LENGTH:usize = 2;
 
 // Charging Characteristics IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 
 pub struct ChargingCharacteristics {
     pub t:u8,
@@ -30,7 +30,7 @@ impl IEs for ChargingCharacteristics {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
-        if buffer.len()>=CHARGING_CHARACTERISTICS_LENGTH+1 {
+        if buffer.len() > CHARGING_CHARACTERISTICS_LENGTH {
             let mut data=ChargingCharacteristics::default();
             data.value = buffer[1] & 0b1111;
             Ok(data) 

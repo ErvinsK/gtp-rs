@@ -9,7 +9,7 @@ pub const RABCTX_LENGTH:usize = 9;
 
 // RAB Context IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RabContext {
     pub t:u8,
     pub length:u16,

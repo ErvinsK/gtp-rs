@@ -9,7 +9,7 @@ pub const NODETYPE_LENGTH:usize = 1;
 
 // Node Type Enum 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Node {
     Mme,
     Sgsn,
@@ -33,7 +33,7 @@ impl Node {
 
 // Node Type IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NodeType {
     pub t:u8,
     pub length:u16,

@@ -9,7 +9,7 @@ pub const EPC_TIMER_LENGTH:usize = 1;
 
 // EPC Timer IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EpcTimer {
     pub t:u8,
     pub length:u16,

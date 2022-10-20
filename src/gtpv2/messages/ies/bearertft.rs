@@ -8,7 +8,7 @@ pub const BEARERTFT:u8 = 84;
 
 // EPS Bearer Level Traffic Flow Template (TFT) IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BearerTft {
     pub t:u8,
     pub length:u16,

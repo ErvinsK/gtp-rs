@@ -9,7 +9,7 @@ pub const IMEI_LENGTH:u16 = 8;
 
 // IMEI(SV) IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Imei {
     pub t:u8,
     pub length:u16,

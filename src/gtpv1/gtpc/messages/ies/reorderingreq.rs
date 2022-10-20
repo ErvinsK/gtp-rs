@@ -9,7 +9,7 @@ pub const REORDERING_REQUIRED_LENGTH:usize = 1;
 
 // Reordering Required IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 
 pub struct ReorderingRequired {
     pub t:u8,
@@ -32,7 +32,7 @@ impl IEs for ReorderingRequired {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> {
-        if buffer.len()>=REORDERING_REQUIRED_LENGTH+1 {
+        if buffer.len() > REORDERING_REQUIRED_LENGTH {
             let mut data=ReorderingRequired::default();
             match buffer[1] & 1 {
                 0 => data.req = false,

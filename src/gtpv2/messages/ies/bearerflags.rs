@@ -9,7 +9,7 @@ pub const BEARERFLAGS_LENGTH:usize = 1;
 
 // Bearer Flags IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BearerFlags {
     pub t:u8,
     pub length:u16,
@@ -43,13 +43,13 @@ impl IEs for BearerFlags {
             flags = 0x08;
         }
         if self.vind {
-            flags = flags | 0x04;
+            flags |= 0x04;
         }
         if self.vb {
-            flags = flags | 0x02;
+            flags |= 0x02;
         }
         if self.ppc {
-            flags = flags | 0x01;
+            flags |= 0x01;
         }
         buffer_ie.push(flags);
         set_tliv_ie_length(&mut buffer_ie);

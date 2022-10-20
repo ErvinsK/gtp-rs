@@ -10,7 +10,7 @@ pub const IP4CP_LENGTH: usize = 5;
 
 // IP4CP IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Ip4Cp {
     pub t:u8,
     pub length:u16,

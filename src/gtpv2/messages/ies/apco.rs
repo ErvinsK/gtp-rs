@@ -9,7 +9,7 @@ pub const APCO:u8 = 163;
 
 // Additional PCO IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Apco {
     pub t:u8,
     pub length:u16,

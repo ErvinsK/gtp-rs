@@ -630,13 +630,13 @@ impl Messages for UpdatePDPContextResponse {
                             return Err(GTPV1Error::MessageInvalidMessageFormat);
                         }
                 }
-                if let Some(_) = msg_hash.get(&CAUSE) {
-                    return Ok(message);
+                if msg_hash.get(&CAUSE).is_some() {
+                    Ok(message)
                 } else {
-                    return Err(GTPV1Error::MessageMandatoryIEMissing);
+                    Err(GTPV1Error::MessageMandatoryIEMissing)
                 }
             } else {
-                return Err(GTPV1Error::MessageLengthError);
+                Err(GTPV1Error::MessageLengthError)
             }                 
         }
 

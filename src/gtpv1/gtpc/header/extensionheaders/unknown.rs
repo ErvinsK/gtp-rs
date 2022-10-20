@@ -2,7 +2,7 @@ use crate::gtpv1::{gtpc::header::extensionheaders::commons::*, errors::GTPV1Erro
 
 // Struct for Unknow Extension Headers 
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Unknown {
     pub extension_header_type:u8,
     pub length:u8,

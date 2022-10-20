@@ -9,7 +9,7 @@ pub const PDUNMBRS_LENGTH:usize = 9;
 
 // PDU Numbers IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PduNumbers {
     pub t:u8,
     pub length:u16,

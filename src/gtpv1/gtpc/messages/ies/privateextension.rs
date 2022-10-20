@@ -8,7 +8,7 @@ pub const PRIVATE_EXTENSION:u8 = 255;
 
 // Private Extension IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PrivateExtension {
     pub t:u8,
     pub length:u16,

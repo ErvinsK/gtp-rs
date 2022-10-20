@@ -6,7 +6,7 @@ pub const ALERT_MME_ACK:u8 = 154;
 
 // Definition of GTPv2-C Alert MME Acknowledge Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AlertMmeAcknowledge {
     pub header:Gtpv2Header,
     pub cause:Cause,
@@ -54,7 +54,7 @@ impl Messages for AlertMmeAcknowledge {
                         Err(j) => Err(j),
                     }
                 },
-                Err(j) => return Err(j),
+                Err(j) => Err(j),
             }
         } else {
             Err(GTPV2Error::MessageInvalidMessageFormat)

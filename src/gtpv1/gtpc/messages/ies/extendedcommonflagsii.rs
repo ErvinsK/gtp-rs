@@ -9,7 +9,7 @@ pub const EXTCOMMONFLAGS_II_LENGTH:u16 = 1;
 
 // Extended Common Flags II IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExtendedCommonFlagsII {
     pub t:u8,
     pub length:u16,
@@ -40,7 +40,7 @@ impl IEs for ExtendedCommonFlagsII {
         if buffer.len()>=4 {
             let mut data=ExtendedCommonFlagsII::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            let to_bool = |i:u8| -> bool { if i == 1 { true } else {false}};
+            let to_bool = |i:u8| -> bool { i == 1};
             data.pnsi = to_bool(buffer[3] & 1);
             data.dtci = to_bool((buffer[3]>>1) & 1);
             data.pmtsmi = to_bool((buffer[3]>>2) & 1);

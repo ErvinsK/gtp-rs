@@ -8,7 +8,7 @@ pub const APN:u8 = 131;
 
 // APN IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 
 pub struct Apn {
     pub t:u8,
@@ -27,7 +27,7 @@ impl IEs for Apn {
         let mut buffer_ie:Vec<u8> = vec!();  
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
-        let n:Vec<_> = self.name.split(".").collect();
+        let n:Vec<_> = self.name.split('.').collect();
         let mut z:Vec<u8>=vec!();
         for i in n.iter() {
             z.push(i.len() as u8);

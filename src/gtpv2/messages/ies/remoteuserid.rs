@@ -8,7 +8,7 @@ pub const REMOTE_USR_ID:u8 = 192;
 
 // Remote User ID IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RemoteUserId {
     pub t:u8,
     pub length:u16,
@@ -50,7 +50,7 @@ impl IEs for RemoteUserId {
                 buffer_ie.extend(i);
                 match &self.msisdn {
                     Some(i) => {
-                        let m = tbcd_encode(&i);
+                        let m = tbcd_encode(i);
                         buffer_ie.push(m.len() as u8);
                         buffer_ie.extend(m);
                     },
@@ -64,7 +64,7 @@ impl IEs for RemoteUserId {
                 buffer_ie.extend(i);
                 match &self.imei {
                     Some(i) => {
-                        let m = tbcd_encode(&i);
+                        let m = tbcd_encode(i);
                         buffer_ie.push(m.len() as u8);
                         buffer_ie.extend(m);
                     },
@@ -78,7 +78,7 @@ impl IEs for RemoteUserId {
                 buffer_ie.extend(i);
                 match &self.msisdn {
                     Some(i) => {
-                        let m = tbcd_encode(&i);
+                        let m = tbcd_encode(i);
                         buffer_ie.push(m.len() as u8);
                         buffer_ie.extend(m);
                     },
@@ -86,7 +86,7 @@ impl IEs for RemoteUserId {
                 }
                match &self.imei {
                     Some(i) => {
-                        let m = tbcd_encode(&i);
+                        let m = tbcd_encode(i);
                         buffer_ie.push(m.len() as u8);
                         buffer_ie.extend(m);
                     },

@@ -9,7 +9,7 @@ pub const SERVINGNW_LENGTH:usize = 3;
 
 // Serving Network IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ServingNetwork {
     pub t: u8,
     pub length:u16,

@@ -8,7 +8,7 @@ pub const QOS:u8 = 135;
 
 // PCO IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Qos {
     pub t:u8,
     pub length:u16,

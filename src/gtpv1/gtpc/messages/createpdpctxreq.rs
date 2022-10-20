@@ -1156,11 +1156,11 @@ impl Messages for CreatePDPContextRequest {
                         }
                 }
                 match (msg_hash.get(&TEID_DATA), msg_hash.get(&NSAPI), msg_hash.get(&GSN_ADDRESS), msg_hash.get(&QOS)) {
-                    (Some(_),Some(_),Some(_), Some(_)) => return Ok(message),
-                    _ => return Err(GTPV1Error::MessageMandatoryIEMissing),
+                    (Some(_),Some(_),Some(_), Some(_)) => Ok(message),
+                    _ => Err(GTPV1Error::MessageMandatoryIEMissing),
                 }
             } else {
-                return Err(GTPV1Error::MessageLengthError);
+                Err(GTPV1Error::MessageLengthError)
             }                 
         }
 

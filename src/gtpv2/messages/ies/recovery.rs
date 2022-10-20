@@ -9,7 +9,7 @@ pub const RECOVERY_LENGTH:usize = 1;
 
 // Recovery IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recovery {
     pub t:u8,
     pub length:u16,

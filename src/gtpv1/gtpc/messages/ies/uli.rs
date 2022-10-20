@@ -9,7 +9,7 @@ pub const ULI_LENGTH:u16 = 8;
 
 // CI, SAC and RAC enum
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Location {
     Ci(u16),
     Sac(u16),
@@ -17,7 +17,7 @@ pub enum Location {
 }
 // User Location Information (ULI) IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Uli {
     pub t: u8,
     pub length: u16,

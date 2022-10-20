@@ -9,7 +9,7 @@ pub const IMSI_LENGTH:usize = 8;
 
 // IMSI IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Imsi {
     pub t:u8,
     pub imsi:String,
@@ -28,7 +28,7 @@ impl IEs for Imsi {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Imsi, GTPV1Error> where Self:Sized {
-        if buffer.len()>=IMSI_LENGTH+1 {
+        if buffer.len() > IMSI_LENGTH {
             let mut data = Imsi::default();
             match buffer[1..=8].try_into() {
                Ok(i) => data.imsi = tbcd_decode(i),

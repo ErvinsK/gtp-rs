@@ -9,7 +9,7 @@ pub const IP_ADDRESS:u8 = 74;
 
 // IP Address IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct IpAddress {
     pub t:u8,
     pub length:u16,

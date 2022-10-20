@@ -132,9 +132,5 @@ pub fn set_tlv_ie_length (buffer: &mut Vec<u8>) {
 // Check TLV IE length vs buffer size
 
 pub fn check_tlv_ie_buffer (length:u16, buffer:&[u8]) -> bool {
-    if (length+3) as usize <= buffer.len() {
-        true
-    } else {
-        false
-    }
+    (length+3) as usize <= buffer.len()
 }

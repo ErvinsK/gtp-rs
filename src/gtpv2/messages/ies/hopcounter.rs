@@ -9,7 +9,7 @@ pub const HOP_CNTR_LENGTH:usize = 1;
 
 // Hop Counter IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct HopCounter {
     pub t:u8,
     pub length:u16,

@@ -8,7 +8,7 @@ pub const OMCID:u8 = 143;
 
 // OMC ID IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OmcId {
     pub t:u8,
     pub length:u16,

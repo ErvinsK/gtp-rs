@@ -9,7 +9,7 @@ pub const ULI:u8 = 86;
 
 // CGI, SAI, RAI, TAI, ECGI, LAI, Macro eNB ID, Extended Macro eNB ID
 
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub enum Location {
     Cgi(Cgi),
     Sai(Sai),
@@ -57,49 +57,49 @@ impl IEs for Uli {
                 Location::Cgi(j) => {
                     if flags & 0x01 == 0 {
                         j.marshal(&mut buffer_li);
-                        flags = flags | 0x01;
+                        flags |= 0x01;
                     }
                 },
                 Location::Sai(j) => {
                     if flags & 0x02 == 0 {
                         j.marshal(&mut buffer_li);
-                        flags = flags | 0x02;
+                        flags |= 0x02;
                     }
                 },
                 Location::Rai(j) => {
                     if flags & 0x04 == 0 {
                         j.marshal(&mut buffer_li);
-                        flags = flags | 0x04;
+                        flags |= 0x04;
                     }
                 },
                 Location::Tai(j) => {
                     if flags & 0x08 == 0 {
                         j.marshal(&mut buffer_li);
-                        flags = flags | 0x08;
+                        flags |= 0x08;
                     }
                 },
                 Location::Ecgi(j) => {
                     if flags & 0x10 == 0 {
                         j.marshal(&mut buffer_li);
-                        flags = flags | 0x10;
+                        flags |= 0x10;
                     }
                 },
                 Location::Lai(j) => {
                     if flags & 0x20 == 0 {
                         j.marshal(&mut buffer_li);
-                        flags = flags | 0x20;
+                        flags |= 0x20;
                     }
                 },
                 Location::MacroEnbId(j) => {
                     if flags & 0x40 == 0 {
                         j.marshal(&mut buffer_li);
-                        flags = flags | 0x40;
+                        flags |= 0x40;
                     }
                 },
                 Location::ExtMacroEnbId(j) => {
                     if flags & 0x80 == 0 {
                         j.marshal(&mut buffer_li);
-                        flags = flags | 0x80;
+                        flags |= 0x80;
                     }
                 },
             }

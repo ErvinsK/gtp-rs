@@ -9,7 +9,7 @@ pub const CAUSE_LENGTH:usize = 1;
 
 // Cause IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 
 pub struct Cause {
     pub t:u8,
@@ -29,7 +29,7 @@ impl IEs for Cause {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> {
-        if buffer.len()>=CAUSE_LENGTH+1 {
+        if buffer.len() > CAUSE_LENGTH {
             let mut data=Cause::default();
             data.value = buffer[1];
             Ok(data) 

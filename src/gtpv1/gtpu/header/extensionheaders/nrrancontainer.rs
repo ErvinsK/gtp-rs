@@ -5,7 +5,7 @@ pub const NR_RAN_CONTAINER_LENGTH:u8 = 1;
 
 // Struct for NR RAN Container Extension Header
     
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct NrRanContainer {
     pub extension_header_type:u8,
     pub length:u8,

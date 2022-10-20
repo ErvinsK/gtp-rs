@@ -9,7 +9,7 @@ pub const RECOVERY:u8 = 14;
 
 // Recovery IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recovery {
     pub t:u8,
     pub value:u8,
@@ -31,7 +31,7 @@ impl IEs for Recovery {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Recovery, GTPV1Error> {
-        if buffer.len()>=RECOVERY_LENGTH+1 {
+        if buffer.len() > RECOVERY_LENGTH {
             match buffer[0] {
                 RECOVERY => Ok (Recovery { t:RECOVERY, value: buffer[1] }),
                 _ => Err(GTPV1Error::IEIncorrect), 

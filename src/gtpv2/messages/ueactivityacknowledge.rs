@@ -6,7 +6,7 @@ pub const UE_ACTIVITY_ACK:u8 = 156;
 
 // Definition of GTPv2-C UE Activity Acknowledge Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UeActivityAcknowledge {
     pub header:Gtpv2Header,
     pub cause:Cause,
@@ -54,7 +54,7 @@ impl Messages for UeActivityAcknowledge {
                         Err(j) => Err(j),
                     }
                 },
-                Err(j) => return Err(j),
+                Err(j) => Err(j),
             }
         } else {
             Err(GTPV2Error::MessageInvalidMessageFormat)

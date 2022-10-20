@@ -9,7 +9,7 @@ pub const APNAMBR_LENGTH:u16 = 8;
 
 // APN-AMBR IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ApnAmbr {
     pub t:u8,
     pub length:u16,

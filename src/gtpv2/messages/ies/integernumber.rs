@@ -8,7 +8,7 @@ pub const INT_NMBR:u8 = 187;
 
 // Integer Number IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct IntegerNumber {
     pub t:u8,
     pub length:u16,

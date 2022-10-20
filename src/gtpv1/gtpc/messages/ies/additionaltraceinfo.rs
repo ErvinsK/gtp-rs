@@ -9,7 +9,7 @@ pub const ADDITIONALTRACEINFO_LENGTH:u16 = 9;
 
 // Additional Trace Info IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AdditionalTraceInfo {
     pub t:u8,
     pub length:u16,

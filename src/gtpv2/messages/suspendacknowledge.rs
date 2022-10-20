@@ -6,7 +6,7 @@ pub const SUSPEND_ACK:u8 = 163;
 
 // Definition of GTPv2-C Suspend Acknowledge Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SuspendAcknowledge {
     pub header:Gtpv2Header,
     pub cause:Cause,
@@ -54,7 +54,7 @@ impl Messages for SuspendAcknowledge {
                         Err(j) => Err(j),
                     }
                 },
-                Err(j) => return Err(j),
+                Err(j) => Err(j),
             }
         } else {
             Err(GTPV2Error::MessageInvalidMessageFormat)

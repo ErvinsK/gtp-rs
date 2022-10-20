@@ -9,7 +9,7 @@ pub const TWMI_LENGTH:usize = 1;
 
 // TWMI IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Twmi {
     pub t:u8,
     pub length:u16,

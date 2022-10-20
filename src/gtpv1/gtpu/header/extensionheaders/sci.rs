@@ -5,7 +5,7 @@ pub const SCI_LENGTH:u8 = 1;
 
 // Struct for Service Class Indicator Extension Header
     
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Sci {
     pub extension_header_type:u8,
     pub length:u8,

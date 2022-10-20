@@ -6,7 +6,7 @@ pub const LONG_PDCP_PDU_NUMBER_LENGTH:u8 = 2;
 
 // Struct for Long PDCP PDU Number Extension Header
     
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct LongPDCPPDUNumber {
     pub extension_header_type:u8,
     pub length:u8,

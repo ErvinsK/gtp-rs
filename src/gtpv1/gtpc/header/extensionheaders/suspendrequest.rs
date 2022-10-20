@@ -5,7 +5,7 @@ pub const SUSPEND_REQUEST_LENGTH:u8 = 1;
 
 // Struct for Suspend Request 
     
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SuspendRequest {
     pub extension_header_type:u8,
     pub length:u8,

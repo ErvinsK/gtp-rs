@@ -9,7 +9,7 @@ pub const MSINFO_CHANGE_LENGTH:u16 = 1;
 
 // MS Info Change Reporting Action IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MSInfoChangeReportingAction {
     pub t:u8,
     pub length:u16,

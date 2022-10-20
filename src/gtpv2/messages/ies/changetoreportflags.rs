@@ -12,7 +12,7 @@ pub const CHNG_TO_RPRT_FLAGS_LENGTH:usize = 1;
 // TZCR (Time Zone Change to Report): When set to 1 (true), this bit indicates that a UE Time Zone change still needs to be reported to the SGW/PGW.
 // SNCR (Serving Network Change to Report): When set to 1 (true), this bit indicates that a Serving Network change still need to be reported to the SGW/PGW.
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChangeToReportFlags {
     pub t:u8,
     pub length:u16,

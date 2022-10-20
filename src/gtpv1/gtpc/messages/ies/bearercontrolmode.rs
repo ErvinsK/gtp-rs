@@ -9,7 +9,7 @@ pub const BEARER_CONTROL_MODE_LENGTH:u16 = 1;
 
 // Bearer Control Mode IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BearerControlMode {
     pub t:u8,
     pub length:u16,

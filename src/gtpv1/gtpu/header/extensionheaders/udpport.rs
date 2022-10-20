@@ -5,7 +5,7 @@ pub const UDP_PORT_LENGTH:u8 = 1;
 
 // Struct for UDP Port Extension Header
     
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct UDPPort {
     pub extension_header_type:u8,
     pub length:u8,

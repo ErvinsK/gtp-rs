@@ -6,7 +6,7 @@ use crate::gtpv2::{errors::GTPV2Error, messages::ies::*};
 
 pub const LOAD_CNTRL:u8 = 181;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct LoadControl {
     pub t:u8,
     pub length:u16,

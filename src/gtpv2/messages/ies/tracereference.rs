@@ -9,7 +9,7 @@ pub const TRACEREF_LENGTH:usize = 6;
 
 // Trace Reference IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TraceReference {
     pub t: u8,
     pub length:u16,

@@ -10,7 +10,7 @@ pub const MUEUT_LENGTH:usize = 2;
 
 // Mapped UE Usage Type (MUEUT) IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MappedUeUsageType {
     pub t:u8,
     pub length:u16,

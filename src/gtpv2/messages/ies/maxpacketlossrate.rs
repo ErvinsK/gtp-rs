@@ -10,7 +10,7 @@ pub const MAX_PACKET_LOSS:u8 = 203;
 // The Maximum Packet Loss Rate for UL and DL shall be coded as an unsigned integer in the range of 0 to 1000. 
 // It shall be interpreted as Ratio of lost packets per number of packets sent, expressed in tenth of percent.
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct MaxPacketLossRate {
     pub t:u8,
     pub length:u16,
@@ -58,7 +58,7 @@ impl IEs for MaxPacketLossRate {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>= MIN_IE_SIZE+1 {
+        if buffer.len() > MIN_IE_SIZE {
             let mut data = MaxPacketLossRate::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
             data.ins = buffer[3];
@@ -68,7 +68,7 @@ impl IEs for MaxPacketLossRate {
                     data.max_packet_loss_ul = None;
                 },
                 1 => {
-                    if check_tliv_ie_buffer(3, &buffer) {
+                    if check_tliv_ie_buffer(3, buffer) {
                         data.max_packet_loss_ul = Some(u16::from_be_bytes([buffer[5],buffer[6]]));
                         data.max_packet_loss_dl = None;
                     } else {
@@ -76,7 +76,7 @@ impl IEs for MaxPacketLossRate {
                     }
                 },
                 2 => {
-                    if check_tliv_ie_buffer(3, &buffer) {
+                    if check_tliv_ie_buffer(3, buffer) {
                         data.max_packet_loss_ul = None;
                         data.max_packet_loss_dl = Some(u16::from_be_bytes([buffer[5],buffer[6]]));
                     } else {
@@ -84,7 +84,7 @@ impl IEs for MaxPacketLossRate {
                     }
                 },
                 3 => {
-                    if check_tliv_ie_buffer(5, &buffer) {
+                    if check_tliv_ie_buffer(5, buffer) {
                         data.max_packet_loss_ul = Some(u16::from_be_bytes([buffer[5],buffer[6]]));
                         data.max_packet_loss_dl = Some(u16::from_be_bytes([buffer[7],buffer[8]]));
                     } else {

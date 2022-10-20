@@ -22,7 +22,7 @@ pub const THROTTLING_LENGTH:usize = 2;
 //
 // Factor = Throttling Factor indicates a percentage and may take binary coded integer values from and including 0 up to and including 100. Other values shall be considered as 0.
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Throttling {
     pub t:u8,
     pub length:u16,

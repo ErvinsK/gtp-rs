@@ -8,7 +8,7 @@ pub const NODE_NMBR:u8 = 175;
 
 // Node Number IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NodeNumber {
     pub t:u8,
     pub length:u16,

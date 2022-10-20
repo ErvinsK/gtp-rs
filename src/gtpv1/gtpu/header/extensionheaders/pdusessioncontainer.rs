@@ -5,7 +5,7 @@ pub const PDU_SESSION_CONTAINER_LENGTH:u8 = 1;
 
 // Struct for PDU Session Container Extension Header
     
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct PduSessionContainer {
     pub extension_header_type:u8,
     pub length:u8,

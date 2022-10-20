@@ -9,7 +9,7 @@ pub const PDNTYPE_LENGTH:usize = 1;
 
 // PDN Type enum
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Pdn {
     Ipv4,
     Ipv6,
@@ -39,7 +39,7 @@ impl Pdn {
 
 // PDN Type IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PdnType {
     pub t:u8,
     pub length:u16,

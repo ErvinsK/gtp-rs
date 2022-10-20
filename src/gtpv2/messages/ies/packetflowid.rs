@@ -9,7 +9,7 @@ pub const PCKTFLOW_LENGTH:usize = 5;
 
 // Packet Flow ID IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PacketFlowId {
     pub t:u8,
     pub length:u16,

@@ -9,7 +9,7 @@ pub const PRAI_LENGTH:usize = 4;
 
 // Presence Reporting Area enum
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum PresenceReportingArea { // The PRA ID shall be encoded as an integer on 3 octets. The most significant bit of the PRA ID shall be set to 0 for UEdedicated PRA and shall be to 1 for Core Network predefined PRA. 
     Ipra(u32),
     Opra(u32),
@@ -49,7 +49,7 @@ impl From<&[u8]> for PresenceReportingArea {
 
 // Presence Reporting Area Info IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PresenceReportingAreaInformation {
     pub t:u8,
     pub length:u16,

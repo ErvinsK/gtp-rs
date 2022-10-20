@@ -9,7 +9,7 @@ pub const GLOBAL_CN_ID_LENGTH:usize = 5;
 
 // Global CN-Id IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GlobalCnId {
     pub t: u8,
     pub length:u16,

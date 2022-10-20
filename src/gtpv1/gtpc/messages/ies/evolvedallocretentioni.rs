@@ -9,7 +9,7 @@ pub const EVOLVEDALLOCRETENTIONI_LENGTH:u16 = 1;
 
 // Evolved Allocation/Retention I IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EvolvedAllocationRetentionI {
     pub t:u8,
     pub length:u16,

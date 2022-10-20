@@ -14,7 +14,7 @@ pub const WLAN_OFFLOAD_IND_LENGTH:usize = 1;
 // UTRAN Indication when set to '1', this indicates that the UE has been authorized to perform WLAN offload from UTRAN. 
 // When set to '0', this indicates that the UE has not been authorized to perform WLAN offload from UTRAN.
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct WlanOffloadIndication {
     pub t:u8,
     pub length:u16,

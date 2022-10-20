@@ -9,7 +9,7 @@ pub const CHARGINGID_LENGTH:usize = 4;
 
 // Charging ID IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChargingId {
     pub t:u8,
     pub length:u16,

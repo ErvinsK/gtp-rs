@@ -9,7 +9,7 @@ pub const PTMSI_SIG_LENGTH:usize = 4;
 
 // P-TMSI Signature IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PtmsiSignature {
     pub t:u8,
     pub length:u16,

@@ -17,7 +17,7 @@ pub const ACTION_IND_LENGTH:usize = 1;
 //       <spare>                   4 to 7
 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ActionIndication {
     pub t:u8,
     pub length:u16,

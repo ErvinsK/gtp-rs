@@ -9,7 +9,7 @@ pub const CHARGING_ID_LENGTH:usize = 4;
 
 // Charging Characteristics IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 
 pub struct ChargingID {
     pub t:u8,
@@ -29,7 +29,7 @@ impl IEs for ChargingID {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error>  {
-        if buffer.len()>=CHARGING_ID_LENGTH+1 {
+        if buffer.len() > CHARGING_ID_LENGTH {
             let mut data=ChargingID::default();
             data.value = u32::from_be_bytes([buffer[1],buffer[2],buffer[3],buffer[4]]);
             match data.value {

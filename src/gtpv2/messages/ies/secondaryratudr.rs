@@ -12,7 +12,7 @@ pub const SCND_RAT_UDR_LENGTH:usize = 27;
 // IRSGW (Intended Receiver SGW): This bit defines if the Usage Data Report shall be used by the SGW or not. If set to 1 the SGW shall store it. If set to zero the SGW shall not store it.
 // IRPGW (Intended Receiver PGW): This bit defines if the Usage Data Report shall be sent to the PGW or not. If set to 1 the SGW shall forward it to PGW and PGW shall store it. If set to zero SGW shall not forward it to PGW.
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SecondaryRatUsageDataReport {
     pub t:u8,
     pub length:u16,

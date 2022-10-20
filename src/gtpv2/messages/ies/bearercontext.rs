@@ -6,7 +6,7 @@ use crate::gtpv2::{errors::GTPV2Error, messages::ies::*};
 
 pub const BEARER_CTX:u8 = 93;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BearerContext {
     pub t:u8,
     pub length:u16,

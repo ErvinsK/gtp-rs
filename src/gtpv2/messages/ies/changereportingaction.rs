@@ -23,7 +23,7 @@ pub const CHANGE_RPRT_LENGTH:usize = 1;
 //  <spare>                                                             9-255
 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChangeReportingAction {
     pub t:u8,
     pub length:u16,

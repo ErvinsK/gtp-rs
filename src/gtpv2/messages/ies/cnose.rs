@@ -9,7 +9,7 @@ pub const CNOSE_LENGTH:usize = 1;
 
 // CNOSE IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CnOperatorSelectionEntity {
     pub t:u8,
     pub length:u16,
@@ -18,7 +18,7 @@ pub struct CnOperatorSelectionEntity {
 }
 
 // Selection Mode enum
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SelectionMode {
     ServingNetworkSelectedbyUE,
     ServingNetworkSelectedbyNetwork,

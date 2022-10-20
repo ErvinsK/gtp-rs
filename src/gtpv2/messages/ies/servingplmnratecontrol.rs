@@ -9,7 +9,7 @@ pub const SERV_PLMN_RATE_CTRL_LENGTH:usize = 4;
 
 // Serving PLMN Rate Control IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ServingPlmnRateControl {
     pub t:u8,
     pub length:u16,

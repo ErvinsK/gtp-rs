@@ -9,7 +9,7 @@ pub const DTF_LENGTH:u16 = 1;
 
 // Direct Tunnel Flags IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DirectTunnelFlags {
     pub t:u8,
     pub length:u16,
@@ -40,7 +40,7 @@ impl IEs for DirectTunnelFlags {
         if buffer.len()>=4 {
             let mut data=DirectTunnelFlags::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            let to_bool = |i:u8| -> bool { if i == 1 { true } else {false}};
+            let to_bool = |i:u8| -> bool { i == 1};
             data.dti = to_bool(buffer[3] & 1);
             data.gcsi = to_bool((buffer[3]>>1) & 1);
             data.ei = to_bool((buffer[3]>>2) & 1);

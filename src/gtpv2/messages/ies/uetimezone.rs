@@ -9,7 +9,7 @@ pub const UETIMEZONE_LENGTH:usize = 2;
 
 // UE Time Zone IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UeTimeZone {
     pub t:u8,
     pub length:u16,
@@ -42,7 +42,7 @@ impl IEs for UeTimeZone {
             let a = tz % 10;
             buffer_ie.push(b>>4 | a<<4);
         } else {
-            let tz = (self.time_zone.abs() as u8) << 2 ;
+            let tz = self.time_zone.unsigned_abs() << 2 ;
             let b: u8 = (((tz - (tz%10))/ 10)<<4) | 0x80;
             let a = tz % 10;
             buffer_ie.push(b>>4 | a<<4);

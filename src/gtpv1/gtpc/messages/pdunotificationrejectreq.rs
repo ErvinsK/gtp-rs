@@ -223,11 +223,11 @@ impl Messages for PDUNotificationRejectRequest {
                         }
                 }
                 match (msg_hash.get(&CAUSE), msg_hash.get(&TEID_CONTROL), msg_hash.get(&END_USER_ADDRESS), msg_hash.get(&APN)) {
-                    (Some(_),Some(_),Some(_),Some(_)) => return Ok(message),
-                    _ => return Err(GTPV1Error::MessageMandatoryIEMissing),
+                    (Some(_),Some(_),Some(_),Some(_)) => Ok(message),
+                    _ => Err(GTPV1Error::MessageMandatoryIEMissing),
                 }
             } else {
-                return Err(GTPV1Error::MessageLengthError);
+                Err(GTPV1Error::MessageLengthError)
             }                 
         }
 

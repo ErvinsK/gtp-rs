@@ -9,7 +9,7 @@ pub const RAI_LENGTH:usize = 6;
 
 // Routeing Area Identity (RAI) IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Rai {
     pub t: u8,
     pub mcc: u16,
@@ -33,7 +33,7 @@ impl IEs for Rai {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
-        if buffer.len()>=RAI_LENGTH+1 {
+        if buffer.len() > RAI_LENGTH {
             let mut data:Rai=Rai::default();
             (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[1..=3]);
             data.lac=u16::from_be_bytes([buffer[4],buffer[5]]);

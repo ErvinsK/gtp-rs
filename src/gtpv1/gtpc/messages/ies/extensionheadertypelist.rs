@@ -8,7 +8,7 @@ pub const EXTENSION_HEADER_TYPE_LIST:u8 = 141;
 
 // Extension Header Type List IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ExtensionHeaderTypeList {
     pub t:u8,
     pub length:u8,

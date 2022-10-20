@@ -8,7 +8,7 @@ pub const TRIGGERID:u8 = 142;
 
 // Trigger ID IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TriggerId {
     pub t:u8,
     pub length:u16,

@@ -5,7 +5,7 @@ pub const MBMS_SUPPORT_INDICATION_LENGTH:u8 = 1;
 
 // Struct for MBMS Support Indication 
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct MBMSSupportIndication {
     pub extension_header_type:u8,
     pub length:u8,

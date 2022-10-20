@@ -9,7 +9,7 @@ pub const TRACE_TYPE_LENGTH:usize = 2;
 
 // Trace Type IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 
 pub struct TraceType {
     pub t:u8,
@@ -29,7 +29,7 @@ impl IEs for TraceType {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result <Self, GTPV1Error> where Self:Sized {
-        if buffer.len()>=TRACE_TYPE_LENGTH+1 {
+        if buffer.len() > TRACE_TYPE_LENGTH {
             let mut data=TraceType::default();
             data.value = u16::from_be_bytes([buffer[1],buffer[2]]);
             Ok(data) 

@@ -9,7 +9,7 @@ pub const COUNTER_LENGTH:usize = 5;
 
 // Counter IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Counter {
     pub t:u8,
     pub length:u16,

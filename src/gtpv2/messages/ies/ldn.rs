@@ -8,7 +8,7 @@ pub const LDN:u8 = 151;
 
 // LDN IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Ldn {
     pub t:u8,
     pub length:u16,

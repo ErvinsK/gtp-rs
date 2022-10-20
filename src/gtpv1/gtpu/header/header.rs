@@ -5,7 +5,7 @@ use crate::gtpv1::gtpu::header::extensionheaders::*;
 
 // Enum to hold all possible Extension headers for GTPv1-U
     
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ExtensionHeader {
     NoMoreExtensionHeaders,
     PDCPPDUNumber(PDCPPDUNumber),
@@ -25,61 +25,61 @@ impl ExtensionHeader {
         match buffer[0] {
             NO_MORE_EXTENSION_HEADERS => Ok(ExtensionHeader::NoMoreExtensionHeaders),
             PDCP_PDU_NUMBER => {
-                match PDCPPDUNumber::unmarshal(&buffer) {
+                match PDCPPDUNumber::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::PDCPPDUNumber(i)),
                     Err(j) => Err(j),
                 }
             },
             UDP_PORT => {
-                match UDPPort::unmarshal(&buffer) {
+                match UDPPort::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::UDPPort(i)),
                     Err(j) => Err(j),
                 }
             },
             LONG_PDCP_PDU_NUMBER_I => {
-                match LongPDCPPDUNumber::unmarshal(&buffer) {
+                match LongPDCPPDUNumber::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::LongPDCPPDUNumber(i)),
                     Err(j) => Err(j),
                 }
             },
             LONG_PDCP_PDU_NUMBER_II => {
-                match LongPDCPPDUNumber::unmarshal(&buffer) {
+                match LongPDCPPDUNumber::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::LongPDCPPDUNumber(i)),
                     Err(j) => Err(j),
                 }
             },
             SCI => {
-                match Sci::unmarshal(&buffer) {
+                match Sci::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::Sci(i)),
                     Err(j) => Err(j),
                 }
             },
             RAN_CONTAINER => {
-                match RanContainer::unmarshal(&buffer) {
+                match RanContainer::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::RanContainer(i)),
                     Err(j) => Err(j),
                 }
             },
             XW_RAN_CONTAINER => {
-                match XwRanContainer::unmarshal(&buffer) {
+                match XwRanContainer::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::XwRanContainer(i)),
                     Err(j) => Err(j),
                 }
             },
             NR_RAN_CONTAINER => {
-                match NrRanContainer::unmarshal(&buffer) {
+                match NrRanContainer::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::NrRanContainer(i)),
                     Err(j) => Err(j),
                 }
             },
             PDU_SESSION_CONTAINER => {
-                match PduSessionContainer::unmarshal(&buffer) {
+                match PduSessionContainer::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::PduSessionContainer(i)),
                     Err(j) => Err(j),
                 }
             },
             _ => {
-                match Unknown::unmarshal(&buffer) {
+                match Unknown::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::Unknown(i)),
                     Err(j) => Err(j),
                 }
@@ -298,17 +298,17 @@ impl Gtpv1Header {
             flags = 0x04;
         }
         if self.sequence_number.is_some() {
-            flags = flags | 0x02;
+            flags |= 0x02;
         }
         if self.npdu_number.is_some() {
-            flags = flags | 0x01;
+            flags |= 0x01;
         }
         flags | 0x30
     }
 
     fn marshal_ext_hdr(&self, buffer:&mut Vec<u8>) {
         if let Some(i) = &self.extension_headers {
-            if i.len() !=0 {
+            if !i.is_empty() {
                 for k in i.iter() {
                     k.clone().marshal(buffer);
                 }

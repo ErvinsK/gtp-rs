@@ -135,11 +135,11 @@ impl Messages for ErrorIndication {
                         }
                 }
                 match (msg_hash.get(&TEID_DATA), msg_hash.get(&GSN_ADDRESS)) {
-                    (Some(_),Some(_)) => return Ok(message),
-                    _ => return Err(GTPV1Error::MessageMandatoryIEMissing),
+                    (Some(_),Some(_)) => Ok(message),
+                    _ => Err(GTPV1Error::MessageMandatoryIEMissing),
                 }
         } else {
-            return Err(GTPV1Error::MessageLengthError);
+            Err(GTPV1Error::MessageLengthError)
         }                 
     }
 }

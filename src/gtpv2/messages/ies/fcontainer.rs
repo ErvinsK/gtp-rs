@@ -7,7 +7,7 @@ use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::
 pub const FCONTAINER:u8 = 118;
 
 // F-Container Type Enum
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Container {
     Reserved,
     Utran(Vec<u8>),
@@ -20,7 +20,7 @@ pub enum Container {
 
 // F-Container IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Fcontainer {
     pub t:u8,
     pub length:u16,
@@ -78,7 +78,7 @@ impl IEs for Fcontainer {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>=MIN_IE_SIZE+1 {
+        if buffer.len() > MIN_IE_SIZE {
             let mut data=Fcontainer::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
             data.ins = buffer[3];

@@ -4,7 +4,7 @@ use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::
 
 // Unknown IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Unknown {
     pub t: u8,
     pub length:u16,

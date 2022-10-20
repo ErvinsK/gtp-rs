@@ -9,7 +9,7 @@ pub const UCI_LENGTH:usize = 8;
 
 // Access mode enum
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum AccessMode {
     ClosedMode,
     HybridMode,
@@ -36,7 +36,7 @@ impl AccessMode {
 
 // CSG Membership Indication (CMI) enum
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Cmi {
     CsgMembership,
     NonCsgMembership,
@@ -60,7 +60,7 @@ impl Cmi {
 
 // User CSG Information (UCI) IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Uci {
     pub t: u8,
     pub length: u16,

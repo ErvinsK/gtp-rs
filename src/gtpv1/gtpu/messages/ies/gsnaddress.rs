@@ -9,7 +9,7 @@ pub const GSN_ADDRESS:u8 = 133;
 
 // GSN Address IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GsnAddress {
     pub t:u8,
     pub length:u16,

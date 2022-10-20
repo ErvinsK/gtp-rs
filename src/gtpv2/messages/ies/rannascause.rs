@@ -8,7 +8,7 @@ pub const RAN_NAS_CAUSE:u8 = 172;
 
 // S1AP Cause Types
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum S1APCause {
     RadioLayer(u8),
     TransportLayer(u8),
@@ -43,7 +43,7 @@ impl S1APCause {
 
 // Enum of RAN NAS Causes
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum CauseValue {
     S1ap(S1APCause),
     Emm(u8),

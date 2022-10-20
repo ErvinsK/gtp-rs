@@ -8,7 +8,7 @@ pub const RATTYPE:u8 = 151;
 pub const RATTYPE_LENGTH:u16 = 1;
 
 // RAT Type enum
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Rat {
     Utran,
     Geran,
@@ -44,7 +44,7 @@ impl Rat {
 
 // RAT Type IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RatType {
     pub t:u8,
     pub length:u16,

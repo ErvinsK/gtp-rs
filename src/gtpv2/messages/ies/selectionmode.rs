@@ -9,7 +9,7 @@ pub const SELECTION_MODE_LENGTH:usize = 1;
 
 // Charging Characteristics IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SelectionMode {
     pub t:u8,
     pub length:u16,

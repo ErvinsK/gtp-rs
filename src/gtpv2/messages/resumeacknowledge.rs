@@ -6,7 +6,7 @@ pub const RESUME_ACK:u8 = 165;
 
 // Definition of GTPv2-C Resume Acknowledge Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ResumeAcknowledge {
     pub header:Gtpv2Header,
     pub cause:Cause,
@@ -54,7 +54,7 @@ impl Messages for ResumeAcknowledge {
                         Err(j) => Err(j),
                     }
                 },
-                Err(j) => return Err(j),
+                Err(j) => Err(j),
             }
         } else {
             Err(GTPV2Error::MessageInvalidMessageFormat)

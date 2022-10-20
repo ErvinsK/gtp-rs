@@ -10,7 +10,7 @@ pub const TRACEINFO_LENGTH:usize = 34;
 
 // Trace Information IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TraceInformation {
     pub t: u8,
     pub length:u16,

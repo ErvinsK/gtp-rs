@@ -13,7 +13,7 @@ pub const HENB_INFO_LENGTH:usize = 1;
 // from H(e)NB to another H(e)NB with a fixed network backhaul change, or from H(e)NB to (e)NB.
 // FTI shall be set to 0 (false) to stop reporting H(e)NB local IP address and UDP port number information change.
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct HenbInfoReporting {
     pub t:u8,
     pub length:u16,

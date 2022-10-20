@@ -9,7 +9,7 @@ pub const EPCO:u8 = 197;
 
 // Extended PCO IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Epco {
     pub t:u8,
     pub length:u16,

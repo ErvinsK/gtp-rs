@@ -9,7 +9,7 @@ pub const GGSN_BACKOFF_LENGTH:u16 = 1;
 
 // Extended Common Flags II IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct GGSNBackOffTime {
     pub t:u8,
     pub length:u16,

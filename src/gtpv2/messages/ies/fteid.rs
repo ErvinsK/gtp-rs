@@ -52,7 +52,7 @@ pub const FTEID:u8 = 87;
 // 39: S11 SGW GTP-U interface
 // 40:	N26 AMF GTP-C interface
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Fteid {
     pub t:u8,
     pub length:u16,

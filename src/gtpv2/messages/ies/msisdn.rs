@@ -8,7 +8,7 @@ pub const MSISDN:u8 = 76;
 
 // MSISDN IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Msisdn {
     pub t:u8,
     pub length:u16,

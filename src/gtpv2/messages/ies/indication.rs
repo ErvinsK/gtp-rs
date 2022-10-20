@@ -9,7 +9,7 @@ pub const INDICATION_LENGTH:usize = 7;
 
 // Indication IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Indication {
     pub t:u8,
     pub length:u16,
@@ -163,7 +163,7 @@ impl IEs for Indication {
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
             data.ins = buffer[3];
             let f = u64::from_be_bytes([0x00,buffer[4],buffer[5],buffer[6],buffer[7],buffer[8],buffer[9],buffer[10]]);
-            let flags = [f;56].iter().enumerate().map(|(i,x)| if ((*x & (0x80000000000000 >> i))>>(55-i)) as u8 == 1 {true} else {false}).collect::<Vec<bool>>();
+            let flags = [f;56].iter().enumerate().map(|(i,x)| ((*x & (0x80000000000000 >> i))>>(55-i)) as u8 == 1).collect::<Vec<bool>>();
             data.from_array(&flags[..]);
             Ok(data)
         } else {

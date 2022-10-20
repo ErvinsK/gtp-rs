@@ -9,7 +9,7 @@ pub const APNRESTRICTION_LENGTH:u16 = 1;
 
 // APN Restriction Enum and Values as per 3GPP 23.060 V16.0.0 (2019-03)
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Restriction {
     NoApnRestriction,
     Public1,
@@ -42,7 +42,7 @@ impl Restriction {
 
 // APN Restriction IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ApnRestriction {
     pub t:u8,
     pub length:u16,

@@ -15,7 +15,7 @@ pub const DETACHTYPE_LENGTH:usize = 1;
 //  Combined PS/CS Detach         2
 //      <spare>                 3-255
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DetachType {
     pub t:u8,
     pub length:u16,

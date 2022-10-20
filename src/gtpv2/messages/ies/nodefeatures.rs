@@ -9,7 +9,7 @@ pub const NODEFEATURES_LENGTH:usize = 1;
 
 // Node Features IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NodeFeatures {
     pub t:u8,
     pub length:u16,
@@ -59,7 +59,7 @@ impl IEs for NodeFeatures {
             let mut data=NodeFeatures::default();
             data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
             data.ins = buffer[3];
-            let flags = [buffer[4];5].iter().enumerate().map(|(i,x)| if ((*x >> i) & 0x01) as u8 == 1 {true} else {false}).collect::<Vec<bool>>();
+            let flags = [buffer[4];5].iter().enumerate().map(|(i,x)| ((*x >> i) & 0x01) as u8 == 1).collect::<Vec<bool>>();
             data.from_array(&flags[..]);
             Ok(data)
         } else {

@@ -9,7 +9,7 @@ pub const SQN_LENGTH:usize = 4;
 
 // Sequence Number IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Sqn {
     pub t:u8,
     pub length:u16,

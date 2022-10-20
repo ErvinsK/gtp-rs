@@ -8,7 +8,7 @@ pub const TAD:u8 = 85;
 
 // TAD IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TrafficAggregateDescription {
     pub t:u8,
     pub length:u16,

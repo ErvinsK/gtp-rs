@@ -6,7 +6,7 @@ pub const ALERT_MME_NOTIF:u8 = 153;
 
 // Definition of GTPv2-C Alert MME Notification Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AlertMmeNotification {
     pub header:Gtpv2Header,
     pub private_ext:Vec<PrivateExtension>,
@@ -52,7 +52,7 @@ impl Messages for AlertMmeNotification {
                         Err(j) => Err(j),
                     }
                 },
-                Err(j) => return Err(j),
+                Err(j) => Err(j),
             }
         } else {
             Err(GTPV2Error::MessageInvalidMessageFormat)

@@ -6,7 +6,7 @@ pub const UE_ACTIVITY_NOTIF:u8 = 155;
 
 // Definition of GTPv2-C UE Activity Notification Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UeActivityNotification {
     pub header:Gtpv2Header,
     pub private_ext:Vec<PrivateExtension>,
@@ -52,7 +52,7 @@ impl Messages for UeActivityNotification {
                         Err(j) => Err(j),
                     }
                 },
-                Err(j) => return Err(j),
+                Err(j) => Err(j),
             }
         } else {
             Err(GTPV2Error::MessageInvalidMessageFormat)

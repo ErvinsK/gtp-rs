@@ -17,7 +17,7 @@ pub trait Li {
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> where Self:Sized;
 }
 
-#[derive(Debug,Clone,PartialEq, PartialOrd)]
+#[derive(Debug,Clone,PartialEq, Eq, PartialOrd)]
 pub struct Cgi {
     pub mcc: u16,
     pub mnc: u16,
@@ -51,7 +51,7 @@ impl Li for Cgi {
     }
 }
 
-#[derive(Debug,Clone,PartialEq,PartialOrd)]
+#[derive(Debug,Clone,PartialEq, Eq,PartialOrd)]
 pub struct Sai {
     pub mcc: u16,
     pub mnc: u16,
@@ -85,7 +85,7 @@ impl Li for Sai {
     }
 }
 
-#[derive(Debug,Clone,PartialEq,PartialOrd)]
+#[derive(Debug,Clone,PartialEq, Eq,PartialOrd)]
 pub struct Rai {
     pub mcc: u16,
     pub mnc: u16,
@@ -120,7 +120,7 @@ impl Li for Rai {
     }
 }
 
-#[derive(Debug,Clone,PartialEq,PartialOrd)]
+#[derive(Debug,Clone,PartialEq, Eq,PartialOrd)]
 pub struct Tai {
     pub mcc: u16,
     pub mnc: u16,
@@ -151,7 +151,7 @@ impl Li for Tai {
     }
 }
 
-#[derive(Debug,Clone,PartialEq,PartialOrd)]
+#[derive(Debug,Clone,PartialEq, Eq,PartialOrd)]
 pub struct Ecgi {
     pub mcc: u16,
     pub mnc: u16,
@@ -182,7 +182,7 @@ impl Li for Ecgi {
     }
 }
 
-#[derive(Debug,Clone,PartialEq,PartialOrd)]
+#[derive(Debug,Clone,PartialEq, Eq,PartialOrd)]
 pub struct Lai {
     pub mcc: u16,
     pub mnc: u16,
@@ -213,7 +213,7 @@ impl Li for Lai {
     }
 }
 
-#[derive(Debug,Clone,PartialEq,PartialOrd)]
+#[derive(Debug,Clone,PartialEq, Eq,PartialOrd)]
 pub struct MacroEnbId {
     pub mcc: u16,
     pub mnc: u16,
@@ -244,7 +244,7 @@ impl Li for MacroEnbId {
     }
 }
 
-#[derive(Debug,Clone,PartialEq,PartialOrd)]
+#[derive(Debug,Clone,PartialEq, Eq,PartialOrd)]
 pub struct ExtMacroEnbId {
     pub mcc: u16,
     pub mnc: u16,

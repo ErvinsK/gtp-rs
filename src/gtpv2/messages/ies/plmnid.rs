@@ -9,7 +9,7 @@ pub const PLMNID_LENGTH:usize = 3;
 
 // PLMN ID IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PlmnId {
     pub t: u8,
     pub length:u16,

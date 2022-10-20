@@ -9,7 +9,7 @@ pub const PORT_NBR_LENGTH:usize = 2;
 
 // Port Number IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PortNumber {
     pub t:u8,
     pub length:u16,

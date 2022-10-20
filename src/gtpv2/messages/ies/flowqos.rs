@@ -9,7 +9,7 @@ pub const FLOWQOS_LENGTH:usize = 21;
 
 // Flow QoS IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FlowQos {
     pub t:u8,
     pub length:u16,

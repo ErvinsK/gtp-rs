@@ -9,7 +9,7 @@ pub const CORRELATIONID_LENGTH:u16 = 1;
 
 // Correlation-ID IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CorrelationId {
     pub t:u8,
     pub length:u16,

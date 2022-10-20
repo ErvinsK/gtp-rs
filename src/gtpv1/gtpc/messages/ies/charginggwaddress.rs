@@ -9,7 +9,7 @@ pub const CHARGING_GW_ADDRESS:u8 = 251;
 
 // Charging Gateway Address IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChargingGWAddress {
     pub t:u8,
     pub length:u16,

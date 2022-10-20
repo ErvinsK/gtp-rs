@@ -6,7 +6,7 @@ use crate::gtpv2::{errors::GTPV2Error, messages::ies::*};
 
 pub const OVERLOAD_CNTRL:u8 = 180;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OverloadControlInfo {
     pub t:u8,
     pub length:u16,

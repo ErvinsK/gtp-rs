@@ -9,7 +9,7 @@ pub const MEI_LENGTH:usize = 8;
 
 // MEI IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Mei {
     pub t:u8,
     pub length:u16,

@@ -5,7 +5,7 @@ use crate::gtpv1::gtpc::header::extensionheaders::*;
 
 // Enum to hold all possible Extension headers for GTPv1-C
     
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum ExtensionHeader {
     NoMoreExtensionHeaders,
     PDCPPDUNumber(PDCPPDUNumber),
@@ -22,37 +22,37 @@ impl ExtensionHeader {
         match buffer[0] {
             NO_MORE_EXTENSION_HEADERS => Ok(ExtensionHeader::NoMoreExtensionHeaders),
             PDCP_PDU_NUMBER => {
-                match PDCPPDUNumber::unmarshal(&buffer) {
+                match PDCPPDUNumber::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::PDCPPDUNumber(i)),
                     Err(j) => Err(j),
                 }
             },
             SUSPEND_REQUEST => {
-                match SuspendRequest::unmarshal(&buffer) {
+                match SuspendRequest::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::SuspendRequest(i)),
                     Err(j) => Err(j),
                 }
             },
             SUSPEND_RESPONSE => {
-                match SuspendResponse::unmarshal(&buffer) {
+                match SuspendResponse::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::SuspendResponse(i)),
                     Err(j) => Err(j),
                 }
             },
             MBMS_SUPPORT_INDICATION => {
-                match MBMSSupportIndication::unmarshal(&buffer) {
+                match MBMSSupportIndication::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::MBMSSupportIndication(i)),
                     Err(j) => Err(j),
                 }
             },
             MS_INFO_CHANGE_REPORTING_SUPPORT_INDICATION => {
-                match MSInfoChangeReportingSupportIndication::unmarshal(&buffer) {
+                match MSInfoChangeReportingSupportIndication::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::MSInfoChangeReportingSupportIndication(i)),
                     Err(j) => Err(j),
                 }
             },
             _ => {
-                match Unknown::unmarshal(&buffer) {
+                match Unknown::unmarshal(buffer) {
                     Ok(i) => Ok(ExtensionHeader::Unknown(i)),
                     Err(j) => Err(j),
                 }
@@ -265,17 +265,17 @@ impl Gtpv1Header {
             flags = 0x04;
         }
         if self.sequence_number.is_some() {
-            flags = flags | 0x02;
+            flags |= 0x02;
         }
         if self.npdu_number.is_some() {
-            flags = flags | 0x01;
+            flags |= 0x01;
         }
         flags | 0x30
     }
 
     fn marshal_ext_hdr(&self, buffer:&mut Vec<u8>) {
         if let Some(i) = &self.extension_headers {
-            if i.len() !=0 {
+            if !i.is_empty() {
                 for k in i.iter() {
                     k.clone().marshal(buffer);
                 }

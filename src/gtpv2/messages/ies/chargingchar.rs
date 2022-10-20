@@ -9,7 +9,7 @@ pub const CHARGINGCHAR_LENGTH:usize = 2;
 
 // Charging Characteristics IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChargingCharacteristics {
     pub t:u8,
     pub length:u16,

@@ -8,7 +8,7 @@ pub const TFT:u8 = 137;
 
 // TFT IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Tft {
     pub t:u8,
     pub length:u16,

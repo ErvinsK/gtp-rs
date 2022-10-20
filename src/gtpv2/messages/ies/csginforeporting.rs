@@ -9,7 +9,7 @@ pub const CSG_INFO_REPORT_LENGTH:usize = 1;
 
 // CSG Information Reporting Action IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CSGInformationReportingAction {
     pub t:u8,
     pub length:u16,

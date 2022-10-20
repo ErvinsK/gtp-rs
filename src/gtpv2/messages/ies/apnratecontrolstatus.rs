@@ -9,7 +9,7 @@ pub const APN_RATE_CNTR_LENGTH:usize = 20;
 
 // APN Rate Control Status IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ApnRateControlStatus {
     pub t:u8,
     pub length:u16,

@@ -8,7 +8,7 @@ pub const IMSI:u8 = 1;
 
 // IMSI IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Imsi {
     pub t:u8,
     pub length:u16,

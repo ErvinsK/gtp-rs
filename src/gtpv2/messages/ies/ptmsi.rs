@@ -9,7 +9,7 @@ pub const PTMSI_LENGTH:usize = 4;
 
 // P-TMSI IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Ptmsi {
     pub t:u8,
     pub length:u16,

@@ -4,12 +4,12 @@ use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::
 
 // Paging and Service Information IE TL
 
-pub const PAGING_SRVC_INFO:u8 = 174;
+pub const PAGING_SRVC_INFO:u8 = 186;
 pub const PAGING_SRVC_INFO_LENGTH:usize = 2;
 
 // Paging and Service Information IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PagingServiceInfo {
     pub t:u8,
     pub length:u16,

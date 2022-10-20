@@ -9,7 +9,7 @@ pub const METRIC_LENGTH:usize = 1;
 
 // Metric IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Metric {
     pub t:u8,
     pub length:u16,

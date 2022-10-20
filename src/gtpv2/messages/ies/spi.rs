@@ -9,7 +9,7 @@ pub const SPI_LENGTH:usize = 1;
 
 // SPI IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Spi {
     pub t:u8,
     pub length:u16,

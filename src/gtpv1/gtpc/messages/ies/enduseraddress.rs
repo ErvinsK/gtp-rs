@@ -25,7 +25,7 @@ pub const IPV46:u8 = 0x8D;
 
 // End User Address IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EndUserAddress {
     pub t: u8,
     pub length: u16,

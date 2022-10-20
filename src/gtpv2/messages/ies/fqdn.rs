@@ -8,7 +8,7 @@ pub const FQDN:u8 = 136;
 
 // FQDN IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Fqdn {
     pub t:u8,
     pub length:u16,
@@ -34,7 +34,7 @@ impl IEs for Fqdn {
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        let n:Vec<_> = self.name.split(".").collect();
+        let n:Vec<_> = self.name.split('.').collect();
         let mut z:Vec<u8>=vec!();
         for i in n.iter() {
             z.push(i.len() as u8);

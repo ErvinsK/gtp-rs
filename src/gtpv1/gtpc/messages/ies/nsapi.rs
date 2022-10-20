@@ -9,7 +9,7 @@ pub const NSAPI_LENGTH:usize = 1;
 
 // NSAPI IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 
 pub struct Nsapi {
     pub t:u8,
@@ -29,7 +29,7 @@ impl IEs for Nsapi {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
-        if buffer.len()>=NSAPI_LENGTH+1 {
+        if buffer.len() > NSAPI_LENGTH {
             let mut data=Nsapi::default();
             data.value = buffer[1] & 0b1111;
             Ok(data) 

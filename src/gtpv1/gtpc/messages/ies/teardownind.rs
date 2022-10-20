@@ -9,7 +9,7 @@ pub const TEARDOWN_IND_LENGTH:u16 = 1;
 
 // Teardown Ind IE implementation 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TeardownInd {
     pub t:u8,
     pub teardown:bool,          // Teardown Ind

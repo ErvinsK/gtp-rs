@@ -8,7 +8,7 @@ pub const SRC_RNC_PDCP:u8 = 125;
 
 // Source RNC PDCP Context Info IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SrcRncPdcpCtxInfo {
     pub t:u8,
     pub length:u16,

@@ -8,7 +8,7 @@ pub const CAMELCIC:u8 = 155;
 
 // CAMEL Charging Information Container (CIC) IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CamelChargingInfoContainer {
     pub t:u8,
     pub length:u16,

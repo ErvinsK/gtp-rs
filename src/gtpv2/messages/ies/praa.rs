@@ -16,7 +16,7 @@ pub const PRAA_LENGTH:usize = 11;
 //                      <spare>                                       0, 4-7
 
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PresenceReportingAreaAction {
     pub t:u8,
     pub length:u16,
