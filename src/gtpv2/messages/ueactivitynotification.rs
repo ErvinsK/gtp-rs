@@ -14,9 +14,10 @@ pub struct UeActivityNotification {
 
 impl Default for UeActivityNotification {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = UE_ACTIVITY_NOTIF;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header {
+            msgtype: UE_ACTIVITY_NOTIF,
+            teid: Some(0),
+            ..Default::default()};
         UeActivityNotification {
             header:hdr,
             private_ext:vec!(),
@@ -69,9 +70,8 @@ impl Messages for UeActivityNotification {
     
     fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         for e in elements.into_iter() {
-            match e {
-                InformationElement::PrivateExtension(j) => self.private_ext.push(j),
-                _ => (),
+            if let InformationElement::PrivateExtension(j) = e {
+                self.private_ext.push(j);
             }
         }
         Ok(true)

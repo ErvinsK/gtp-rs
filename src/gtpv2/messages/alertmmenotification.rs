@@ -14,9 +14,11 @@ pub struct AlertMmeNotification {
 
 impl Default for AlertMmeNotification {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = ALERT_MME_NOTIF;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header {
+            msgtype:ALERT_MME_NOTIF,
+            teid:Some(0),
+            ..Default::default()
+        };
         AlertMmeNotification {
             header:hdr,
             private_ext:vec!(),
@@ -69,9 +71,8 @@ impl Messages for AlertMmeNotification {
     
     fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         for e in elements.into_iter() {
-            match e {
-                InformationElement::PrivateExtension(j) => self.private_ext.push(j),
-                _ => (),
+            if let InformationElement::PrivateExtension(j) = e { 
+                self.private_ext.push(j); 
             }
         }
         Ok(true)

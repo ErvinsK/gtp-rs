@@ -18,9 +18,11 @@ pub struct ModifyBearerCommand {
 
 impl Default for ModifyBearerCommand {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = MODIFY_BEARER_CMD;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:MODIFY_BEARER_CMD,
+            teid:Some(0),
+            ..Default::default()
+        };
         ModifyBearerCommand {
             header: hdr,
             apnambr: ApnAmbr::default(),
@@ -76,9 +78,8 @@ impl Messages for ModifyBearerCommand {
 
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
-        match self.fteid_control.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.fteid_control.clone() {
+            elements.push(i.into());
         }
 
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone()))); 
@@ -91,30 +92,24 @@ impl Messages for ModifyBearerCommand {
         for e in elements.iter() {
             match e {
                 InformationElement::ApnAmbr(j) => {
-                    match (j.ins, mandatory[0]) {
-                        (0, false) => (self.apnambr, mandatory[0]) = (j.clone(), true),
-                        _ => (),
+                    if let (0, false) = (j.ins, mandatory[0]) {
+                        (self.apnambr, mandatory[0]) = (j.clone(), true);
                     }
                 },
                 InformationElement::BearerContext(j) => {  
-                    match (j.ins, mandatory[1]) {
-                        (0,false) => {
-                            self.bearer_ctxs.push(j.clone());
-                            mandatory[1] = true;
-                        },
-                        _ => (),
+                    if let (0, false) = (j.ins, mandatory[1]) {
+                        self.bearer_ctxs.push(j.clone());
+                        mandatory[1] = true;
                     }
                 }, 
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<3 => self.overload_info.push(j.clone()),
-                        _ => (),
+                    if j.ins<3 {
+                        self.overload_info.push(j.clone());
                     }
                 }, 
                 InformationElement::Fteid(j) => {  
-                    match (j.ins, self.fteid_control.is_none()) {
-                        (0, true) => self.fteid_control = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.fteid_control.is_none()) {
+                        self.fteid_control = Some(j.clone());
                     }
                 }, 
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),

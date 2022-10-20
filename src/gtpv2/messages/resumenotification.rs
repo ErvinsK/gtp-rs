@@ -18,9 +18,10 @@ pub struct ResumeNotification {
 
 impl Default for ResumeNotification {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = RESUME_NOTIF;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:RESUME_NOTIF,
+            teid:Some(0),
+            ..Default::default()};
         ResumeNotification {
             header:hdr,
             imsi:Imsi::default(),
@@ -72,17 +73,14 @@ impl Messages for ResumeNotification {
 
         elements.push(self.imsi.clone().into());
 
-        match self.linked_ebi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.linked_ebi.clone() {
+            elements.push(i.into());
         }
-        match self.orig_node.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.orig_node.clone() {
+            elements.push(i.into());
         }
-        match self.fteid_control.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.fteid_control.clone() {
+            elements.push(i.into());
         }
 
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));  
@@ -95,27 +93,23 @@ impl Messages for ResumeNotification {
         for e in elements.into_iter() {
             match e {
                 InformationElement::Imsi(j) => {
-                    match (j.ins, mandatory) {
-                        (0, false) => (self.imsi, mandatory) = (j, true),
-                        _ => (),
+                    if let (0, false) = (j.ins, mandatory) {
+                        (self.imsi, mandatory) = (j, true);
                     }
                 },
-                InformationElement::Ebi(j) => {  
-                    match (j.ins, self.linked_ebi.is_none()) {
-                        (0, true) => self.linked_ebi = Some(j),
-                        _ => (),
-                    }
+                InformationElement::Ebi(j) => { 
+                    if let (0, true) = (j.ins, self.linked_ebi.is_none()) {
+                        self.linked_ebi = Some(j);
+                    } 
                 },
                 InformationElement::NodeType(j) => {
-                    match (j.ins, self.orig_node.is_none()) {
-                        (0, true) => self.orig_node = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.orig_node.is_none()) {
+                        self.orig_node = Some(j);
                     }
                 },
                 InformationElement::Fteid(j) => {
-                    match (j.ins, self.fteid_control.is_none()) {
-                        (0, true) => self.fteid_control = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.fteid_control.is_none()) {
+                        self.fteid_control = Some(j);
                     }
                 },
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j),

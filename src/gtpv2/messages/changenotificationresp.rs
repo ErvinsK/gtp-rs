@@ -20,9 +20,10 @@ pub struct ChangeNotificationResponse {
 
 impl Default for ChangeNotificationResponse {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = CHNG_NOTIF_RESP;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:CHNG_NOTIF_RESP,
+            teid:Some(0),
+            ..Default::default()};
         ChangeNotificationResponse {
             header:hdr,
             imsi:None,
@@ -74,30 +75,25 @@ impl Messages for ChangeNotificationResponse {
     fn to_vec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
         
-        match self.imsi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.imsi.clone() {
+            elements.push(i.into());
         }
-        match self.mei.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.mei.clone() {
+            elements.push(i.into());
         }
 
         elements.push(self.cause.clone().into());
 
-        match self.cra.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.cra.clone() {
+            elements.push(i.into());
         }
-        match self.csg_ira.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.csg_ira.clone() {
+            elements.push(i.into());
         }
-        match self.praa.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.praa.clone() {
+            elements.push(i.into());
         }
-
+       
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));  
 
         elements
@@ -108,39 +104,33 @@ impl Messages for ChangeNotificationResponse {
         for e in elements.iter() {
             match e {
                 InformationElement::Imsi(j) => {
-                    match (j.ins, self.imsi.is_none()) {
-                        (0, true) => self.imsi = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.imsi.is_none()) {
+                        self.imsi = Some(j.clone());
                     }
                 },
                 InformationElement::Mei(j) => {
-                    match (j.ins, self.mei.is_none()) {
-                        (0, true) => self.mei = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.mei.is_none()) {
+                        self.mei = Some(j.clone());
                     }
                 },
                 InformationElement::Cause(j) => {
-                    match (j.ins, mandatory) {
-                        (0, false) => (self.cause, mandatory) = (j.clone(), true),
-                        _ => (),
+                    if let (0, false) = (j.ins, mandatory) {
+                        (self.cause, mandatory) = (j.clone(), true);
                     }
                 },
                 InformationElement::ChangeReportingAction(j) => {
-                    match (j.ins, self.cra.is_none()) {
-                        (0, true) => self.cra = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.cra.is_none()) {
+                        self.cra = Some(j.clone());
                     }
                 },
                 InformationElement::CSGInformationReportingAction(j) => {
-                    match (j.ins, self.csg_ira.is_none()) {
-                        (0, true) => self.csg_ira = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.csg_ira.is_none()) {
+                        self.csg_ira = Some(j.clone());
                     }
                 },
                 InformationElement::PresenceReportingAreaAction(j) => {  
-                    match (j.ins, self.praa.is_none()) {
-                        (0, true) => self.praa = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.praa.is_none()) {
+                        self.praa = Some(j.clone());
                     }
                 }, 
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),

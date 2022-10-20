@@ -15,9 +15,11 @@ pub struct UeActivityAcknowledge {
 
 impl Default for UeActivityAcknowledge {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = UE_ACTIVITY_ACK;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header {
+            msgtype:UE_ACTIVITY_ACK,
+            teid:Some(0),
+            ..Default::default()
+        };
         UeActivityAcknowledge {
             header:hdr,
             cause:Cause::default(),
@@ -76,9 +78,8 @@ impl Messages for UeActivityAcknowledge {
         for e in elements.into_iter() {
             match e {
                 InformationElement::Cause(j) => {
-                    match (j.ins, mandatory) {
-                        (0, false) => (self.cause, mandatory) = (j, true),
-                        _ => (),
+                    if let (0, false) = (j.ins, mandatory) {
+                        (self.cause, mandatory) = (j, true);
                     }
                 },
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j),

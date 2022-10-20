@@ -19,9 +19,10 @@ pub struct DeleteBearerFailureInd {
 
 impl Default for DeleteBearerFailureInd {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = DELETE_BEARER_FAIL;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:DELETE_BEARER_FAIL,
+            teid:Some(0),
+            ..Default::default()};
         DeleteBearerFailureInd {
             header: hdr,
             cause: Cause::default(),
@@ -76,15 +77,13 @@ impl Messages for DeleteBearerFailureInd {
 
         self.bearer_ctxs.iter().for_each(|x| elements.push(InformationElement::BearerContext(x.clone())));
 
-        match self.recovery.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }         
-        match self.indication.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.recovery.clone() {
+            elements.push(i.into());
         }
-
+        if let Some(i) = self.indication.clone() {
+            elements.push(i.into());
+        }
+        
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));    
@@ -97,33 +96,28 @@ impl Messages for DeleteBearerFailureInd {
         for e in elements.iter() {
             match e {
                 InformationElement::Cause(j) => {
-                    match (j.ins, mandatory) {
-                        (0, false) => (self.cause, mandatory) = (j.clone(), true),
-                        _ => (),
+                    if let (0, false) = (j.ins, mandatory) {
+                        (self.cause, mandatory) = (j.clone(), true);
                     }
                 },
                 InformationElement::BearerContext(j) => {  
-                    match j.ins {
-                        0 => self.bearer_ctxs.push(j.clone()),
-                        _ => (),
+                    if let 0 = j.ins {
+                        self.bearer_ctxs.push(j.clone());
                     }
                 }, 
                 InformationElement::Recovery(j) => {
-                    match (j.ins, self.recovery.is_none()) {
-                        (0, true) => self.recovery = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.recovery.is_none()) {
+                        self.recovery = Some(j.clone());
                     }
                 },
                 InformationElement::Indication(j) => {
-                    match (j.ins, self.indication.is_none()) {
-                        (0, true) => self.indication = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.indication.is_none()) {
+                        self.indication = Some(j.clone());
                     }
                 },
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<2 => self.overload_info.push(j.clone()),
-                        _ => (),
+                    if j.ins < 2 {
+                        self.overload_info.push(j.clone());
                     }
                 }, 
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),

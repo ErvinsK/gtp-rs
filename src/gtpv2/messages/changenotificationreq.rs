@@ -25,9 +25,10 @@ pub struct ChangeNotificationRequest {
 
 impl Default for ChangeNotificationRequest {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = CHNG_NOTIF_REQ;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:CHNG_NOTIF_REQ,
+            teid:Some(0),
+            ..Default::default()};
         ChangeNotificationRequest {
             header:hdr,
             imsi:None,
@@ -83,44 +84,35 @@ impl Messages for ChangeNotificationRequest {
 
     fn to_vec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
-        match self.imsi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.imsi.clone() {
+            elements.push(i.into());
         }
-        match self.mei.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.mei.clone() {
+            elements.push(i.into());
         }
-        match self.indication.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.indication.clone() {
+            elements.push(i.into());
         }
-        
+               
         elements.push(self.rattype.clone().into());
 
-        match self.uli.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.uli.clone() {
+            elements.push(i.into());
         }
-        match self.uci.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.uci.clone() {
+            elements.push(i.into());
         }
-        match self.pgw_addr_control.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }        
-        match self.linked_ebi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.pgw_addr_control.clone() {
+            elements.push(i.into());
         }
-        match self.prai.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.linked_ebi.clone() {
+            elements.push(i.into());
         }
-        match self.mo_exception_data_counter.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.prai.clone() {
+            elements.push(i.into());
+        }
+        if let Some(i) = self.mo_exception_data_counter.clone() {
+            elements.push(i.into());
         }
 
         self.secondary_rat_usage_report.iter().for_each(|x| elements.push(InformationElement::SecondaryRatUsageDataReport(x.clone())));
@@ -136,63 +128,53 @@ impl Messages for ChangeNotificationRequest {
         for e in elements.iter() {
             match e {
                 InformationElement::Imsi(j) => {
-                    match (j.ins, self.imsi.is_none()) {
-                        (0, true) => self.imsi = Some(j.clone()),
-                        (_,_) => (),
+                    if let (0, true) = (j.ins, self.imsi.is_none()) {
+                        self.imsi = Some(j.clone());
                     }
                 },
                 InformationElement::Mei(j) => {
-                    match (j.ins, self.mei.is_none()) {
-                        (0, true) => self.mei = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.mei.is_none()) {
+                        self.mei = Some(j.clone());
                     }
                 },
                 InformationElement::Indication(j) => {
-                    match (j.ins, self.indication.is_none()) {
-                        (0, true) => self.indication = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.indication.is_none()) {
+                        self.indication = Some(j.clone());
                     }
                 },
                 InformationElement::RatType(j) => {
-                    match (j.ins, mandatory) {
-                        (0, false) => (self.rattype, mandatory) = (j.clone(), true),
-                        _ => (),
+                    if let (0, false) = (j.ins, mandatory) {
+                        (self.rattype, mandatory) = (j.clone(), true);
                     }
                 },
-                InformationElement::Uli(j) => { // Two instances
-                    match (j.ins, self.uli.is_none()) {
-                        (0, true) => self.uli = Some(j.clone()),
-                        _ => (),
+                InformationElement::Uli(j) => { 
+                    if let (0, true) = (j.ins, self.uli.is_none()) {
+                        self.uli = Some(j.clone());
                     }
                 },                
                 InformationElement::Uci(j) => {
-                    match (j.ins, self.uci.is_none()) {
-                        (0, true) => self.uci = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.uci.is_none()) {
+                        self.uci = Some(j.clone());
                     }
                 },
                 InformationElement::IpAddress(j) => {   
-                    match (j.ins, self.pgw_addr_control.is_none()) {
-                        (0, true) => self.pgw_addr_control = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.pgw_addr_control.is_none()) {
+                        self.pgw_addr_control = Some(j.clone());
                     }
                 }, 
                 InformationElement::Ebi(j) => {  
-                    match (j.ins, self.linked_ebi.is_none()) {
-                        (0, true) => self.linked_ebi = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.linked_ebi.is_none()) {
+                        self.linked_ebi = Some(j.clone());
                     }
                 }, 
                 InformationElement::PresenceReportingAreaInformation(j) => {  
-                    match (j.ins, self.prai.is_none()) {
-                        (0, true) => self.prai = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.prai.is_none()) {
+                        self.prai = Some(j.clone());
                     }
                 }, 
                 InformationElement::Counter(j) => {  
-                    match (j.ins, self.mo_exception_data_counter.is_none()) {
-                        (0, true) => self.mo_exception_data_counter = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.mo_exception_data_counter.is_none()) {
+                        self.mo_exception_data_counter = Some(j.clone());
                     }
                 }, 
                 InformationElement::SecondaryRatUsageDataReport(j) => {

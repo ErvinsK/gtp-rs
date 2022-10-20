@@ -15,9 +15,10 @@ pub struct ResumeAcknowledge {
 
 impl Default for ResumeAcknowledge {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = RESUME_ACK;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:RESUME_ACK,
+            teid:Some(0),
+            ..Default::default()};
         ResumeAcknowledge {
             header:hdr,
             cause:Cause::default(),
@@ -75,10 +76,9 @@ impl Messages for ResumeAcknowledge {
         let mut mandatory = false;
         for e in elements.into_iter() {
             match e {
-                InformationElement::Cause(j) => {
-                    match (j.ins, mandatory) {
-                        (0, false) => (self.cause, mandatory) = (j, true),
-                        _ => (),
+                InformationElement::Cause(j) => {     
+                    if let (0, false) = (j.ins, mandatory) {
+                         (self.cause, mandatory) = (j, true);
                     }
                 },
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j),

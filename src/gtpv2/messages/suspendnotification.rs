@@ -23,9 +23,10 @@ pub struct SuspendNotification {
 
 impl Default for SuspendNotification {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = SUSPEND_NOTIF;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:SUSPEND_NOTIF,
+            teid:Some(0),
+            ..Default::default()};
         SuspendNotification {
             header:hdr,
             imsi:None,
@@ -80,41 +81,32 @@ impl Messages for SuspendNotification {
     fn to_vec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
 
-        match self.imsi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.imsi.clone() {
+            elements.push(i.into());
         }
-        match self.rai.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.rai.clone() {
+            elements.push(i.into());
         }
-        match self.linked_ebi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.linked_ebi.clone() {
+            elements.push(i.into());
         }
-        match self.ptmsi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.ptmsi.clone() {
+            elements.push(i.into());
         }
-        match self.orig_node.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.orig_node.clone() {
+            elements.push(i.into());
         }
-        match self.ip_control.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.ip_control.clone() {
+            elements.push(i.into());
         }
-        match self.udp_port.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.udp_port.clone() {
+            elements.push(i.into());
         }
-        match self.hop_counter.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.hop_counter.clone() {
+            elements.push(i.into());
         }
-        match self.fteid_control.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.fteid_control.clone() {
+            elements.push(i.into());
         }
 
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));  
@@ -126,57 +118,48 @@ impl Messages for SuspendNotification {
         for e in elements.into_iter() {
             match e {
                 InformationElement::Imsi(j) => {
-                    match (j.ins, self.imsi.is_none()) {
-                        (0, true) => self.imsi = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.imsi.is_none()) {
+                        self.imsi = Some(j);
                     }
                 },
                 InformationElement::Uli(j) => {
-                    match (j.ins, self.rai.is_none()) {
-                        (0, true) => self.rai = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.rai.is_none()) {
+                        self.rai = Some(j);
                     }
                 },
                 InformationElement::Ebi(j) => {  
-                    match (j.ins, self.linked_ebi.is_none()) {
-                        (0, true) => self.linked_ebi = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.linked_ebi.is_none()) {
+                        self.linked_ebi = Some(j);
                     }
                 },
                 InformationElement::Ptmsi(j) => {
-                    match (j.ins, self.ptmsi.is_none()) {
-                        (0, true) => self.ptmsi = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.ptmsi.is_none()) {
+                        self.ptmsi = Some(j);
                     }
                 },
                 InformationElement::NodeType(j) => {
-                    match (j.ins, self.orig_node.is_none()) {
-                        (0, true) => self.orig_node = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.orig_node.is_none()) {
+                        self.orig_node = Some(j);
                     }
                 },
                 InformationElement::IpAddress(j) => {
-                    match (j.ins, self.ip_control.is_none()) {
-                        (0, true) => self.ip_control = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.ip_control.is_none()) {
+                        self.ip_control = Some(j);
                     }
                 },
                 InformationElement::PortNumber(j) => {
-                    match (j.ins, self.udp_port.is_none()) {
-                        (0, true) => self.udp_port = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.udp_port.is_none()) {
+                        self.udp_port = Some(j);
                     }
                 },
                 InformationElement::HopCounter(j) => {
-                    match (j.ins, self.hop_counter.is_none()) {
-                        (0, true) => self.hop_counter = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.hop_counter.is_none()) {
+                        self.hop_counter = Some(j);
                     }
                 },
                 InformationElement::Fteid(j) => {
-                    match (j.ins, self.fteid_control.is_none()) {
-                        (0, true) => self.fteid_control = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.fteid_control.is_none()) {
+                        self.fteid_control = Some(j);
                     }
                 },
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j),

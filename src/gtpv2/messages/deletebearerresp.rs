@@ -36,9 +36,11 @@ pub struct DeleteBearerResponse {
 
 impl Default for DeleteBearerResponse {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = DELETE_BEARER_RESP;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:DELETE_BEARER_RESP,
+            teid:Some(0),
+            ..Default::default()
+        };
         DeleteBearerResponse {
             header:hdr,
             cause:Cause::default(),
@@ -108,85 +110,66 @@ impl Messages for DeleteBearerResponse {
         
         elements.push(self.cause.clone().into());
 
-        match self.linked_ebi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.linked_ebi.clone() {
+            elements.push(i.into());
         }
 
         self.bearer_ctxs.iter().for_each(|x| elements.push(InformationElement::BearerContext(x.clone())));
 
-        match self.recovery.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.recovery.clone() {
+            elements.push(i.into());
         }
-
-        match self.mme_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
+        if let Some(i) = self.mme_fqcsid.clone() {
+            elements.push(i.into());
         }
-        match self.sgw_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
+        if let Some(i) = self.sgw_fqcsid.clone() {
+            elements.push(i.into());
         }
-        match self.epdg_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
+        if let Some(i) = self.epdg_fqcsid.clone() {
+            elements.push(i.into());
         }
-        match self.twan_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
+        if let Some(i) = self.twan_fqcsid.clone() {
+            elements.push(i.into());
         }
-        match self.pco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }    
-        match self.uetimezone.clone() {
-            Some(i) => elements.push(InformationElement::UeTimeZone(i)),
-            None => (),
+        if let Some(i) = self.pco.clone() {
+            elements.push(i.into());
         }
-        match self.uli.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.uetimezone.clone() {
+            elements.push(i.into());
         }
-        match self.uli_timestamp.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.uli.clone() {
+            elements.push(i.into());
         }
-        match self.twan_id.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.uli_timestamp.clone() {
+            elements.push(i.into());
         }
-        match self.twan_id_timestamp.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.twan_id.clone() {
+            elements.push(i.into());
+        }
+        if let Some(i) = self.twan_id_timestamp.clone() {
+            elements.push(i.into());
         }
 
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
-        match self.ip.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }        
-        match self.wlan_loc.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.ip.clone() {
+            elements.push(i.into());
         }
-        match self.wlan_loc_timestamp.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.wlan_loc.clone() {
+            elements.push(i.into());
         }
-        match self.ue_udpport.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.wlan_loc_timestamp.clone() {
+            elements.push(i.into());
         }
-        match self.nbifom.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.ue_udpport.clone() {
+            elements.push(i.into());
         }
-        match self.ue_tcpport.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        } 
+        if let Some(i) = self.nbifom.clone() {
+            elements.push(i.into());
+        }
+        if let Some(i) = self.ue_tcpport.clone() {
+            elements.push(i.into());
+        }
 
         self.secondary_rat_usage_report.iter().for_each(|x| elements.push(InformationElement::SecondaryRatUsageDataReport(x.clone())));  
 
@@ -200,29 +183,23 @@ impl Messages for DeleteBearerResponse {
         for e in elements.into_iter() {
             match e {
                 InformationElement::Cause(j) => {
-                    match (j.ins, mandatory) {
-                        (0, false) => (self.cause, mandatory) = (j, true),
-                        _ => (),
+                    if let (0, false) = (j.ins, mandatory) {
+                        (self.cause, mandatory) = (j, true);
                     }
                 },
                 InformationElement::Ebi(j) => {
-                    match (j.ins, self.linked_ebi.is_none()) {
-                        (0, true) => self.linked_ebi = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.linked_ebi.is_none()) {
+                        self.linked_ebi = Some(j);
                     }
                 },
                 InformationElement::BearerContext(j) => {
-                    match j.ins {
-                        0 => {
-                            self.bearer_ctxs.push(j);
-                        },
-                        _ => (),
+                    if j.ins == 0 {
+                        self.bearer_ctxs.push(j);
                     }
                 }
                 InformationElement::Recovery(j) => {
-                    match (j.ins, self.recovery.is_none()) {
-                        (0, true) => self.recovery = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.recovery.is_none()) {
+                        self.recovery = Some(j);
                     }
                 },
                 InformationElement::Fqcsid(j) => {  // 4 instances
@@ -235,27 +212,23 @@ impl Messages for DeleteBearerResponse {
                     }
                 }, 
                 InformationElement::Pco(j) => {
-                    match (j.ins, self.pco.is_none()) {
-                        (0, true) => self.pco = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.pco.is_none()) {
+                        self.pco = Some(j);
                     }
                 },
                 InformationElement::UeTimeZone(j) => {
-                    match (j.ins, self.uetimezone.is_none()) {
-                        (0, true) => self.uetimezone = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.uetimezone.is_none()) {
+                        self.uetimezone = Some(j);
                     }
                 },
                 InformationElement::Uli(j) => {
-                    match (j.ins, self.uli.is_none()) {
-                        (0, true) => self.uli = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.uli.is_none()) {
+                        self.uli = Some(j);
                     }
                 },
                 InformationElement::UliTimestamp(j) => {
-                    match (j.ins, self.uli_timestamp.is_none()) {
-                        (0, true) => self.uli_timestamp = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.uli_timestamp.is_none()) {
+                        self.uli_timestamp = Some(j);
                     }
                 },
                 InformationElement::TwanId(j) => { // 2 instances
@@ -273,15 +246,13 @@ impl Messages for DeleteBearerResponse {
                     }
                 },
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<3 => self.overload_info.push(j),
-                        _ => (),
+                    if j.ins<3 {
+                        self.overload_info.push(j);
                     }
                 }, 
                 InformationElement::IpAddress(j) => {
-                    match (j.ins, self.ip.is_none()) {
-                        (0, true) => self.ip = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.ip.is_none()) {
+                        self.ip = Some(j);
                     }
                 },
                 InformationElement::PortNumber(j) => { // 2 instances
@@ -292,9 +263,8 @@ impl Messages for DeleteBearerResponse {
                     }
                 },
                 InformationElement::Fcontainer(j) => {  
-                    match (j.ins, self.nbifom.is_none()) {
-                        (0, true) => self.nbifom = Some(j),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.nbifom.is_none()) {
+                        self.nbifom = Some(j);
                     }
                 },
 

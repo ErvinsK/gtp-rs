@@ -21,9 +21,11 @@ pub struct DeleteBearerCommand {
 
 impl Default for DeleteBearerCommand {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = DELETE_BEARER_CMD;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:DELETE_BEARER_CMD,
+            teid:Some(0),
+            ..Default::default()};
+        
         DeleteBearerCommand {
             header: hdr,
             bearer_ctxs: vec!(),
@@ -78,24 +80,20 @@ impl Messages for DeleteBearerCommand {
 
         self.bearer_ctxs.iter().for_each(|x| elements.push(InformationElement::BearerContext(x.clone())));
 
-        match self.uli.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.uli.clone() {
+            elements.push(i.into());
         }
-        match self.uli_timestamp.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.uli_timestamp.clone() {
+            elements.push(i.into());
         }
-        match self.uetimezone.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.uetimezone.clone() {
+            elements.push(i.into());
         }
-
+        
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
        
-        match self.fteid_control.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
+        if let Some(i) = self.fteid_control.clone() {
+            elements.push(i.into());
         }
 
         self.secondary_rat_usage_report.iter().for_each(|x| elements.push(InformationElement::SecondaryRatUsageDataReport(x.clone())));
@@ -111,42 +109,34 @@ impl Messages for DeleteBearerCommand {
         for e in elements.iter() {
             match e {
                 InformationElement::BearerContext(j) => {
-                    match j.ins {
-                        0 => {
+                    if j.ins == 0 {
                             self.bearer_ctxs.push(j.clone());
                             mandatory = true;
-                        },
-                        _ => (),
                     }
                 },
                 InformationElement::Uli(j) => {
-                    match (j.ins, self.uli.is_none()) {
-                        (0, true) => self.uli = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.uli.is_none()) {
+                        self.uli = Some(j.clone());
                     }
                 },
                 InformationElement::UliTimestamp(j) => {
-                    match (j.ins, self.uli_timestamp.is_none()) {
-                        (0, true) => self.uli_timestamp = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.uli_timestamp.is_none()) {
+                        self.uli_timestamp = Some(j.clone());
                     }
                 },
                 InformationElement::UeTimeZone(j) => {
-                    match (j.ins, self.uetimezone.is_none()) {
-                        (0, true) => self.uetimezone = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.uetimezone.is_none()) {
+                        self.uetimezone = Some(j.clone());
                     }
                 },
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<2 => self.overload_info.push(j.clone()),
-                        _ => (),
+                    if j.ins < 2 {
+                        self.overload_info.push(j.clone());
                     }
                 }, 
                 InformationElement::Fteid(j) => {  
-                    match (j.ins, self.fteid_control.is_none()) {
-                        (0, true) => self.fteid_control = Some(j.clone()),
-                        _ => (),
+                    if let (0, true) = (j.ins, self.fteid_control.is_none()) {
+                        self.fteid_control = Some(j.clone());
                     }
                 }, 
                 InformationElement::SecondaryRatUsageDataReport(j) => {

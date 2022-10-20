@@ -15,9 +15,10 @@ pub struct SuspendAcknowledge {
 
 impl Default for SuspendAcknowledge {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = SUSPEND_ACK;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:SUSPEND_ACK,
+            teid:Some(0),
+            ..Default::default()};
         SuspendAcknowledge {
             header:hdr,
             cause:Cause::default(),
@@ -76,9 +77,8 @@ impl Messages for SuspendAcknowledge {
         for e in elements.into_iter() {
             match e {
                 InformationElement::Cause(j) => {
-                    match (j.ins, mandatory) {
-                        (0, false) => (self.cause, mandatory) = (j, true),
-                        _ => (),
+                    if let (0, false) = (j.ins, mandatory) {
+                        (self.cause, mandatory) = (j, true);
                     }
                 },
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j),
