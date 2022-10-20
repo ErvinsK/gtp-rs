@@ -6,7 +6,7 @@ pub const BEARER_RSRC_CMD:u8 = 68;
 
 // Definition of GTPv2-C Bearer Resource Command Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BearerResourceCommand {
     pub header:Gtpv2Header,
     pub linked_ebi: Ebi,

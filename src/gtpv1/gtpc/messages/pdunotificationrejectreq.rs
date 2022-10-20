@@ -10,7 +10,7 @@ pub const PDU_NOTIFICATION_REJECT_REQUEST:u8 = 29;
 
 // Definition of GTPv1-C PDU Notification Reject Request
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PDUNotificationRejectRequest {
     pub header:Gtpv1Header,
     pub cause:Cause,

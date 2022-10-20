@@ -6,7 +6,7 @@ pub const RESUME_NOTIF:u8 = 164;
 
 // Definition of GTPv2-C Resume Notification Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ResumeNotification {
     pub header:Gtpv2Header,
     pub imsi:Imsi,

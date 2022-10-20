@@ -6,7 +6,7 @@ pub const MODIFY_BEARER_REQ:u8 = 34;
 
 // Definition of GTPv2-C Modify Bearer Request Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ModifyBearerRequest {
     pub header:Gtpv2Header,
     pub mei: Option<Mei>,

@@ -11,7 +11,7 @@ pub const SUPPORTED_EXTENSION_HEADERS_NOTIFICATION:u8 = 31;
 
 // Definition of GTPv1-C Supported Extension Headers Notification
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SupportedExtensionHeadersNotification {
     pub header:Gtpv1Header,
     pub list:ExtensionHeaderTypeList,

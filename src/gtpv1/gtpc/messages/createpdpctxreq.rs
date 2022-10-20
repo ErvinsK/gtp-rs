@@ -12,7 +12,7 @@ pub const CREATE_PDP_CONTEXT_REQUEST:u8 = 16;
 
 // Definition of GTPv1-C Create PDP Context Request
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreatePDPContextRequest {
     pub header:Gtpv1Header,
     pub imsi:Option<Imsi>,

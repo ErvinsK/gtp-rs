@@ -12,7 +12,7 @@ pub const UPDATE_PDP_CONTEXT_RESPONSE:u8 = 19;
 
 // Definition of GTPv1-C Update PDP Context Response
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UpdatePDPContextResponse {
     pub header:Gtpv1Header,
     pub cause:Cause,

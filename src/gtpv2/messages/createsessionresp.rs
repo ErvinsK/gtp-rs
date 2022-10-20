@@ -6,7 +6,7 @@ pub const CREATE_SESSION_RESP:u8 = 33;
 
 // Definition of GTPv2-C Create Session Response Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreateSessionResponse {
     pub header:Gtpv2Header,
     pub cause:Cause,

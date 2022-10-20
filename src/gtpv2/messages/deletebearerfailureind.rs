@@ -6,7 +6,7 @@ pub const DELETE_BEARER_FAIL:u8 = 67;
 
 // Definition of GTPv2-C Delete Bearer Failure Indication Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DeleteBearerFailureInd {
     pub header:Gtpv2Header,
     pub cause: Cause,

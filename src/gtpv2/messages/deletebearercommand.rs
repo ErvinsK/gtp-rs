@@ -6,7 +6,7 @@ pub const DELETE_BEARER_CMD:u8 = 66;
 
 // Definition of GTPv2-C Delete Bearer Command Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DeleteBearerCommand {
     pub header:Gtpv2Header,
     pub bearer_ctxs: Vec<BearerContext>,

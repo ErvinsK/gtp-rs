@@ -6,7 +6,7 @@ pub const UPD_BEARER_REQ:u8 = 97;
 
 // Definition of GTPv2-C Update Bearer Request Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UpdateBearerRequest {
     pub header:Gtpv2Header,
     pub bearer_ctxs:Vec<BearerContext>,

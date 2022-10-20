@@ -6,7 +6,7 @@ pub const MODIFY_BEARER_CMD:u8 = 64;
 
 // Definition of GTPv2-C Modify Bearer Command Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ModifyBearerCommand {
     pub header:Gtpv2Header,
     pub apnambr: ApnAmbr,

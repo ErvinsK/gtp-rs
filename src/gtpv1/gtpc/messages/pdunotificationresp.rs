@@ -10,7 +10,7 @@ pub const PDU_NOTIFICATION_RESPONSE:u8 = 28;
 
 // Definition of GTPv1-C PDU Notification Response
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PDUNotificationResponse {
     pub header:Gtpv1Header,
     pub cause:Cause,

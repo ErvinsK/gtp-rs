@@ -10,7 +10,7 @@ pub const VERSION_NOT_SUPPORTED:u8 = 3;
 
 // Definition of GTPv1-C Version Not Supported
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct VersionNotSupported {
     pub header:Gtpv1Header,
 }

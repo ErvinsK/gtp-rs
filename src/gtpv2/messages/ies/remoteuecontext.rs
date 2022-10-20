@@ -6,7 +6,7 @@ use crate::gtpv2::{errors::GTPV2Error, messages::ies::*};
 
 pub const REMOTE_UE_CTX:u8 = 191;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RemoteUeContext {
     pub t:u8,
     pub length:u16,

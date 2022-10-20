@@ -6,7 +6,7 @@ pub const CREATE_BEARER_REQ:u8 = 95;
 
 // Definition of GTPv2-C Create Bearer Request Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreateBearerRequest {
     pub header:Gtpv2Header,
     pub pti:Option<Pti>,

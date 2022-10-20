@@ -6,7 +6,7 @@ pub const CREATE_BEARER_RESP:u8 = 96;
 
 // Definition of GTPv2-C Create Bearer Response Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreateBearerResponse {
     pub header:Gtpv2Header,
     pub cause:Cause,

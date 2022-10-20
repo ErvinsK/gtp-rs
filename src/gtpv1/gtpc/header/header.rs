@@ -92,7 +92,7 @@ pub const MIN_HEADER_LENGTH:usize = 8;
 pub const SQN_LENGTH:usize = 2;
 pub const NPDU_NUMBER_LENGTH:usize = 1;
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Gtpv1Header {
     pub msgtype:u8,
     pub length:u16,

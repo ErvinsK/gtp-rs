@@ -55,7 +55,7 @@ pub enum CauseValue {
 
 // RAN NAS Cause IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RanNasCause {
     pub t:u8,
     pub length:u16,

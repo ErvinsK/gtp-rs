@@ -10,7 +10,7 @@ pub const INITIATE_PDP_CTX_ACTIVATION_RESPONSE:u8 = 23;
 
 // Definition of GTPv1-C Initiate PDP Context Activation Response
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct InitiatePDPContextActivationResponse {
     pub header:Gtpv1Header,
     pub cause:Cause,

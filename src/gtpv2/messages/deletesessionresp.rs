@@ -6,7 +6,7 @@ pub const DELETE_SESSION_RESP:u8 = 37;
 
 // Definition of GTPv2-C Delete Session Response Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DeleteSessionResponse {
     pub header:Gtpv2Header,
     pub cause:Cause,

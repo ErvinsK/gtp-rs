@@ -6,7 +6,7 @@ pub const BEARER_RSRC_FAIL:u8 = 69;
 
 // Definition of GTPv2-C Bearer Resource Failure Indication Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct BearerResourceFailureInd {
     pub header:Gtpv2Header,
     pub cause: Cause,

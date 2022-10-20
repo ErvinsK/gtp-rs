@@ -12,7 +12,7 @@ pub const DELETE_PDP_CONTEXT_REQUEST:u8 = 20;
 
 // Definition of GTPv1-C Delete PDP Context Request
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DeletePDPContextRequest {
     pub header:Gtpv1Header,
     pub cause:Option<Cause>,

@@ -6,7 +6,7 @@ pub const CHNG_NOTIF_REQ:u8 = 38;
 
 // Definition of GTPv2-C Change Notification Request Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChangeNotificationRequest {
     pub header:Gtpv2Header,
     pub imsi:Option<Imsi>,

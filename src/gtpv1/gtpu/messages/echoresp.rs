@@ -11,7 +11,7 @@ pub const ECHO_RESPONSE:u8 = 2;
 
 // Definition of GTPv1-U Echo Response Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EchoResponse {
     pub header:Gtpv1Header,
     pub recovery:Recovery,

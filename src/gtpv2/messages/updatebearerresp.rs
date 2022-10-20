@@ -6,7 +6,7 @@ pub const UPD_BEARER_RESP:u8 = 98;
 
 // Definition of GTPv2-C Update Bearer Response Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UpdateBearerResponse {
     pub header:Gtpv2Header,
     pub cause:Cause,

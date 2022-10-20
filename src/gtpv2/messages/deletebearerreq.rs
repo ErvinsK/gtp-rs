@@ -6,7 +6,7 @@ pub const DELETE_BEARER_REQ:u8 = 99;
 
 // Definition of GTPv2-C Delete Bearer Request Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DeleteBearerRequest {
     pub header:Gtpv2Header,
     pub linked_ebi:Option<Ebi>,

@@ -6,7 +6,7 @@ pub const MODIFY_BEARER_FAIL_IND:u8 = 65;
 
 // Definition of GTPv2-C Modify Bearer Failure Indication Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ModifyBearerFailureInd {
     pub header:Gtpv2Header,
     pub cause:Cause,

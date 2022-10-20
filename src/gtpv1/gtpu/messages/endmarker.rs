@@ -11,7 +11,7 @@ pub const END_MARKER:u8 = 254;
 
 // Definition of GTPv1-U Echo Request Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EndMarker {
     pub header:Gtpv1Header,
     pub private_ext:Option<PrivateExtension>,

@@ -10,7 +10,7 @@ pub const INITIATE_PDP_CTX_ACTIVATION_REQUEST:u8 = 22;
 
 // Definition of GTPv1-C Initiate PDP Context Activation Request
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct InitiatePDPContextActivationRequest {
     pub header:Gtpv1Header,
     pub linked_nsapi:Nsapi,

@@ -12,7 +12,7 @@ pub const DELETE_PDP_CONTEXT_RESPONSE:u8 = 21;
 
 // Definition of GTPv1-C Delete PDP Context Response
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DeletePDPContextResponse {
     pub header:Gtpv1Header,
     pub cause:Cause,

@@ -8,7 +8,7 @@ use crate::gtpv1::utils::*;
 
 // Definition of GTPv1-C GGSN initiated Update PDP Context Request
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UpdatePDPContextRequestGGSN {
     pub header:Gtpv1Header,
     pub imsi:Option<Imsi>,

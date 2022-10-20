@@ -12,7 +12,7 @@ pub const CREATE_PDP_CONTEXT_RESPONSE:u8 = 17;
 
 // Definition of GTPv1-C Create PDP Context Response
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CreatePDPContextResponse {
     pub header:Gtpv1Header,
     pub cause:Cause,

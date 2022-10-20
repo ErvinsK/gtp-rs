@@ -12,7 +12,7 @@ pub const ERROR_INDICATION:u8 = 26;
 
 // Definition of GTPv1-U Echo Request Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ErrorIndication {
     pub header:Gtpv1Header,
     pub teid_data:Teid,

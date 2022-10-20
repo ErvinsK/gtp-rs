@@ -6,7 +6,7 @@ pub const MODIFY_BEARER_RESP:u8 = 35;
 
 // Definition of GTPv2-C Modify Bearer Response Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ModifyBearerResponse {
     pub header:Gtpv2Header,
     pub cause:Cause,

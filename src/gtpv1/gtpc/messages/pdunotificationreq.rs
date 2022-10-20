@@ -10,7 +10,7 @@ pub const PDU_NOTIFICATION_REQUEST:u8 = 27;
 
 // Definition of GTPv1-C PDU Notification Request
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PDUNotificationRequest {
     pub header:Gtpv1Header,
     pub imsi:Imsi,

@@ -11,7 +11,7 @@ pub const ECHO_REQUEST:u8 = 1;
 
 // Definition of GTPv1-U Echo Request Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct EchoRequest {
     pub header:Gtpv1Header,
     pub private_ext:Option<PrivateExtension>,

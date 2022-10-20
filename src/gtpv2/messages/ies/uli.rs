@@ -22,7 +22,7 @@ pub enum Location {
 }
 // User Location Information (ULI) IE implementation
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Uli {
     pub t: u8,
     pub length: u16,

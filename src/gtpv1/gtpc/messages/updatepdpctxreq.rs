@@ -12,7 +12,7 @@ pub const UPDATE_PDP_CONTEXT_REQUEST:u8 = 18;
 
 // Definition of GTPv1-C Update PDP Context Request
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct UpdatePDPContextRequest {
     pub header:Gtpv1Header,
     pub imsi:Option<Imsi>,

@@ -6,7 +6,7 @@ pub const SUSPEND_NOTIF:u8 = 162;
 
 // Definition of GTPv2-C Suspend Notification Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SuspendNotification {
     pub header:Gtpv2Header,
     pub imsi:Option<Imsi>,

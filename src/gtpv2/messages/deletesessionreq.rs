@@ -6,7 +6,7 @@ pub const DELETE_SESSION_REQ:u8 = 36;
 
 // Definition of GTPv2-C Delete Session Request Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DeleteSessionRequest {
     pub header:Gtpv2Header,
     pub cause:Option<Cause>,

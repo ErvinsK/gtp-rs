@@ -10,7 +10,7 @@ pub const GPDU:u8 = 255;
 
 // Definition of GTPv1-U G-PDU Message
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Gpdu {
     pub header:Gtpv1Header,
     pub tpdu:Vec<u8>,
