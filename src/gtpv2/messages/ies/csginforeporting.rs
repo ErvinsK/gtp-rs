@@ -60,6 +60,10 @@ impl IEs for CSGInformationReportingAction {
     fn len (&self) -> usize {
        CSG_INFO_REPORT_LENGTH+MIN_IE_SIZE
     }
+
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

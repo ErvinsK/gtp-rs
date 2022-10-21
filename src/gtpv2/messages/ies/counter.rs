@@ -60,6 +60,10 @@ impl IEs for Counter {
     fn len (&self) -> usize {
        (self.length as usize) + MIN_IE_SIZE 
     }
+
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

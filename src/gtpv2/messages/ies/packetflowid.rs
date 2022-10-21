@@ -60,6 +60,10 @@ impl IEs for PacketFlowId {
     fn len (&self) -> usize {
         PCKTFLOW_LENGTH+MIN_IE_SIZE
     }
+
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

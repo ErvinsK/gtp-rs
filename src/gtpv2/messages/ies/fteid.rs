@@ -143,6 +143,10 @@ impl IEs for Fteid {
     fn len(&self) -> usize {
         (self.length+4) as usize
     }
+
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

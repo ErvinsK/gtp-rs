@@ -108,6 +108,9 @@ impl IEs for RatType {
        RATTYPE_LENGTH+4 
     }
 
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

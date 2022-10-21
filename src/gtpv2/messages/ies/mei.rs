@@ -64,6 +64,10 @@ impl IEs for Mei {
     fn len (&self) -> usize {
        MEI_LENGTH+4 
     }
+
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

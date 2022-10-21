@@ -77,6 +77,10 @@ impl IEs for FlowQos {
     fn len (&self) -> usize {
         FLOWQOS_LENGTH + 4 
     }
+
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

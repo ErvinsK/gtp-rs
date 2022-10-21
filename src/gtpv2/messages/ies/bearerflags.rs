@@ -86,6 +86,9 @@ impl IEs for BearerFlags {
        (self.length as usize)+MIN_IE_SIZE 
     }
 
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

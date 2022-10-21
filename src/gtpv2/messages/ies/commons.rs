@@ -8,6 +8,7 @@ pub trait IEs {
     fn marshal (&self, buffer: &mut Vec<u8>);
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> where Self:Sized;
     fn len (&self) -> usize; // Total IE length = Type+Length+Instance+Value for TLIV messages
+    fn is_empty (&self) -> bool; // is_empty() method
 }
 
 // Location Field definitions

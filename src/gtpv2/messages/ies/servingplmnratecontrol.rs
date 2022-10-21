@@ -61,6 +61,9 @@ impl IEs for ServingPlmnRateControl {
        (self.length as usize) + 4 
     }
 
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]
