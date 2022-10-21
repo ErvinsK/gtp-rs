@@ -24,8 +24,10 @@ pub struct InitiatePDPContextActivationRequest {
 
 impl Default for InitiatePDPContextActivationRequest {
     fn default() -> InitiatePDPContextActivationRequest {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = INITIATE_PDP_CTX_ACTIVATION_REQUEST;
+        let hdr = Gtpv1Header{
+            msgtype:INITIATE_PDP_CTX_ACTIVATION_REQUEST,
+            ..Default::default()
+        };
         InitiatePDPContextActivationRequest {
             header: hdr,
             linked_nsapi:Nsapi::default(),
@@ -54,46 +56,28 @@ impl Messages for InitiatePDPContextActivationRequest {
 
         // Marshal PCO IE
 
-        match self.pco {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.pco { i.marshal(buffer)};
+        
         // Marshal QoS IE
 
         self.qos.marshal(buffer);
         
         // Marshal TFT IE
 
-        match self.tft {
-            Some(i) => i.marshal(buffer),
-            None => (),
-        }
-
+        if let Some(i) = self.tft { i.marshal(buffer)};
+        
         // Marshal Correlation ID IE
 
         self.correlation_id.marshal(buffer);
         
         // Marshal Evolved Allocation/Retention Priority I IE
         
-        match self.evolved_alloc {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-        
+        if let Some(i) = self.evolved_alloc { i.marshal(buffer)};
+                
        // Marshal Private Extension IE
         
-        match self.private_extension {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.private_extension { i.marshal(buffer)}; 
+       
         set_length(buffer);
     }
 

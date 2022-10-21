@@ -1,4 +1,4 @@
-use crate::gtpv1::{gtpc::header::extensionheaders::commons::*, errors::GTPV1Error};
+use crate::gtpv1::{gtpc::extensionheaders::commons::*, errors::GTPV1Error};
 
 pub const SUSPEND_RESPONSE:u8 = 0xc2;
 pub const SUSPEND_RESPONSE_LENGTH:u8 = 1;
@@ -30,8 +30,10 @@ impl ExtensionHeaders for SuspendResponse {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV1Error> {
-        let mut data = SuspendResponse::default();
-        data.length = buffer[1];
+        let mut data = SuspendResponse{
+            length:buffer[1],
+            ..Default::default()
+        };
         if (data.length * 4) as usize <= buffer.len() {
             data.value = u16::from_be_bytes([buffer[2],buffer [3]]);
             Ok(data)
@@ -42,6 +44,9 @@ impl ExtensionHeaders for SuspendResponse {
 
     fn len (&self) -> usize {
         (self.length*4) as usize
+    }
+    fn is_empty (&self) -> bool {
+        self.length == 0
     }
 }
 

@@ -19,8 +19,10 @@ pub struct SupportedExtensionHeadersNotification {
 
 impl Default for SupportedExtensionHeadersNotification {
     fn default() -> SupportedExtensionHeadersNotification {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = SUPPORTED_EXTENSION_HEADERS_NOTIFICATION;
+        let hdr = Gtpv1Header{
+            msgtype: SUPPORTED_EXTENSION_HEADERS_NOTIFICATION,
+            ..Default::default()
+        };
         SupportedExtensionHeadersNotification {
             header: hdr,
             list: ExtensionHeaderTypeList::default(),

@@ -34,9 +34,11 @@ impl IEs for MappedUeUsageType {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>= MUEUT_LENGTH as usize + 3 {
-            let mut data = MappedUeUsageType::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            data.usage_type = u16::from_be_bytes([buffer[3],buffer[4]]);
+            let data = MappedUeUsageType{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                usage_type:u16::from_be_bytes([buffer[3],buffer[4]]),
+                ..Default::default()
+            };
             Ok(data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -45,6 +47,9 @@ impl IEs for MappedUeUsageType {
     
     fn len (&self) -> usize {
        MUEUT_LENGTH as usize + 3 
+    }
+    fn is_empty (&self) -> bool {
+        self.length == 0
     }
 }
 

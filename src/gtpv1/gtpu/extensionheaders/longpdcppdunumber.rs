@@ -1,4 +1,4 @@
-use crate::gtpv1::{gtpu::header::extensionheaders::commons::*, errors::GTPV1Error};
+use crate::gtpv1::{gtpu::extensionheaders::commons::*, errors::GTPV1Error};
 
 pub const LONG_PDCP_PDU_NUMBER_I:u8 = 0x03;
 pub const LONG_PDCP_PDU_NUMBER_II:u8 = 0x82;
@@ -33,13 +33,15 @@ impl ExtensionHeaders for LongPDCPPDUNumber {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self,GTPV1Error> {
-        let mut data = LongPDCPPDUNumber::default();
-        match buffer[0] {
-            LONG_PDCP_PDU_NUMBER_I => data.extension_header_type = buffer[0],
-            LONG_PDCP_PDU_NUMBER_II => data.extension_header_type = buffer[0],
-            _ => return Err(GTPV1Error::ExtHeaderUnknown),
-        }
-        data.length = buffer[1];
+        let mut data = LongPDCPPDUNumber{
+            extension_header_type: match buffer[0] {
+                                    LONG_PDCP_PDU_NUMBER_I => buffer[0],
+                                    LONG_PDCP_PDU_NUMBER_II => buffer[0],
+                                    _ => return Err(GTPV1Error::ExtHeaderUnknown),
+                                },
+            length:buffer[1],
+            ..Default::default()
+        };
         if (data.length * 4) as usize <= buffer.len() {
             data.long_pdcp_pdu_number = u32::from_be_bytes([0x0,buffer[2],buffer[3],buffer[4]]);
             Ok(data)

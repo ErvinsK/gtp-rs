@@ -32,10 +32,7 @@ impl IEs for Recovery {
 
     fn unmarshal(buffer: &[u8]) -> Result<Recovery, GTPV1Error> {
         if buffer.len() > RECOVERY_LENGTH {
-            match buffer[0] {
-                RECOVERY => Ok (Recovery { t:RECOVERY, value: buffer[1] }),
-                _ => Err(GTPV1Error::IEIncorrect), 
-            }
+            Ok (Recovery { t:buffer[0], value: buffer[1] })
         } else { 
             Err(GTPV1Error::IEInvalidLength)
         }

@@ -20,8 +20,10 @@ pub struct InitiatePDPContextActivationResponse {
 
 impl Default for InitiatePDPContextActivationResponse {
     fn default() -> InitiatePDPContextActivationResponse {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = INITIATE_PDP_CTX_ACTIVATION_RESPONSE;
+        let hdr = Gtpv1Header{
+            msgtype:INITIATE_PDP_CTX_ACTIVATION_RESPONSE,
+            ..Default::default()
+        };
         InitiatePDPContextActivationResponse {
             header: hdr,
             cause: Cause::default(),
@@ -46,17 +48,11 @@ impl Messages for InitiatePDPContextActivationResponse {
 
         // Marshal PCO IE
         
-        match self.pco {
-            Some(i) => i.marshal(buffer),
-            None => (),
-        }
+        if let Some(i) = self.pco { i.marshal(buffer)};
 
        // Marshal Private Extension IE
         
-        match self.private_extension {
-            Some(i) => i.marshal(buffer),            
-            None => (),
-        }
+        if let Some(i) = self.private_extension { i.marshal(buffer)};
 
         set_length(buffer);
     }

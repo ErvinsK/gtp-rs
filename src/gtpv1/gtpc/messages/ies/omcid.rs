@@ -33,8 +33,10 @@ impl IEs for OmcId {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=3 {
-            let mut data=OmcId::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=OmcId{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             if  check_tlv_ie_buffer(data.length, buffer) {
                 data.omcid.extend_from_slice(&buffer[3..(data.length+3) as usize]);
                 Ok(data)
@@ -49,7 +51,9 @@ impl IEs for OmcId {
     fn len (&self) -> usize {
        (self.length+3) as usize 
     }
-
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

@@ -50,8 +50,10 @@ pub struct UpdatePDPContextRequest {
 
 impl Default for UpdatePDPContextRequest {
     fn default() -> UpdatePDPContextRequest {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = UPDATE_PDP_CONTEXT_REQUEST;
+        let hdr = Gtpv1Header{
+            msgtype: UPDATE_PDP_CONTEXT_REQUEST,
+            ..Default::default()
+        };
         UpdatePDPContextRequest {
             header: hdr,
             imsi:None,
@@ -99,30 +101,15 @@ impl Messages for UpdatePDPContextRequest {
                
         // Marshal IMSI IE
 
-            match self.imsi {
-                Some(i) => {
-                    i.marshal(buffer);
-                },
-                None => (),
-            }
-
+        if let Some(i) = self.imsi { i.marshal(buffer)};     
+        
         // Marshal RAI IE
 
-        match self.rai {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
+        if let Some(i) = self.rai { i.marshal(buffer)}; 
 
         // Marshal Recovery IE
 
-        match self.recovery {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
+        if let Some(i) = self.recovery { i.marshal(buffer)}; 
         
         // Marshal TEID Data IE
 
@@ -130,12 +117,7 @@ impl Messages for UpdatePDPContextRequest {
 
         // Marshal TEID Control IE
 
-        match self.teid_control {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
+        if let Some(i) = self.teid_control { i.marshal(buffer)}; 
 
         // Marshal NSAPI IE 
 
@@ -143,31 +125,16 @@ impl Messages for UpdatePDPContextRequest {
 
         // Marshal Trace Reference IE 
 
-        match self.trace_ref {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.trace_ref { i.marshal(buffer)}; 
+       
         // Marshal Trace Type IE 
 
-        match self.trace_type {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
+        if let Some(i) = self.trace_type { i.marshal(buffer)}; 
 
         // Marshal PCO IE
 
-        match self.pco {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.pco { i.marshal(buffer)}; 
+        
         // Marshal SGSN Address for Signalling IE
 
         self.sgsn_ip_control.marshal(buffer);
@@ -178,179 +145,84 @@ impl Messages for UpdatePDPContextRequest {
 
         // Marshal Alternative SGSN Address for Signalling IE
 
-        match self.alt_sgsn_ip_control {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.alt_sgsn_ip_control { i.marshal(buffer)}; 
+        
         // Marshal Alternative SGSN Address for User plane IE
 
-        match self.alt_sgsn_ip_user {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.alt_sgsn_ip_user { i.marshal(buffer)}; 
+        
         // Marshal QoS IE
 
         self.qos.marshal(buffer);
 
         // Marshal TFT IE
 
-        match self.tft {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.tft { i.marshal(buffer)}; 
+        
         // Marshal Trigger ID IE
 
-        match self.trigger_id {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
+        if let Some(i) = self.trigger_id { i.marshal(buffer)}; 
 
         // Marshal OMC Id IE
 
-        match self.omc_id {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.omc_id { i.marshal(buffer)}; 
+        
         // Marshal Common Flags IE
 
-        match self.common_flags {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.common_flags { i.marshal(buffer)}; 
+       
         // Marshal RAT Type IE
 
-        match self.rat_type {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.rat_type { i.marshal(buffer)}; 
+        
         // Marshal ULI IE
 
-        match self.uli {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.uli { i.marshal(buffer)}; 
+       
         // Marshal MS Time Zone IE
 
-        match self.ms_timezone {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.ms_timezone { i.marshal(buffer)}; 
+        
         // Marshal IMEI(SV) IE
 
-        match self.imei {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.imei { i.marshal(buffer)}; 
+        
         // Marshal Additional Trace Info IE
 
-        match self.add_trace_info {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.add_trace_info { i.marshal(buffer)}; 
+        
         // Marshal Direct Tunnel Flags IE
 
-        match self.dtf {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.dtf { i.marshal(buffer)}; 
+        
         // Marshal Evolved Allocation/Retention Priority I IE
 
-        match self.evolved_alloc {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.evolved_alloc { i.marshal(buffer)}; 
+       
         // Marshal Extended Common Flags IE
 
-        match self.ext_common_flags {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.ext_common_flags { i.marshal(buffer)}; 
+        
         // Marshal User CSG Information IE
 
-        match self.user_csg_info {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.user_csg_info { i.marshal(buffer)}; 
+        
         // Marshal APN-AMBR IE
 
-        match self.apn_ambr {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.apn_ambr { i.marshal(buffer)}; 
+        
         // Marshal Signalling Priority Indication IE
 
-        match self.signalling_prio {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.signalling_prio { i.marshal(buffer)}; 
+        
         // Marshal CN Operator Selection Entity IE
 
-        match self.cnose {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.cnose { i.marshal(buffer)}; 
+        
         // Marshal Private Extension IE
         
-        match self.private_extension {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.private_extension { i.marshal(buffer)}; 
+        
         set_length(buffer);
     }
 

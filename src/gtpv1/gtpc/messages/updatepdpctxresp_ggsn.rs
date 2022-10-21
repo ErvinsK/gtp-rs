@@ -27,8 +27,10 @@ pub struct UpdatePDPContextResponseGGSN {
 
 impl Default for UpdatePDPContextResponseGGSN {
     fn default() -> UpdatePDPContextResponseGGSN {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = UPDATE_PDP_CONTEXT_RESPONSE;
+        let hdr = Gtpv1Header{
+            msgtype: UPDATE_PDP_CONTEXT_RESPONSE,
+            ..Default::default()
+        };
         UpdatePDPContextResponseGGSN {
             header: hdr,
             cause:Cause::default(),
@@ -62,102 +64,47 @@ impl Messages for UpdatePDPContextResponseGGSN {
 
         // Marshal Recovery IE
 
-        match self.recovery {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.recovery { i.marshal(buffer)}; 
+        
         // Marshal TEID Data I IE
 
-        match self.teid_data {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.teid_data { i.marshal(buffer)}; 
+        
         // Marshal PCO IE
 
-        match self.pco {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-        
-        // Marshal GGSN Address for User plane IE
+        if let Some(i) = self.pco { i.marshal(buffer)}; 
+                
+        // Marshal SGSN Address for User plane IE
 
-        match self.sgsn_ip_user {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
+        if let Some(i) = self.sgsn_ip_user { i.marshal(buffer)}; 
 
         // Marshal QoS IE
 
-        match self.qos {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.qos { i.marshal(buffer)}; 
+       
         // Marshal ULI IE
 
-        match self.uli {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
+        if let Some(i) = self.uli { i.marshal(buffer)}; 
 
         // Marshal MS Time Zone IE
 
-        match self.ms_timezone {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.ms_timezone { i.marshal(buffer)};
+        
         // Marshal Direct Tunnel Flags IE
 
-        match self.dtf {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.dtf { i.marshal(buffer)};
+       
         // Marshal Evolved Allocation/Retention Priority I IE
 
-        match self.evolved_alloc {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.evolved_alloc { i.marshal(buffer)};
+        
         // Marshal APN-AMBR IE
 
-        match self.apn_ambr {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.apn_ambr { i.marshal(buffer)};
+        
        // Marshal Private Extension IE
         
-        match self.private_extension {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
+       if let Some(i) = self.private_extension { i.marshal(buffer)};
 
         set_length(buffer);
     }

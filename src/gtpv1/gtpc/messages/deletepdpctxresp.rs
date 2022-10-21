@@ -25,8 +25,10 @@ pub struct DeletePDPContextResponse {
 
 impl Default for DeletePDPContextResponse {
     fn default() -> DeletePDPContextResponse {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = DELETE_PDP_CONTEXT_RESPONSE;
+        let hdr = Gtpv1Header{
+            msgtype: DELETE_PDP_CONTEXT_RESPONSE,
+            ..Default::default()
+        };
         DeletePDPContextResponse {
             header: hdr,
             cause:Cause::default(),
@@ -53,49 +55,24 @@ impl Messages for DeletePDPContextResponse {
 
         // Marshal PCO IE
 
-        match self.pco {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.pco { i.marshal(buffer)};
+        
         // Marshal ULI IE
 
-        match self.uli {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.uli { i.marshal(buffer)};
+       
         // Marshal MS Time Zone IE
 
-        match self.ms_timezone {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.ms_timezone { i.marshal(buffer)};
+        
         // Marshal ULI Timestamp IE
 
-        match self.uli_timestamp {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.uli_timestamp { i.marshal(buffer)};
+        
         // Marshal Private Extension IE
         
-        match self.private_extension {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.private_extension { i.marshal(buffer)};
+        
         set_length(buffer);
     }
 

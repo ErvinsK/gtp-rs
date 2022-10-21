@@ -19,8 +19,10 @@ pub struct PDUNotificationRejectResponse {
 
 impl Default for PDUNotificationRejectResponse {
     fn default() -> PDUNotificationRejectResponse {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = PDU_NOTIFICATION_REJECT_RESPONSE;
+        let hdr = Gtpv1Header{
+            msgtype:PDU_NOTIFICATION_REJECT_RESPONSE,
+            ..Default::default()
+        };
         PDUNotificationRejectResponse {
             header: hdr,
             cause: Cause::default(),
@@ -44,12 +46,7 @@ impl Messages for PDUNotificationRejectResponse {
 
        // Marshal Private Extension IE
         
-        match self.private_extension {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
+        if let Some(i) = self.private_extension { i.marshal(buffer)};
 
         set_length(buffer);
     }

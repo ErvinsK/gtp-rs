@@ -1,8 +1,6 @@
 use std::collections::HashMap;
-use crate::gtpv1::gtpu::header::*;
-use crate::gtpv1::gtpu::messages::commons::*;
+use crate::gtpv1::gtpu::*;
 use crate::gtpv1::errors::*;
-use crate::gtpv1::gtpu::messages::ies::*;
 use crate::gtpv1::utils::*;
 
 
@@ -22,8 +20,10 @@ pub struct ErrorIndication {
 
 impl Default for ErrorIndication {
     fn default() -> ErrorIndication {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = ERROR_INDICATION;
+        let hdr = Gtpv1Header{
+            msgtype:ERROR_INDICATION,
+            ..Default::default()
+        };
         ErrorIndication {
             header: hdr,
             teid_data:Teid::default(),
@@ -39,13 +39,10 @@ impl Messages for ErrorIndication {
         self.header.marshal(buffer);
         self.teid_data.marshal(buffer);
         self.peer_addr.marshal(buffer);
-        match self.private_extension {
-            Some(i) => {
-                let mut buffer_ie:Vec<u8> = vec!();
-                i.marshal(&mut buffer_ie);
-                buffer.append(&mut buffer_ie);
-            },
-            None => (),
+        if let Some(i) = self.private_extension {
+            let mut buffer_ie:Vec<u8> = vec!();
+            i.marshal(&mut buffer_ie);
+            buffer.append(&mut buffer_ie);
         }
         set_length(buffer);
     }

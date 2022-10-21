@@ -1,5 +1,5 @@
 use crate::gtpv1::errors::*;
-use crate::gtpv1::gtpc::header::extensionheaders::*;
+use crate::gtpv1::gtpc::extensionheaders::*;
 
 // According to 3GPP TS 29.281 V16.0.0 (2019-12)
 
@@ -82,6 +82,10 @@ impl ExtensionHeader {
             ExtensionHeader::MSInfoChangeReportingSupportIndication(i) => i.len(),
             ExtensionHeader::Unknown (i) => i.len(),
         }
+    }
+
+    pub fn is_empty (self) -> bool {
+        self == ExtensionHeader::NoMoreExtensionHeaders
     }
 }
 

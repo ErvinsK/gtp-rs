@@ -24,8 +24,10 @@ pub struct PDUNotificationRequest {
 
 impl Default for PDUNotificationRequest {
     fn default() -> PDUNotificationRequest {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = PDU_NOTIFICATION_REQUEST;
+        let hdr = Gtpv1Header{
+            msgtype:PDU_NOTIFICATION_REQUEST,
+            ..Default::default()
+        };
         PDUNotificationRequest {
             header: hdr,
             imsi:Imsi::default(),
@@ -66,25 +68,16 @@ impl Messages for PDUNotificationRequest {
 
         // Marshal PCO IE
 
-        match self.pco {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-        
+        if let Some(i) = self.pco { i.marshal(buffer)}; 
+                
         // Marshal GGSN Address for Control plane IE
 
         self.ggsn_ip_control.marshal(buffer);
 
        // Marshal Private Extension IE
         
-        match self.private_extension {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
+        if let Some(i) = self.private_extension { i.marshal(buffer)}; 
+        
 
         set_length(buffer);
     }

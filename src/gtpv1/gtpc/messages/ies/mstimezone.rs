@@ -46,8 +46,10 @@ impl IEs for MsTimeZone {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=5 {
-            let mut data=MsTimeZone::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=MsTimeZone{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             let bcd = (buffer[3] >> 4) | (buffer[3] << 4);
             match (bcd >> 7) as u8 {
                 0 => data.time_zone = ((((bcd & 0x7f) >> 4)*10+((bcd & 0x7f) & 0xf)) >> 2) as i8,
@@ -64,7 +66,9 @@ impl IEs for MsTimeZone {
     fn len (&self) -> usize {
        (MSTIMEZONE_LENGTH+3) as usize 
     }
-
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

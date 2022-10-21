@@ -36,11 +36,13 @@ impl IEs for EvolvedAllocationRetentionI {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>= EVOLVEDALLOCRETENTIONI_LENGTH as usize + 3 {
-            let mut data = EvolvedAllocationRetentionI::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            data.pre_emption_capability = buffer[3] >> 6 & 0x01;
-            data.priority_level = buffer[3] >> 2 & 0x0f;
-            data.pre_emption_vulnerability = buffer[3] & 0x01;
+            let data = EvolvedAllocationRetentionI{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                pre_emption_capability:buffer[3] >> 6 & 0x01,
+                priority_level:buffer[3] >> 2 & 0x0f,
+                pre_emption_vulnerability:buffer[3] & 0x01,
+                ..Default::default()
+            };
             Ok(data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -49,6 +51,9 @@ impl IEs for EvolvedAllocationRetentionI {
     
     fn len (&self) -> usize {
        EVOLVEDALLOCRETENTIONI_LENGTH as usize + 3 
+    }
+    fn is_empty (&self) -> bool {
+        self.length == 0
     }
 }
 

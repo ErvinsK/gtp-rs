@@ -36,9 +36,11 @@ impl IEs for CSGInformationReportingAction {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> {
         if buffer.len()>=4 {
-            let mut data = CSGInformationReportingAction::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            data.action = buffer[3] & 0b111;
+            let data = CSGInformationReportingAction{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                action:buffer[3] & 0b111,
+                ..Default::default()
+            };
             Ok(data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -47,6 +49,9 @@ impl IEs for CSGInformationReportingAction {
     
     fn len (&self) -> usize {
        (self.length + 3) as usize
+    }
+    fn is_empty (&self) -> bool {
+        self.length == 0
     }
 }
 

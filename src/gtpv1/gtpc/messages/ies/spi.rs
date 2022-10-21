@@ -37,13 +37,15 @@ impl IEs for Spi {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=(SPI_LENGTH+3) as usize {
-            let mut data = Spi::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            match buffer[3] {
-                0 => data.lapi = false,
-                1 => data.lapi = true,
-                _ => return Err(GTPV1Error::IEIncorrect),
-            }
+            let data = Spi{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                lapi: match buffer[3] {
+                        0 => false,
+                        1 => true,
+                        _ => return Err(GTPV1Error::IEIncorrect),
+                    },
+                ..Default::default()
+            };
             Ok(data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -52,6 +54,9 @@ impl IEs for Spi {
     
     fn len (&self) -> usize {
        SPI_LENGTH as usize + 3 
+    }
+    fn is_empty (&self) -> bool {
+        self.length == 0
     }
 }
 

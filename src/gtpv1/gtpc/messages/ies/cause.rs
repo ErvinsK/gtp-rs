@@ -18,7 +18,7 @@ pub struct Cause {
 
 impl Default for Cause {
     fn default() -> Self {
-        Cause { t: CAUSE, value: 234 }
+        Cause { t: CAUSE, value: 0 }
     }
 }
 
@@ -30,8 +30,10 @@ impl IEs for Cause {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> {
         if buffer.len() > CAUSE_LENGTH {
-            let mut data=Cause::default();
-            data.value = buffer[1];
+            let data=Cause{
+                value:buffer[1],
+                ..Default::default()
+            };
             Ok(data) 
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -40,6 +42,9 @@ impl IEs for Cause {
 
     fn len (&self) -> usize {
         CAUSE_LENGTH+1
+    }
+    fn is_empty (&self) -> bool {
+        false
     }
 }
 

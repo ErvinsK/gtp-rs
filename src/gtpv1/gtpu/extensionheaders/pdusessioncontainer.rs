@@ -1,4 +1,4 @@
-use crate::gtpv1::{gtpu::header::extensionheaders::commons::*, errors::GTPV1Error};
+use crate::gtpv1::{gtpu::extensionheaders::commons::*, errors::GTPV1Error};
 
 pub const PDU_SESSION_CONTAINER:u8 = 0x85;
 pub const PDU_SESSION_CONTAINER_LENGTH:u8 = 1;
@@ -30,8 +30,10 @@ impl ExtensionHeaders for PduSessionContainer {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self,GTPV1Error> {
-        let mut data = PduSessionContainer::default();
-        data.length = buffer[1];
+        let mut data = PduSessionContainer{
+            length:buffer[1],
+            ..Default::default()
+        };
         if (data.length * 4) as usize <= buffer.len() {
             data.container.extend_from_slice(&buffer[2..((data.length * 4) as usize)]);
             Ok(data)

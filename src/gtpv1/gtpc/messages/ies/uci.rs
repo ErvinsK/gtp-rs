@@ -65,8 +65,10 @@ impl IEs for Uci {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=(UCI_LENGTH+3) as usize {
-            let mut data=Uci::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=Uci{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[3..=5]);
             data.csgid=u32::from_be_bytes([buffer[6],buffer[7],buffer[8],buffer[9]]);
             match (buffer[10] & 0xc0) >> 6 {
@@ -88,7 +90,9 @@ impl IEs for Uci {
     fn len (&self) -> usize {
         (UCI_LENGTH+3) as usize
     }
-
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

@@ -19,8 +19,10 @@ pub struct EndMarker {
 
 impl Default for EndMarker {
     fn default() -> EndMarker {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = END_MARKER;
+        let hdr = Gtpv1Header{
+            msgtype:END_MARKER,
+            ..Default::default()
+        };
         EndMarker {
             header: hdr,
             private_ext: None,
@@ -32,13 +34,10 @@ impl Messages for EndMarker {
 
     fn marshal (self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
-        match self.private_ext {
-            Some(i) => {
-                let mut buffer_ie:Vec<u8> = vec!();
-                i.marshal(&mut buffer_ie);
-                buffer.append(&mut buffer_ie);
-            },
-            None => (),
+        if let Some(i) = self.private_ext {
+            let mut buffer_ie:Vec<u8> = vec!();
+            i.marshal(&mut buffer_ie);
+            buffer.append(&mut buffer_ie);
         }
         set_length(buffer);
     }
@@ -55,10 +54,7 @@ impl Messages for EndMarker {
         }
 
         if (message.header.length as usize)<buffer.len() {
-            match PrivateExtension::unmarshal(&buffer[message.header.get_header_size()..]) {
-                Ok(i) => message.private_ext=Some(i),
-                Err(_)=> (),
-            }
+            if let Ok(i) = PrivateExtension::unmarshal(&buffer[message.header.get_header_size()..]) { message.private_ext=Some(i) };
         }
         Ok(message)
     }

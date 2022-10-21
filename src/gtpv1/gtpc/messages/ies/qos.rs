@@ -35,8 +35,10 @@ impl IEs for Qos {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=3 {
-            let mut data=Qos::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=Qos{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             if  check_tlv_ie_buffer(data.length, buffer) {
                 data.arp = buffer[3];
                 data.qos.extend_from_slice(&buffer[4..(data.length+3) as usize]);
@@ -56,7 +58,9 @@ impl IEs for Qos {
     fn len (&self) -> usize {
        (self.length+3) as usize 
     }
-
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

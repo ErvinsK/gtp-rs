@@ -34,9 +34,10 @@ impl IEs for Teid {
 
     fn unmarshal(buffer: &[u8]) -> Result<Teid, GTPV1Error> {
         if buffer.len() > TEID_LENGTH {
-            let mut data = Teid::default();
-            data.t=buffer[0];
-            data.teid=u32::from_be_bytes([buffer[1], buffer[2], buffer[3], buffer[4]]);
+            let data = Teid{
+                teid:u32::from_be_bytes([buffer[1], buffer[2], buffer[3], buffer[4]]),
+                ..Default::default()
+            };
             Ok(data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -45,6 +46,9 @@ impl IEs for Teid {
 
     fn len(&self) -> usize {
         TEID_LENGTH+1
+    }
+    fn is_empty (&self) -> bool {
+        false
     }
 }
 

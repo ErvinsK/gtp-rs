@@ -41,8 +41,10 @@ impl IEs for PrivateExtension {
 
     fn unmarshal(buffer: &[u8]) -> Result <PrivateExtension, GTPV1Error> {
         if buffer.len()>=3 {
-            let mut data = PrivateExtension::default();
-            data.length = u16::from_be_bytes([buffer[1],buffer[2]]);
+            let mut data = PrivateExtension{
+                length:u16::from_be_bytes([buffer[1],buffer[2]]),
+                ..Default::default()
+            };
             if check_tlv_ie_buffer(data.length, buffer) {
                 data.extension_id = u16::from_be_bytes([buffer[3],buffer[4]]);
                 data.extension_value.extend_from_slice(&buffer[5..]);

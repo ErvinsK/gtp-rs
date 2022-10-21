@@ -29,8 +29,10 @@ impl IEs for SelectionMode {
 
     fn unmarshal (buffer:&[u8]) -> Result <Self, GTPV1Error> where Self:Sized {
         if buffer.len() > SELECTION_MODE_LENGTH {
-            let mut data=SelectionMode::default();
-            data.value = buffer[1] & 0b11;
+            let data=SelectionMode{
+                value:buffer[1] & 0b11,
+                ..Default::default()
+            };
             Ok(data) 
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -39,6 +41,9 @@ impl IEs for SelectionMode {
 
     fn len (&self) -> usize {
         SELECTION_MODE_LENGTH+1
+    }
+    fn is_empty (&self) -> bool {
+        false
     }
 }
 

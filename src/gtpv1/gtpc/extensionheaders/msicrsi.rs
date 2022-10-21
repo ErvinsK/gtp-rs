@@ -1,4 +1,4 @@
-use crate::gtpv1::{gtpc::header::extensionheaders::commons::*, errors::GTPV1Error};
+use crate::gtpv1::{gtpc::extensionheaders::commons::*, errors::GTPV1Error};
 
 pub const MS_INFO_CHANGE_REPORTING_SUPPORT_INDICATION:u8 = 2;
 pub const MS_INFO_CHANGE_REPORTING_SUPPORT_INDICATION_LENGTH:u8 = 1;
@@ -30,8 +30,10 @@ pub const MS_INFO_CHANGE_REPORTING_SUPPORT_INDICATION_LENGTH:u8 = 1;
      }
  
      fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV1Error> {
-        let mut data = MSInfoChangeReportingSupportIndication::default();
-        data.length = buffer[1];
+        let mut data = MSInfoChangeReportingSupportIndication{
+            length:buffer[1],
+            ..Default::default()
+        };
         if (data.length * 4) as usize <= buffer.len() {
             data.value = u16::from_be_bytes([buffer[2],buffer [3]]);
             Ok(data)
@@ -43,6 +45,9 @@ pub const MS_INFO_CHANGE_REPORTING_SUPPORT_INDICATION_LENGTH:u8 = 1;
      fn len (&self) -> usize {
          (self.length*4) as usize
      }
+     fn is_empty (&self) -> bool {
+        self.length == 0
+    }
  }
 
 #[test]

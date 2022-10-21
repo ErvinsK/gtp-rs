@@ -30,8 +30,10 @@ impl IEs for ChargingID {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error>  {
         if buffer.len() > CHARGING_ID_LENGTH {
-            let mut data=ChargingID::default();
-            data.value = u32::from_be_bytes([buffer[1],buffer[2],buffer[3],buffer[4]]);
+            let data=ChargingID{
+                value:u32::from_be_bytes([buffer[1],buffer[2],buffer[3],buffer[4]]),
+                ..Default::default()
+            };
             match data.value {
                 0 => Err(GTPV1Error::IEIncorrect),
                 _ => Ok(data),
@@ -43,6 +45,9 @@ impl IEs for ChargingID {
 
     fn len (&self) -> usize {
         CHARGING_ID_LENGTH+1
+    }
+    fn is_empty (&self) -> bool {
+        false
     }
 }
 

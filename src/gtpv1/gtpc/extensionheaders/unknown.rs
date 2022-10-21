@@ -1,4 +1,4 @@
-use crate::gtpv1::{gtpu::header::extensionheaders::commons::*, errors::GTPV1Error};
+use crate::gtpv1::{gtpc::extensionheaders::commons::*, errors::GTPV1Error};
 
 // Struct for Unknow Extension Headers 
 
@@ -27,9 +27,11 @@ impl ExtensionHeaders for Unknown {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self,GTPV1Error> {
-        let mut data = Unknown::default();
-        data.extension_header_type = buffer[0];
-        data.length = buffer[1];
+        let mut data = Unknown{
+            extension_header_type:buffer[0],
+            length:buffer[1],
+            ..Default::default()
+        };
         if (data.length * 4) as usize <= buffer.len() {
             data.value.extend_from_slice(&buffer[2..(data.length*4) as usize]);
             Ok(data)
@@ -41,6 +43,9 @@ impl ExtensionHeaders for Unknown {
 
     fn len (&self) -> usize {
         (self.length*4) as usize
+    }
+    fn is_empty (&self) -> bool {
+        false
     }
 }
 

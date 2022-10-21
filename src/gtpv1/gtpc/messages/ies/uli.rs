@@ -66,8 +66,10 @@ impl IEs for Uli {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=(ULI_LENGTH+3) as usize {
-            let mut data=Uli::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=Uli{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             match buffer[3] {
                 0 => {
                     (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..=6]);
@@ -97,7 +99,9 @@ impl IEs for Uli {
     fn len (&self) -> usize {
         (ULI_LENGTH+3) as usize
     }
-
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

@@ -1,4 +1,4 @@
-use crate::gtpv1::{gtpu::header::extensionheaders::commons::*, errors::GTPV1Error};
+use crate::gtpv1::{gtpu::extensionheaders::commons::*, errors::GTPV1Error};
 
 pub const SCI:u8 = 0x20;
 pub const SCI_LENGTH:u8 = 1;
@@ -31,8 +31,10 @@ impl ExtensionHeaders for Sci {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self,GTPV1Error> {
-        let mut data = Sci::default();
-        data.length = buffer[1];
+        let mut data = Sci{
+            length:buffer[1],
+            ..Default::default()
+        };
         if (data.length * 4) as usize <= buffer.len() {
             data.sci = buffer[2];
             Ok(data)

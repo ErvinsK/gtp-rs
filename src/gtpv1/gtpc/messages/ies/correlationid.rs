@@ -34,9 +34,11 @@ impl IEs for CorrelationId {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=(CORRELATIONID_LENGTH+3) as usize {
-            let mut data = CorrelationId::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            data.correlation_id = buffer[3];
+            let data = CorrelationId{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                correlation_id:buffer[3],
+                ..Default::default()
+            };
             Ok(data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -45,6 +47,9 @@ impl IEs for CorrelationId {
     
     fn len (&self) -> usize {
        CORRELATIONID_LENGTH as usize + 3 
+    }
+    fn is_empty (&self) -> bool {
+        self.length == 0
     }
 }
 

@@ -1,4 +1,4 @@
-use crate::gtpv1::{gtpu::header::extensionheaders::commons::*, errors::GTPV1Error};
+use crate::gtpv1::{gtpu::extensionheaders::commons::*, errors::GTPV1Error};
 
 pub const PDCP_PDU_NUMBER:u8 = 0xc0;
 pub const PDCP_PDU_NUMBER_LENGTH:u8 = 1;
@@ -30,8 +30,10 @@ impl ExtensionHeaders for PDCPPDUNumber {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self,GTPV1Error> {
-        let mut data = PDCPPDUNumber::default();
-        data.length = buffer[1];
+        let mut data = PDCPPDUNumber{
+            length:buffer[1],
+            ..Default::default()
+        };
         if (data.length * 4) as usize <= buffer.len() {
             data.pdcp_pdu_number = u16::from_be_bytes([buffer[2],buffer [3]]);
             Ok(data)

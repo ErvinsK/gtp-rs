@@ -34,10 +34,12 @@ impl IEs for Rai {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len() > RAI_LENGTH {
-            let mut data:Rai=Rai::default();
+            let mut data:Rai=Rai{
+                lac:u16::from_be_bytes([buffer[4],buffer[5]]),
+                rac:buffer[6],
+                ..Default::default()
+            };
             (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[1..=3]);
-            data.lac=u16::from_be_bytes([buffer[4],buffer[5]]);
-            data.rac=buffer[6];
             Ok (data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -46,6 +48,9 @@ impl IEs for Rai {
 
     fn len (&self) -> usize {
         RAI_LENGTH+1
+    }
+    fn is_empty (&self) -> bool {
+        false
     }
 
 }

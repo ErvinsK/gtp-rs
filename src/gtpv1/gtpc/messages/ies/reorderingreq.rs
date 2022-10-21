@@ -33,11 +33,10 @@ impl IEs for ReorderingRequired {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> {
         if buffer.len() > REORDERING_REQUIRED_LENGTH {
-            let mut data=ReorderingRequired::default();
-            match buffer[1] & 1 {
-                0 => data.req = false,
-                _ => data.req = true,
-            }
+            let data=ReorderingRequired{
+                req: !matches!(buffer[1] & 1, 0),
+                ..Default::default()
+            };
             Ok(data) 
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -46,6 +45,9 @@ impl IEs for ReorderingRequired {
 
     fn len (&self) -> usize {
         REORDERING_REQUIRED_LENGTH+1
+    }
+    fn is_empty (&self) -> bool {
+        false
     }
 }
 

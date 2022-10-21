@@ -1,4 +1,4 @@
-use crate::gtpv1::{gtpu::header::extensionheaders::commons::*, errors::GTPV1Error};
+use crate::gtpv1::{gtpu::extensionheaders::commons::*, errors::GTPV1Error};
 
 pub const UDP_PORT:u8 = 0x40;
 pub const UDP_PORT_LENGTH:u8 = 1;
@@ -30,8 +30,10 @@ impl ExtensionHeaders for UDPPort {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self,GTPV1Error> {
-        let mut data = UDPPort::default();
-        data.length = buffer[1];
+        let mut data = UDPPort{
+            length:buffer[1],
+            ..Default::default()
+        };
         if (data.length * 4) as usize <= buffer.len() {
             data.udp_port = u16::from_be_bytes([buffer[2],buffer [3]]);
             Ok(data)

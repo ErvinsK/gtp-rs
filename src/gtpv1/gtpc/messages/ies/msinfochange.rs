@@ -34,8 +34,10 @@ impl IEs for MSInfoChangeReportingAction {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> {
         if buffer.len()>=(MSINFO_CHANGE_LENGTH+3) as usize {
-            let mut data = MSInfoChangeReportingAction::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = MSInfoChangeReportingAction{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             match buffer[3] {
                 i if i<=2 => data.action = buffer[3],
                 _ => return Err(GTPV1Error::IEIncorrect),
@@ -48,6 +50,9 @@ impl IEs for MSInfoChangeReportingAction {
     
     fn len (&self) -> usize {
        MSINFO_CHANGE_LENGTH as usize + 3 
+    }
+    fn is_empty (&self) -> bool {
+        self.length == 0
     }
 }
 

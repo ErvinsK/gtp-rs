@@ -34,9 +34,11 @@ impl IEs for UliTimestamp {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> {
         if buffer.len()>=(ULI_TIMESTAMP_LENGTH+3) as usize {
-            let mut data = UliTimestamp::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            data.timestamp = u32::from_be_bytes([buffer[3],buffer[4],buffer[5],buffer[6]]);
+            let data = UliTimestamp{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                timestamp:u32::from_be_bytes([buffer[3],buffer[4],buffer[5],buffer[6]]),
+                ..Default::default()
+            };
             Ok(data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -45,6 +47,9 @@ impl IEs for UliTimestamp {
     
     fn len (&self) -> usize {
        ULI_TIMESTAMP_LENGTH as usize + 3 
+    }
+    fn is_empty (&self) -> bool {
+        self.length == 0
     }
 }
 

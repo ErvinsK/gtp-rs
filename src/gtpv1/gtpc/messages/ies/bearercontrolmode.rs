@@ -34,8 +34,10 @@ impl IEs for BearerControlMode {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> {
         if buffer.len()>=(BEARER_CONTROL_MODE_LENGTH+3) as usize {
-            let mut data = BearerControlMode::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = BearerControlMode{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             match buffer[3] {
                 i if i<=1 => data.bearer_ctrl_mode = buffer[3],
                 _ => return Err(GTPV1Error::IEIncorrect),
@@ -48,6 +50,9 @@ impl IEs for BearerControlMode {
     
     fn len (&self) -> usize {
        BEARER_CONTROL_MODE_LENGTH as usize + 3 
+    }
+    fn is_empty (&self) -> bool {
+        self.length == 0
     }
 }
 

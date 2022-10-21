@@ -1,4 +1,4 @@
-use crate::gtpv1::{gtpu::header::extensionheaders::commons::*, errors::GTPV1Error};
+use crate::gtpv1::{gtpu::extensionheaders::commons::*, errors::GTPV1Error};
 
 pub const RAN_CONTAINER:u8 = 0x81;
 pub const RAN_CONTAINER_LENGTH:u8 = 1;
@@ -30,8 +30,10 @@ impl ExtensionHeaders for RanContainer {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self,GTPV1Error> {
-        let mut data = RanContainer::default();
-        data.length = buffer[1];
+        let mut data = RanContainer{
+            length:buffer[1],
+            ..Default::default()
+        };
         if (data.length * 4) as usize <= buffer.len() {
             data.container.extend_from_slice(&buffer[2..((data.length * 4) as usize)]);
             Ok(data)

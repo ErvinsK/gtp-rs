@@ -28,8 +28,10 @@ pub struct DeletePDPContextRequest {
 
 impl Default for DeletePDPContextRequest {
     fn default() -> DeletePDPContextRequest {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = DELETE_PDP_CONTEXT_REQUEST;
+        let hdr = Gtpv1Header{
+            msgtype: DELETE_PDP_CONTEXT_REQUEST,
+            ..Default::default()
+        };
         DeletePDPContextRequest {
             header: hdr,
             cause:None,
@@ -55,80 +57,40 @@ impl Messages for DeletePDPContextRequest {
                
         // Marshal Cause IE
 
-            match self.cause {
-                Some(i) => {
-                    i.marshal(buffer);
-                },
-                None => (),
-            }
-
+        if let Some(i) = self.cause { i.marshal(buffer)};    
+        
         // Marshal Teardown Ind IE
 
-        match self.teardown {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.teardown { i.marshal(buffer)};
+        
         // Marshal NSAPI IE 
 
         self.nsapi.marshal(buffer);
 
         // Marshal PCO IE
 
-        match self.pco {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.pco { i.marshal(buffer)};
+        
         // Marshal ULI IE
 
-        match self.uli {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.uli { i.marshal(buffer)};
+        
         // Marshal MS Time Zone IE
 
-        match self.ms_timezone {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.ms_timezone { i.marshal(buffer)};
+        
         // Marshal Extended Common Flags IE
 
-        match self.ext_common_flags {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.ext_common_flags { i.marshal(buffer)};
+        
         // Marshal ULI Timestamp IE
 
-        match self.uli_timestamp {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.uli_timestamp { i.marshal(buffer)};
+        
         // Marshal Private Extension IE
         
-        match self.private_extension {
-            Some(i) => {
-                i.marshal(buffer);
-            },
-            None => (),
-        }
-
+        if let Some(i) = self.private_extension { i.marshal(buffer)};
+        
         set_length(buffer);
     }
 

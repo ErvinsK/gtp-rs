@@ -17,8 +17,10 @@ pub struct VersionNotSupported {
 
 impl Default for VersionNotSupported {
     fn default() -> VersionNotSupported {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = VERSION_NOT_SUPPORTED;
+        let hdr = Gtpv1Header{
+            msgtype: VERSION_NOT_SUPPORTED,
+            ..Default::default()
+        };
         VersionNotSupported {
             header: hdr,
         }

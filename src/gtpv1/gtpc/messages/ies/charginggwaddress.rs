@@ -41,8 +41,10 @@ impl IEs for ChargingGWAddress {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV1Error> {
         if buffer.len()>=3 {
-            let mut data = ChargingGWAddress::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = ChargingGWAddress{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             if check_tlv_ie_buffer(data.length, buffer) {
                 match data.length {
                     0x04 => data.ip = IpAddr::from([buffer[3], buffer[4], buffer[5], buffer[6]]),
@@ -68,6 +70,9 @@ impl IEs for ChargingGWAddress {
     
     fn len(&self) -> usize {
         (self.length+3) as usize
+    }
+    fn is_empty (&self) -> bool {
+        self.length == 0
     }
 }
 

@@ -37,13 +37,15 @@ impl IEs for UpFunctionSelectionIndicationFlags {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>= UPFSIF_LENGTH as usize + 3 {
-            let mut data = UpFunctionSelectionIndicationFlags::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            match buffer[3] {
-                0 => data.dcnr = false,
-                1 => data.dcnr = true,
-                _ => return Err(GTPV1Error::IEIncorrect),
-            }
+            let data = UpFunctionSelectionIndicationFlags{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                dcnr: match buffer[3] {
+                        0 => false,
+                        1 => true,
+                        _ => return Err(GTPV1Error::IEIncorrect),
+                },
+                ..Default::default()
+            };
             Ok(data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -52,6 +54,9 @@ impl IEs for UpFunctionSelectionIndicationFlags {
     
     fn len (&self) -> usize {
        UPFSIF_LENGTH as usize + 3 
+    }
+    fn is_empty (&self) -> bool {
+        self.length == 0
     }
 }
 

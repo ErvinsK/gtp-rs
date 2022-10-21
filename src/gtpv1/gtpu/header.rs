@@ -1,5 +1,5 @@
 use crate::gtpv1::errors::*;
-use crate::gtpv1::gtpu::header::extensionheaders::*;
+use crate::gtpv1::gtpu::extensionheaders::*;
 
 // According to 3GPP TS 29.281 V16.0.0 (2019-12)
 

@@ -48,6 +48,9 @@ impl IEs for Imei {
     fn len (&self) -> usize {
        (IMEI_LENGTH+3) as usize 
     }
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

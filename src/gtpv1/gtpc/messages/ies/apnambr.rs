@@ -36,10 +36,12 @@ impl IEs for ApnAmbr {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=APNAMBR_LENGTH as usize + 3 {
-            let mut data=ApnAmbr::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            data.ambr_ul = u32::from_be_bytes([buffer[3],buffer[4],buffer[5],buffer[6]]); 
-            data.ambr_dl = u32::from_be_bytes([buffer[7],buffer[8],buffer[9],buffer[10]]);
+            let data=ApnAmbr{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ambr_ul:u32::from_be_bytes([buffer[3],buffer[4],buffer[5],buffer[6]]),
+                ambr_dl:u32::from_be_bytes([buffer[7],buffer[8],buffer[9],buffer[10]]),
+                ..Default::default()
+            };
             Ok(data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -49,7 +51,9 @@ impl IEs for ApnAmbr {
     fn len (&self) -> usize {
        APNAMBR_LENGTH as usize + 3 
     }
-
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

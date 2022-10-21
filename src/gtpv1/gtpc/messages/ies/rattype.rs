@@ -69,8 +69,10 @@ impl IEs for RatType {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=4 {
-            let mut data=RatType::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=RatType{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             match Rat::value_to_enum(buffer[3]) {
                Ok(i) => data.rat_type = i,
                Err(j) => return Err(j),
@@ -84,7 +86,9 @@ impl IEs for RatType {
     fn len (&self) -> usize {
        (RATTYPE_LENGTH+3) as usize 
     }
-
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

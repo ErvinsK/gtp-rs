@@ -47,14 +47,16 @@ impl IEs for AdditionalTraceInfo {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=(ADDITIONALTRACEINFO_LENGTH as usize +3) {
-            let mut data=AdditionalTraceInfo::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            data.trace_ref = u32::from_be_bytes([0x00, buffer[3], buffer[4], buffer[5]]);
-            data.trace_rec_session_ref = u16::from_be_bytes([buffer[6], buffer[7]]);
-            data.triggering_events = buffer[8];
-            data.trace_depth = buffer[9];
-            data.interface_list = buffer[10];
-            data.trace_activity_control = buffer[11];
+            let data=AdditionalTraceInfo{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                trace_ref:u32::from_be_bytes([0x00, buffer[3], buffer[4], buffer[5]]),
+                trace_rec_session_ref:u16::from_be_bytes([buffer[6], buffer[7]]),
+                triggering_events:buffer[8],
+                trace_depth:buffer[9],
+                interface_list:buffer[10],
+                trace_activity_control:buffer[11],
+                ..Default::default()
+            };
             Ok(data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -65,6 +67,9 @@ impl IEs for AdditionalTraceInfo {
        (ADDITIONALTRACEINFO_LENGTH + 3) as usize 
     }
 
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

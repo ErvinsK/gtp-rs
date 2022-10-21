@@ -37,8 +37,10 @@ impl IEs for ExtensionHeaderTypeList {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<ExtensionHeaderTypeList, GTPV1Error> {
-        let mut data = ExtensionHeaderTypeList::default();
-        data.length = buffer[1];
+        let mut data = ExtensionHeaderTypeList{
+            length:buffer[1],
+            ..Default::default()
+        };
         if (data.length+2) as usize <=buffer.len() {
             data.list.extend_from_slice(&buffer[2..]);
             Ok(data)               
@@ -49,6 +51,9 @@ impl IEs for ExtensionHeaderTypeList {
 
     fn len(&self) -> usize {
         (self.length+2) as usize
+    }
+    fn is_empty (&self) -> bool {
+        self.length == 0
     }
 }
 

@@ -30,8 +30,10 @@ impl IEs for Nsapi {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len() > NSAPI_LENGTH {
-            let mut data=Nsapi::default();
-            data.value = buffer[1] & 0b1111;
+            let data=Nsapi{
+                value:buffer[1] & 0b1111,
+                ..Default::default()
+            };
             Ok(data) 
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -40,6 +42,9 @@ impl IEs for Nsapi {
 
     fn len (&self) -> usize {
         NSAPI_LENGTH+1
+    }
+    fn is_empty (&self) -> bool {
+        false
     }
 }
 

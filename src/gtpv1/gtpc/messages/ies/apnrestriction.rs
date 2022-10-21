@@ -67,8 +67,10 @@ impl IEs for ApnRestriction {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=4 {
-            let mut data=ApnRestriction::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=ApnRestriction{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]), 
+                ..Default::default()
+            };
             match Restriction::value_to_enum(buffer[3]) {
                 Ok(i) => data.restriction_type=i,
                 Err(j) => return Err(j),
@@ -82,7 +84,9 @@ impl IEs for ApnRestriction {
     fn len (&self) -> usize {
        (APNRESTRICTION_LENGTH+1) as usize 
     }
-
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

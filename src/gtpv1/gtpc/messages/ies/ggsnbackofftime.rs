@@ -38,8 +38,10 @@ impl IEs for GGSNBackOffTime {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> {
         if buffer.len()>=(GGSN_BACKOFF_LENGTH+1) as usize {
-            let mut data=GGSNBackOffTime::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=GGSNBackOffTime{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             match buffer[3] >> 5 {
                 i if i<=4 => data.timer_unit= buffer[3] >> 5,
                 7 => data.timer_unit=7,
@@ -55,7 +57,9 @@ impl IEs for GGSNBackOffTime {
     fn len (&self) -> usize {
        (self.length+3) as usize 
     }
-
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

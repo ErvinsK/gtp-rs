@@ -42,8 +42,10 @@ impl IEs for ExtendedCommonFlags {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=4 {
-            let mut data=ExtendedCommonFlags::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=ExtendedCommonFlags{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             let flags = [buffer[3];8].iter().enumerate().map(|(i,x)| (*x & (0b10000000 >> i))>>(7-i)).collect::<Vec<u8>>();
             let to_bool = |i:u8| -> bool { i == 1};
             data.uasi = to_bool(flags[0]); 
@@ -63,7 +65,9 @@ impl IEs for ExtendedCommonFlags {
     fn len (&self) -> usize {
        (self.length+3) as usize 
     }
-
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 impl ExtendedCommonFlags {

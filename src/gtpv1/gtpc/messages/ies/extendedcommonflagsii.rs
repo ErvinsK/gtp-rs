@@ -38,8 +38,10 @@ impl IEs for ExtendedCommonFlagsII {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len()>=4 {
-            let mut data=ExtendedCommonFlagsII::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=ExtendedCommonFlagsII{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             let to_bool = |i:u8| -> bool { i == 1};
             data.pnsi = to_bool(buffer[3] & 1);
             data.dtci = to_bool((buffer[3]>>1) & 1);
@@ -53,7 +55,9 @@ impl IEs for ExtendedCommonFlagsII {
     fn len (&self) -> usize {
        (self.length+3) as usize 
     }
-
+    fn is_empty (&self) -> bool {
+        self.length == 0
+    }
 }
 
 #[test]

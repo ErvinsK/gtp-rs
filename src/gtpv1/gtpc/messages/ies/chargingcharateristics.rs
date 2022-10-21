@@ -18,7 +18,7 @@ pub struct ChargingCharacteristics {
 
 impl Default for ChargingCharacteristics {
     fn default() -> Self {
-        ChargingCharacteristics { t: CHARGING_CHARACTERISTICS, value: 0b1000 }
+        ChargingCharacteristics { t: CHARGING_CHARACTERISTICS, value: 0 }
     }
 }
 
@@ -31,8 +31,10 @@ impl IEs for ChargingCharacteristics {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
         if buffer.len() > CHARGING_CHARACTERISTICS_LENGTH {
-            let mut data=ChargingCharacteristics::default();
-            data.value = buffer[1] & 0b1111;
+            let data=ChargingCharacteristics{
+                value:buffer[1] & 0b1111,
+                ..Default::default()
+            };
             Ok(data) 
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -41,6 +43,10 @@ impl IEs for ChargingCharacteristics {
 
     fn len (&self) -> usize {
         CHARGING_CHARACTERISTICS_LENGTH+1
+    }
+
+    fn is_empty (&self) -> bool {
+        false
     }
 }
 

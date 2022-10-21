@@ -18,8 +18,10 @@ pub struct Gpdu {
 
 impl Default for Gpdu {
     fn default() -> Gpdu {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = GPDU;
+        let hdr = Gtpv1Header{
+            msgtype:GPDU,
+            ..Default::default()
+        };
         Gpdu {
             header: hdr,
             tpdu: vec!(),

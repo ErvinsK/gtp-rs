@@ -32,12 +32,14 @@ impl IEs for TeardownInd {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error>  {
         if buffer.len()>=(TEARDOWN_IND_LENGTH+1) as usize {
-            let mut data = TeardownInd::default();
-            match buffer[1] {
-                0xfe => data.teardown = false,
-                0xff => data.teardown = true,
-                _ => return Err(GTPV1Error::IEIncorrect),
-            }
+            let data = TeardownInd{
+                teardown: match buffer[1] {
+                            0xfe => false,
+                            0xff => true,
+                            _ => return Err(GTPV1Error::IEIncorrect),
+                        },
+                ..Default::default()
+            };
             Ok(data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -46,6 +48,9 @@ impl IEs for TeardownInd {
     
     fn len (&self) -> usize {
        TEARDOWN_IND_LENGTH as usize + 1 
+    }
+    fn is_empty (&self) -> bool {
+        false
     }
 }
 

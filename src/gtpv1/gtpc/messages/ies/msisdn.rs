@@ -37,8 +37,10 @@ impl IEs for Msisdn {
 
     fn unmarshal (buffer:&[u8]) -> Result<Msisdn, GTPV1Error> where Self:Sized {
         if buffer.len()>=3 {
-            let mut data = Msisdn::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = Msisdn{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             if check_tlv_ie_buffer(data.length, buffer) {
                 data.extension = (buffer[3] & 0x80) >> 7;
                 data.number_nature = (buffer[3] & 0x70) >> 4;
@@ -63,6 +65,9 @@ impl IEs for Msisdn {
     
     fn len (&self) -> usize {
        (self.length+3) as usize 
+    }
+    fn is_empty (&self) -> bool {
+        self.length == 0
     }
 }
 

@@ -30,8 +30,10 @@ impl IEs for TraceType {
 
     fn unmarshal (buffer:&[u8]) -> Result <Self, GTPV1Error> where Self:Sized {
         if buffer.len() > TRACE_TYPE_LENGTH {
-            let mut data=TraceType::default();
-            data.value = u16::from_be_bytes([buffer[1],buffer[2]]);
+            let data=TraceType{
+                value:u16::from_be_bytes([buffer[1],buffer[2]]),
+                ..Default::default()
+            };
             Ok(data) 
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -40,6 +42,9 @@ impl IEs for TraceType {
 
     fn len (&self) -> usize {
         TRACE_TYPE_LENGTH+1
+    }
+    fn is_empty (&self) -> bool {
+        false
     }
 }
 

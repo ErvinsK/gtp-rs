@@ -20,8 +20,10 @@ pub struct EchoResponse {
 
 impl Default for EchoResponse {
     fn default() -> EchoResponse {
-        let mut hdr = Gtpv1Header::default();
-        hdr.msgtype = ECHO_RESPONSE;
+        let hdr = Gtpv1Header{
+            msgtype: ECHO_RESPONSE,
+            ..Default::default()
+        };
         EchoResponse {
             header: hdr,
             recovery: Recovery::default(),
@@ -39,13 +41,10 @@ impl Messages for EchoResponse {
             self.recovery.marshal(&mut buffer_ie);
             buffer.append(&mut buffer_ie);
         }
-        match self.private_ext {
-            Some(i) => {
+        if let Some(i) = self.private_ext {
                 let mut buffer_ie:Vec<u8> = vec!();
                 i.marshal(&mut buffer_ie);
                 buffer.append(&mut buffer_ie);
-            },
-            None => (),
         }
         set_length(buffer);
     }
@@ -68,10 +67,7 @@ impl Messages for EchoResponse {
                 Err(_) => return Err(GTPV1Error::MessageMandatoryIEMissing),
             }
             cursor+=message.recovery.len();
-            match PrivateExtension::unmarshal(&buffer[cursor..]) {
-                Ok(i) => message.private_ext=Some(i),
-                Err(_)=> (),
-            }
+            if let Ok(i) = PrivateExtension::unmarshal(&buffer[cursor..]) { message.private_ext=Some(i) };
             Ok(message)    
         } else {
             Err(GTPV1Error::MessageLengthError)

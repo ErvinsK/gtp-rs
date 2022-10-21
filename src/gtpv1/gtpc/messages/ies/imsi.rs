@@ -43,6 +43,9 @@ impl IEs for Imsi {
     fn len (&self) -> usize {
        IMSI_LENGTH+1 
     }
+    fn is_empty (&self) -> bool {
+        self.imsi == *"0"
+    }
 }
 
 #[test]
