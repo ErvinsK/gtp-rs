@@ -96,22 +96,18 @@ impl IEs for Fteid {
             (false,false) => buffer_ie.push( 0xC0 | self.interface),
         }
         buffer_ie.extend_from_slice(&self.teid.to_be_bytes());
-        match self.ipv4 {
-            Some(i) => buffer_ie.extend_from_slice(&i.octets()),
-            None => (),
-        }
-        match self.ipv6 {
-            Some(i) => buffer_ie.extend_from_slice(&i.octets()),
-            None => (),
-        }
+        if let Some(i) = self.ipv4 { buffer_ie.extend_from_slice(&i.octets()) };
+        if let Some(i) = self.ipv6 { buffer_ie.extend_from_slice(&i.octets()) };
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE {
-            let mut data = Fteid::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = Fteid{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.interface = buffer[4] & 0x3f;

@@ -54,8 +54,10 @@ impl IEs for UeTimeZone {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE+UETIMEZONE_LENGTH {
-            let mut data=UeTimeZone::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=UeTimeZone{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             let bcd = (buffer[4] >> 4) | (buffer[4] << 4);
             match (bcd >> 7) as u8 {

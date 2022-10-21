@@ -44,8 +44,10 @@ impl IEs for ServingPlmnRateControl {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=SERV_PLMN_RATE_CTRL_LENGTH + MIN_IE_SIZE {
-            let mut data=ServingPlmnRateControl::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=ServingPlmnRateControl{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3] & 0x0f;
             data.rate_ctrl_ul = u16::from_be_bytes([buffer[4],buffer[5]]); 
             data.rate_ctrl_dl = u16::from_be_bytes([buffer[6],buffer[7]]);

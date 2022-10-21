@@ -21,9 +21,11 @@ pub struct BearerResourceFailureInd {
 
 impl Default for BearerResourceFailureInd {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = BEARER_RSRC_FAIL;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:BEARER_RSRC_FAIL,
+            teid:Some(0),
+            ..Default::default()
+        };
         BearerResourceFailureInd {
             header: hdr,
             cause: Cause::default(),
@@ -42,7 +44,7 @@ impl Messages for BearerResourceFailureInd {
 
     fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
-        let elements = self.to_vec();
+        let elements = self.tovec();
         elements.into_iter().for_each(|k| k.marshal(buffer));
         set_msg_length(buffer);
     }
@@ -61,7 +63,7 @@ impl Messages for BearerResourceFailureInd {
         if (message.header.length as usize)+4<=buffer.len() {
             match InformationElement::decoder(&buffer[12..]) {
                 Ok(i) => {
-                    match message.from_vec(i) {
+                    match message.fromvec(i) {
                         Ok(_) => Ok(message),
                         Err(j) => Err(j),
                     }
@@ -73,7 +75,7 @@ impl Messages for BearerResourceFailureInd {
         }
     }
 
-    fn to_vec(&self) -> Vec<InformationElement> {
+    fn tovec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
         
         elements.push(self.cause.clone().into());
@@ -82,71 +84,42 @@ impl Messages for BearerResourceFailureInd {
 
         elements.push(self.pti.clone().into());
                 
-        match self.indication.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
+        if let Some(i) = self.indication.clone() { elements.push(i.into()) };
+        
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
-        match self.recovery.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.nbifom.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
+        if let Some(i) = self.recovery.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.nbifom.clone() { elements.push(i.into()) };
+        
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));    
         elements
     }
     
-    fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+    fn fromvec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         let mut mandatory:[bool;3]=[false;3];
         for e in elements.iter() {
             match e {
                 InformationElement::Cause(j) => {
-                    match (j.ins, mandatory[0]) {
-                        (0, false) => (self.cause, mandatory[0]) = (j.clone(), true),
-                        _ => (),
-                    }
+                    if let (0, false) = (j.ins, mandatory[0]) { (self.cause, mandatory[0]) = (j.clone(), true) };
                 },
                 InformationElement::Ebi(j) => {
-                    match (j.ins, mandatory[1]) {
-                        (0, false) => (self.linked_ebi, mandatory[1]) = (j.clone(), true),
-                        _ => (),
-                    }
+                    if let (0, false) = (j.ins, mandatory[1]) { (self.linked_ebi, mandatory[1]) = (j.clone(), true) };
                 },
                 InformationElement::Pti(j) => {
-                    match (j.ins, mandatory[2]) {
-                        (0, false) => (self.pti, mandatory[2]) = (j.clone(), true),
-                        _ => (),
-                    }
+                    if let (0, false) = (j.ins, mandatory[2]) { (self.pti, mandatory[2]) = (j.clone(), true) };
                 },
                 InformationElement::Indication(j) => {
-                    match (j.ins, self.indication.is_none()) {
-                        (0, true) => self.indication = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.indication.is_none()) { self.indication = Some(j.clone()) };
                 },
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<2 => self.overload_info.push(j.clone()),
-                        _ => (),
-                    }
+                    if j.ins<2 { self.overload_info.push(j.clone()) };
                 }, 
                 InformationElement::Recovery(j) => {
-                    match (j.ins, self.recovery.is_none()) {
-                        (0, true) => self.recovery = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.recovery.is_none()) { self.recovery = Some(j.clone()) };
                 },
                 InformationElement::Fcontainer(j) => {  
-                    match (j.ins, self.nbifom.is_none()) {
-                        (0, true) => self.nbifom = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.nbifom.is_none()) { self.nbifom = Some(j.clone()) };
                 },
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),
                 _ => (),

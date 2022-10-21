@@ -52,8 +52,10 @@ impl IEs for CnOperatorSelectionEntity {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=CNOSE_LENGTH+MIN_IE_SIZE {
-            let mut data = CnOperatorSelectionEntity::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = CnOperatorSelectionEntity{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             match buffer[4] {
                 0 => data.selection_entity = SelectionMode::ServingNetworkSelectedbyUE,

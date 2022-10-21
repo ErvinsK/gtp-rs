@@ -47,8 +47,10 @@ impl IEs for Apn {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE {
-            let mut data=Apn::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=Apn{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 let mut donor:Vec<u8>=buffer[4..(4+data.length as usize)].to_vec();

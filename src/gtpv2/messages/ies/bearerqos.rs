@@ -65,8 +65,10 @@ impl IEs for BearerQos {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>= BEARERQOS_LENGTH + 4 {
-            let mut data = BearerQos::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = BearerQos{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             data.pre_emption_capability = buffer[4] >> 6 & 0x01;
             data.priority_level = buffer[4] >> 2 & 0x0f;

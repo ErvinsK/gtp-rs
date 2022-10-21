@@ -43,8 +43,10 @@ impl IEs for PrivateExtension {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE+3 {
-            let mut data=PrivateExtension::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=PrivateExtension{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.enterprise_id = u16::from_be_bytes([buffer[4],buffer[5]]);

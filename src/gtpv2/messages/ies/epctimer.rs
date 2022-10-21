@@ -46,8 +46,10 @@ impl IEs for EpcTimer {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=EPC_TIMER_LENGTH+MIN_IE_SIZE {
-            let mut data=EpcTimer::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=EpcTimer{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             match buffer[4] >> 5 {
                 i if i<=4 => data.timer_unit= buffer[4] >> 5,

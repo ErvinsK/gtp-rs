@@ -50,8 +50,10 @@ impl IEs for PduNumbers {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE+PDUNMBRS_LENGTH {
-            let mut data=PduNumbers::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=PduNumbers{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             data.nsapi = buffer[4] & 0x0f;
             data.dl_gtpu_sqn = u16::from_be_bytes([buffer[5],buffer[6]]);

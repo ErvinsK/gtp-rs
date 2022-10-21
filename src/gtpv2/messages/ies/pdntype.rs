@@ -72,8 +72,10 @@ impl IEs for PdnType {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE+PDNTYPE_LENGTH {
-            let mut data=PdnType::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=PdnType{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             match Pdn::value_to_enum(buffer[4]) {
                Ok(i) => data.pdn_type = i,

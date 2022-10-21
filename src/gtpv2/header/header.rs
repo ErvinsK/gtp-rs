@@ -37,10 +37,7 @@ impl Gtpv2Header {
         buffer.push(self.construct_flags());
         buffer.push(self.msgtype);
         buffer.extend_from_slice(&self.length.to_be_bytes());
-        match self.teid {
-            Some(i) => buffer.extend_from_slice(&i.to_be_bytes()),
-            None => (),
-        }
+        if let Some(i) = self.teid { buffer.extend_from_slice(&i.to_be_bytes()) };
         buffer.extend_from_slice(&self.sqn.to_be_bytes()[1..]);
         match self.message_prio {
             Some(i) => buffer.push(i<<4),

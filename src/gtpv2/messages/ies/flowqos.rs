@@ -58,8 +58,10 @@ impl IEs for FlowQos {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>= FLOWQOS_LENGTH + 4 {
-            let mut data = FlowQos::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = FlowQos{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             data.qci = buffer[4];
             data.maxbr_ul = u64::from_be_bytes([0x00, 0x00, 0x00, buffer[5],buffer[6],buffer[7],buffer[8],buffer[9]]);

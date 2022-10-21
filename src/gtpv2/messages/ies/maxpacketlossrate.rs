@@ -59,8 +59,10 @@ impl IEs for MaxPacketLossRate {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() > MIN_IE_SIZE {
-            let mut data = MaxPacketLossRate::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = MaxPacketLossRate{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             match buffer[4] & 0x03 {
                 0 => {

@@ -90,8 +90,10 @@ impl IEs for Fqcsid {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() > MIN_IE_SIZE {
-            let mut data = Fqcsid::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = Fqcsid{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             if !check_tliv_ie_buffer(data.length, buffer) {
                 return Err(GTPV2Error::IEInvalidLength(FQCSID));
             }

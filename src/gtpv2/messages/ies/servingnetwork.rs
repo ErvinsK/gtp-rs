@@ -43,8 +43,10 @@ impl IEs for ServingNetwork {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE+SERVINGNW_LENGTH {
-            let mut data=ServingNetwork::default();
-            data.length = u16::from_be_bytes([buffer[1],buffer[2]]);
+            let mut data=ServingNetwork{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..7]);
             Ok (data)

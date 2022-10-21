@@ -28,9 +28,11 @@ pub struct DeleteBearerRequest {
 
 impl Default for DeleteBearerRequest {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = DELETE_BEARER_REQ;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:DELETE_BEARER_REQ,
+            teid:Some(0),
+            ..Default::default()
+        };
         DeleteBearerRequest {
             header:hdr,
             linked_ebi:None,
@@ -56,7 +58,7 @@ impl Messages for DeleteBearerRequest {
 
     fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
-        let elements = self.to_vec();
+        let elements = self.tovec();
         elements.into_iter().for_each(|k| k.marshal(buffer));
         set_msg_length(buffer);
     }
@@ -75,7 +77,7 @@ impl Messages for DeleteBearerRequest {
         if (message.header.length as usize)+4<=buffer.len() {
             match InformationElement::decoder(&buffer[12..]) {
                 Ok(i) => {
-                    match message.from_vec(i) {
+                    match message.fromvec(i) {
                         Ok(_) => Ok(message),
                         Err(j) => Err(j),
                     }
@@ -87,68 +89,41 @@ impl Messages for DeleteBearerRequest {
         }
     }
 
-    fn to_vec(&self) -> Vec<InformationElement> {
+    fn tovec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
 
-        match self.linked_ebi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.ebi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
+        if let Some(i) = self.linked_ebi.clone() { elements.push(i.into()) };
+        
         self.bearer_ctxs.iter().for_each(|x| elements.push(InformationElement::BearerContext(x.clone())));
 
-        match self.pti.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }  
-        match self.pco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }  
-        match self.pgw_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
-        match self.sgw_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
-        match self.cause.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.indication.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.pti.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.pco.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.pgw_fqcsid.clone() { elements.push(i.into()) };
+
+        if let Some(i) = self.sgw_fqcsid.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.cause.clone() { elements.push(i.into()) };
+       
+        if let Some(i) = self.indication.clone() { elements.push(i.into()) };
         
         self.load_control.iter().for_each(|x| elements.push(InformationElement::LoadControlInfo(x.clone())));
 
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
-        match self.nbifom.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }  
-        match self.apn_rate_control_status.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }  
-        match self.epco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }  
-
+        if let Some(i) = self.nbifom.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.apn_rate_control_status.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.epco.clone() { elements.push(i.into()) };
+        
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));  
 
         elements
     }
     
-    fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+    fn fromvec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         for e in elements.into_iter() {
             match e {
                 InformationElement::Ebi(j) => {  // 2 instances
@@ -159,22 +134,13 @@ impl Messages for DeleteBearerRequest {
                     }
                 },
                 InformationElement::BearerContext(j) => {
-                    match j.ins {
-                        0 => self.bearer_ctxs.push(j),
-                        _ => (),
-                    }
-                }
+                    if j.ins == 0 { self.bearer_ctxs.push(j) };
+                },
                 InformationElement::Pti(j) => {
-                    match (j.ins, self.pti.is_none()) {
-                        (0, true) => self.pti = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.pti.is_none()) { self.pti = Some(j) };
                 },
                 InformationElement::Pco(j) => {
-                    match (j.ins, self.pco.is_none()) {
-                        (0, true) => self.pco = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.pco.is_none()) { self.pco = Some(j) };
                 },
                 InformationElement::Fqcsid(j) => {  // 2 instances
                     match (j.ins, self.pgw_fqcsid.is_none(), self.sgw_fqcsid.is_none()) {
@@ -184,46 +150,25 @@ impl Messages for DeleteBearerRequest {
                     }
                 }, 
                 InformationElement::Cause(j) => {
-                    match (j.ins, self.cause.is_none()) {
-                        (0, true) => self.cause = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.cause.is_none()) { self.cause = Some(j) };
                 },
                 InformationElement::Indication(j) => {  
-                    match (j.ins, self.indication.is_none()) {
-                        (0, true) => self.indication = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.indication.is_none()) { self.indication = Some(j) };
                 }, 
                 InformationElement::LoadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<3 => self.load_control.push(j),
-                        _ => (),
-                    }
+                    if j.ins<3 { self.load_control.push(j) };
                 }, 
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<2 => self.overload_info.push(j),
-                        _ => (),
-                    }
+                    if j.ins<2 { self.overload_info.push(j) };
                 }, 
                 InformationElement::Fcontainer(j) => {  
-                    match (j.ins, self.nbifom.is_none()) {
-                        (0, true) => self.nbifom = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.nbifom.is_none()) { self.nbifom = Some(j) };
                 },
                 InformationElement::ApnRateControlStatus(j) => {  
-                    match (j.ins, self.apn_rate_control_status.is_none()) {
-                        (0, true) => self.apn_rate_control_status = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.apn_rate_control_status.is_none()) { self.apn_rate_control_status = Some(j) };
                 },
                 InformationElement::Epco(j) => {  
-                    match (j.ins, self.epco.is_none()) {
-                        (0, true) => self.epco = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.epco.is_none()) { self.epco = Some(j) };
                 },
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j),
                 _ => (),
@@ -301,7 +246,8 @@ fn test_delete_bearer_req_unmarshal () {
             pco:None,
             apco:None,
             epco:None,
-            max_packet_loss:None, 
+            max_packet_loss:None,
+            ran_nas_cause:None, 
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
             fteids: vec!(),
             bearer_qos:None,
@@ -378,7 +324,8 @@ fn test_delete_bearer_req_marshal () {
             pco:None,
             apco:None,
             epco:None,
-            max_packet_loss:None, 
+            max_packet_loss:None,
+            ran_nas_cause:None, 
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
             fteids: vec!(),
             bearer_qos:None,

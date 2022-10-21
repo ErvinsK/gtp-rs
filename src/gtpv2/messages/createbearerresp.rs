@@ -33,9 +33,11 @@ pub struct CreateBearerResponse {
 
 impl Default for CreateBearerResponse {
     fn default() -> CreateBearerResponse {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = CREATE_BEARER_RESP;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:CREATE_BEARER_RESP,
+            teid:Some(0),
+            ..Default::default()
+        };
         CreateBearerResponse {
             header:hdr,
             cause:Cause::default(),
@@ -66,7 +68,7 @@ impl Messages for CreateBearerResponse {
 
     fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
-        let elements = self.to_vec();
+        let elements = self.tovec();
         elements.into_iter().for_each(|k| k.marshal(buffer));
         set_msg_length(buffer);
     }
@@ -85,7 +87,7 @@ impl Messages for CreateBearerResponse {
         if (message.header.length as usize)+4<=buffer.len() {
             match InformationElement::decoder(&buffer[12..]) {
                 Ok(i) => {
-                    match message.from_vec(i) {
+                    match message.fromvec(i) {
                         Ok(_) => Ok(message),
                         Err(j) => Err(j),
                     }
@@ -97,111 +99,67 @@ impl Messages for CreateBearerResponse {
         }
     }
 
-    fn to_vec(&self) -> Vec<InformationElement> {
+    fn tovec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
         
         elements.push(self.cause.clone().into());
 
         self.bearer_ctxs.iter().for_each(|x| elements.push(InformationElement::BearerContext(x.clone())));
 
-        match self.recovery.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.recovery.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.mme_fqcsid.clone() { elements.push(i.into()) };
 
-        match self.mme_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
-        match self.sgw_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
-        match self.epdg_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
-        match self.twan_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
-        match self.pco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }    
-        match self.uetimezone.clone() {
-            Some(i) => elements.push(InformationElement::UeTimeZone(i)),
-            None => (),
-        }
-        match self.uli.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.twan_id.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
+        if let Some(i) = self.sgw_fqcsid.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.epdg_fqcsid.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.twan_fqcsid.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.pco.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.uetimezone.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.uli.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.twan_id.clone() { elements.push(i.into()) };
+       
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
-        match self.prai.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.ip.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }        
-        match self.wlan_loc.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.wlan_loc_timestamp.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.ue_udpport.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.nbifom.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.ue_tcpport.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        } 
-
+        if let Some(i) = self.prai.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.ip.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.wlan_loc.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.wlan_loc_timestamp.clone() { elements.push(i.into()) };
+       
+        if let Some(i) = self.ue_udpport.clone() { elements.push(i.into()) };
+       
+        if let Some(i) = self.nbifom.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.ue_tcpport.clone() { elements.push(i.into()) };
+        
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));  
 
         elements
     }
     
-    fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+    fn fromvec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         let mut mandatory:[bool;2]=[false,false];
         for e in elements.iter() {
             match e {
                 InformationElement::Cause(j) => {
-                    match (j.ins, mandatory[0]) {
-                        (0, false) => (self.cause, mandatory[0]) = (j.clone(), true),
-                        _ => (),
-                    }
+                    if let (0, false) = (j.ins, mandatory[0]) { (self.cause, mandatory[0]) = (j.clone(), true) };
                 },
                 InformationElement::BearerContext(j) => {
-                    match j.ins {
-                        0 => {
-                            mandatory[1]=true;
-                            self.bearer_ctxs.push(j.clone());
-                        },
-                        _ => (),
+                    if j.ins == 0 {
+                        mandatory[1]=true;
+                        self.bearer_ctxs.push(j.clone());
                     }
                 }
                 InformationElement::Recovery(j) => {
-                    match (j.ins, self.recovery.is_none()) {
-                        (0, true) => self.recovery = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.recovery.is_none()) { self.recovery = Some(j.clone()) };
                 },
                 InformationElement::Fqcsid(j) => {  // 4 instances
                     match (j.ins, self.mme_fqcsid.is_none(), self.sgw_fqcsid.is_none(), self.epdg_fqcsid.is_none(), self.twan_fqcsid.is_none()) {
@@ -213,22 +171,13 @@ impl Messages for CreateBearerResponse {
                     }
                 }, 
                 InformationElement::Pco(j) => {
-                    match (j.ins, self.pco.is_none()) {
-                        (0, true) => self.pco = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.pco.is_none()) { self.pco = Some(j.clone()) };
                 },
                 InformationElement::UeTimeZone(j) => {
-                    match (j.ins, self.uetimezone.is_none()) {
-                        (0, true) => self.uetimezone = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.uetimezone.is_none()) { self.uetimezone = Some(j.clone()) };
                 },
                 InformationElement::Uli(j) => {
-                    match (j.ins, self.uli.is_none()) {
-                        (0, true) => self.uli = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.uli.is_none()) { self.uli = Some(j.clone()) };
                 },
                 InformationElement::TwanId(j) => {
                     match (j.ins, self.twan_id.is_none(), self.wlan_loc.is_none()) {
@@ -238,28 +187,16 @@ impl Messages for CreateBearerResponse {
                     }
                 },
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<3 => self.overload_info.push(j.clone()),
-                        _ => (),
-                    }
+                    if j.ins<3 { self.overload_info.push(j.clone()) };
                 }, 
                 InformationElement::PresenceReportingAreaInformation(j) => {
-                    match (j.ins, self.prai.is_none()) {
-                        (0, true) => self.prai = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.prai.is_none()) { self.prai = Some(j.clone()) };
                 },
                 InformationElement::IpAddress(j) => {
-                    match (j.ins, self.ip.is_none()) {
-                        (0, true) => self.ip = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.ip.is_none()) { self.ip = Some(j.clone()) };
                 },
                 InformationElement::TwanIdTimeStamp(j) => {
-                    match (j.ins, self.wlan_loc_timestamp.is_none()) {
-                        (1, true) => self.wlan_loc_timestamp = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.wlan_loc_timestamp.is_none()) { self.wlan_loc_timestamp = Some(j.clone()) };
                 },
                 InformationElement::PortNumber(j) => {
                     match (j.ins, self.ue_udpport.is_none(), self.ue_tcpport.is_none()) {
@@ -269,10 +206,7 @@ impl Messages for CreateBearerResponse {
                     }
                 },
                 InformationElement::Fcontainer(j) => {  
-                    match (j.ins, self.nbifom.is_none()) {
-                        (0, true) => self.nbifom = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.nbifom.is_none()) { self.nbifom = Some(j.clone()) };
                 },
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),
                 _ => (),
@@ -372,6 +306,7 @@ fn test_create_bearer_resp_unmarshal () {
             apco:None,
             epco:None,
             max_packet_loss:None, 
+            ran_nas_cause:None,
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
             fteids: vec!( Fteid { t: 87, length: 9, ins: 2, interface: 5, teid: 0x3b95985a, ipv4: Some(Ipv4Addr::new(62,153,137,85)), ipv6: None }),
             bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 0, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),
@@ -466,6 +401,7 @@ fn test_create_bearer_resp_marshal () {
             apco:None,
             epco:None,
             max_packet_loss:None, 
+            ran_nas_cause:None,
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
             fteids: vec!( Fteid { t: 87, length: 9, ins: 2, interface: 5, teid: 0x3b95985a, ipv4: Some(Ipv4Addr::new(62,153,137,85)), ipv6: None }),
             bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 0, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),

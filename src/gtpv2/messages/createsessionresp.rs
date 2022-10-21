@@ -43,9 +43,11 @@ pub struct CreateSessionResponse {
 
 impl Default for CreateSessionResponse {
     fn default() -> CreateSessionResponse {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = CREATE_SESSION_RESP;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:CREATE_SESSION_RESP,
+            teid:Some(0),
+            ..Default::default()
+        };
         CreateSessionResponse {
             header:hdr,
             cause:Cause::default(),
@@ -86,7 +88,7 @@ impl Messages for CreateSessionResponse {
 
     fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
-        let elements = self.to_vec();
+        let elements = self.tovec();
         elements.into_iter().for_each(|k| k.marshal(buffer));
         set_msg_length(buffer);
     }
@@ -105,7 +107,7 @@ impl Messages for CreateSessionResponse {
         if (message.header.length as usize)+4<=buffer.len() {
             match InformationElement::decoder(&buffer[12..]) {
                 Ok(i) => {
-                    match message.from_vec(i) {
+                    match message.fromvec(i) {
                         Ok(_) => Ok(message),
                         Err(j) => Err(j),
                     }
@@ -117,171 +119,87 @@ impl Messages for CreateSessionResponse {
         }
     }
 
-    fn to_vec(&self) -> Vec<InformationElement> {
+    fn tovec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
         
         elements.push(self.cause.clone().into());
 
-        match self.cra.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
-        match self.csg_ira.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
-        match self.henb_info_report.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
-        match self.fteid_control.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.fteid_pgw.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
-        match self.paa.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.cra.clone() { elements.push(i.into()) };
         
-        match self.apn_restriction.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.csg_ira.clone() { elements.push(i.into()) };
 
-        match self.apn_ambr.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.henb_info_report.clone() { elements.push(i.into()) };
 
-        match self.linked_ebi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.fteid_control.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.fteid_pgw.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.paa.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.apn_restriction.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.apn_ambr.clone() { elements.push(i.into()) };
 
-        match self.pco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }    
+        if let Some(i) = self.linked_ebi.clone() { elements.push(i.into()) };
+
+        if let Some(i) = self.pco.clone() { elements.push(i.into()) };
 
         self.bearer_ctxs.iter().for_each(|x| elements.push(InformationElement::BearerContext(x.clone())));
 
-        match self.recovery.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.recovery.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.charging_gw_name.clone() { elements.push(i.into()) };
 
-        match self.charging_gw_name.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        } 
+        if let Some(i) = self.charging_gw_ip.clone() { elements.push(i.into()) };
 
-        match self.charging_gw_ip.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
+        if let Some(i) = self.pgw_fqcsid.clone() { elements.push(i.into()) };
 
-        match self.pgw_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
-        match self.sgw_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
+        if let Some(i) = self.sgw_fqcsid.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.sgw_ldn.clone() { elements.push(i.into()) };
 
-        match self.sgw_ldn.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.pgw_ldn.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.pgw_ldn.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.pgw_backoff_time.clone() { elements.push(i.into()) };
 
-        match self.pgw_backoff_time.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.apco.clone() { elements.push(i.into()) };
 
-        match self.apco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.twan_ip_params.clone() { elements.push(i.into()) };
 
-        match self.twan_ip_params.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.indication.clone() { elements.push(i.into()) };
 
-        match self.indication.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
-        match self.praa.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.praa.clone() { elements.push(i.into()) };
 
         self.load_control.iter().for_each(|x| elements.push(InformationElement::LoadControlInfo(x.clone())));
 
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
-        match self.nbifom.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.nbifom.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.charging_id.clone() { elements.push(i.into()) };
 
-        match self.charging_id.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }    
-       
-        match self.epco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        } 
-
+        if let Some(i) = self.epco.clone() { elements.push(i.into()) };       
+        
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));  
 
         elements
     }
     
-    fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+    fn fromvec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         let mut mandatory:[bool;2]=[false,false];
         for e in elements.iter() {
             match e {
                 InformationElement::Cause(j) => {
-                    match (j.ins, mandatory[0]) {
-                        (0, false) => (self.cause, mandatory[0]) = (j.clone(), true),
-                        _ => (),
-                    }
+                    if let (0, false) = (j.ins, mandatory[0]) { (self.cause, mandatory[0]) = (j.clone(), true) };
                 },
                 InformationElement::ChangeReportingAction(j) => {
-                    match (j.ins, self.cra.is_none()) {
-                        (0, true) => self.cra = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.cra.is_none()) { self.cra = Some(j.clone()) };
                 },
                 InformationElement::CSGInformationReportingAction(j) => {
-                    match (j.ins, self.csg_ira.is_none()) {
-                        (0, true) => self.csg_ira = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.csg_ira.is_none()) { self.csg_ira = Some(j.clone()) };
                 },
                 InformationElement::HenbInfoReporting(j) => {
-                    match (j.ins, self.henb_info_report.is_none()) {
-                        (0, true) => self.henb_info_report = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.henb_info_report.is_none()) { self.henb_info_report = Some(j.clone()) };
                 },
                 InformationElement::Fteid(j) => { // Two instances
                     match (j.ins, self.fteid_control.is_none(), self.fteid_pgw.is_none()) {
@@ -291,49 +209,28 @@ impl Messages for CreateSessionResponse {
                     }
                 }, 
                 InformationElement::PdnAddressAllocation(j) => {
-                    match (j.ins, self.paa.is_none()) {
-                        (0, true) => self.paa = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.paa.is_none()) { self.paa = Some(j.clone()) };
                 },
                 InformationElement::ApnRestriction(j) => {
-                    match (j.ins, self.apn_restriction.is_none()) {
-                        (0, true) => self.apn_restriction = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.apn_restriction.is_none()) { self.apn_restriction = Some(j.clone()) };
                 },
                 InformationElement::ApnAmbr(j) => {
-                    match (j.ins, self.apn_ambr.is_none()) {
-                        (0, true) => self.apn_ambr = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.apn_ambr.is_none()) { self.apn_ambr = Some(j.clone()) };
                 },
                 InformationElement::Ebi(j) => {
-                    match (j.ins, self.linked_ebi.is_none()) {
-                        (0, true) => self.linked_ebi = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.linked_ebi.is_none()) { self.linked_ebi = Some(j.clone()) };
                 },
                 InformationElement::Pco(j) => {
-                    match (j.ins, self.pco.is_none()) {
-                        (0, true) => self.pco = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.pco.is_none()) { self.pco = Some(j.clone()) };
                 },
                 InformationElement::BearerContext(j) => {
-                    match j.ins {
-                        0 => {
-                            mandatory[1]=true;
-                            self.bearer_ctxs.push(j.clone());
-                        },
-                        _ => self.bearer_ctxs.push(j.clone()),
+                    if j.ins == 0 {
+                        mandatory[1]=true;
+                        self.bearer_ctxs.push(j.clone());
                     }
                 }
                 InformationElement::Recovery(j) => {
-                    match (j.ins, self.recovery.is_none()) {
-                        (0, true) => self.recovery = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.recovery.is_none()) { self.recovery = Some(j.clone()) };
                 },
                 InformationElement::Fqcsid(j) => {  // 2 instances
                     match (j.ins, self.pgw_fqcsid.is_none(), self.sgw_fqcsid.is_none()) {
@@ -350,64 +247,34 @@ impl Messages for CreateSessionResponse {
                     }
                 }, 
                 InformationElement::EpcTimer(j) => {
-                    match (j.ins, self.pgw_backoff_time.is_none()) {
-                        (0, true) => self.pgw_backoff_time = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.pgw_backoff_time.is_none()) { self.pgw_backoff_time = Some(j.clone()) };
                 },
                 InformationElement::Apco(j) => {  
-                    match (j.ins, self.apco.is_none()) {
-                        (0, true) => self.apco = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.apco.is_none()) { self.apco = Some(j.clone()) };
                 },
                 InformationElement::Ip4Cp(j) => {  
-                    match (j.ins, self.twan_ip_params.is_none()) {
-                        (0, true) => self.twan_ip_params = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.twan_ip_params.is_none()) { self.twan_ip_params = Some(j.clone()) };
                 },  
                 InformationElement::Indication(j) => {  
-                    match (j.ins, self.indication.is_none()) {
-                        (0, true) => self.indication = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.indication.is_none()) { self.indication = Some(j.clone()) };
                 }, 
                 InformationElement::PresenceReportingAreaAction(j) => {  
-                    match (j.ins, self.praa.is_none()) {
-                        (0, true) => self.praa = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.praa.is_none()) { self.praa = Some(j.clone()) };
                 }, 
                 InformationElement::LoadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<3 => self.load_control.push(j.clone()),
-                        _ => (),
-                    }
+                    if j.ins<3 { self.load_control.push(j.clone()) };
                 }, 
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<2 => self.overload_info.push(j.clone()),
-                        _ => (),
-                    }
+                    if j.ins<2 { self.overload_info.push(j.clone()) };
                 }, 
                 InformationElement::Fcontainer(j) => {  
-                    match (j.ins, self.nbifom.is_none()) {
-                        (0, true) => self.nbifom = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.nbifom.is_none()) { self.nbifom = Some(j.clone()) };
                 },
                 InformationElement::ChargingId(j) => {  
-                    match (j.ins, self.charging_id.is_none()) {
-                        (0, true) => self.charging_id = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.charging_id.is_none()) { self.charging_id = Some(j.clone()) };
                 },
                 InformationElement::Epco(j) => {  
-                    match (j.ins, self.epco.is_none()) {
-                        (0, true) => self.epco = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.epco.is_none()) { self.epco = Some(j.clone()) };
                 },
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),
                 _ => (),
@@ -535,6 +402,7 @@ fn test_create_session_resp_unmarshal () {
             apco:None,
             epco:None,
             max_packet_loss:None, 
+            ran_nas_cause:None,
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
             fteids: vec!( Fteid { t: 87, length: 9, ins: 2, interface: 5, teid: 0x3b95985a, ipv4: Some(Ipv4Addr::new(62,153,137,85)), ipv6: None }),
             bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 0, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),
@@ -664,6 +532,7 @@ fn test_create_session_resp_marshal () {
             apco:None,
             epco:None,
             max_packet_loss:None, 
+            ran_nas_cause:None,
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
             fteids: vec!( Fteid { t: 87, length: 9, ins: 2, interface: 5, teid: 0x3b95985a, ipv4: Some(Ipv4Addr::new(62,153,137,85)), ipv6: None }),
             bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 0, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),

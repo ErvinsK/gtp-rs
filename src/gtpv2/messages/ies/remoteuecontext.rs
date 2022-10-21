@@ -58,11 +58,10 @@ impl IEs for RemoteUeContext {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        let data:RemoteUeContext;
-        match GroupedIe::unmarshal(buffer) {
-            Ok(i) => data = RemoteUeContext::from(i),
-            Err(j) => return Err(j),
-        }
+        let data:RemoteUeContext = match GroupedIe::unmarshal(buffer) {
+                                        Ok(i) => RemoteUeContext::from(i),
+                                        Err(j) => return Err(j),
+                                    };
         Ok(data)
     }
     
@@ -75,10 +74,7 @@ impl RemoteUeContext {
     fn to_vec(&self) -> Vec<InformationElement> {
         let mut v:Vec<InformationElement> = vec!();        
         v.push(self.user_id.clone().into());
-        match self.ue_ip.clone() {
-            Some(i) => v.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.ue_ip.clone() { v.push(i.into()) };
         v
     }
 }

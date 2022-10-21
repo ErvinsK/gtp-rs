@@ -45,8 +45,10 @@ impl IEs for Imsi {
 
     fn unmarshal (buffer:&[u8]) -> Result<Imsi, GTPV2Error> {
         if buffer.len() > MIN_IE_SIZE {
-            let mut data = Imsi::default();
-            data.length = u16::from_be_bytes([buffer[1],buffer[2]]);
+            let mut data = Imsi{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3] & 0x0f;
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4..=(data.length as usize)+3].try_into() {

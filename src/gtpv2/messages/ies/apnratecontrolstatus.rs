@@ -48,8 +48,10 @@ impl IEs for ApnRateControlStatus {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>= APN_RATE_CNTR_LENGTH + MIN_IE_SIZE {
-            let mut data = ApnRateControlStatus::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = ApnRateControlStatus{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             data.ul_packets_allowed = u32::from_slice(&buffer[4..8]);
             data.nmbr_add_exception_reports = u32::from_slice(&buffer[8..12]);

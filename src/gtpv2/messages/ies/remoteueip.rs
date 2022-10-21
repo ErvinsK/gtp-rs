@@ -66,8 +66,10 @@ impl IEs for RemoteUeIpInformation {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() > MIN_IE_SIZE {
-            let mut data = RemoteUeIpInformation::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = RemoteUeIpInformation{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4] {

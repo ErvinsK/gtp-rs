@@ -31,9 +31,11 @@ pub struct BearerResourceCommand {
 
 impl Default for BearerResourceCommand {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = BEARER_RSRC_CMD;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:BEARER_RSRC_CMD,
+            teid:Some(0),
+            ..Default::default()
+        };
         BearerResourceCommand {
             header: hdr,
             linked_ebi: Ebi::default(),
@@ -62,7 +64,7 @@ impl Messages for BearerResourceCommand {
 
     fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
-        let elements = self.to_vec();
+        let elements = self.tovec();
         elements.into_iter().for_each(|k| k.marshal(buffer));
         set_msg_length(buffer);
     }
@@ -81,7 +83,7 @@ impl Messages for BearerResourceCommand {
         if (message.header.length as usize)+4<=buffer.len() {
             match InformationElement::decoder(&buffer[12..]) {
                 Ok(i) => {
-                    match message.from_vec(i) {
+                    match message.fromvec(i) {
                         Ok(_) => Ok(message),
                         Err(j) => Err(j),
                     }
@@ -93,78 +95,49 @@ impl Messages for BearerResourceCommand {
         }
     }
 
-    fn to_vec(&self) -> Vec<InformationElement> {
+    fn tovec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
         
         elements.push(self.linked_ebi.clone().into());
 
         elements.push(self.pti.clone().into());
-                
-        match self.flow_qos.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.tad.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.rattype.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.servingnetwork.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.uli.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.ebi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }        
-        match self.indication.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.sgsn_fteid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.rnc_fteid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.pco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }    
-        match self.spi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
+        
+        if let Some(i) = self.flow_qos.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.tad.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.rattype.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.servingnetwork.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.uli.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.ebi.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.indication.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.sgsn_fteid.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.rnc_fteid.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.pco.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.spi.clone() { elements.push(i.into()) };
+        
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
-        match self.nbifom.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.epco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.fteid_control.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
+        if let Some(i) = self.nbifom.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.epco.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.fteid_control.clone() { elements.push(i.into()) };
+        
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));    
+
         elements
     }
     
-    fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+    fn fromvec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         let mut mandatory:[bool;2]=[false,false];
         for e in elements.iter() {
             match e {
@@ -176,46 +149,25 @@ impl Messages for BearerResourceCommand {
                     }
                 },
                 InformationElement::Pti(j) => {
-                    match (j.ins, mandatory[1]) {
-                        (0, false) => (self.pti, mandatory[1]) = (j.clone(), true),
-                        _ => (),
-                    }
+                    if let (0, false) = (j.ins, mandatory[1]) { (self.pti, mandatory[1]) = (j.clone(), true) };
                 },
                 InformationElement::FlowQos(j) => {
-                    match (j.ins, self.flow_qos.is_none()) {
-                        (0, true) => self.flow_qos = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.flow_qos.is_none()) { self.flow_qos = Some(j.clone()) };
                 },
                 InformationElement::TrafficAggregateDescription(j) => {
-                    match (j.ins, self.tad.is_none()) {
-                        (0, true) => self.tad = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.tad.is_none()) { self.tad = Some(j.clone()) };
                 },
                 InformationElement::RatType(j) => {
-                    match (j.ins, self.rattype.is_none()) {
-                        (0, true) => self.rattype = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.rattype.is_none()) { self.rattype = Some(j.clone()) };
                 },
                 InformationElement::ServingNetwork(j) => {
-                    match (j.ins, self.servingnetwork.is_none()) {
-                        (0, true) => self.servingnetwork = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.servingnetwork.is_none()) { self.servingnetwork = Some(j.clone()) };
                 },
                 InformationElement::Uli(j) => {
-                    match (j.ins, self.uli.is_none()) {
-                        (0, true) => self.uli = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.uli.is_none()) { self.uli = Some(j.clone()) };
                 },
                 InformationElement::Indication(j) => {
-                    match (j.ins, self.indication.is_none()) {
-                        (0, true) => self.indication = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.indication.is_none()) { self.indication = Some(j.clone()) };
                 },
                 InformationElement::Fteid(j) => {  // 3 instances
                     match (j.ins, self.sgsn_fteid.is_none(), self.rnc_fteid.is_none(), self.fteid_control.is_none()) {
@@ -226,34 +178,19 @@ impl Messages for BearerResourceCommand {
                     }
                 }, 
                 InformationElement::Pco(j) => {
-                    match (j.ins, self.pco.is_none()) {
-                        (0, true) => self.pco = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.pco.is_none()) { self.pco = Some(j.clone()) };
                 },
                 InformationElement::Spi(j) => {
-                    match (j.ins, self.spi.is_none()) {
-                        (0, true) => self.spi = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.spi.is_none()) { self.spi = Some(j.clone()) };
                 },
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<2 => self.overload_info.push(j.clone()),
-                        _ => (),
-                    }
+                    if j.ins<2 { self.overload_info.push(j.clone()) };
                 }, 
                 InformationElement::Fcontainer(j) => {  
-                    match (j.ins, self.nbifom.is_none()) {
-                        (0, true) => self.nbifom = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.nbifom.is_none()) { self.nbifom = Some(j.clone()) };
                 },
                 InformationElement::Epco(j) => {
-                    match (j.ins, self.epco.is_none()) {
-                        (0, true) => self.epco = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.epco.is_none()) { self.epco = Some(j.clone()) };
                 },
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),
                 _ => (),

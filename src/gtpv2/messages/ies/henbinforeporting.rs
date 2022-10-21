@@ -49,8 +49,10 @@ impl IEs for HenbInfoReporting {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>= HENB_INFO_LENGTH + MIN_IE_SIZE {
-            let mut data = HenbInfoReporting::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = HenbInfoReporting{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             match buffer[4] {
                 0 => data.fti = false,

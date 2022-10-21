@@ -52,12 +52,9 @@ impl IEs for Cause {
         let from_bool = |i:bool| -> u8 { if i {1} else {0} };
         let flags = from_bool(self.pce) << 2 | from_bool(self.bce) << 1 | from_bool(self.cs);
         buffer_ie.push (flags);
-        match self.offend_ie_type {
-            Some(i) => {
+        if let Some(i) = self.offend_ie_type {
                 buffer_ie.push(i);
                 buffer_ie.extend_from_slice(&[0x00;3]);
-            },
-            None => (),
         }
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -66,8 +63,10 @@ impl IEs for Cause {
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() > MIN_IE_SIZE {
             let to_bool = |i:u8| -> bool { i == 1};
-            let mut data = Cause::default();
-            data.length = u16::from_be_bytes([buffer[1],buffer[2]]);
+            let mut data = Cause{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3] & 0x0f;
             match data.length as usize {
                 SHORT_CAUSE_LENGTH => {

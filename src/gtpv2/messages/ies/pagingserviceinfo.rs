@@ -50,18 +50,15 @@ impl IEs for PagingServiceInfo {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>= PAGING_SRVC_INFO_LENGTH + MIN_IE_SIZE {
-            let mut data = PagingServiceInfo::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = PagingServiceInfo{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             data.ebi = buffer[4] & 0x0f;
             match buffer[5] {
                 0 => (),
-                1 => {
-                    match buffer[6].try_into() {
-                        Ok(i) => data.paging_policy = Some(i),
-                        Err(_) => return Err(GTPV2Error::IEInvalidLength(PAGING_SRVC_INFO)),
-                    }
-                },
+                1 => data.paging_policy = Some(buffer[6]), 
                 _ => return Err(GTPV2Error::IEIncorrect(PAGING_SRVC_INFO)),
             }
             Ok(data)

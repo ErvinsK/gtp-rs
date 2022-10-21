@@ -50,8 +50,10 @@ impl IEs for ActionIndication {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>= ACTION_IND_LENGTH + MIN_IE_SIZE {
-            let mut data = ActionIndication::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = ActionIndication {
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             data.indication = buffer[4] & 0x07; 
             Ok(data)

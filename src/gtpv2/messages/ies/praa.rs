@@ -77,11 +77,10 @@ impl IEs for PresenceReportingAreaAction {
         }
         let mut macro_enb = vec!();
         {
-            let cursor;
-            match self.macro_enb.len() {
-                i if i<=63 => cursor = i,
-                _ => cursor = 63,
-            }
+            let cursor = match self.macro_enb.len() {
+                                i if i<=63 => i,
+                                _ => 63,
+                            };
             buffer_ie.push(cursor as u8);
             for i in self.macro_enb[..cursor].iter() {
                 i.marshal(&mut macro_enb);
@@ -89,11 +88,10 @@ impl IEs for PresenceReportingAreaAction {
         }
         let mut home_enb = vec!();
         {
-            let cursor;
-            match self.home_enb.len() {
-                i if i<=63 => cursor = i,
-                _ => cursor = 63,
-            }
+            let cursor = match self.home_enb.len() {
+                                i if i<=63 => i,
+                                _ => 63,
+                            };
             buffer_ie.push(cursor as u8);
             for i in self.home_enb[..cursor].iter() {
                 i.marshal(&mut home_enb);
@@ -101,11 +99,10 @@ impl IEs for PresenceReportingAreaAction {
         }
         let mut ecgi = vec!();
         {
-            let cursor;
-            match self.ecgi.len() {
-                i if i<=63 => cursor = i,
-                _ => cursor = 63,
-            }
+            let cursor = match self.ecgi.len() {
+                                i if i<=63 => i,
+                                _ => 63,
+                            };
             buffer_ie.push(cursor as u8);
             for i in self.ecgi[..cursor].iter() {
                 i.marshal(&mut ecgi);
@@ -113,11 +110,10 @@ impl IEs for PresenceReportingAreaAction {
         }
         let mut sai = vec!();
         {
-            let cursor;
-            match self.sai.len() {
-                i if i<=63 => cursor = i,
-                _ => cursor = 63,
-            }
+            let cursor = match self.sai.len() {
+                                i if i<=63 => i,
+                                _ => 63,
+                            };
             buffer_ie.push(cursor as u8);
             for i in self.sai[..cursor].iter() {
                 i.marshal(&mut sai);
@@ -125,11 +121,10 @@ impl IEs for PresenceReportingAreaAction {
         }
         let mut cgi = vec!();
         {
-            let cursor;
-            match self.cgi.len() {
-                i if i<=63 => cursor = i,
-                _ => cursor = 63,
-            }
+            let cursor = match self.cgi.len() {
+                                i if i<=63 => i,
+                                _ => 63,
+                                };
             buffer_ie.push(cursor as u8);
             for i in self.cgi[..cursor].iter() {
                 i.marshal(&mut cgi);
@@ -144,11 +139,10 @@ impl IEs for PresenceReportingAreaAction {
         buffer_ie.append(&mut cgi);
         let mut ext_macro_enb = vec!();
         {
-            let cursor;
-            match self.ext_macro_enb.len() {
-                i if i<=63 => cursor = i,
-                _ => cursor = 63,
-            }
+            let cursor = match self.ext_macro_enb.len() {
+                                    i if i<=63 => i,
+                                    _ => 63,
+                                };
             buffer_ie.push(cursor as u8);
             for i in self.ext_macro_enb[..cursor].iter() {
                 i.marshal(&mut ext_macro_enb);
@@ -161,8 +155,10 @@ impl IEs for PresenceReportingAreaAction {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE+PRAA_LENGTH {
-            let mut data=PresenceReportingAreaAction::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=PresenceReportingAreaAction{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             if !check_tliv_ie_buffer(data.length,buffer) {
                 return Err(GTPV2Error::IEInvalidLength(PRAA));
             }

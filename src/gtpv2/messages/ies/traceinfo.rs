@@ -56,8 +56,10 @@ impl IEs for TraceInformation {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE+TRACEINFO_LENGTH {
-            let mut data=TraceInformation::default();
-            data.length = u16::from_be_bytes([buffer[1],buffer[2]]);
+            let mut data=TraceInformation{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..=6]);
             data.trace_id = u32::from_be_bytes([0x00, buffer[7],buffer[8],buffer[9]]);

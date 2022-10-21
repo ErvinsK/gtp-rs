@@ -89,8 +89,10 @@ impl IEs for RatType {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE+RATTYPE_LENGTH {
-            let mut data=RatType::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=RatType{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             match Rat::value_to_enum(buffer[4]) {
                Ok(i) => data.rat_type = i,

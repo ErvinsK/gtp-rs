@@ -42,8 +42,10 @@ impl IEs for IntegerNumber {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE {
-            let mut data=IntegerNumber::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=IntegerNumber{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.number.extend_from_slice(&buffer[4..]);

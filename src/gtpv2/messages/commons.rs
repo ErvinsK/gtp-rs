@@ -5,7 +5,7 @@ use crate::gtpv2::{errors::*, messages::ies::*};
 pub trait Messages {
     fn marshal (&self, buffer: &mut Vec<u8>);
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> where Self:Sized;
-    fn to_vec (&self) -> Vec<InformationElement>;
-    fn from_vec (&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error>;
+    fn tovec (&self) -> Vec<InformationElement>;
+    fn fromvec (&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error>;
     //fn len (&self) -> usize;
 }

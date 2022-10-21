@@ -78,21 +78,18 @@ impl IEs for PresenceReportingAreaInformation {
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.append(&mut self.prai.clone().into());
-        match self.add_prai.clone() {
-            Some(i) => {
-                let mut flag = buffer_ie[buffer_ie.len()-1] | 0x04;
-                let mut cursor = buffer_ie.len()-1;
+        if let Some(i) = self.add_prai.clone() {
+            let mut flag = buffer_ie[buffer_ie.len()-1] | 0x04;
+            let mut cursor = buffer_ie.len()-1;
+            buffer_ie[cursor] = flag;
+            for k in i {
+                buffer_ie.append(&mut k.into());
+                let flag = buffer_ie[buffer_ie.len()-1] | 0x04;
+                cursor = buffer_ie.len()-1;
                 buffer_ie[cursor] = flag;
-                for k in i {
-                    buffer_ie.append(&mut k.into());
-                    let flag = buffer_ie[buffer_ie.len()-1] | 0x04;
-                    cursor = buffer_ie.len()-1;
-                    buffer_ie[cursor] = flag;
-                }
-                flag = buffer_ie[cursor] & 0x0b;
-                buffer_ie[cursor] = flag;
-            },
-            None => (),
+            }
+            flag = buffer_ie[cursor] & 0x0b;
+            buffer_ie[cursor] = flag;
         }
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -100,8 +97,10 @@ impl IEs for PresenceReportingAreaInformation {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE+PRAI_LENGTH {
-            let mut data=PresenceReportingAreaInformation::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=PresenceReportingAreaInformation{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             data.prai = PresenceReportingArea::from(&buffer[4..8]);
             if (buffer[7] >> 2) & 0x01 == 1 {

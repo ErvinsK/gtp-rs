@@ -68,18 +68,14 @@ impl IEs for OverloadControlInfo {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        let data:OverloadControlInfo;
-        match GroupedIe::unmarshal(buffer) {
-            Ok(i) => data = OverloadControlInfo::from(i),
-            Err(j) => return Err(j),
-        }
-        match data.list.clone() {
-            Some(i) => {
-                if i.len()>10 {
-                    return Err(GTPV2Error::IEIncorrect(OVERLOAD_CNTRL));
-                }
-            },
-            None => (), 
+        let data:OverloadControlInfo = match GroupedIe::unmarshal(buffer) {
+                                        Ok(i) => OverloadControlInfo::from(i),
+                                        Err(j) => return Err(j),
+                                    };
+        if let Some(i) = data.list.clone() {
+            if i.len()>10 {
+                return Err(GTPV2Error::IEIncorrect(OVERLOAD_CNTRL));
+            }
         }
         Ok(data)
     }
@@ -95,13 +91,10 @@ impl OverloadControlInfo {
         v.push(self.sqn.clone().into());
         v.push(self.metric.clone().into());
         v.push(self.validity.clone().into());
-        match self.list.clone() {
-            Some(i) => {
-                for j in i.into_iter() {
-                    v.push(j.into())
-                }
-            },
-            None => (),
+        if let Some(i) = self.list.clone() {
+            for j in i.into_iter() {
+                v.push(j.into())
+            }
         }
         v
     }

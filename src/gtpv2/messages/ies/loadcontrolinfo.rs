@@ -65,18 +65,14 @@ impl IEs for LoadControl {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        let data:LoadControl;
-        match GroupedIe::unmarshal(buffer) {
-            Ok(i) => data = LoadControl::from(i),
-            Err(j) => return Err(j),
-        }
-        match data.list.clone() {
-            Some(i) => {
-                if i.len()>10 {
-                    return Err(GTPV2Error::IEIncorrect(LOAD_CNTRL));
-                }
-            },
-            None => (), 
+        let data:LoadControl = match GroupedIe::unmarshal(buffer) {
+                                Ok(i) => LoadControl::from(i),
+                                Err(j) => return Err(j),
+                            };
+        if let Some(i) = data.list.clone() {
+            if i.len()>10 {
+                return Err(GTPV2Error::IEIncorrect(LOAD_CNTRL));
+            }
         }
         Ok(data)
     }
@@ -91,13 +87,10 @@ impl LoadControl {
         let mut v:Vec<InformationElement> = vec!();        
         v.push(self.sqn.clone().into());
         v.push(self.load_metric.clone().into());
-        match self.list.clone() {
-            Some(i) => {
-                for j in i.into_iter() {
-                    v.push(j.into())
-                }
-            },
-            None => (),
+        if let Some(i) = self.list.clone() {
+            for j in i.into_iter() {
+                v.push(j.into())
+            }
         }
         v
     }

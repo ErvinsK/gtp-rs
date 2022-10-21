@@ -13,8 +13,10 @@ pub struct VersionNotSupported {
 
 impl Default for VersionNotSupported {
     fn default() -> VersionNotSupported {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = VERSION_NOT_SUPPORTED;
+        let hdr = Gtpv2Header{
+            msgtype:VERSION_NOT_SUPPORTED,
+            ..Default::default()
+        };
         VersionNotSupported {
             header: hdr,
         }
@@ -40,11 +42,11 @@ impl Messages for VersionNotSupported {
         Ok(message)            
     }
 
-    fn to_vec (&self) -> Vec<InformationElement> {
+    fn tovec (&self) -> Vec<InformationElement> {
         vec!()
     }
 
-    fn from_vec (&mut self, _:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+    fn fromvec (&mut self, _:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         Ok(true)
     }
 }

@@ -42,8 +42,10 @@ impl IEs for Metric {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE+METRIC_LENGTH {
-            let mut data=Metric::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=Metric{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             if buffer[4] > 100 {
                 data.metric = 0;

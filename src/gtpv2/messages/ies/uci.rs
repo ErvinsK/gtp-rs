@@ -111,8 +111,10 @@ impl IEs for Uci {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=UCI_LENGTH+MIN_IE_SIZE {
-            let mut data=Uci::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=Uci{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..=6]);
             data.csgid=u32::from_be_bytes([buffer[7],buffer[8],buffer[9],buffer[10]]);

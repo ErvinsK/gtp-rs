@@ -42,8 +42,10 @@ impl IEs for Ebi {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=EBI_LENGTH+MIN_IE_SIZE {
-            let mut data=Ebi::default();
-            data.length = u16::from_be_bytes([buffer[1],buffer[2]]);
+            let mut data=Ebi{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3] & 0x0f;
             data.value = buffer[4] & 0x0f;
             Ok(data) 

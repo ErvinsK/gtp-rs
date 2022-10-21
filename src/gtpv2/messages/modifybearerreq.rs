@@ -45,9 +45,11 @@ pub struct ModifyBearerRequest {
 
 impl Default for ModifyBearerRequest {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = MODIFY_BEARER_REQ;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:MODIFY_BEARER_REQ,
+            teid:Some(0),
+            ..Default::default()
+        };
         ModifyBearerRequest {
             header: hdr,
             mei: None,
@@ -90,7 +92,7 @@ impl Messages for ModifyBearerRequest {
 
     fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
-        let elements = self.to_vec();
+        let elements = self.tovec();
         elements.into_iter().for_each(|k| k.marshal(buffer));
         set_msg_length(buffer);
     }
@@ -109,7 +111,7 @@ impl Messages for ModifyBearerRequest {
         if (message.header.length as usize)+4<=buffer.len() {
             match InformationElement::decoder(&buffer[12..]) {
                 Ok(i) => {
-                    match message.from_vec(i) {
+                    match message.fromvec(i) {
                         Ok(_) => Ok(message),
                         Err(j) => Err(j),
                     }
@@ -121,127 +123,69 @@ impl Messages for ModifyBearerRequest {
         }
     }
 
-    fn to_vec(&self) -> Vec<InformationElement> {
+    fn tovec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
-        match self.mei.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.uli.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.servingnetwork.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.rattype.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.indication.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.fteid_control.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.apnambr.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.delay_dl_pnr.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        
+        if let Some(i) = self.mei.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.uli.clone() { elements.push(i.into()) };
+       
+        if let Some(i) = self.servingnetwork.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.rattype.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.indication.clone() { elements.push(i.into()) };
 
+        if let Some(i) = self.fteid_control.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.apnambr.clone() { elements.push(i.into()) };
+       
+        if let Some(i) = self.delay_dl_pnr.clone() { elements.push(i.into()) };
+       
         self.bearer_ctxs.iter().for_each(|x| elements.push(InformationElement::BearerContext(x.clone())));
 
-        match self.recovery.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.uetimezone.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.mme_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
-        match self.sgw_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
-        match self.uci.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.ue_localip.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.ue_udpport.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.mme_ldn.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.sgw_ldn.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.henb_localip.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.henb_udpport.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.mme_id.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.cnose.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.prai.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
+        if let Some(i) = self.recovery.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.uetimezone.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.mme_fqcsid.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.sgw_fqcsid.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.uci.clone() { elements.push(i.into()) };
+       
+        if let Some(i) = self.ue_localip.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.ue_udpport.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.mme_ldn.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.sgw_ldn.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.henb_localip.clone() { elements.push(i.into()) };
+       
+        if let Some(i) = self.henb_udpport.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.mme_id.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.cnose.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.prai.clone() { elements.push(i.into()) };
+        
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
-        match self.srv_plmn_rate_cntrl.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.mo_exception_data_counter.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.imsi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.uli_for_sgw.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.wlan_loc.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.wlan_loc_timestamp.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
+        if let Some(i) = self.srv_plmn_rate_cntrl.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.mo_exception_data_counter.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.imsi.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.uli_for_sgw.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.wlan_loc.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.wlan_loc_timestamp.clone() { elements.push(i.into()) };
+        
         self.secondary_rat_usage_report.iter().for_each(|x| elements.push(InformationElement::SecondaryRatUsageDataReport(x.clone())));
 
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));  
@@ -250,14 +194,11 @@ impl Messages for ModifyBearerRequest {
         
     }
     
-    fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+    fn fromvec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         for e in elements.iter() {
             match e {
                 InformationElement::Mei(j) => {
-                    match (j.ins, self.mei.is_none()) {
-                        (0, true) => self.mei = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.mei.is_none()) { self.mei = Some(j.clone()) };
                 },
                 InformationElement::Uli(j) => { // Two instances
                     match (j.ins, self.uli.is_none(), self.uli_for_sgw.is_none()) {
@@ -267,58 +208,31 @@ impl Messages for ModifyBearerRequest {
                     }
                 }, 
                 InformationElement::ServingNetwork(j) => {
-                    match (j.ins, self.servingnetwork.is_none()) {
-                        (0, true) => self.servingnetwork = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.servingnetwork.is_none()) { self.servingnetwork = Some(j.clone()) };
                 },
                 InformationElement::RatType(j) => {
-                    match (j.ins, self.rattype.is_none()) {
-                        (0, true) => self.rattype = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.rattype.is_none()) { self.rattype = Some(j.clone()) };
                 },
                 InformationElement::Indication(j) => {
-                    match (j.ins, self.indication.is_none()) {
-                        (0, true) => self.indication = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.indication.is_none()) { self.indication = Some(j.clone()) };
                 },
                 InformationElement::Fteid(j) => {
-                    match (j.ins, self.fteid_control.is_none()) {
-                        (0, true) => self.fteid_control = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.fteid_control.is_none()) { self.fteid_control = Some(j.clone()) };
                 },
                 InformationElement::ApnAmbr(j) => {
-                    match (j.ins, self.apnambr.is_none()) {
-                        (0, true) => self.apnambr = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.apnambr.is_none()) { self.apnambr = Some(j.clone()) };
                 },
                 InformationElement::DelayValue(j) => {
-                    match (j.ins, self.delay_dl_pnr.is_none()) {
-                        (0, true) => self.delay_dl_pnr = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.delay_dl_pnr.is_none()) { self.delay_dl_pnr = Some(j.clone()) };
                 },
                 InformationElement::BearerContext(j) => {
-                    match j.ins {
-                        k if k<2 => self.bearer_ctxs.push(j.clone()),
-                        _ => (),
-                    }
+                    if j.ins<2 { self.bearer_ctxs.push(j.clone()) };
                 },
                 InformationElement::Recovery(j) => {
-                    match (j.ins, self.recovery.is_none()) {
-                        (0, true) => self.recovery = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.recovery.is_none()) { self.recovery = Some(j.clone()) };
                 },
                 InformationElement::UeTimeZone(j) => {
-                    match (j.ins, self.uetimezone.is_none()) {
-                        (0, true) => self.uetimezone = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.uetimezone.is_none()) { self.uetimezone = Some(j.clone()) };
                 },
                 InformationElement::Fqcsid(j) => {  // 2 instances
                     match (j.ins, self.mme_fqcsid.is_none(), self.sgw_fqcsid.is_none()) {
@@ -328,10 +242,7 @@ impl Messages for ModifyBearerRequest {
                     }
                 }, 
                 InformationElement::Uci(j) => {
-                    match (j.ins, self.uci.is_none()) {
-                        (0, true) => self.uci = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.uci.is_none()) { self.uci = Some(j.clone()) };
                 },
                 InformationElement::IpAddress(j) => {   // three ins
                     match (j.ins, self.henb_localip.is_none(), self.ue_localip.is_none(), self.mme_id.is_none()) {
@@ -356,52 +267,28 @@ impl Messages for ModifyBearerRequest {
                     }
                 }, 
                 InformationElement::CnOperatorSelectionEntity(j) => {  
-                    match (j.ins, self.cnose.is_none()) {
-                        (0, true) => self.cnose = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.cnose.is_none()) { self.cnose = Some(j.clone()) };
                 }, 
                 InformationElement::PresenceReportingAreaInformation(j) => {  
-                    match (j.ins, self.prai.is_none()) {
-                        (0, true) => self.prai = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.prai.is_none()) { self.prai = Some(j.clone()) };
                 }, 
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<3 => self.overload_info.push(j.clone()),
-                        _ => (),
-                    }
+                    if j.ins<3 { self.overload_info.push(j.clone()) };
                 }, 
                 InformationElement::ServingPlmnRateControl(j) => {  
-                    match (j.ins, self.srv_plmn_rate_cntrl.is_none()) {
-                        (0, true) => self.srv_plmn_rate_cntrl = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.srv_plmn_rate_cntrl.is_none()) { self.srv_plmn_rate_cntrl = Some(j.clone()) };
                 }, 
                 InformationElement::Counter(j) => {  
-                    match (j.ins, self.mo_exception_data_counter.is_none()) {
-                        (0, true) => self.mo_exception_data_counter = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.mo_exception_data_counter.is_none()) { self.mo_exception_data_counter = Some(j.clone()) };
                 },
                 InformationElement::Imsi(j) => {
-                    match (j.ins, self.imsi.is_none()) {
-                        (0, true) => self.imsi = Some(j.clone()),
-                        (_,_) => (),
-                    }
+                    if let (0, true) = (j.ins, self.imsi.is_none()) { self.imsi = Some(j.clone()) };
                 },
                 InformationElement::TwanId(j) => {
-                    match (j.ins, self.wlan_loc.is_none()) {
-                        (0, true) => self.wlan_loc = Some(j.clone()),
-                        (_,_) => (),
-                    }
+                    if let (0, true) = (j.ins, self.wlan_loc.is_none()) { self.wlan_loc = Some(j.clone()) };
                 },
                 InformationElement::TwanIdTimeStamp(j) => {  
-                    match (j.ins, self.wlan_loc_timestamp.is_none()) {
-                        (0, true) => self.wlan_loc_timestamp = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.wlan_loc_timestamp.is_none()) { self.wlan_loc_timestamp = Some(j.clone()) };
                 },
                 InformationElement::SecondaryRatUsageDataReport(j) => {
                     if j.ins == 0 {
@@ -524,6 +411,7 @@ fn test_modify_bearer_req_unmarshal () {
             apco:None,
             epco:None,
             max_packet_loss:None, 
+            ran_nas_cause:None,
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
             fteids: vec!( Fteid { t: FTEID, length: 25, ins: 1, interface: 4, teid: 0x23ed3825, ipv4: Some(Ipv4Addr::new(217,171,141,243)), ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x28)) }),
             bearer_qos: None,
@@ -645,6 +533,7 @@ fn test_modify_bearer_req_marshal () {
             apco:None,
             epco:None,
             max_packet_loss:None, 
+            ran_nas_cause:None,
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
             fteids: vec!( Fteid { t: FTEID, length: 25, ins: 1, interface: 4, teid: 0x15e9e7cc, ipv4: Some(Ipv4Addr::new(213,181,60,112)), ipv6: None }),
             bearer_qos: None,

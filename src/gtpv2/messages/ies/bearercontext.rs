@@ -22,7 +22,7 @@ pub struct BearerContext {
     pub apco: Option<Apco>,
     pub epco:Option<Epco>,
     pub max_packet_loss:Option<MaxPacketLossRate>,
-    // pub ran_nas_cause:Option<RanNasCause>,
+    pub ran_nas_cause:Option<RanNasCause>,
 }
 
 impl Default for BearerContext {
@@ -41,7 +41,7 @@ impl Default for BearerContext {
                         apco:None,
                         epco:None,
                         max_packet_loss:None,
-                        //ran_nas_cause:None,    
+                        ran_nas_cause:None,    
                     }        
     }
 }
@@ -64,67 +64,39 @@ impl From<GroupedIe> for BearerContext {
        for j in i.elements.into_iter() {
             match j {
                 InformationElement::Ebi(k) => {
-                    match (k.ins, mandatory) {
-                        (0, false) => (bearer.ebi, mandatory) = (k, true),
-                        _ => (),
-                    }
+                    if let (0, false) = (k.ins, mandatory) { (bearer.ebi, mandatory) = (k, true) };
                 },
                 InformationElement::Cause(k) => {
-                    match (k.ins, bearer.cause.is_none()) {
-                        (0, true) => bearer.cause=Some(k),
-                        _ => (),
-                    }
+                    if let (0, true) = (k.ins, bearer.cause.is_none()) { bearer.cause=Some(k) };
                 },
                 InformationElement::BearerTft(k) => {
-                    match (k.ins, bearer.tft.is_none()) {
-                        (0, true) => bearer.tft=Some(k),
-                        _ => (),
-                    }
+                    if let (0, true) = (k.ins, bearer.tft.is_none()) { bearer.tft=Some(k) };
                 },
                 InformationElement::Fteid(k) => bearer.fteids.push(k),
                 InformationElement::BearerQos(k) => {
-                    match (k.ins, bearer.bearer_qos.is_none()) {
-                        (0, true) => bearer.bearer_qos=Some(k),
-                        _ => (),
-                    }
+                    if let (0, true) = (k.ins, bearer.bearer_qos.is_none()) { bearer.bearer_qos=Some(k) };
                 },
                 InformationElement::ChargingId(k) => {
-                    match (k.ins, bearer.charging_id.is_none()) {
-                        (0, true) => bearer.charging_id=Some(k),
-                        _ => (),
-                    }
+                    if let (0, true) = (k.ins, bearer.charging_id.is_none()) { bearer.charging_id=Some(k) };
                 },
                 InformationElement::BearerFlags(k) => {
-                    match (k.ins, bearer.bearer_flags.is_none()) {
-                        (0, true) => bearer.bearer_flags=Some(k),
-                        _ => (),
-                    }
+                    if let (0, true) = (k.ins, bearer.bearer_flags.is_none()) { bearer.bearer_flags=Some(k) };
                 }, 
                 InformationElement::Pco(k) => {
-                    match (k.ins, bearer.pco.is_none()) {
-                        (0, true) => bearer.pco=Some(k),
-                        _ => (),
-                    }
+                    if let (0, true) = (k.ins, bearer.pco.is_none()) { bearer.pco=Some(k) };
                 },
                 InformationElement::Apco(k) => {
-                    match (k.ins, bearer.apco.is_none()) {
-                        (0, true) => bearer.apco=Some(k),
-                        _ => (),
-                    }
+                    if let (0, true) = (k.ins, bearer.apco.is_none()) { bearer.apco=Some(k) };
                 },
                 InformationElement::Epco(k) => {
-                    match (k.ins, bearer.epco.is_none()) {
-                        (0, true) => bearer.epco=Some(k),
-                        _ => (),
-                    }
+                    if let (0, true) = (k.ins, bearer.epco.is_none()) { bearer.epco=Some(k) };
                 },
                 InformationElement::MaxPacketLossRate(k) => {
-                    match (k.ins, bearer.max_packet_loss.is_none()) {
-                        (0, true) => bearer.max_packet_loss=Some(k),
-                        _ => (),
-                    }
+                    if let (0, true) = (k.ins, bearer.max_packet_loss.is_none()) { bearer.max_packet_loss=Some(k) };
                 },
-                // InformationElement::RanNasCause(k) => bearer.ran_nas_cause=Some(k),
+                InformationElement::RanNasCause(k) => {
+                    if let (0, true) = (k.ins, bearer.ran_nas_cause.is_none()) { bearer.ran_nas_cause=Some(k) };
+                },
                 _ => (),       
             } 
        }
@@ -139,11 +111,10 @@ impl IEs for BearerContext {
     }
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        let data:BearerContext;
-        match GroupedIe::unmarshal(buffer) {
-            Ok(i) => data = BearerContext::from(i),
-            Err(j) => return Err(j),
-        }
+        let data:BearerContext = match GroupedIe::unmarshal(buffer) {
+                                    Ok(i) => BearerContext::from(i),
+                                    Err(j) => return Err(j),
+                                };
         Ok(data)
     }
     
@@ -156,53 +127,30 @@ impl BearerContext {
     fn to_vec(&self) -> Vec<InformationElement> {
         let mut v:Vec<InformationElement> = vec!();
         
-        match self.cause.clone() {
-            Some(i) => v.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.cause.clone() { v.push(i.into()) }
+        
         v.push(self.ebi.clone().into());
         
-        match self.tft.clone() {
-            Some(i) => v.push(i.into()),
-            None => (),
-        }
-
+        if let Some(i) = self.tft.clone() { v.push(i.into()) }
+        
         self.fteids.iter().for_each(|x| v.push(InformationElement::Fteid(x.clone())));
        
-        match self.bearer_qos.clone() {
-            Some(i) => v.push(i.into()),
-            None => (),
-        }
-        match self.charging_id.clone() {
-            Some(i) => v.push(i.into()),
-            None => (),
-        }
-        match self.bearer_flags.clone() {
-            Some(i) => v.push(i.into()),
-            None => (),
-        }
-        match self.pco.clone() {
-            Some(i) => v.push(i.into()),
-            None => (),
-        }
-        match self.apco.clone() {
-            Some(i) => v.push(i.into()),
-            None => (),
-        }
-        match self.epco.clone() {
-            Some(i) => v.push(i.into()),
-            None => (),
-        }
-        match self.max_packet_loss.clone() {
-            Some(i) => v.push(i.into()),
-            None => (),
-        }
-        /*
-        match self.ran_nas_cause.clone() {
-            Some(i) => v.push(i.into()),
-            None => (),
-        }
-        */
+        if let Some(i) = self.bearer_qos.clone() { v.push(i.into()) }
+        
+        if let Some(i) = self.charging_id.clone() { v.push(i.into()) }
+        
+        if let Some(i) = self.bearer_flags.clone() { v.push(i.into()) }
+        
+        if let Some(i) = self.pco.clone() { v.push(i.into()) }
+        
+        if let Some(i) = self.apco.clone() { v.push(i.into()) }
+        
+        if let Some(i) = self.epco.clone() { v.push(i.into()) }
+       
+        if let Some(i) = self.max_packet_loss.clone() { v.push(i.into()) }
+        
+        if let Some(i) = self.ran_nas_cause.clone() { v.push(i.into()) }
+        
         v
     }
 }
@@ -236,6 +184,7 @@ fn bearer_context_ie_unmarshal_test () {
     apco:None,
     epco:None,
     max_packet_loss:None,
+    ran_nas_cause:None,
     };
     let i = BearerContext::unmarshal(&encoded);
     assert_eq!(i.unwrap(), decoded);
@@ -270,6 +219,7 @@ fn bearer_context_ie_marshal_test () {
     apco:None,
     epco:None,
     max_packet_loss:None,
+    ran_nas_cause:None,
     };
     let mut buffer:Vec<u8>=vec!();
     decoded.marshal(&mut buffer);

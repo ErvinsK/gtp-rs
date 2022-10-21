@@ -114,8 +114,10 @@ impl IEs for RanNasCause {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE+2 {
-            let mut data = RanNasCause::default();
-            data.length = u16::from_be_bytes([buffer[1],buffer[2]]);
+            let mut data = RanNasCause{
+                length:u16::from_be_bytes([buffer[1],buffer[2]]),
+                ..Default::default()
+            };
             if !check_tliv_ie_buffer(data.length, buffer) {
                 return Err(GTPV2Error::IEInvalidLength(RAN_NAS_CAUSE));
             }

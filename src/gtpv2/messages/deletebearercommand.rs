@@ -44,7 +44,7 @@ impl Messages for DeleteBearerCommand {
 
     fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
-        let elements = self.to_vec();
+        let elements = self.tovec();
         elements.into_iter().for_each(|k| k.marshal(buffer));
         set_msg_length(buffer);
     }
@@ -63,7 +63,7 @@ impl Messages for DeleteBearerCommand {
         if (message.header.length as usize)+4<=buffer.len() {
             match InformationElement::decoder(&buffer[12..]) {
                 Ok(i) => {
-                    match message.from_vec(i) {
+                    match message.fromvec(i) {
                         Ok(_) => Ok(message),
                         Err(j) => Err(j),
                     }
@@ -75,7 +75,7 @@ impl Messages for DeleteBearerCommand {
         }
     }
 
-    fn to_vec(&self) -> Vec<InformationElement> {
+    fn tovec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
 
         self.bearer_ctxs.iter().for_each(|x| elements.push(InformationElement::BearerContext(x.clone())));
@@ -104,7 +104,7 @@ impl Messages for DeleteBearerCommand {
         
     }
     
-    fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+    fn fromvec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         let mut mandatory = false;
         for e in elements.iter() {
             match e {
@@ -227,6 +227,7 @@ fn test_delete_bearer_cmd_unmarshal () {
             apco:None,
             epco:None,
             max_packet_loss:None, 
+            ran_nas_cause:None,
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
             fteids: vec!( Fteid { t: FTEID, length: 25, ins: 1, interface: 4, teid: 0x23ed3825, ipv4: Some(Ipv4Addr::new(217,171,141,243)), ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x28)) }),
             bearer_qos: None,
@@ -335,6 +336,7 @@ fn test_delete_bearer_cmd_marshal () {
             apco:None,
             epco:None,
             max_packet_loss:None, 
+            ran_nas_cause:None,
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
             fteids: vec!( Fteid { t: FTEID, length: 25, ins: 1, interface: 4, teid: 0x23ed3825, ipv4: Some(Ipv4Addr::new(217,171,141,243)), ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x28)) }),
             bearer_qos: None,

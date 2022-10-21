@@ -22,9 +22,10 @@ pub struct DeleteSessionResponse {
 
 impl Default for DeleteSessionResponse {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = DELETE_SESSION_RESP;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header {
+            msgtype:DELETE_SESSION_RESP,
+            teid:Some(0),
+            ..Default::default()};
         DeleteSessionResponse {
             header:hdr,
             cause:Cause::default(),
@@ -44,7 +45,7 @@ impl Messages for DeleteSessionResponse {
 
     fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
-        let elements = self.to_vec();
+        let elements = self.tovec();
         elements.into_iter().for_each(|k| k.marshal(buffer));
         set_msg_length(buffer);
     }
@@ -63,7 +64,7 @@ impl Messages for DeleteSessionResponse {
         if (message.header.length as usize)+4<=buffer.len() {
             match InformationElement::decoder(&buffer[12..]) {
                 Ok(i) => {
-                    match message.from_vec(i) {
+                    match message.fromvec(i) {
                         Ok(_) => Ok(message),
                         Err(j) => Err(j),
                     }
@@ -75,95 +76,58 @@ impl Messages for DeleteSessionResponse {
         }
     }
 
-    fn to_vec(&self) -> Vec<InformationElement> {
+    fn tovec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
         
         elements.push(self.cause.clone().into());
 
-        match self.recovery.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.pco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.indication.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
+        if let Some(i) = self.recovery.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.pco.clone() { elements.push(i.into()) };
+       
+        if let Some(i) = self.indication.clone() { elements.push(i.into()) };
+       
         self.load_control.iter().for_each(|x| elements.push(InformationElement::LoadControlInfo(x.clone())));
 
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
-        match self.epco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.apn_rate_control_status.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.epco.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.apn_rate_control_status.clone() { elements.push(i.into()) };
 
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));  
 
         elements
     }
     
-    fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+    fn fromvec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         let mut mandatory=false;
         for e in elements.into_iter() {
             match e {
-                InformationElement::Cause(j) => {
-                    match (j.ins, mandatory) {
-                        (0, false) => (self.cause, mandatory) = (j, true),
-                        _ => (),
-                    }
+                InformationElement::Cause(j) => { 
+                    if let (0, false) = (j.ins, mandatory) { (self.cause, mandatory) = (j, true) };
                 },
                 InformationElement::Recovery(j) => {
-                    match (j.ins, self.recovery.is_none()) {
-                        (0, true) => self.recovery = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.recovery.is_none()) { self.recovery = Some(j) };
                 },
                 InformationElement::Pco(j) => {
-                    match (j.ins, self.pco.is_none()) {
-                        (0, true) => self.pco = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.pco.is_none()) { self.pco = Some(j) };
                 },
                 InformationElement::Indication(j) => {  
-                    match (j.ins, self.indication.is_none()) {
-                        (0, true) => self.indication = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.indication.is_none()) { self.indication = Some(j) };
                 }, 
                 InformationElement::LoadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<3 => self.load_control.push(j),
-                        _ => (),
-                    }
+                    if j.ins<3 { self.load_control.push(j) };
                 }, 
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<2 => self.overload_info.push(j),
-                        _ => (),
-                    }
+                    if j.ins<2 { self.overload_info.push(j) };
                 }, 
                 InformationElement::Epco(j) => {
-                    match (j.ins, self.epco.is_none()) {
-                        (0, true) => self.epco = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.epco.is_none()) { self.epco = Some(j) };
                 },
                 InformationElement::ApnRateControlStatus(j) => {
-                    match (j.ins, self.apn_rate_control_status.is_none()) {
-                        (0, true) => self.apn_rate_control_status = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.apn_rate_control_status.is_none()) { self.apn_rate_control_status = Some(j) };
                 },
-               
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j),
                 _ => (),
             }

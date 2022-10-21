@@ -4,18 +4,12 @@ use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::
 
 // Unknown IE implementation
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct Unknown {
     pub t: u8,
     pub length:u16,
     pub ins: u8,
     pub value: Vec<u8>,
-}
-
-impl Default for Unknown {
-    fn default() -> Self {
-        Unknown { t: 0, length: 0, ins:0, value:vec!() }
-    }
 }
 
 impl From<Unknown> for InformationElement {
@@ -37,8 +31,10 @@ impl IEs for Unknown {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE {
-            let mut data=Unknown::default();
-            data.length = u16::from_be_bytes([buffer[1],buffer[2]]);
+            let mut data=Unknown{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             if  check_tliv_ie_buffer(data.length, buffer) {
                 data.value.extend_from_slice(&buffer[4..(data.length+4) as usize]);

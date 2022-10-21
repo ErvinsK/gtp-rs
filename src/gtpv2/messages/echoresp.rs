@@ -16,8 +16,10 @@ pub struct EchoResponse {
 
 impl Default for EchoResponse {
     fn default() -> EchoResponse {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = ECHO_RESPONSE;
+        let hdr = Gtpv2Header{
+            msgtype:ECHO_RESPONSE,
+            ..Default::default()
+        };
         EchoResponse {
             header: hdr,
             recovery: Recovery::default(),
@@ -31,7 +33,7 @@ impl Messages for EchoResponse {
 
     fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
-        let elements = self.to_vec();
+        let elements = self.tovec();
         elements.into_iter().for_each(|k| k.marshal(buffer));
         set_msg_length(buffer);
     }
@@ -48,13 +50,13 @@ impl Messages for EchoResponse {
         }
 
         if (message.header.length as usize)+4<=buffer.len() {
-            let ies:Vec<InformationElement>;
-            match InformationElement::decoder(&buffer[8..]) {
-                Ok(i) => ies = i,
-                Err(j) => return Err(j),
-            }
-            match message.from_vec(ies) {
-                Ok(_) => Ok(message),
+            match InformationElement::decoder(&buffer[12..]) {
+                Ok(i) => {
+                    match message.fromvec(i) {
+                        Ok(_) => Ok(message),
+                        Err(j) => Err(j),
+                    }
+                },
                 Err(j) => Err(j),
             }
         } else {
@@ -62,38 +64,29 @@ impl Messages for EchoResponse {
         }
     }
 
-    fn to_vec(&self) -> Vec<InformationElement> {
+    fn tovec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
         
         elements.push(InformationElement::Recovery(self.recovery.clone()));
         
-        match self.sending_node_features.clone() {
-            Some(i) => elements.push(InformationElement::NodeFeatures(i)),
-            None => (),
-        }
+        if let Some(i) = self.sending_node_features.clone() { elements.push(i.into()) };
     
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));    
         elements
     }
     
-    fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+    fn fromvec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         let mut mandatory:bool=false;
         for e in elements.iter() {
             match e {
                 InformationElement::Recovery(j) => {
-                    match (j.ins, mandatory) {
-                        (0, false) => {
-                            mandatory=true;
-                            self.recovery = j.clone();
-                        },
-                        _ => (),
+                    if let (0, false) = (j.ins, mandatory) {
+                        mandatory=true;
+                        self.recovery = j.clone();
                     }
                 },
                 InformationElement::NodeFeatures(j) => {
-                    match (j.ins, self.sending_node_features.is_none()) {
-                        (0, true) => self.sending_node_features = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.sending_node_features.is_none()) { self.sending_node_features = Some(j.clone()) };
                 },
 
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),

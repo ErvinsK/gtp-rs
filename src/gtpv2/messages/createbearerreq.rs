@@ -28,9 +28,11 @@ pub struct CreateBearerRequest {
 
 impl Default for CreateBearerRequest {
     fn default() -> CreateBearerRequest {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = CREATE_BEARER_REQ;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:CREATE_BEARER_REQ,
+            teid:Some(0),
+            ..Default::default()
+        };
         CreateBearerRequest {
             header:hdr,
             pti:None,
@@ -56,7 +58,7 @@ impl Messages for CreateBearerRequest {
 
     fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
-        let elements = self.to_vec();
+        let elements = self.tovec();
         elements.into_iter().for_each(|k| k.marshal(buffer));
         set_msg_length(buffer);
     }
@@ -75,7 +77,7 @@ impl Messages for CreateBearerRequest {
         if (message.header.length as usize)+4<=buffer.len() {
             match InformationElement::decoder(&buffer[12..]) {
                 Ok(i) => {
-                    match message.from_vec(i) {
+                    match message.fromvec(i) {
                         Ok(_) => Ok(message),
                         Err(j) => Err(j),
                     }
@@ -87,100 +89,59 @@ impl Messages for CreateBearerRequest {
         }
     }
 
-    fn to_vec(&self) -> Vec<InformationElement> {
+    fn tovec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
         
-        match self.pti.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
+        if let Some(i) = self.pti.clone() { elements.push(i.into()) };
+        
         elements.push(self.linked_ebi.clone().into());
 
-        match self.pco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
+        if let Some(i) = self.pco.clone() { elements.push(i.into()) };
+        
         self.bearer_ctxs.iter().for_each(|x| elements.push(InformationElement::BearerContext(x.clone())));
 
-        match self.pgw_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
-        match self.sgw_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.cra.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
-        match self.csg_ira.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.pgw_fqcsid.clone() { elements.push(i.into()) };
         
-        match self.henb_info_report.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.sgw_fqcsid.clone() { elements.push(i.into()) };
 
-        match self.praa.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.cra.clone() { elements.push(i.into()) };
+       
+        if let Some(i) = self.csg_ira.clone() { elements.push(i.into()) };
 
-        match self.indication.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
+        if let Some(i) = self.henb_info_report.clone() { elements.push(i.into()) };
+            
+        if let Some(i) = self.praa.clone() { elements.push(i.into()) };
+
+        if let Some(i) = self.indication.clone() { elements.push(i.into()) };
 
         self.load_control.iter().for_each(|x| elements.push(InformationElement::LoadControlInfo(x.clone())));
 
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
-        match self.nbifom.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
+        if let Some(i) = self.nbifom.clone() { elements.push(i.into()) };
+        
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));  
 
         elements
     }
     
-    fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+    fn fromvec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         let mut mandatory:[bool;2]=[false,false];
         for e in elements.iter() {
             match e {
                 InformationElement::Pti(j) => {
-                    match (j.ins, self.pti.is_none()) {
-                        (0, true) => self.pti = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.pti.is_none()) { self.pti = Some(j.clone()) };
                 },
                 InformationElement::Ebi(j) => {
-                    match (j.ins, mandatory[0]) {
-                        (0, false) => (self.linked_ebi, mandatory[0]) = (j.clone(), true),
-                        (_,_) => (),
-                    }
+                    if let (0, false) = (j.ins, mandatory[0]) { (self.linked_ebi, mandatory[0]) = (j.clone(), true) };
                 },
                 InformationElement::Pco(j) => {
-                    match (j.ins, self.pco.is_none()) {
-                        (0, true) => self.pco = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.pco.is_none()) { self.pco = Some(j.clone()) };
                 },
                 InformationElement::BearerContext(j) => {
-                    match j.ins {
-                        0 => {
-                            mandatory[1]=true;
-                            self.bearer_ctxs.push(j.clone());
-                        },
-                        _ => (),
+                    if j.ins == 0 {
+                        mandatory[1]=true;
+                        self.bearer_ctxs.push(j.clone());
                     }
                 }
                 InformationElement::Fqcsid(j) => {  // 2 instances
@@ -191,52 +152,28 @@ impl Messages for CreateBearerRequest {
                     }
                 }, 
                 InformationElement::ChangeReportingAction(j) => {
-                    match (j.ins, self.cra.is_none()) {
-                        (0, true) => self.cra = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.cra.is_none()) { self.cra = Some(j.clone()) };
                 },
                 InformationElement::CSGInformationReportingAction(j) => {
-                    match (j.ins, self.csg_ira.is_none()) {
-                        (0, true) => self.csg_ira = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.csg_ira.is_none()) { self.csg_ira = Some(j.clone()) };
                 },
                 InformationElement::HenbInfoReporting(j) => {
-                    match (j.ins, self.henb_info_report.is_none()) {
-                        (0, true) => self.henb_info_report = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.henb_info_report.is_none()) { self.henb_info_report = Some(j.clone()) };
                 },
                 InformationElement::PresenceReportingAreaAction(j) => {
-                    match (j.ins, self.praa.is_none()) {
-                        (0, true) => self.praa = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.praa.is_none()) { self.praa = Some(j.clone()) };
                 },
                 InformationElement::Indication(j) => {  
-                    match (j.ins, self.indication.is_none()) {
-                        (0, true) => self.indication = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.indication.is_none()) { self.indication = Some(j.clone()) };
                 },               
                 InformationElement::LoadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<3 => self.load_control.push(j.clone()),
-                        _ => (),
-                    }
+                    if j.ins<3 { self.load_control.push(j.clone()) };
                 }, 
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<2 => self.overload_info.push(j.clone()),
-                        _ => (),
-                    }
+                    if j.ins<2 { self.overload_info.push(j.clone()) };
                 }, 
                 InformationElement::Fcontainer(j) => {  
-                    match (j.ins, self.nbifom.is_none()) {
-                        (0, true) => self.nbifom = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.nbifom.is_none()) { self.nbifom = Some(j.clone()) };
                 },
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),
                 _ => (),
@@ -312,6 +249,7 @@ fn test_create_bearer_req_unmarshal () {
             apco:None,
             epco:None,
             max_packet_loss:None, 
+            ran_nas_cause:None,
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 0 },
             fteids: vec!( Fteid { t: 87, length: 9, ins: 2, interface: 5, teid: 0x3b95985a, ipv4: Some(Ipv4Addr::new(62,153,137,85)), ipv6: None }),
             bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 0, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),
@@ -382,6 +320,7 @@ fn test_create_bearer_req_marshal () {
             apco:None,
             epco:None,
             max_packet_loss:None, 
+            ran_nas_cause:None,
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 0 },
             fteids: vec!( Fteid { t: 87, length: 9, ins: 2, interface: 5, teid: 0x3b95985a, ipv4: Some(Ipv4Addr::new(62,153,137,85)), ipv6: None }),
             bearer_qos:Some(BearerQos { t: 80, length: 22, ins: 0, pre_emption_vulnerability: 0, priority_level: 11, pre_emption_capability: 0, qci: 9, maxbr_ul: 0, maxbr_dl: 0, gbr_ul: 0, gbr_dl: 0 }),

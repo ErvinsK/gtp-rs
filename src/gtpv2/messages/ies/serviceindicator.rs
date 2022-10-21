@@ -48,8 +48,10 @@ impl IEs for ServiceIndicator {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE+SRVCIND_LENGTH {
-            let mut data=ServiceIndicator::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=ServiceIndicator{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             data.ind = buffer[4];
             Ok(data)

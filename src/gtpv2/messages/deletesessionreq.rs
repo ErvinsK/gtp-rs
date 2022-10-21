@@ -34,9 +34,11 @@ pub struct DeleteSessionRequest {
 
 impl Default for DeleteSessionRequest {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = DELETE_SESSION_REQ;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:DELETE_SESSION_REQ,
+            teid:Some(0),
+            ..Default::default()
+        };
         DeleteSessionRequest {
             header:hdr,
             cause:None,
@@ -68,7 +70,7 @@ impl Messages for DeleteSessionRequest {
 
     fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
-        let elements = self.to_vec();
+        let elements = self.tovec();
         elements.into_iter().for_each(|k| k.marshal(buffer));
         set_msg_length(buffer);
     }
@@ -87,7 +89,7 @@ impl Messages for DeleteSessionRequest {
         if (message.header.length as usize)+4<=buffer.len() {
             match InformationElement::decoder(&buffer[12..]) {
                 Ok(i) => {
-                    match message.from_vec(i) {
+                    match message.fromvec(i) {
                         Ok(_) => Ok(message),
                         Err(j) => Err(j),
                     }
@@ -99,85 +101,47 @@ impl Messages for DeleteSessionRequest {
         }
     }
 
-    fn to_vec(&self) -> Vec<InformationElement> {
+    fn tovec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
         
-        match self.cause.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.linked_ebi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.uli.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.indication.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.pco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }  
-        match self.orig_node.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }  
-        match self.fteid_control.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        } 
-        match self.uetimezone.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }  
-        match self.uli_timestamp.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        } 
-        match self.ran_nas_cause.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        } 
-        match self.twan_id.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }  
-        match self.twan_id_timestamp.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }   
+        if let Some(i) = self.cause.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.linked_ebi.clone() { elements.push(i.into()) };
+
+        if let Some(i) = self.uli.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.indication.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.pco.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.orig_node.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.fteid_control.clone() { elements.push(i.into()) };
+       
+        if let Some(i) = self.uetimezone.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.uli_timestamp.clone() { elements.push(i.into()) };
+       
+        if let Some(i) = self.ran_nas_cause.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.twan_id.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.twan_id_timestamp.clone() { elements.push(i.into()) };
 
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
-        match self.wlan_loc.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }   
-        match self.wlan_loc_timestamp.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }   
-        match self.ue_localip.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        } 
-        match self.ue_udpport.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        } 
-        match self.epco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        } 
-        match self.ue_tcpport.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }       
-
+        if let Some(i) = self.wlan_loc.clone() { elements.push(i.into()) };
+       
+        if let Some(i) = self.wlan_loc_timestamp.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.ue_localip.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.ue_udpport.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.epco.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.ue_tcpport.clone() { elements.push(i.into()) };
+       
         self.secondary_rat_usage_report.iter().for_each(|x| elements.push(InformationElement::SecondaryRatUsageDataReport(x.clone())));
 
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));  
@@ -185,68 +149,38 @@ impl Messages for DeleteSessionRequest {
         elements
     }
     
-    fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+    fn fromvec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         for e in elements.into_iter() {
             match e {
                 InformationElement::Cause(j) => {
-                    match (j.ins, self.cause.is_none()) {
-                        (0, true) => self.cause = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.cause.is_none()) { self.cause = Some(j) };
                 },
                 InformationElement::Ebi(j) => {
-                    match (j.ins, self.linked_ebi.is_none()) {
-                        (0, true) => self.linked_ebi = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.linked_ebi.is_none()) { self.linked_ebi = Some(j) };
                 },
                 InformationElement::Uli(j) => {
-                    match (j.ins, self.uli.is_none()) {
-                        (0, true) => self.uli = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.uli.is_none()) { self.uli = Some(j) };
                 },
                 InformationElement::Indication(j) => {  
-                    match (j.ins, self.indication.is_none()) {
-                        (0, true) => self.indication = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.indication.is_none()) { self.indication = Some(j) };
                 }, 
                 InformationElement::Pco(j) => {
-                    match (j.ins, self.pco.is_none()) {
-                        (0, true) => self.pco = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.pco.is_none()) { self.pco = Some(j) };
                 },
                 InformationElement::NodeType(j) => {  
-                    match (j.ins, self.orig_node.is_none()) {
-                        (0, true) => self.orig_node = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.orig_node.is_none()) { self.orig_node = Some(j) };
                 }, 
                 InformationElement::Fteid(j) => {  
-                    match (j.ins, self.fteid_control.is_none()) {
-                        (0, true) => self.fteid_control = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.fteid_control.is_none()) { self.fteid_control = Some(j) };
                 }, 
                 InformationElement::UeTimeZone(j) => {  
-                    match (j.ins, self.uetimezone.is_none()) {
-                        (0, true) => self.uetimezone = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.uetimezone.is_none()) { self.uetimezone = Some(j) };
                 },
                 InformationElement::UliTimestamp(j) => {  
-                    match (j.ins, self.uli_timestamp.is_none()) {
-                        (0, true) => self.uli_timestamp = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.uli_timestamp.is_none()) { self.uli_timestamp = Some(j) };
                 }, 
                 InformationElement::RanNasCause(j) => {  
-                    match (j.ins, self.ran_nas_cause.is_none()) {
-                        (0, true) => self.ran_nas_cause = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.ran_nas_cause.is_none()) { self.ran_nas_cause = Some(j) };
                 }, 
                 InformationElement::TwanId(j) => {  // 2 instances
                     match (j.ins, self.twan_id.is_none(), self.wlan_loc.is_none()) {
@@ -263,16 +197,10 @@ impl Messages for DeleteSessionRequest {
                     }
                 }, 
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<3 => self.overload_info.push(j),
-                        _ => (),
-                    }
+                    if j.ins<3 { self.overload_info.push(j) };
                 }, 
                 InformationElement::IpAddress(j) => {  
-                    match (j.ins, self.ue_localip.is_none()) {
-                        (0, true) => self.ue_localip = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.ue_localip.is_none()) { self.ue_localip = Some(j) };
                 }, 
                 InformationElement::PortNumber(j) => {  // 2 instances
                     match (j.ins, self.ue_udpport.is_none(), self.ue_tcpport.is_none()) {
@@ -282,16 +210,10 @@ impl Messages for DeleteSessionRequest {
                     }
                 }, 
                 InformationElement::Epco(j) => {  
-                    match (j.ins, self.epco.is_none()) {
-                        (0, true) => self.epco = Some(j),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.epco.is_none()) { self.epco = Some(j) };
                 }, 
                 InformationElement::SecondaryRatUsageDataReport(j) => {
-                    match j.ins {
-                        0 => self.secondary_rat_usage_report.push(j),
-                        _ => (),
-                    }
+                    if j.ins == 0 { self.secondary_rat_usage_report.push(j) };
                 }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j),
                 _ => (),

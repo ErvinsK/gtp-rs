@@ -31,10 +31,12 @@ impl IEs for GroupedIe {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE {
-            let mut data=GroupedIe::default();
-            data.t = buffer[0];
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
-            data.ins = buffer[3];
+            let mut data=GroupedIe{
+                t:buffer[0],
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ins:buffer[3],
+                ..Default::default()
+            };
             if check_tliv_ie_buffer(data.length, buffer) {
                 match InformationElement::decoder(&buffer[4..(data.length+4) as usize]) {
                     Ok(i) => data.elements = i,

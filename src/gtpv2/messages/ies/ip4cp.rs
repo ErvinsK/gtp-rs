@@ -51,8 +51,10 @@ impl IEs for Ip4Cp {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE+IP4CP_LENGTH {
-            let mut data = Ip4Cp::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = Ip4Cp{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             data.subnet_prefix = buffer[4];
             data.ip = Ipv4Addr::from([buffer[5], buffer[6], buffer[7], buffer[8]]);

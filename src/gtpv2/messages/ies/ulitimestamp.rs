@@ -42,8 +42,10 @@ impl IEs for UliTimestamp {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=ULI_TIMESTAMP_LENGTH+MIN_IE_SIZE {
-            let mut data = UliTimestamp::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data = UliTimestamp{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             data.timestamp = u32::from_be_bytes([buffer[4],buffer[5],buffer[6],buffer[7]]);
             Ok(data)

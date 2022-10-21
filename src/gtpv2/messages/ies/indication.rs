@@ -150,7 +150,7 @@ impl IEs for Indication {
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        let flags = self.clone().into_array().iter().map( |x| if *x {1} else {0}).enumerate().map( |(i,x)| x<<(55-i)).collect::<Vec<_>>().iter().sum::<u64>();
+        let flags = self.clone().intoarray().iter().map( |x| if *x {1} else {0}).enumerate().map( |(i,x)| x<<(55-i)).collect::<Vec<_>>().iter().sum::<u64>();
         let i = flags.to_be_bytes();
         buffer_ie.extend_from_slice(&i[1..]);
         set_tliv_ie_length(&mut buffer_ie);
@@ -159,12 +159,14 @@ impl IEs for Indication {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> where Self:Sized {
         if buffer.len()>=INDICATION_LENGTH {
-            let mut data=Indication::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=Indication{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             let f = u64::from_be_bytes([0x00,buffer[4],buffer[5],buffer[6],buffer[7],buffer[8],buffer[9],buffer[10]]);
             let flags = [f;56].iter().enumerate().map(|(i,x)| ((*x & (0x80000000000000 >> i))>>(55-i)) as u8 == 1).collect::<Vec<bool>>();
-            data.from_array(&flags[..]);
+            data.fromarray(&flags[..]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(INDICATION))
@@ -178,7 +180,7 @@ impl IEs for Indication {
 }
 
 impl Indication {
-    fn into_array(self) -> [bool;56] {
+    fn intoarray(self) -> [bool;56] {
         [
             self.daf,                       // Dual Address Bearer Flag
             self.dtf,                       // Direct Tunnel Flag
@@ -238,7 +240,7 @@ impl Indication {
             self.tspcmi                     // Triggering SGSN initiated PDP Context Creation/Modification Indication
         ]
     }
-    fn from_array(&mut self, i:&[bool]) {
+    fn fromarray(&mut self, i:&[bool]) {
             self.daf = i[0];                       // Dual Address Bearer Flag
             self.dtf = i[1];                       // Direct Tunnel Flag
             self.hi = i[2];                        // Handover Indication

@@ -35,9 +35,11 @@ pub struct ModifyBearerResponse {
 
 impl Default for ModifyBearerResponse {
     fn default() -> Self {
-        let mut hdr = Gtpv2Header::default();
-        hdr.msgtype = MODIFY_BEARER_RESP;
-        hdr.teid = Some(0);
+        let hdr = Gtpv2Header{
+            msgtype:MODIFY_BEARER_RESP,
+            teid:Some(0),
+            ..Default::default()
+        };
         ModifyBearerResponse {
             header:hdr,
             cause:Cause::default(),
@@ -70,7 +72,7 @@ impl Messages for ModifyBearerResponse {
 
     fn marshal (&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
-        let elements = self.to_vec();
+        let elements = self.tovec();
         elements.into_iter().for_each(|k| k.marshal(buffer));
         set_msg_length(buffer);
     }
@@ -89,7 +91,7 @@ impl Messages for ModifyBearerResponse {
         if (message.header.length as usize)+4<=buffer.len() {
             match InformationElement::decoder(&buffer[12..]) {
                 Ok(i) => {
-                    match message.from_vec(i) {
+                    match message.fromvec(i) {
                         Ok(_) => Ok(message),
                         Err(j) => Err(j),
                     }
@@ -101,163 +103,92 @@ impl Messages for ModifyBearerResponse {
         }
     }
 
-    fn to_vec(&self) -> Vec<InformationElement> {
+    fn tovec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
         
         elements.push(self.cause.clone().into());
 
-        match self.msisdn.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.linked_ebi.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.apn_restriction.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.pco.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }  
-
+        if let Some(i) = self.msisdn.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.linked_ebi.clone() { elements.push(i.into()) };
+       
+        if let Some(i) = self.apn_restriction.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.pco.clone() { elements.push(i.into()) };
+        
         self.bearer_ctxs.iter().for_each(|x| elements.push(InformationElement::BearerContext(x.clone())));
 
-        match self.cra.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.csg_ira.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.henb_info_report.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.charging_gw_name.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        } 
+        if let Some(i) = self.cra.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.csg_ira.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.henb_info_report.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.charging_gw_name.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.charging_gw_ip.clone() { elements.push(i.into()) };
 
-        match self.charging_gw_ip.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
-        match self.pgw_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
-        match self.sgw_fqcsid.clone() {
-            Some(i) => elements.push(i.into()),
-            None => ()
-        }
-        match self.recovery.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.sgw_ldn.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.pgw_ldn.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.indication.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-        match self.praa.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }
-
+        if let Some(i) = self.pgw_fqcsid.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.sgw_fqcsid.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.recovery.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.sgw_ldn.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.pgw_ldn.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.indication.clone() { elements.push(i.into()) };
+        
+        if let Some(i) = self.praa.clone() { elements.push(i.into()) };
+        
         self.load_control.iter().for_each(|x| elements.push(InformationElement::LoadControlInfo(x.clone())));
 
         self.overload_info.iter().for_each(|x| elements.push(InformationElement::OverloadControlInfo(x.clone())));
 
-        match self.charging_id.clone() {
-            Some(i) => elements.push(i.into()),
-            None => (),
-        }    
-
+        if let Some(i) = self.charging_id.clone() { elements.push(i.into()) };
+        
         self.private_ext.iter().for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));  
 
         elements
     }
     
-    fn from_vec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
+    fn fromvec(&mut self, elements:Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         let mut mandatory=false;
         for e in elements.iter() {
             match e {
                 InformationElement::Cause(j) => {
-                    match (j.ins, mandatory) {
-                        (0, false) => (self.cause, mandatory) = (j.clone(), true),
-                        _ => (),
-                    }
+                    if let (0, false) = (j.ins, mandatory) { (self.cause, mandatory) = (j.clone(), true) };
                 },
                 InformationElement::Msisdn(j) => {
-                    match (j.ins, self.msisdn.is_none()) {
-                        (0, true) => self.msisdn = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.msisdn.is_none()) { self.msisdn = Some(j.clone()) };
                 },
                 InformationElement::Ebi(j) => {
-                    match (j.ins, self.linked_ebi.is_none()) {
-                        (0, true) => self.linked_ebi = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.linked_ebi.is_none()) { self.linked_ebi = Some(j.clone()) };
                 },
                 InformationElement::ApnRestriction(j) => {
-                    match (j.ins, self.apn_restriction.is_none()) {
-                        (0, true) => self.apn_restriction = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.apn_restriction.is_none()) { self.apn_restriction = Some(j.clone()) };
                 },
                 InformationElement::Pco(j) => {
-                    match (j.ins, self.pco.is_none()) {
-                        (0, true) => self.pco = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.pco.is_none()) { self.pco = Some(j.clone()) };
                 },
                 InformationElement::BearerContext(j) => {
-                    match j.ins {
-                        k if k<2 => self.bearer_ctxs.push(j.clone()),
-                        _ => (),
-                    }
+                    if j.ins<2 { self.bearer_ctxs.push(j.clone()) };
                 }
                 InformationElement::ChangeReportingAction(j) => {
-                    match (j.ins, self.cra.is_none()) {
-                        (0, true) => self.cra = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.cra.is_none()) { self.cra = Some(j.clone()) };
                 },
                 InformationElement::CSGInformationReportingAction(j) => {
-                    match (j.ins, self.csg_ira.is_none()) {
-                        (0, true) => self.csg_ira = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.csg_ira.is_none()) { self.csg_ira = Some(j.clone()) };
                 },
                 InformationElement::HenbInfoReporting(j) => {
-                    match (j.ins, self.henb_info_report.is_none()) {
-                        (0, true) => self.henb_info_report = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.henb_info_report.is_none()) { self.henb_info_report = Some(j.clone()) };
                 },
                 InformationElement::Fqdn(j) => {
-                    match (j.ins, self.charging_gw_name.is_none()) {
-                        (0, true) => self.charging_gw_name = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.charging_gw_name.is_none()) { self.charging_gw_name = Some(j.clone()) };
                 },
                 InformationElement::IpAddress(j) => {
-                    match (j.ins, self.charging_gw_ip.is_none()) {
-                        (0, true) => self.charging_gw_ip = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.charging_gw_ip.is_none()) { self.charging_gw_ip = Some(j.clone()) };
                 },
                 InformationElement::Fqcsid(j) => {  // 2 instances
                     match (j.ins, self.pgw_fqcsid.is_none(), self.sgw_fqcsid.is_none()) {
@@ -267,10 +198,7 @@ impl Messages for ModifyBearerResponse {
                     }
                 }, 
                 InformationElement::Recovery(j) => {
-                    match (j.ins, self.recovery.is_none()) {
-                        (0, true) => self.recovery = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.recovery.is_none()) { self.recovery = Some(j.clone()) };
                 },
                 InformationElement::Ldn(j) => {  // 2 instances
                     match (j.ins, self.sgw_ldn.is_none(), self.pgw_ldn.is_none()) {
@@ -280,34 +208,19 @@ impl Messages for ModifyBearerResponse {
                     }
                 }, 
                 InformationElement::Indication(j) => {  
-                    match (j.ins, self.indication.is_none()) {
-                        (0, true) => self.indication = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.indication.is_none()) { self.indication = Some(j.clone()) };
                 }, 
                 InformationElement::PresenceReportingAreaAction(j) => {  
-                    match (j.ins, self.praa.is_none()) {
-                        (0, true) => self.praa = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.praa.is_none()) { self.praa = Some(j.clone()) };
                 }, 
                 InformationElement::LoadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<3 => self.load_control.push(j.clone()),
-                        _ => (),
-                    }
+                    if j.ins<3 { self.load_control.push(j.clone())};
                 }, 
                 InformationElement::OverloadControlInfo(j) => {  
-                    match j.ins {
-                        k if k<2 => self.overload_info.push(j.clone()),
-                        _ => (),
-                    }
+                    if j.ins<2 { self.overload_info.push(j.clone())};
                 }, 
                 InformationElement::ChargingId(j) => {  
-                    match (j.ins, self.charging_id.is_none()) {
-                        (0, true) => self.charging_id = Some(j.clone()),
-                        _ => (),
-                    }
+                    if let (0, true) = (j.ins, self.charging_id.is_none()) { self.charging_id = Some(j.clone()) };
                 },
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),
                 _ => (),
@@ -418,6 +331,7 @@ fn test_modify_bearer_resp_unmarshal () {
             apco:None,
             epco:None,
             max_packet_loss:None, 
+            ran_nas_cause:None,
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
             fteids: vec!(),
             bearer_qos:None,
@@ -519,6 +433,7 @@ fn test_modify_bearer_resp_marshal () {
             apco:None,
             epco:None,
             max_packet_loss:None, 
+            ran_nas_cause:None,
             ebi: Ebi { t: EBI, length: 1, ins: 0, value: 5 },
             fteids: vec!(),
             bearer_qos:None,

@@ -42,8 +42,10 @@ impl IEs for SelectionMode {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=MIN_IE_SIZE+SELECTION_MODE_LENGTH {
-            let mut data=SelectionMode::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=SelectionMode{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             data.mode = buffer[4] & 0x03;
             Ok(data)

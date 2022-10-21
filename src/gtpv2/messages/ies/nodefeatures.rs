@@ -48,7 +48,7 @@ impl IEs for NodeFeatures {
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        let flags = self.clone().into_array().iter().map( |x| if *x {1} else {0}).enumerate().map( |(i,x)| x<<i).collect::<Vec<_>>().iter().sum::<u8>();
+        let flags = self.clone().intoarray().iter().map( |x| if *x {1} else {0}).enumerate().map( |(i,x)| x<<i).collect::<Vec<_>>().iter().sum::<u8>();
         buffer_ie.push(flags);
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -56,11 +56,13 @@ impl IEs for NodeFeatures {
 
     fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len()>=(NODEFEATURES_LENGTH+MIN_IE_SIZE) {
-            let mut data=NodeFeatures::default();
-            data.length = u16::from_be_bytes([buffer[1], buffer[2]]);
+            let mut data=NodeFeatures{
+                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+                ..Default::default()
+            };
             data.ins = buffer[3];
             let flags = [buffer[4];5].iter().enumerate().map(|(i,x)| ((*x >> i) & 0x01) as u8 == 1).collect::<Vec<bool>>();
-            data.from_array(&flags[..]);
+            data.fromarray(&flags[..]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(NODEFEATURES))
@@ -74,7 +76,7 @@ impl IEs for NodeFeatures {
 }
 
 impl NodeFeatures {
-    fn into_array(self) -> [bool;5] {
+    fn intoarray(self) -> [bool;5] {
         [
             self.prn,                       
             self.mabr,                       
@@ -83,7 +85,7 @@ impl NodeFeatures {
             self.s1un,                      
         ]
     }
-    fn from_array(&mut self, i:&[bool]) {
+    fn fromarray(&mut self, i:&[bool]) {
             self.prn = i[0];                      
             self.mabr = i[1];                      
             self.ntsr = i[2];                      
