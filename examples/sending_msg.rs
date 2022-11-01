@@ -6,7 +6,7 @@ fn main() {
     let mut send_header=Gtpv1Header::default();
     send_header.msgtype=ERROR_INDICATION;
     send_header.sequence_number=Some(2000);
-    send_header.teid=4000;
+    send_header.teid=4001;
     let mut port = UDPPort::default();
     port.udp_port=6511;
     send_header.extension_headers = Some(vec!(ExtensionHeader::UDPPort(port)));
