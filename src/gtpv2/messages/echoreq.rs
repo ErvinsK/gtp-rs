@@ -50,7 +50,7 @@ impl Messages for EchoRequest {
         }
 
         if (message.header.length as usize)+4<=buffer.len() {
-            match InformationElement::decoder(&buffer[12..]) {
+            match InformationElement::decoder(&buffer[MIN_HEADER_LENGTH as usize..]) {
                 Ok(i) => {
                     match message.fromvec(i) {
                         Ok(_) => Ok(message),

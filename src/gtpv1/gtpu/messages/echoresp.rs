@@ -60,14 +60,25 @@ impl Messages for EchoResponse {
             return Err(GTPV1Error::MessageIncorrectMessageType);
         }
 
-        if message.header.length as usize <= buffer.len() {
+        if (message.header.length as usize + 4) < buffer.len() {
             let mut cursor = message.header.get_header_size();
-            match Recovery::unmarshal(&buffer[cursor..]) {
-                Ok(i) => message.recovery=i,
-                Err(_) => return Err(GTPV1Error::MessageMandatoryIEMissing),
+            if cursor < buffer.len() {
+                if let RECOVERY = buffer[cursor] {
+                    match Recovery::unmarshal(&buffer[cursor..]) {
+                        Ok(i) => message.recovery=i,
+                        Err(i) => return Err(i),
+                    }
+                } else {
+                    return Err(GTPV1Error::MessageMandatoryIEMissing);
+                }
+
+            } else {
+                return Err(GTPV1Error::MessageMandatoryIEMissing);
             }
             cursor+=message.recovery.len();
-            if let Ok(i) = PrivateExtension::unmarshal(&buffer[cursor..]) { message.private_ext=Some(i) };
+            if cursor < buffer.len() {
+                if let Ok(i) = PrivateExtension::unmarshal(&buffer[cursor..]) { message.private_ext=Some(i) };
+            }
             Ok(message)    
         } else {
             Err(GTPV1Error::MessageLengthError)

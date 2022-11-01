@@ -50,7 +50,7 @@ impl Messages for EchoResponse {
         }
 
         if (message.header.length as usize)+4<=buffer.len() {
-            match InformationElement::decoder(&buffer[12..]) {
+            match InformationElement::decoder(&buffer[MIN_HEADER_LENGTH as usize..]) {
                 Ok(i) => {
                     match message.fromvec(i) {
                         Ok(_) => Ok(message),
@@ -67,7 +67,7 @@ impl Messages for EchoResponse {
     fn tovec(&self) -> Vec<InformationElement> {
         let mut elements:Vec<InformationElement> = vec!();
         
-        elements.push(InformationElement::Recovery(self.recovery.clone()));
+        elements.push(self.recovery.clone().into());
         
         if let Some(i) = self.sending_node_features.clone() { elements.push(i.into()) };
     
