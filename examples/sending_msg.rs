@@ -1,15 +1,15 @@
 use std::net::UdpSocket;
-use ::gtpu::gtpv1::gtpu::{*};
+use ::gtp_rs::gtpv1::gtpu::{*};
 use std::net::{IpAddr,Ipv6Addr};
 
 fn main() {
-    let mut send_header=gtpu::gtpv1::gtpu::Gtpv1Header::default();
+    let mut send_header=Gtpv1Header::default();
     send_header.msgtype=ERROR_INDICATION;
     send_header.sequence_number=Some(2000);
     send_header.teid=4000;
-    let mut port = gtpu::gtpv1::gtpu::UDPPort::default();
+    let mut port = UDPPort::default();
     port.udp_port=6511;
-    send_header.extension_headers = Some(vec!(gtpu::gtpv1::gtpu::ExtensionHeader::UDPPort(port)));
+    send_header.extension_headers = Some(vec!(ExtensionHeader::UDPPort(port)));
     let mut buffer:Vec<u8> = vec!();
     let mut message = ErrorIndication::default();
     message.header=send_header;
