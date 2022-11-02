@@ -7,7 +7,9 @@
 
 # Disclaimer
 
-It is still an experimental project (**WIP**) for me as I'm still learnig Rust and developing my Rust skills. Thus, the code still requires some polishing, optimization and further development. 
+It is still an experimental project with many items **WIP**.
+
+I'm still developing and advancing my Rust programming skills. Thus, the code might require additional polishing, optimization and further improvement. 
 
 # Things To Do
 
@@ -19,7 +21,7 @@ It is still an experimental project (**WIP**) for me as I'm still learnig Rust a
 
 # Author(s)
 
-Ervins Kampans [Github] (https://github.com/ErvinsK/ErvinsK)
+Ervins Kampans [Github](https://github.com/ErvinsK/ErvinsK)
 
 # LICENSE
 
