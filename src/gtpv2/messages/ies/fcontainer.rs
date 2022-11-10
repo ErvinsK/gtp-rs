@@ -15,7 +15,7 @@ pub enum Container {
     Eutran(Vec<u8>),
     Nbifom(Vec<u8>),
     EnDc(Vec<u8>),
-    Unknown(Vec<u8>),   // Container Type is in put into the first element of the containing vector
+    Unknown(Vec<u8>),   // Container Type is put into the first element of the containing vector
 }
 
 // F-Container IE implementation

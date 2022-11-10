@@ -1,5 +1,7 @@
 use crate::gtpv2::{errors::GTPV2Error, messages::ies::*};
 
+use super::transactionid::TransactionIdentifier;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum InformationElement {
     Imsi(Imsi),
@@ -48,10 +50,10 @@ pub enum InformationElement {
     HopCounter(HopCounter),
     UeTimeZone(UeTimeZone),
     TraceReference(TraceReference),
-    // Complete Request Message
-    // GUTI
+    CompleteRequestMessage(CompleteRequestMessage),
+    Guti(Guti),
     Fcontainer(Fcontainer),
-    // F-Cause
+    Fcause(Fcause),
     PlmnId(PlmnId),
     // Target Identification
     PacketFlowId(PacketFlowId),
@@ -64,10 +66,10 @@ pub enum InformationElement {
     ChangeReportingAction(ChangeReportingAction),
     Fqcsid(Fqcsid),
     ChannelNeeded(ChannelNeeded),
-    // eMLPP Priority
+    EmlppPriority(EmlppPriority),
     NodeType(NodeType),
     Fqdn(Fqdn),
-    // Transaction Identifier
+    TransactionIdentifier(TransactionIdentifier),
     // MBMS Session Duration
     // MBMS Service Area
     // MBMS Session Identifier
@@ -77,7 +79,7 @@ pub enum InformationElement {
     RfspIndex(RfspIndex),
     Uci(Uci),
     CSGInformationReportingAction(CSGInformationReportingAction),
-    // CSG ID
+    CsgId(CsgId),
     // CSG Membership Indication
     ServiceIndicator(ServiceIndicator),
     DetachType(DetachType),
@@ -191,10 +193,10 @@ impl InformationElement {
             InformationElement::HopCounter(i) => i.marshal(buffer),
             InformationElement::UeTimeZone(i) => i.marshal(buffer),
             InformationElement::TraceReference(i) => i.marshal(buffer),
-            // Complete Request Message
-            // GUTI
+            InformationElement::CompleteRequestMessage(i) => i.marshal(buffer),
+            InformationElement::Guti(i) => i.marshal(buffer),
             InformationElement::Fcontainer(i) => i.marshal(buffer),
-            // F-Cause
+            InformationElement::Fcause(i) => i.marshal(buffer),
             InformationElement::PlmnId(i) => i.marshal(buffer),
             // Target Identification
             InformationElement::PacketFlowId(i) => i.marshal(buffer),
@@ -207,10 +209,10 @@ impl InformationElement {
             InformationElement::ChangeReportingAction(i) => i.marshal(buffer),
             InformationElement::Fqcsid(i) => i.marshal(buffer),
             InformationElement::ChannelNeeded(i) => i.marshal(buffer),
-            // eMLPP Priority
+            InformationElement::EmlppPriority(i) => i.marshal(buffer),
             InformationElement::NodeType(i) => i.marshal(buffer),
             InformationElement::Fqdn(i) => i.marshal(buffer),
-            // Transaction Identifier
+            InformationElement::TransactionIdentifier(i) => i.marshal(buffer),
             // MBMS Session Duration
             // MBMS Service Area
             // MBMS Session Identifier
@@ -220,7 +222,7 @@ impl InformationElement {
             InformationElement::RfspIndex(i) => i.marshal(buffer),
             InformationElement::Uci(i) => i.marshal(buffer),
             InformationElement::CSGInformationReportingAction(i) => i.marshal(buffer),
-            // CSG ID
+            InformationElement::CsgId(i) => i.marshal(buffer),
             // CSG Membership Indication
             InformationElement::ServiceIndicator(i) => i.marshal(buffer),
             InformationElement::DetachType(i) => i.marshal(buffer),
@@ -641,8 +643,24 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // Complete Request Message
-                    // GUTI
+                    116 => {
+                        match CompleteRequestMessage::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
+                    117 => {
+                        match Guti::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     118 => {
                         match Fcontainer::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
@@ -652,7 +670,15 @@ impl InformationElement {
                             Err(j) => return Err(j),
                         }
                     },
-                    // F-Cause
+                    119 => {
+                        match Fcause::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     120 => {
                         match PlmnId::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
@@ -667,7 +693,7 @@ impl InformationElement {
                         match PacketFlowId::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::PacketFlowId(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -676,7 +702,7 @@ impl InformationElement {
                         match RabContext::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::RabContext(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -685,7 +711,7 @@ impl InformationElement {
                         match SrcRncPdcpCtxInfo::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::SrcRncPdcpCtxInfo(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -694,7 +720,7 @@ impl InformationElement {
                         match PortNumber::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::PortNumber(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -703,7 +729,7 @@ impl InformationElement {
                         match ApnRestriction::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::ApnRestriction(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -712,7 +738,7 @@ impl InformationElement {
                         match SelectionMode::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::SelectionMode(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -722,7 +748,7 @@ impl InformationElement {
                         match ChangeReportingAction::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::ChangeReportingAction(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -731,7 +757,7 @@ impl InformationElement {
                         match Fqcsid::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::Fqcsid(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -740,17 +766,25 @@ impl InformationElement {
                         match ChannelNeeded::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::ChannelNeeded(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
                     },
-                    // eMLPP Priority
+                    134 => {
+                        match EmlppPriority::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     135 => {
                         match NodeType::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::NodeType(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -759,12 +793,20 @@ impl InformationElement {
                         match Fqdn::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::Fqdn(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
                     },
-                    // Transaction Identifier
+                    137 => {
+                        match TransactionIdentifier::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // MBMS Session Duration
                     // MBMS Service Area
                     // MBMS Session Identifier
@@ -775,7 +817,7 @@ impl InformationElement {
                         match RfspIndex::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::RfspIndex(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -784,7 +826,7 @@ impl InformationElement {
                         match Uci::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::Uci(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -793,18 +835,26 @@ impl InformationElement {
                         match CSGInformationReportingAction::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::CSGInformationReportingAction(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
                     },
-                    // CSG ID
+                    147 => {
+                        match CsgId::unmarshal(&buffer[cursor..]) {
+                            Ok(i) => {
+                                cursor+=i.len();
+                                ies.push(i.into());
+                            },
+                            Err(j) => return Err(j),
+                        }
+                    },
                     // CSG Membership Indication
                     149 => {
                         match ServiceIndicator::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::ServiceIndicator(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -813,7 +863,7 @@ impl InformationElement {
                         match DetachType::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::DetachType(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -822,7 +872,7 @@ impl InformationElement {
                         match Ldn::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::Ldn(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -841,7 +891,7 @@ impl InformationElement {
                         match Throttling::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::Throttling(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -850,7 +900,7 @@ impl InformationElement {
                         match Arp::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::Arp(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -859,7 +909,7 @@ impl InformationElement {
                         match EpcTimer::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::EpcTimer(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -868,7 +918,7 @@ impl InformationElement {
                         match Spi::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::Spi(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -1119,7 +1169,7 @@ impl InformationElement {
                         match RemoteUeIpInformation::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::RemoteUeIpInformation(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
@@ -1128,7 +1178,7 @@ impl InformationElement {
                         match CIoTOptimizationSupportIndication::unmarshal(&buffer[cursor..]) {
                             Ok(i) => {
                                 cursor+=i.len();
-                                ies.push(InformationElement::CIoTOptimizationSupportIndication(i));
+                                ies.push(i.into());
                             },
                             Err(j) => return Err(j),
                         }
