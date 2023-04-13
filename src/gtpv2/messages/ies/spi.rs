@@ -1,25 +1,34 @@
 // Signalling Priority Indication (SPI) IE - according to 3GPP TS 29.274 V15.5.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
+use crate::gtpv2::{
+    errors::GTPV2Error,
+    messages::ies::{commons::*, ie::*},
+    utils::*,
+};
 
 // SPI IE TV
 
-pub const SPI:u8 = 157;
-pub const SPI_LENGTH:usize = 1;
+pub const SPI: u8 = 157;
+pub const SPI_LENGTH: usize = 1;
 
-// SPI IE implementation 
+// SPI IE implementation
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Spi {
-    pub t:u8,
-    pub length:u16,
-    pub ins:u8,
-    pub lapi:bool,          // LAPI - Low Access Priority Indication
+    pub t: u8,
+    pub length: u16,
+    pub ins: u8,
+    pub lapi: bool, // LAPI - Low Access Priority Indication
 }
 
 impl Default for Spi {
     fn default() -> Spi {
-        Spi { t: SPI, length:SPI_LENGTH as u16, ins:0, lapi:false }        
+        Spi {
+            t: SPI,
+            length: SPI_LENGTH as u16,
+            ins: 0,
+            lapi: false,
+        }
     }
 }
 
@@ -30,8 +39,8 @@ impl From<Spi> for InformationElement {
 }
 
 impl IEs for Spi {
-    fn marshal (&self, buffer: &mut Vec<u8>) {
-        let mut buffer_ie:Vec<u8> = vec!();  
+    fn marshal(&self, buffer: &mut Vec<u8>) {
+        let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
@@ -43,10 +52,10 @@ impl IEs for Spi {
         buffer.append(&mut buffer_ie);
     }
 
-    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>= SPI_LENGTH + MIN_IE_SIZE {
-            let mut data = Spi{
-                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
+        if buffer.len() >= SPI_LENGTH + MIN_IE_SIZE {
+            let mut data = Spi {
+                length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ..Default::default()
             };
             data.ins = buffer[3];
@@ -60,29 +69,39 @@ impl IEs for Spi {
             Err(GTPV2Error::IEInvalidLength(SPI))
         }
     }
-    
-    fn len (&self) -> usize {
-       (self.length as usize) + MIN_IE_SIZE 
+
+    fn len(&self) -> usize {
+        (self.length as usize) + MIN_IE_SIZE
     }
 
-    fn is_empty (&self) -> bool {
+    fn is_empty(&self) -> bool {
         self.length == 0
     }
 }
 
 #[test]
-fn spi_ie_unmarshal_test () {
-    let encoded:[u8;5]=[0x9d, 0x00, 0x01, 0x00, 0x01];
-    let decoded = Spi { t:SPI, length: SPI_LENGTH as u16, ins:0, lapi: true };
+fn spi_ie_unmarshal_test() {
+    let encoded: [u8; 5] = [0x9d, 0x00, 0x01, 0x00, 0x01];
+    let decoded = Spi {
+        t: SPI,
+        length: SPI_LENGTH as u16,
+        ins: 0,
+        lapi: true,
+    };
     let i = Spi::unmarshal(&encoded);
     assert_eq!(i.unwrap(), decoded);
 }
 
 #[test]
-fn spi_ie_marshal_test () {
-    let encoded:[u8;5]=[0x9d, 0x00, 0x01, 0x00, 0x01];
-    let decoded = Spi { t:SPI, length: SPI_LENGTH as u16, ins:0, lapi: true };
-    let mut buffer:Vec<u8>=vec!();
+fn spi_ie_marshal_test() {
+    let encoded: [u8; 5] = [0x9d, 0x00, 0x01, 0x00, 0x01];
+    let decoded = Spi {
+        t: SPI,
+        length: SPI_LENGTH as u16,
+        ins: 0,
+        lapi: true,
+    };
+    let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);
 }

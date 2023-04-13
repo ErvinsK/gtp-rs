@@ -1,25 +1,34 @@
-// Packet TMSI (P-TMSI) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
+// Packet TMSI (P-TMSI) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
+use crate::gtpv2::{
+    errors::GTPV2Error,
+    messages::ies::{commons::*, ie::*},
+    utils::*,
+};
 
 // P-TMSI Type
 
-pub const PTMSI:u8 = 111;
-pub const PTMSI_LENGTH:usize = 4;
+pub const PTMSI: u8 = 111;
+pub const PTMSI_LENGTH: usize = 4;
 
 // P-TMSI IE implementation
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Ptmsi {
-    pub t:u8,
-    pub length:u16,
-    pub ins:u8,
-    pub ptmsi:u32,
+    pub t: u8,
+    pub length: u16,
+    pub ins: u8,
+    pub ptmsi: u32,
 }
 
 impl Default for Ptmsi {
     fn default() -> Self {
-        Ptmsi { t: PTMSI, length:PTMSI_LENGTH as u16, ins:0, ptmsi:0}
+        Ptmsi {
+            t: PTMSI,
+            length: PTMSI_LENGTH as u16,
+            ins: 0,
+            ptmsi: 0,
+        }
     }
 }
 
@@ -30,8 +39,8 @@ impl From<Ptmsi> for InformationElement {
 }
 
 impl IEs for Ptmsi {
-    fn marshal (&self, buffer: &mut Vec<u8>) {
-        let mut buffer_ie:Vec<u8> = vec!();  
+    fn marshal(&self, buffer: &mut Vec<u8>) {
+        let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
@@ -40,41 +49,51 @@ impl IEs for Ptmsi {
         buffer.append(&mut buffer_ie);
     }
 
-    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>=MIN_IE_SIZE+PTMSI_LENGTH {
-            let mut data=Ptmsi{
-                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
+        if buffer.len() >= MIN_IE_SIZE + PTMSI_LENGTH {
+            let mut data = Ptmsi {
+                length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ..Default::default()
             };
             data.ins = buffer[3];
-            data.ptmsi = u32::from_be_bytes([buffer[4],buffer[5],buffer[6],buffer[7]]);
+            data.ptmsi = u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(PTMSI))
         }
     }
 
-    fn len (&self) -> usize {
-       (self.length as usize)+MIN_IE_SIZE 
+    fn len(&self) -> usize {
+        (self.length as usize) + MIN_IE_SIZE
     }
 
-    fn is_empty (&self) -> bool {
+    fn is_empty(&self) -> bool {
         self.length == 0
     }
 }
 
 #[test]
-fn ptmsi_ie_marshal_test () {
-    let encoded:[u8;8]=[0x6f, 0x00, 0x04, 0x00, 0xff, 0xff, 0xff, 0xff];
-    let decoded = Ptmsi { t:PTMSI, length: PTMSI_LENGTH as u16, ins:0, ptmsi:0xffffffff };
-    let mut buffer:Vec<u8>=vec!();
+fn ptmsi_ie_marshal_test() {
+    let encoded: [u8; 8] = [0x6f, 0x00, 0x04, 0x00, 0xff, 0xff, 0xff, 0xff];
+    let decoded = Ptmsi {
+        t: PTMSI,
+        length: PTMSI_LENGTH as u16,
+        ins: 0,
+        ptmsi: 0xffffffff,
+    };
+    let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
-    assert_eq!(buffer,encoded);
+    assert_eq!(buffer, encoded);
 }
 
 #[test]
-fn ptmsi_ie_unmarshal_test () {
-    let encoded:[u8;8]=[0x6f, 0x00, 0x04, 0x00, 0xff, 0xff, 0xff, 0xff];
-    let decoded = Ptmsi { t:PTMSI, length: PTMSI_LENGTH as u16, ins:0, ptmsi:0xffffffff };
+fn ptmsi_ie_unmarshal_test() {
+    let encoded: [u8; 8] = [0x6f, 0x00, 0x04, 0x00, 0xff, 0xff, 0xff, 0xff];
+    let decoded = Ptmsi {
+        t: PTMSI,
+        length: PTMSI_LENGTH as u16,
+        ins: 0,
+        ptmsi: 0xffffffff,
+    };
     assert_eq!(Ptmsi::unmarshal(&encoded).unwrap(), decoded);
 }

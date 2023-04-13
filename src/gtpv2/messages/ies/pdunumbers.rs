@@ -1,29 +1,42 @@
-// PDU Numbers IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
+// PDU Numbers IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
+use crate::gtpv2::{
+    errors::GTPV2Error,
+    messages::ies::{commons::*, ie::*},
+    utils::*,
+};
 
 // PDU Numbers IE Type
 
-pub const PDUNMBRS:u8 = 110;
-pub const PDUNMBRS_LENGTH:usize = 9;
+pub const PDUNMBRS: u8 = 110;
+pub const PDUNMBRS_LENGTH: usize = 9;
 
 // PDU Numbers IE implementation
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PduNumbers {
-    pub t:u8,
-    pub length:u16,
-    pub ins:u8,
-    pub nsapi:u8,
-    pub dl_gtpu_sqn:u16,
-    pub ul_gtpu_sqn:u16,
-    pub send_npdu:u16,
-    pub receive_npdu:u16,    
+    pub t: u8,
+    pub length: u16,
+    pub ins: u8,
+    pub nsapi: u8,
+    pub dl_gtpu_sqn: u16,
+    pub ul_gtpu_sqn: u16,
+    pub send_npdu: u16,
+    pub receive_npdu: u16,
 }
 
 impl Default for PduNumbers {
     fn default() -> Self {
-        PduNumbers { t: PDUNMBRS, length:PDUNMBRS_LENGTH as u16, ins:0, nsapi:0, dl_gtpu_sqn:0, ul_gtpu_sqn:0, send_npdu:0, receive_npdu:0}
+        PduNumbers {
+            t: PDUNMBRS,
+            length: PDUNMBRS_LENGTH as u16,
+            ins: 0,
+            nsapi: 0,
+            dl_gtpu_sqn: 0,
+            ul_gtpu_sqn: 0,
+            send_npdu: 0,
+            receive_npdu: 0,
+        }
     }
 }
 
@@ -34,8 +47,8 @@ impl From<PduNumbers> for InformationElement {
 }
 
 impl IEs for PduNumbers {
-    fn marshal (&self, buffer: &mut Vec<u8>) {
-        let mut buffer_ie:Vec<u8> = vec!();  
+    fn marshal(&self, buffer: &mut Vec<u8>) {
+        let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
@@ -48,45 +61,67 @@ impl IEs for PduNumbers {
         buffer.append(&mut buffer_ie);
     }
 
-    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>=MIN_IE_SIZE+PDUNMBRS_LENGTH {
-            let mut data=PduNumbers{
-                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
+        if buffer.len() >= MIN_IE_SIZE + PDUNMBRS_LENGTH {
+            let mut data = PduNumbers {
+                length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ..Default::default()
             };
             data.ins = buffer[3];
             data.nsapi = buffer[4] & 0x0f;
-            data.dl_gtpu_sqn = u16::from_be_bytes([buffer[5],buffer[6]]);
-            data.ul_gtpu_sqn = u16::from_be_bytes([buffer[7],buffer[8]]);
-            data.send_npdu = u16::from_be_bytes([buffer[9],buffer[10]]);
-            data.receive_npdu = u16::from_be_bytes([buffer[11],buffer[12]]);
+            data.dl_gtpu_sqn = u16::from_be_bytes([buffer[5], buffer[6]]);
+            data.ul_gtpu_sqn = u16::from_be_bytes([buffer[7], buffer[8]]);
+            data.send_npdu = u16::from_be_bytes([buffer[9], buffer[10]]);
+            data.receive_npdu = u16::from_be_bytes([buffer[11], buffer[12]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(PDUNMBRS))
         }
     }
 
-    fn len (&self) -> usize {
-       (self.length as usize)+MIN_IE_SIZE 
+    fn len(&self) -> usize {
+        (self.length as usize) + MIN_IE_SIZE
     }
 
-    fn is_empty (&self) -> bool {
+    fn is_empty(&self) -> bool {
         self.length == 0
     }
 }
 
 #[test]
-fn pdu_numbers_ie_marshal_test () {
-    let encoded:[u8;13]=[0x6e, 0x00, 0x09, 0x00, 0x05, 0xff, 0x00, 0x00, 0xff, 0xaa, 0x00, 0x00, 0xaa];
-    let decoded = PduNumbers { t:PDUNMBRS, length: PDUNMBRS_LENGTH as u16, ins:0, nsapi:5, dl_gtpu_sqn:0xff00, ul_gtpu_sqn:0x00ff, send_npdu:0xaa00, receive_npdu:0x00aa };
-    let mut buffer:Vec<u8>=vec!();
+fn pdu_numbers_ie_marshal_test() {
+    let encoded: [u8; 13] = [
+        0x6e, 0x00, 0x09, 0x00, 0x05, 0xff, 0x00, 0x00, 0xff, 0xaa, 0x00, 0x00, 0xaa,
+    ];
+    let decoded = PduNumbers {
+        t: PDUNMBRS,
+        length: PDUNMBRS_LENGTH as u16,
+        ins: 0,
+        nsapi: 5,
+        dl_gtpu_sqn: 0xff00,
+        ul_gtpu_sqn: 0x00ff,
+        send_npdu: 0xaa00,
+        receive_npdu: 0x00aa,
+    };
+    let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
-    assert_eq!(buffer,encoded);
+    assert_eq!(buffer, encoded);
 }
 
 #[test]
-fn pdu_numbers_ie_unmarshal_test () {
-    let encoded:[u8;13]=[0x6e, 0x00, 0x09, 0x00, 0x05, 0xff, 0x00, 0x00, 0xff, 0xaa, 0x00, 0x00, 0xaa];
-    let decoded = PduNumbers { t:PDUNMBRS, length: PDUNMBRS_LENGTH as u16, ins:0, nsapi:5, dl_gtpu_sqn:0xff00, ul_gtpu_sqn:0x00ff, send_npdu:0xaa00, receive_npdu:0x00aa };
+fn pdu_numbers_ie_unmarshal_test() {
+    let encoded: [u8; 13] = [
+        0x6e, 0x00, 0x09, 0x00, 0x05, 0xff, 0x00, 0x00, 0xff, 0xaa, 0x00, 0x00, 0xaa,
+    ];
+    let decoded = PduNumbers {
+        t: PDUNMBRS,
+        length: PDUNMBRS_LENGTH as u16,
+        ins: 0,
+        nsapi: 5,
+        dl_gtpu_sqn: 0xff00,
+        ul_gtpu_sqn: 0x00ff,
+        send_npdu: 0xaa00,
+        receive_npdu: 0x00aa,
+    };
     assert_eq!(PduNumbers::unmarshal(&encoded).unwrap(), decoded);
 }

@@ -1,32 +1,36 @@
 // IPv4 Configuation Parameters (IP4CP) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
+use crate::gtpv2::{
+    errors::GTPV2Error,
+    messages::ies::{commons::*, ie::*},
+    utils::*,
+};
 use std::net::Ipv4Addr;
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
 
 // IP4CP Address IE Type
 
-pub const IP4CP:u8 = 166;
+pub const IP4CP: u8 = 166;
 pub const IP4CP_LENGTH: usize = 5;
 
 // IP4CP IE implementation
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Ip4Cp {
-    pub t:u8,
-    pub length:u16,
-    pub ins:u8,
-    pub subnet_prefix:u8,
-    pub ip:Ipv4Addr,
+    pub t: u8,
+    pub length: u16,
+    pub ins: u8,
+    pub subnet_prefix: u8,
+    pub ip: Ipv4Addr,
 }
 
 impl Default for Ip4Cp {
     fn default() -> Self {
         Ip4Cp {
-            t:IP4CP,
-            length:IP4CP_LENGTH as u16,
-            ins:0,
+            t: IP4CP,
+            length: IP4CP_LENGTH as u16,
+            ins: 0,
             subnet_prefix: 0,
-            ip:Ipv4Addr::new(0,0,0,0),
+            ip: Ipv4Addr::new(0, 0, 0, 0),
         }
     }
 }
@@ -39,7 +43,7 @@ impl From<Ip4Cp> for InformationElement {
 
 impl IEs for Ip4Cp {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        let mut buffer_ie:Vec<u8> = vec!();  
+        let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
@@ -50,9 +54,9 @@ impl IEs for Ip4Cp {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>=MIN_IE_SIZE+IP4CP_LENGTH {
-            let mut data = Ip4Cp{
-                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+        if buffer.len() >= MIN_IE_SIZE + IP4CP_LENGTH {
+            let mut data = Ip4Cp {
+                length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ..Default::default()
             };
             data.ins = buffer[3];
@@ -62,31 +66,42 @@ impl IEs for Ip4Cp {
         } else {
             Err(GTPV2Error::IEInvalidLength(IP4CP))
         }
-        
     }
-    
+
     fn len(&self) -> usize {
         (self.length as usize) + MIN_IE_SIZE
     }
 
-    fn is_empty (&self) -> bool {
+    fn is_empty(&self) -> bool {
         self.length == 0
     }
 }
 
 #[test]
-fn ip4cp_address_ie_ipv4_unmarshal_test () {
-    let encoded:[u8;9]=[0xa6, 0x00, 0x05, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00];
-    let decoded = Ip4Cp { t:IP4CP, length:5, ins:0, subnet_prefix:32, ip:Ipv4Addr::new(0,0,0,0) };
+fn ip4cp_address_ie_ipv4_unmarshal_test() {
+    let encoded: [u8; 9] = [0xa6, 0x00, 0x05, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00];
+    let decoded = Ip4Cp {
+        t: IP4CP,
+        length: 5,
+        ins: 0,
+        subnet_prefix: 32,
+        ip: Ipv4Addr::new(0, 0, 0, 0),
+    };
     let i = Ip4Cp::unmarshal(&encoded);
     assert_eq!(i.unwrap(), decoded);
 }
 
 #[test]
-fn ip4cp_address_ie_ipv4_marshal_test () {
-    let encoded:[u8;9]=[0xa6, 0x00, 0x05, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00];
-    let decoded = Ip4Cp { t:IP4CP, length:5, ins:0, subnet_prefix:32, ip:Ipv4Addr::new(0,0,0,0) };
-    let mut buffer:Vec<u8>=vec!();
+fn ip4cp_address_ie_ipv4_marshal_test() {
+    let encoded: [u8; 9] = [0xa6, 0x00, 0x05, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00];
+    let decoded = Ip4Cp {
+        t: IP4CP,
+        length: 5,
+        ins: 0,
+        subnet_prefix: 32,
+        ip: Ipv4Addr::new(0, 0, 0, 0),
+    };
+    let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);
 }

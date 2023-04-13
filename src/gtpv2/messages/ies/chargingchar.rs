@@ -1,25 +1,34 @@
-// Charging Characteristics IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
+// Charging Characteristics IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*, ie::*}};
+use crate::gtpv2::{
+    errors::GTPV2Error,
+    messages::ies::{commons::*, ie::*},
+    utils::*,
+};
 
 // Charging Characteristics IE Type
 
-pub const CHARGINGCHAR:u8 = 95;
-pub const CHARGINGCHAR_LENGTH:usize = 2;
+pub const CHARGINGCHAR: u8 = 95;
+pub const CHARGINGCHAR_LENGTH: usize = 2;
 
 // Charging Characteristics IE implementation
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ChargingCharacteristics {
-    pub t:u8,
-    pub length:u16,
-    pub ins:u8,
-    pub charging_char:u16,
+    pub t: u8,
+    pub length: u16,
+    pub ins: u8,
+    pub charging_char: u16,
 }
 
 impl Default for ChargingCharacteristics {
     fn default() -> Self {
-        ChargingCharacteristics { t: CHARGINGCHAR, length:2, ins:0, charging_char:0}
+        ChargingCharacteristics {
+            t: CHARGINGCHAR,
+            length: 2,
+            ins: 0,
+            charging_char: 0,
+        }
     }
 }
 
@@ -30,8 +39,8 @@ impl From<ChargingCharacteristics> for InformationElement {
 }
 
 impl IEs for ChargingCharacteristics {
-    fn marshal (&self, buffer: &mut Vec<u8>) {
-        let mut buffer_ie:Vec<u8> = vec!();  
+    fn marshal(&self, buffer: &mut Vec<u8>) {
+        let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
@@ -40,41 +49,54 @@ impl IEs for ChargingCharacteristics {
         buffer.append(&mut buffer_ie);
     }
 
-    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>=MIN_IE_SIZE+CHARGINGCHAR_LENGTH {
-            let mut data=ChargingCharacteristics{
-                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
+        if buffer.len() >= MIN_IE_SIZE + CHARGINGCHAR_LENGTH {
+            let mut data = ChargingCharacteristics {
+                length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ..Default::default()
             };
             data.ins = buffer[3];
-            data.charging_char = u16::from_be_bytes([buffer[4],buffer[5]]);
+            data.charging_char = u16::from_be_bytes([buffer[4], buffer[5]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(CHARGINGCHAR))
         }
     }
 
-    fn len (&self) -> usize {
-       CHARGINGCHAR_LENGTH + MIN_IE_SIZE 
+    fn len(&self) -> usize {
+        CHARGINGCHAR_LENGTH + MIN_IE_SIZE
     }
 
-    fn is_empty (&self) -> bool {
+    fn is_empty(&self) -> bool {
         self.length == 0
     }
 }
 
 #[test]
-fn chargingchar_ie_marshal_test () {
-    let encoded:[u8;6]=[0x5f, 0x00, 0x02, 0x00, 0xff, 0xff];
-    let decoded = ChargingCharacteristics { t:CHARGINGCHAR, length: 2, ins:0, charging_char:0xffff };
-    let mut buffer:Vec<u8>=vec!();
+fn chargingchar_ie_marshal_test() {
+    let encoded: [u8; 6] = [0x5f, 0x00, 0x02, 0x00, 0xff, 0xff];
+    let decoded = ChargingCharacteristics {
+        t: CHARGINGCHAR,
+        length: 2,
+        ins: 0,
+        charging_char: 0xffff,
+    };
+    let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
-    assert_eq!(buffer,encoded);
+    assert_eq!(buffer, encoded);
 }
 
 #[test]
-fn chargingchar_ie_unmarshal_test () {
-    let encoded:[u8;6]=[0x5f, 0x00, 0x02, 0x00, 0xff, 0xff];
-    let decoded = ChargingCharacteristics { t:CHARGINGCHAR, length: 2, ins:0, charging_char:0xffff };
-    assert_eq!(ChargingCharacteristics::unmarshal(&encoded).unwrap(), decoded);
+fn chargingchar_ie_unmarshal_test() {
+    let encoded: [u8; 6] = [0x5f, 0x00, 0x02, 0x00, 0xff, 0xff];
+    let decoded = ChargingCharacteristics {
+        t: CHARGINGCHAR,
+        length: 2,
+        ins: 0,
+        charging_char: 0xffff,
+    };
+    assert_eq!(
+        ChargingCharacteristics::unmarshal(&encoded).unwrap(),
+        decoded
+    );
 }

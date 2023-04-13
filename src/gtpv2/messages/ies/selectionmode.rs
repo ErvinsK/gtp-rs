@@ -1,25 +1,34 @@
-// Selection Mode IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) 
+// Selection Mode IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
+use crate::gtpv2::{
+    errors::GTPV2Error,
+    messages::ies::{commons::*, ie::*},
+    utils::*,
+};
 
 // Selection Mode IE Type
 
-pub const SELECTION_MODE:u8 = 128;
-pub const SELECTION_MODE_LENGTH:usize = 1;
+pub const SELECTION_MODE: u8 = 128;
+pub const SELECTION_MODE_LENGTH: usize = 1;
 
 // Charging Characteristics IE implementation
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SelectionMode {
-    pub t:u8,
-    pub length:u16,
-    pub ins:u8,
-    pub mode:u8,
+    pub t: u8,
+    pub length: u16,
+    pub ins: u8,
+    pub mode: u8,
 }
 
 impl Default for SelectionMode {
     fn default() -> Self {
-        SelectionMode { t: SELECTION_MODE, length:SELECTION_MODE_LENGTH as u16, ins:0, mode:0}
+        SelectionMode {
+            t: SELECTION_MODE,
+            length: SELECTION_MODE_LENGTH as u16,
+            ins: 0,
+            mode: 0,
+        }
     }
 }
 
@@ -30,8 +39,8 @@ impl From<SelectionMode> for InformationElement {
 }
 
 impl IEs for SelectionMode {
-    fn marshal (&self, buffer: &mut Vec<u8>) {
-        let mut buffer_ie:Vec<u8> = vec!();  
+    fn marshal(&self, buffer: &mut Vec<u8>) {
+        let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
@@ -40,10 +49,10 @@ impl IEs for SelectionMode {
         buffer.append(&mut buffer_ie);
     }
 
-    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>=MIN_IE_SIZE+SELECTION_MODE_LENGTH {
-            let mut data=SelectionMode{
-                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
+        if buffer.len() >= MIN_IE_SIZE + SELECTION_MODE_LENGTH {
+            let mut data = SelectionMode {
+                length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ..Default::default()
             };
             data.ins = buffer[3];
@@ -54,27 +63,37 @@ impl IEs for SelectionMode {
         }
     }
 
-    fn len (&self) -> usize {
-       SELECTION_MODE_LENGTH + MIN_IE_SIZE 
+    fn len(&self) -> usize {
+        SELECTION_MODE_LENGTH + MIN_IE_SIZE
     }
 
-    fn is_empty (&self) -> bool {
+    fn is_empty(&self) -> bool {
         self.length == 0
     }
 }
 
 #[test]
-fn selection_mode_ie_marshal_test () {
-    let encoded:[u8;5]=[0x80, 0x00, 0x01, 0x00, 0x00];
-    let decoded = SelectionMode { t:SELECTION_MODE, length: SELECTION_MODE_LENGTH as u16, ins:0, mode:0x00 };
-    let mut buffer:Vec<u8>=vec!();
+fn selection_mode_ie_marshal_test() {
+    let encoded: [u8; 5] = [0x80, 0x00, 0x01, 0x00, 0x00];
+    let decoded = SelectionMode {
+        t: SELECTION_MODE,
+        length: SELECTION_MODE_LENGTH as u16,
+        ins: 0,
+        mode: 0x00,
+    };
+    let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
-    assert_eq!(buffer,encoded);
+    assert_eq!(buffer, encoded);
 }
 
 #[test]
-fn chargingchar_ie_unmarshal_test () {
-    let encoded:[u8;5]=[0x80, 0x00, 0x01, 0x00, 0x00];
-    let decoded = SelectionMode { t:SELECTION_MODE, length: SELECTION_MODE_LENGTH as u16, ins:0, mode:0x00 };
+fn chargingchar_ie_unmarshal_test() {
+    let encoded: [u8; 5] = [0x80, 0x00, 0x01, 0x00, 0x00];
+    let decoded = SelectionMode {
+        t: SELECTION_MODE,
+        length: SELECTION_MODE_LENGTH as u16,
+        ins: 0,
+        mode: 0x00,
+    };
     assert_eq!(SelectionMode::unmarshal(&encoded).unwrap(), decoded);
 }

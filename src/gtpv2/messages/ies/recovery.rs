@@ -1,29 +1,34 @@
 // Recovery IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
+use crate::gtpv2::{
+    errors::GTPV2Error,
+    messages::ies::{commons::*, ie::*},
+    utils::*,
+};
 
 // Recovery IE Type
 
-pub const RECOVERY:u8 = 3;
-pub const RECOVERY_LENGTH:usize = 1;
+pub const RECOVERY: u8 = 3;
+pub const RECOVERY_LENGTH: usize = 1;
 
 // Recovery IE implementation
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Recovery {
-    pub t:u8,
-    pub length:u16,
-    pub ins:u8,
-    pub recovery:u8,
+    pub t: u8,
+    pub length: u16,
+    pub ins: u8,
+    pub recovery: u8,
 }
 
 impl Default for Recovery {
     fn default() -> Self {
-        Recovery { t: RECOVERY, 
-                length: RECOVERY_LENGTH as u16,
-                ins: 0,
-                recovery: 0,
-            }
+        Recovery {
+            t: RECOVERY,
+            length: RECOVERY_LENGTH as u16,
+            ins: 0,
+            recovery: 0,
+        }
     }
 }
 
@@ -34,8 +39,8 @@ impl From<Recovery> for InformationElement {
 }
 
 impl IEs for Recovery {
-    fn marshal (&self, buffer: &mut Vec<u8>) {
-        let mut buffer_ie:Vec<u8> = vec!();  
+    fn marshal(&self, buffer: &mut Vec<u8>) {
+        let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
@@ -44,10 +49,10 @@ impl IEs for Recovery {
         buffer.append(&mut buffer_ie);
     }
 
-    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len() >= (RECOVERY_LENGTH+MIN_IE_SIZE) {
-            let mut data = Recovery{
-                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
+        if buffer.len() >= (RECOVERY_LENGTH + MIN_IE_SIZE) {
+            let mut data = Recovery {
+                length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ..Default::default()
             };
             data.ins = buffer[3] & 0x0f;
@@ -55,37 +60,49 @@ impl IEs for Recovery {
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(RECOVERY))
-        }    
+        }
     }
 
-    fn len (&self) -> usize {
-        (self.length+4) as usize
+    fn len(&self) -> usize {
+        (self.length + 4) as usize
     }
 
-    fn is_empty (&self) -> bool {
+    fn is_empty(&self) -> bool {
         self.length == 0
     }
 }
 
 #[test]
 fn recovery_ie_marshal_test() {
-    let decoded=Recovery{ t: RECOVERY, length: RECOVERY_LENGTH as u16, ins:0, recovery:4 };
-    let encoded:[u8;5]=[0x03, 0x00, 0x01, 0x00, 0x04];
-    let mut buffer:Vec<u8>=vec!();
+    let decoded = Recovery {
+        t: RECOVERY,
+        length: RECOVERY_LENGTH as u16,
+        ins: 0,
+        recovery: 4,
+    };
+    let encoded: [u8; 5] = [0x03, 0x00, 0x01, 0x00, 0x04];
+    let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);
 }
 
 #[test]
 fn recovery_ie_unmarshal_test() {
-    let decoded=Recovery{ t: RECOVERY, length: RECOVERY_LENGTH as u16, ins:0, recovery:4 };
-    let encoded:[u8;5]=[0x03, 0x00, 0x01, 0x00, 0x04];
+    let decoded = Recovery {
+        t: RECOVERY,
+        length: RECOVERY_LENGTH as u16,
+        ins: 0,
+        recovery: 4,
+    };
+    let encoded: [u8; 5] = [0x03, 0x00, 0x01, 0x00, 0x04];
     assert_eq!(Recovery::unmarshal(&encoded).unwrap(), decoded);
 }
 
 #[test]
 fn recovery_ie_unmarshal_fail_test() {
-    let encoded:[u8;4]=[0x03, 0x00, 0x01, 0x00];
-    assert_eq!(Recovery::unmarshal(&encoded), Err(GTPV2Error::IEInvalidLength(RECOVERY)));
+    let encoded: [u8; 4] = [0x03, 0x00, 0x01, 0x00];
+    assert_eq!(
+        Recovery::unmarshal(&encoded),
+        Err(GTPV2Error::IEInvalidLength(RECOVERY))
+    );
 }
-

@@ -1,35 +1,51 @@
 // Secondary RAT Usage Data Report IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
+use crate::gtpv2::{
+    errors::GTPV2Error,
+    messages::ies::{commons::*, ie::*},
+    utils::*,
+};
 
 // Secondary RAT Usage Data Report IE TV
 
-pub const SCND_RAT_UDR:u8 = 201;
-pub const SCND_RAT_UDR_LENGTH:usize = 27;
+pub const SCND_RAT_UDR: u8 = 201;
+pub const SCND_RAT_UDR_LENGTH: usize = 27;
 
-// Secondary RAT Usage Data Report IE implementation 
+// Secondary RAT Usage Data Report IE implementation
 
 // IRSGW (Intended Receiver SGW): This bit defines if the Usage Data Report shall be used by the SGW or not. If set to 1 the SGW shall store it. If set to zero the SGW shall not store it.
 // IRPGW (Intended Receiver PGW): This bit defines if the Usage Data Report shall be sent to the PGW or not. If set to 1 the SGW shall forward it to PGW and PGW shall store it. If set to zero SGW shall not forward it to PGW.
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SecondaryRatUsageDataReport {
-    pub t:u8,
-    pub length:u16,
-    pub ins:u8,
-    pub irsgw:bool,
-    pub irpgw:bool,
-    pub rat_type:u8,
-    pub ebi:u8,
-    pub start_timestamp:u32,
-    pub end_timestamp:u32,
+    pub t: u8,
+    pub length: u16,
+    pub ins: u8,
+    pub irsgw: bool,
+    pub irpgw: bool,
+    pub rat_type: u8,
+    pub ebi: u8,
+    pub start_timestamp: u32,
+    pub end_timestamp: u32,
     pub usg_data_dl: u64,
-    pub usg_data_ul: u64,         
+    pub usg_data_ul: u64,
 }
 
 impl Default for SecondaryRatUsageDataReport {
     fn default() -> Self {
-        SecondaryRatUsageDataReport { t: SCND_RAT_UDR, length:SCND_RAT_UDR_LENGTH as u16, ins:0, irsgw:false, irpgw:false, rat_type:0, ebi:0, start_timestamp:0, end_timestamp:0, usg_data_dl:0, usg_data_ul:0 }        
+        SecondaryRatUsageDataReport {
+            t: SCND_RAT_UDR,
+            length: SCND_RAT_UDR_LENGTH as u16,
+            ins: 0,
+            irsgw: false,
+            irpgw: false,
+            rat_type: 0,
+            ebi: 0,
+            start_timestamp: 0,
+            end_timestamp: 0,
+            usg_data_dl: 0,
+            usg_data_ul: 0,
+        }
     }
 }
 
@@ -40,8 +56,8 @@ impl From<SecondaryRatUsageDataReport> for InformationElement {
 }
 
 impl IEs for SecondaryRatUsageDataReport {
-    fn marshal (&self, buffer: &mut Vec<u8>) {
-        let mut buffer_ie:Vec<u8> = vec!();  
+    fn marshal(&self, buffer: &mut Vec<u8>) {
+        let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
@@ -61,18 +77,18 @@ impl IEs for SecondaryRatUsageDataReport {
         buffer.append(&mut buffer_ie);
     }
 
-    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>= SCND_RAT_UDR_LENGTH + MIN_IE_SIZE {
-            let mut data = SecondaryRatUsageDataReport{
-                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
+        if buffer.len() >= SCND_RAT_UDR_LENGTH + MIN_IE_SIZE {
+            let mut data = SecondaryRatUsageDataReport {
+                length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ..Default::default()
             };
             data.ins = buffer[3];
             match buffer[4] & 0x03 {
-                0 => (data.irsgw,data.irpgw) = (false,false),
-                1 => (data.irsgw,data.irpgw) = (false,true),
-                2 => (data.irsgw,data.irpgw) = (true,false),
-                3 => (data.irsgw,data.irpgw) = (true,true),
+                0 => (data.irsgw, data.irpgw) = (false, false),
+                1 => (data.irsgw, data.irpgw) = (false, true),
+                2 => (data.irsgw, data.irpgw) = (true, false),
+                3 => (data.irsgw, data.irpgw) = (true, true),
                 _ => return Err(GTPV2Error::IEIncorrect(SCND_RAT_UDR)),
             }
             data.rat_type = buffer[5];
@@ -86,29 +102,61 @@ impl IEs for SecondaryRatUsageDataReport {
             Err(GTPV2Error::IEInvalidLength(SCND_RAT_UDR))
         }
     }
-    
-    fn len (&self) -> usize {
-       (self.length as usize) + MIN_IE_SIZE 
+
+    fn len(&self) -> usize {
+        (self.length as usize) + MIN_IE_SIZE
     }
 
-    fn is_empty (&self) -> bool {
+    fn is_empty(&self) -> bool {
         self.length == 0
     }
 }
 
 #[test]
-fn secondary_rat_udr_ie_unmarshal_test () {
-    let encoded:[u8;31]=[0xc9, 0x00, 0x1b, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff];
-    let decoded = SecondaryRatUsageDataReport { t:SCND_RAT_UDR, length: SCND_RAT_UDR_LENGTH as u16, ins:0, irsgw: true, irpgw:true, rat_type:0, ebi:5, start_timestamp: 0xff, end_timestamp:0xffff, usg_data_dl:0xffffff00, usg_data_ul:0xffff };
+fn secondary_rat_udr_ie_unmarshal_test() {
+    let encoded: [u8; 31] = [
+        0xc9, 0x00, 0x1b, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0xff, 0xff,
+        0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff,
+        0xff,
+    ];
+    let decoded = SecondaryRatUsageDataReport {
+        t: SCND_RAT_UDR,
+        length: SCND_RAT_UDR_LENGTH as u16,
+        ins: 0,
+        irsgw: true,
+        irpgw: true,
+        rat_type: 0,
+        ebi: 5,
+        start_timestamp: 0xff,
+        end_timestamp: 0xffff,
+        usg_data_dl: 0xffffff00,
+        usg_data_ul: 0xffff,
+    };
     let i = SecondaryRatUsageDataReport::unmarshal(&encoded);
     assert_eq!(i.unwrap(), decoded);
 }
 
 #[test]
-fn secondary_rat_udr_ie_marshal_test () {
-    let encoded:[u8;31]=[0xc9, 0x00, 0x1b, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff];
-    let decoded = SecondaryRatUsageDataReport { t:SCND_RAT_UDR, length: SCND_RAT_UDR_LENGTH as u16, ins:0, irsgw: true, irpgw:true, rat_type:0, ebi:5, start_timestamp: 0xff, end_timestamp:0xffff, usg_data_dl:0xffffff00, usg_data_ul:0xffff };
-    let mut buffer:Vec<u8>=vec!();
+fn secondary_rat_udr_ie_marshal_test() {
+    let encoded: [u8; 31] = [
+        0xc9, 0x00, 0x1b, 0x00, 0x03, 0x00, 0x05, 0x00, 0x00, 0x00, 0xff, 0x00, 0x00, 0xff, 0xff,
+        0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff,
+        0xff,
+    ];
+    let decoded = SecondaryRatUsageDataReport {
+        t: SCND_RAT_UDR,
+        length: SCND_RAT_UDR_LENGTH as u16,
+        ins: 0,
+        irsgw: true,
+        irpgw: true,
+        rat_type: 0,
+        ebi: 5,
+        start_timestamp: 0xff,
+        end_timestamp: 0xffff,
+        usg_data_dl: 0xffffff00,
+        usg_data_ul: 0xffff,
+    };
+    let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);
 }

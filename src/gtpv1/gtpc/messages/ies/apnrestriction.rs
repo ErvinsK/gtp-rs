@@ -1,11 +1,11 @@
-// APN Restriction IE - according to 3GPP TS 29.060 V15.5.0 (2019-06) 
+// APN Restriction IE - according to 3GPP TS 29.060 V15.5.0 (2019-06)
 
-use crate::gtpv1::{utils::*, errors::GTPV1Error, gtpc::messages::ies::commons::*};
+use crate::gtpv1::{errors::GTPV1Error, gtpc::messages::ies::commons::*, utils::*};
 
 // APN Restriction IE Type
 
-pub const APNRESTRICTION:u8 = 149;
-pub const APNRESTRICTION_LENGTH:u16 = 1;
+pub const APNRESTRICTION: u8 = 149;
+pub const APNRESTRICTION_LENGTH: u16 = 1;
 
 // APN Restriction Enum and Values as per 3GPP 23.060 V16.0.0 (2019-03)
 
@@ -19,7 +19,7 @@ pub enum Restriction {
 }
 
 impl Restriction {
-    fn enum_to_value (i:&Restriction) -> u8 {
+    fn enum_to_value(i: &Restriction) -> u8 {
         match i {
             Restriction::NoApnRestriction => 0,
             Restriction::Public1 => 1,
@@ -28,7 +28,7 @@ impl Restriction {
             Restriction::Private2 => 4,
         }
     }
-    fn value_to_enum (i:u8) -> Result<Restriction, GTPV1Error> {
+    fn value_to_enum(i: u8) -> Result<Restriction, GTPV1Error> {
         match i {
             0 => Ok(Restriction::NoApnRestriction),
             1 => Ok(Restriction::Public1),
@@ -44,35 +44,42 @@ impl Restriction {
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ApnRestriction {
-    pub t:u8,
-    pub length:u16,
-    pub restriction_type:Restriction,
+    pub t: u8,
+    pub length: u16,
+    pub restriction_type: Restriction,
 }
 
 impl Default for ApnRestriction {
     fn default() -> Self {
-        ApnRestriction { t: APNRESTRICTION, length:APNRESTRICTION_LENGTH, restriction_type:Restriction::NoApnRestriction}
+        ApnRestriction {
+            t: APNRESTRICTION,
+            length: APNRESTRICTION_LENGTH,
+            restriction_type: Restriction::NoApnRestriction,
+        }
     }
 }
 
 impl IEs for ApnRestriction {
-    fn marshal (&self, buffer: &mut Vec<u8>) {
-        let mut buffer_ie:Vec<u8> = vec!();  
+    fn marshal(&self, buffer: &mut Vec<u8>) {
+        let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
-        buffer_ie.push (Restriction::enum_to_value(&self.restriction_type));
+        buffer_ie.push(Restriction::enum_to_value(&self.restriction_type));
         set_tlv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
     }
 
-    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV1Error> where Self:Sized {
-        if buffer.len()>=4 {
-            let mut data=ApnRestriction{
-                length:u16::from_be_bytes([buffer[1], buffer[2]]), 
+    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV1Error>
+    where
+        Self: Sized,
+    {
+        if buffer.len() >= 4 {
+            let mut data = ApnRestriction {
+                length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ..Default::default()
             };
             match Restriction::value_to_enum(buffer[3]) {
-                Ok(i) => data.restriction_type=i,
+                Ok(i) => data.restriction_type = i,
                 Err(j) => return Err(j),
             }
             Ok(data)
@@ -81,26 +88,37 @@ impl IEs for ApnRestriction {
         }
     }
 
-    fn len (&self) -> usize {
-       (APNRESTRICTION_LENGTH+1) as usize 
+    fn len(&self) -> usize {
+        (APNRESTRICTION_LENGTH + 1) as usize
     }
-    fn is_empty (&self) -> bool {
+    fn is_empty(&self) -> bool {
         self.length == 0
     }
 }
 
 #[test]
-fn apnrestriction_ie_marshal_test () {
-    let ie_marshalled:[u8;4]=[0x95, 0x00, 0x01, 0x00];
-    let ie_to_marshal = ApnRestriction { t:APNRESTRICTION, length: APNRESTRICTION_LENGTH, restriction_type:Restriction::NoApnRestriction };
-    let mut buffer:Vec<u8>=vec!();
+fn apnrestriction_ie_marshal_test() {
+    let ie_marshalled: [u8; 4] = [0x95, 0x00, 0x01, 0x00];
+    let ie_to_marshal = ApnRestriction {
+        t: APNRESTRICTION,
+        length: APNRESTRICTION_LENGTH,
+        restriction_type: Restriction::NoApnRestriction,
+    };
+    let mut buffer: Vec<u8> = vec![];
     ie_to_marshal.marshal(&mut buffer);
-    assert_eq!(buffer,ie_marshalled);
+    assert_eq!(buffer, ie_marshalled);
 }
 
 #[test]
-fn apnrestriciton_ie_unmarshal_test () {
-    let ie_to_unmarshal:[u8;4]=[0x95, 0x00, 0x01, 0x00];
-    let ie_unmarshalled = ApnRestriction { t:APNRESTRICTION, length: APNRESTRICTION_LENGTH, restriction_type:Restriction::NoApnRestriction };
-    assert_eq!(ApnRestriction::unmarshal(&ie_to_unmarshal).unwrap(), ie_unmarshalled);
+fn apnrestriciton_ie_unmarshal_test() {
+    let ie_to_unmarshal: [u8; 4] = [0x95, 0x00, 0x01, 0x00];
+    let ie_unmarshalled = ApnRestriction {
+        t: APNRESTRICTION,
+        length: APNRESTRICTION_LENGTH,
+        restriction_type: Restriction::NoApnRestriction,
+    };
+    assert_eq!(
+        ApnRestriction::unmarshal(&ie_to_unmarshal).unwrap(),
+        ie_unmarshalled
+    );
 }

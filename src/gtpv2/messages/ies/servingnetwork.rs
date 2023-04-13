@@ -1,18 +1,22 @@
 // Serving Network IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-use crate::gtpv2::{utils::*, errors::GTPV2Error, messages::ies::{commons::*,ie::*}};
+use crate::gtpv2::{
+    errors::GTPV2Error,
+    messages::ies::{commons::*, ie::*},
+    utils::*,
+};
 
 // Serving Network IE TL
 
-pub const SERVINGNW:u8 = 83;
-pub const SERVINGNW_LENGTH:usize = 3;
+pub const SERVINGNW: u8 = 83;
+pub const SERVINGNW_LENGTH: usize = 3;
 
 // Serving Network IE implementation
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ServingNetwork {
     pub t: u8,
-    pub length:u16,
+    pub length: u16,
     pub ins: u8,
     pub mcc: u16,
     pub mnc: u16,
@@ -20,7 +24,13 @@ pub struct ServingNetwork {
 
 impl Default for ServingNetwork {
     fn default() -> Self {
-        ServingNetwork { t: SERVINGNW, length: SERVINGNW_LENGTH as u16, ins:0, mcc: 0, mnc: 0 }
+        ServingNetwork {
+            t: SERVINGNW,
+            length: SERVINGNW_LENGTH as u16,
+            ins: 0,
+            mcc: 0,
+            mnc: 0,
+        }
     }
 }
 
@@ -31,8 +41,8 @@ impl From<ServingNetwork> for InformationElement {
 }
 
 impl IEs for ServingNetwork {
-    fn marshal (&self, buffer: &mut Vec<u8>) {
-        let mut buffer_ie:Vec<u8> = vec!();  
+    fn marshal(&self, buffer: &mut Vec<u8>) {
+        let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
@@ -41,41 +51,53 @@ impl IEs for ServingNetwork {
         buffer.append(&mut buffer_ie);
     }
 
-    fn unmarshal (buffer:&[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len()>=MIN_IE_SIZE+SERVINGNW_LENGTH {
-            let mut data=ServingNetwork{
-                length:u16::from_be_bytes([buffer[1], buffer[2]]),
+    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
+        if buffer.len() >= MIN_IE_SIZE + SERVINGNW_LENGTH {
+            let mut data = ServingNetwork {
+                length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ..Default::default()
             };
             data.ins = buffer[3];
             (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..7]);
-            Ok (data)
+            Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(SERVINGNW))
         }
     }
 
-    fn len (&self) -> usize {
-        SERVINGNW_LENGTH+MIN_IE_SIZE
+    fn len(&self) -> usize {
+        SERVINGNW_LENGTH + MIN_IE_SIZE
     }
 
-    fn is_empty (&self) -> bool {
+    fn is_empty(&self) -> bool {
         self.length == 0
     }
 }
 
 #[test]
 fn serving_nw_ie_marshal_test() {
-    let decoded = ServingNetwork { t:SERVINGNW, length: SERVINGNW_LENGTH as u16, ins:0,  mcc:999, mnc:1};
-    let encoded:[u8;7] = [0x53, 0x00, 0x03, 0x00, 0x99, 0xf9, 0x10];
-    let mut buffer:Vec<u8>=vec!();
+    let decoded = ServingNetwork {
+        t: SERVINGNW,
+        length: SERVINGNW_LENGTH as u16,
+        ins: 0,
+        mcc: 999,
+        mnc: 1,
+    };
+    let encoded: [u8; 7] = [0x53, 0x00, 0x03, 0x00, 0x99, 0xf9, 0x10];
+    let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
-    assert_eq!(buffer,encoded);
+    assert_eq!(buffer, encoded);
 }
 
 #[test]
 fn serving_nw_ie_unmarshal_test() {
-    let decoded = ServingNetwork { t:SERVINGNW, length: SERVINGNW_LENGTH as u16, ins:0,  mcc:999, mnc:1};
-    let encoded:[u8;7] = [0x53, 0x00, 0x03, 0x00, 0x99, 0xf9, 0x10];
+    let decoded = ServingNetwork {
+        t: SERVINGNW,
+        length: SERVINGNW_LENGTH as u16,
+        ins: 0,
+        mcc: 999,
+        mnc: 1,
+    };
+    let encoded: [u8; 7] = [0x53, 0x00, 0x03, 0x00, 0x99, 0xf9, 0x10];
     assert_eq!(ServingNetwork::unmarshal(&encoded).unwrap(), decoded);
 }

@@ -57,7 +57,7 @@ pub enum InformationElement {
     PlmnId(PlmnId),
     // Target Identification
     PacketFlowId(PacketFlowId),
-    RabContext(RabContext), 
+    RabContext(RabContext),
     SrcRncPdcpCtxInfo(SrcRncPdcpCtxInfo),
     PortNumber(PortNumber),
     ApnRestriction(ApnRestriction),
@@ -143,9 +143,8 @@ pub enum InformationElement {
     Unknown(Unknown),
 }
 
-
 impl InformationElement {
-    pub fn marshal (self, buffer: &mut Vec<u8>) {
+    pub fn marshal(self, buffer: &mut Vec<u8>) {
         match self {
             InformationElement::Imsi(i) => i.marshal(buffer),
             InformationElement::Cause(i) => i.marshal(buffer),
@@ -172,7 +171,7 @@ impl InformationElement {
             InformationElement::GlobalCnId(i) => i.marshal(buffer),
             // S103 PDN Data Forwarding Info
             // S1-U Data Forwarding Info
-            InformationElement::DelayValue(i) => i.marshal(buffer), 
+            InformationElement::DelayValue(i) => i.marshal(buffer),
             InformationElement::BearerContext(i) => i.marshal(buffer),
             InformationElement::ChargingId(i) => i.marshal(buffer),
             InformationElement::ChargingCharacteristics(i) => i.marshal(buffer),
@@ -242,7 +241,7 @@ impl InformationElement {
             InformationElement::HenbInfoReporting(i) => i.marshal(buffer),
             InformationElement::Ip4Cp(i) => i.marshal(buffer),
             InformationElement::ChangeToReportFlags(i) => i.marshal(buffer),
-            InformationElement::ActionIndication(i) => i.marshal(buffer), 
+            InformationElement::ActionIndication(i) => i.marshal(buffer),
             InformationElement::TwanId(i) => i.marshal(buffer),
             InformationElement::UliTimestamp(i) => i.marshal(buffer),
             // MBMS Flags
@@ -282,1015 +281,815 @@ impl InformationElement {
             // Extended Trace Information
             // Monitoring Event Extension Information
             // Special IE type for IE Type Extension
-            InformationElement::PrivateExtension(i) => i.marshal(buffer),  
+            InformationElement::PrivateExtension(i) => i.marshal(buffer),
             InformationElement::Unknown(i) => i.marshal(buffer),
         }
     }
 
-    pub fn encoder(message:Vec<InformationElement>, buffer: &mut Vec<u8>) {
+    pub fn encoder(message: Vec<InformationElement>, buffer: &mut Vec<u8>) {
         for i in message.into_iter() {
             i.marshal(buffer);
         }
     }
 
-    pub fn decoder(buffer:&[u8]) -> Result<Vec<InformationElement>, GTPV2Error> {
-        let mut ies:Vec<InformationElement>=vec!();
-        let mut cursor:usize = 0;
-            loop {
-                if cursor >= buffer.len() {
-                    break;
-                }
-                match buffer[cursor] {
-                    1 => {
-                        match Imsi::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Imsi(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    2 => {
-                        match Cause::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Cause(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    }, 
-                    3 => {
-                        match Recovery::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Recovery(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // STN-SR   
-                    71 => {
-                        match Apn::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Apn(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    72 => {
-                        match ApnAmbr::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::ApnAmbr(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    73 => {
-                        match Ebi::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Ebi(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    74 => {
-                        match IpAddress::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::IpAddress(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    75 => {
-                        match Mei::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Mei(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    76 => {
-                        match Msisdn::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Msisdn(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    77 => {
-                        match Indication::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Indication(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    78 => {
-                        match Pco::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Pco(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    79 => {
-                        match PdnAddressAllocation::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::PdnAddressAllocation(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    80 => {
-                        match BearerQos::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::BearerQos(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    81 => {
-                        match FlowQos::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::FlowQos(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    82 => {
-                        match RatType::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::RatType(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    83 => {
-                        match ServingNetwork::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::ServingNetwork(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    84 => {
-                        match BearerTft::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::BearerTft(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    85 => {
-                        match TrafficAggregateDescription::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::TrafficAggregateDescription(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    86 => {
-                        match Uli::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Uli(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    87 => {
-                        match Fteid::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Fteid(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    88 => {
-                        match Tmsi::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Tmsi(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    89 => {
-                        match GlobalCnId::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::GlobalCnId(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // S103 PDN Data Forwarding Info
-                    // S1-U Data Forwarding Info
-                    92 => {
-                        match DelayValue::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::DelayValue(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    93 => {
-                        match BearerContext::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::BearerContext(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    94 => {
-                        match ChargingId::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::ChargingId(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    95 => {
-                        match ChargingCharacteristics::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::ChargingCharacteristics(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    96 => {
-                        match TraceInformation::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::TraceInformation(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    97 => {
-                        match BearerFlags::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::BearerFlags(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    99 => {
-                        match PdnType::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::PdnType(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    100 => {
-                        match Pti::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Pti(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // MM Context (GSM Keys and Triplets)
-                    // MM Context (UMTS Keys, Used Chiper, and Quintuplets)
-                    // MM Context (GSM Keys, Used Chiper, and Quintuplets)
-                    // MM Context (UMTS Keys and Quintuplets)
-                    // MM Context (EPS Security Context, Quadruplets and Quintuplets)
-                    // MM Context (UMTS Key, Quadruplets and Quintuplets)
-                    109 => {
-                        match GroupedIe::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::PdnConnection(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    110 => {
-                        match PduNumbers::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::PduNumbers(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    111 => {
-                        match Ptmsi::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Ptmsi(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    112 => {
-                        match PtmsiSignature::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::PtmsiSignature(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    113 => {
-                        match HopCounter::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::HopCounter(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    114 => {
-                        match UeTimeZone::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::UeTimeZone(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    115 => {
-                        match TraceReference::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    116 => {
-                        match CompleteRequestMessage::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    117 => {
-                        match Guti::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    118 => {
-                        match Fcontainer::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    119 => {
-                        match Fcause::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    120 => {
-                        match PlmnId::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // Target Identification
-                    123 => {
-                        match PacketFlowId::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    124 => {
-                        match RabContext::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    125 => {
-                        match SrcRncPdcpCtxInfo::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    126 => {
-                        match PortNumber::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    127 => {
-                        match ApnRestriction::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    128 => {
-                        match SelectionMode::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // Source Identification
-                    131 => {
-                        match ChangeReportingAction::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    132 => {
-                        match Fqcsid::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    133 => {
-                        match ChannelNeeded::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    134 => {
-                        match EmlppPriority::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    135 => {
-                        match NodeType::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    136 => {
-                        match Fqdn::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    137 => {
-                        match TransactionIdentifier::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // MBMS Session Duration
-                    // MBMS Service Area
-                    // MBMS Session Identifier
-                    // MBMS Flow Identifier
-                    // MBMS IP Multicast Distribution
-                    // MBMS Distribution Acknowledge
-                    144 => {
-                        match RfspIndex::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    145 => {
-                        match Uci::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    146 => {
-                        match CSGInformationReportingAction::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    147 => {
-                        match CsgId::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // CSG Membership Indication
-                    149 => {
-                        match ServiceIndicator::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    150 => {
-                        match DetachType::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    151 => {
-                        match Ldn::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    152 => {
-                        match NodeFeatures::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // MBMS Time to Data Transfer
-                    154 => {
-                        match Throttling::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    155 => {
-                        match Arp::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    156 => {
-                        match EpcTimer::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    157 => {
-                        match Spi::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // Temporary Mobile Group Identity
-                    // Additional MM context SRVCC
-                    // Additional flags SRVCC
-                    // MDT Configuration
-                    163 => {
-                        match Apco::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Apco(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // Absolute Time of MBMS Data Transfer
-                    165 => {
-                        match HenbInfoReporting::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    166 => {
-                        match Ip4Cp::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    167 => {
-                        match ChangeToReportFlags::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    168 => {
-                        match ActionIndication::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    169 => {
-                        match ActionIndication::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    170 => {
-                        match UliTimestamp::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // MBMS Flags
-                    172 => {
-                        match RanNasCause::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    173 => {
-                        match CnOperatorSelectionEntity::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    174 => {
-                        match Twmi::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    175 => {
-                        match NodeNumber::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    176 => {
-                        match NodeIdentifier::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    177 => {
-                        match PresenceReportingAreaAction::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    178 => {
-                        match PresenceReportingAreaInformation::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    179 => {
-                        match TwanIdTimeStamp::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    180 => {                                                        // Overload Control Information
-                        match OverloadControlInfo::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::OverloadControlInfo(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    }, 
-                    181 => {                                                        // Load Control Information
-                        match LoadControl::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::LoadControlInfo(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    182 => {
-                        match Metric::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Metric(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    183 => {
-                        match Sqn::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Sqn(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    184 => {
-                        match ApnRelativeCapacity::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::ApnRelativeCapacity(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    185 => {
-                        match WlanOffloadIndication::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::WlanOffloadIndication(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    186 => {
-                        match PagingServiceInfo::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    187 => {
-                        match IntegerNumber::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::IntegerNumber(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    188 => {
-                        match MilliSecondTimeStamp::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // Monitoring Event Information
-                    // ECGI List
-                    191 => {             // Remote UE Context   
-                        match RemoteUeContext::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::RemoteUeContext(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    192 => {
-                        match RemoteUserId::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::RemoteUserId(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    193 => {
-                        match RemoteUeIpInformation::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    194 => {
-                        match CIoTOptimizationSupportIndication::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(i.into());
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    195 => {                // SCEF PDN Connection
-                        match GroupedIe::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::ScefPdnConnection(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // Header Compression Configuration
-                    197 => {
-                        match Epco::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Epco(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    198 => {
-                        match ServingPlmnRateControl::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::ServingPlmnRateControl(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    199 => {
-                        match Counter::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Counter(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    200 => {
-                        match MappedUeUsageType::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::MappedUeUsageType(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    201 => {
-                        match SecondaryRatUsageDataReport::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::SecondaryRatUsageDataReport(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    202 => {
-                        match UpFunctionSelectionIndicationFlags::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::UpFunctionSelectionIndicationFlags(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    203 => {
-                        match MaxPacketLossRate::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::MaxPacketLossRate(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    204 => {
-                        match ApnRateControlStatus::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::ApnRateControlStatus(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    // Extended Trace Information
-                    // Monitoring Event Extension Information
-                    // Special IE type for IE Type Extension
-                    255 => {
-                        match PrivateExtension::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::PrivateExtension(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                    _ => {
-                        match Unknown::unmarshal(&buffer[cursor..]) {
-                            Ok(i) => {
-                                cursor+=i.len();
-                                ies.push(InformationElement::Unknown(i));
-                            },
-                            Err(j) => return Err(j),
-                        }
-                    },
-                }
+    pub fn decoder(buffer: &[u8]) -> Result<Vec<InformationElement>, GTPV2Error> {
+        let mut ies: Vec<InformationElement> = vec![];
+        let mut cursor: usize = 0;
+        loop {
+            if cursor >= buffer.len() {
+                break;
             }
-            Ok(ies)
+            match buffer[cursor] {
+                1 => match Imsi::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Imsi(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                2 => match Cause::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Cause(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                3 => match Recovery::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Recovery(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                // STN-SR
+                71 => match Apn::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Apn(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                72 => match ApnAmbr::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::ApnAmbr(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                73 => match Ebi::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Ebi(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                74 => match IpAddress::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::IpAddress(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                75 => match Mei::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Mei(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                76 => match Msisdn::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Msisdn(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                77 => match Indication::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Indication(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                78 => match Pco::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Pco(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                79 => match PdnAddressAllocation::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::PdnAddressAllocation(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                80 => match BearerQos::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::BearerQos(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                81 => match FlowQos::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::FlowQos(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                82 => match RatType::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::RatType(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                83 => match ServingNetwork::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::ServingNetwork(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                84 => match BearerTft::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::BearerTft(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                85 => match TrafficAggregateDescription::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::TrafficAggregateDescription(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                86 => match Uli::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Uli(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                87 => match Fteid::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Fteid(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                88 => match Tmsi::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Tmsi(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                89 => match GlobalCnId::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::GlobalCnId(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                // S103 PDN Data Forwarding Info
+                // S1-U Data Forwarding Info
+                92 => match DelayValue::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::DelayValue(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                93 => match BearerContext::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::BearerContext(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                94 => match ChargingId::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::ChargingId(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                95 => match ChargingCharacteristics::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::ChargingCharacteristics(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                96 => match TraceInformation::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::TraceInformation(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                97 => match BearerFlags::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::BearerFlags(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                99 => match PdnType::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::PdnType(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                100 => match Pti::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Pti(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                // MM Context (GSM Keys and Triplets)
+                // MM Context (UMTS Keys, Used Chiper, and Quintuplets)
+                // MM Context (GSM Keys, Used Chiper, and Quintuplets)
+                // MM Context (UMTS Keys and Quintuplets)
+                // MM Context (EPS Security Context, Quadruplets and Quintuplets)
+                // MM Context (UMTS Key, Quadruplets and Quintuplets)
+                109 => match GroupedIe::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::PdnConnection(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                110 => match PduNumbers::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::PduNumbers(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                111 => match Ptmsi::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Ptmsi(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                112 => match PtmsiSignature::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::PtmsiSignature(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                113 => match HopCounter::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::HopCounter(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                114 => match UeTimeZone::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::UeTimeZone(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                115 => match TraceReference::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                116 => match CompleteRequestMessage::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                117 => match Guti::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                118 => match Fcontainer::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                119 => match Fcause::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                120 => match PlmnId::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                // Target Identification
+                123 => match PacketFlowId::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                124 => match RabContext::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                125 => match SrcRncPdcpCtxInfo::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                126 => match PortNumber::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                127 => match ApnRestriction::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                128 => match SelectionMode::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                // Source Identification
+                131 => match ChangeReportingAction::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                132 => match Fqcsid::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                133 => match ChannelNeeded::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                134 => match EmlppPriority::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                135 => match NodeType::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                136 => match Fqdn::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                137 => match TransactionIdentifier::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                // MBMS Session Duration
+                // MBMS Service Area
+                // MBMS Session Identifier
+                // MBMS Flow Identifier
+                // MBMS IP Multicast Distribution
+                // MBMS Distribution Acknowledge
+                144 => match RfspIndex::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                145 => match Uci::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                146 => match CSGInformationReportingAction::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                147 => match CsgId::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                // CSG Membership Indication
+                149 => match ServiceIndicator::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                150 => match DetachType::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                151 => match Ldn::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                152 => match NodeFeatures::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                // MBMS Time to Data Transfer
+                154 => match Throttling::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                155 => match Arp::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                156 => match EpcTimer::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                157 => match Spi::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                // Temporary Mobile Group Identity
+                // Additional MM context SRVCC
+                // Additional flags SRVCC
+                // MDT Configuration
+                163 => match Apco::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Apco(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                // Absolute Time of MBMS Data Transfer
+                165 => match HenbInfoReporting::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                166 => match Ip4Cp::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                167 => match ChangeToReportFlags::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                168 => match ActionIndication::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                169 => match ActionIndication::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                170 => match UliTimestamp::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                // MBMS Flags
+                172 => match RanNasCause::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                173 => match CnOperatorSelectionEntity::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                174 => match Twmi::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                175 => match NodeNumber::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                176 => match NodeIdentifier::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                177 => match PresenceReportingAreaAction::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                178 => match PresenceReportingAreaInformation::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                179 => match TwanIdTimeStamp::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                180 => {
+                    // Overload Control Information
+                    match OverloadControlInfo::unmarshal(&buffer[cursor..]) {
+                        Ok(i) => {
+                            cursor += i.len();
+                            ies.push(InformationElement::OverloadControlInfo(i));
+                        }
+                        Err(j) => return Err(j),
+                    }
+                }
+                181 => {
+                    // Load Control Information
+                    match LoadControl::unmarshal(&buffer[cursor..]) {
+                        Ok(i) => {
+                            cursor += i.len();
+                            ies.push(InformationElement::LoadControlInfo(i));
+                        }
+                        Err(j) => return Err(j),
+                    }
+                }
+                182 => match Metric::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Metric(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                183 => match Sqn::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Sqn(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                184 => match ApnRelativeCapacity::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::ApnRelativeCapacity(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                185 => match WlanOffloadIndication::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::WlanOffloadIndication(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                186 => match PagingServiceInfo::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                187 => match IntegerNumber::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::IntegerNumber(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                188 => match MilliSecondTimeStamp::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                // Monitoring Event Information
+                // ECGI List
+                191 => {
+                    // Remote UE Context
+                    match RemoteUeContext::unmarshal(&buffer[cursor..]) {
+                        Ok(i) => {
+                            cursor += i.len();
+                            ies.push(InformationElement::RemoteUeContext(i));
+                        }
+                        Err(j) => return Err(j),
+                    }
+                }
+                192 => match RemoteUserId::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::RemoteUserId(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                193 => match RemoteUeIpInformation::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                194 => match CIoTOptimizationSupportIndication::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                195 => {
+                    // SCEF PDN Connection
+                    match GroupedIe::unmarshal(&buffer[cursor..]) {
+                        Ok(i) => {
+                            cursor += i.len();
+                            ies.push(InformationElement::ScefPdnConnection(i));
+                        }
+                        Err(j) => return Err(j),
+                    }
+                }
+                // Header Compression Configuration
+                197 => match Epco::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Epco(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                198 => match ServingPlmnRateControl::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::ServingPlmnRateControl(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                199 => match Counter::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Counter(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                200 => match MappedUeUsageType::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MappedUeUsageType(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                201 => match SecondaryRatUsageDataReport::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::SecondaryRatUsageDataReport(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                202 => match UpFunctionSelectionIndicationFlags::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::UpFunctionSelectionIndicationFlags(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                203 => match MaxPacketLossRate::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MaxPacketLossRate(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                204 => match ApnRateControlStatus::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::ApnRateControlStatus(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                // Extended Trace Information
+                // Monitoring Event Extension Information
+                // Special IE type for IE Type Extension
+                255 => match PrivateExtension::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::PrivateExtension(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                _ => match Unknown::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::Unknown(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+            }
+        }
+        Ok(ies)
     }
-/* 
+    /*
     pub fn get_ie (&self) -> Box<dyn IEs> {
         match *self {
             InformationElement::Imsi(i) => Box::new(i),
@@ -1311,7 +1110,7 @@ impl InformationElement {
             InformationElement::RatType(i) => Box::new(i),
             InformationElement::ServingNetwork(i) => Box::new(i),
             InformationElement::BearerTft(i) => Box::new(i),
-            InformationElement::TrafficAggregateDescription(i) => Box::new(i), 
+            InformationElement::TrafficAggregateDescription(i) => Box::new(i),
             InformationElement::Uli(i) => Box::new(i),
             InformationElement::Fteid(i) => Box::new(i),
             // Tmsi(Tmsi),
@@ -1428,10 +1227,7 @@ impl InformationElement {
             // Extended Trace Information
             // Monitoring Event Extension Information
             // Special IE type for IE Type Extension
-            InformationElement::PrivateExtension(i) => Box::new(i),  
+            InformationElement::PrivateExtension(i) => Box::new(i),
         }
     } */
 }
-
-
-
