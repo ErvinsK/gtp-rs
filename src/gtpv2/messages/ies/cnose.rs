@@ -18,12 +18,12 @@ pub struct CnOperatorSelectionEntity {
     pub t: u8,
     pub length: u16,
     pub ins: u8,
-    pub selection_entity: SelectionMode,
+    pub selection_entity: SelectMode,
 }
 
 // Selection Mode enum
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum SelectionMode {
+pub enum SelectMode {
     ServingNetworkSelectedbyUE,
     ServingNetworkSelectedbyNetwork,
 }
@@ -34,7 +34,7 @@ impl Default for CnOperatorSelectionEntity {
             t: CNOSE,
             length: CNOSE_LENGTH as u16,
             ins: 0,
-            selection_entity: SelectionMode::ServingNetworkSelectedbyUE,
+            selection_entity: SelectMode::ServingNetworkSelectedbyUE,
         }
     }
 }
@@ -52,8 +52,8 @@ impl IEs for CnOperatorSelectionEntity {
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.selection_entity {
-            SelectionMode::ServingNetworkSelectedbyUE => buffer_ie.push(0x00),
-            SelectionMode::ServingNetworkSelectedbyNetwork => buffer_ie.push(0x01),
+            SelectMode::ServingNetworkSelectedbyUE => buffer_ie.push(0x00),
+            SelectMode::ServingNetworkSelectedbyNetwork => buffer_ie.push(0x01),
         }
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -67,9 +67,9 @@ impl IEs for CnOperatorSelectionEntity {
             };
             data.ins = buffer[3];
             match buffer[4] {
-                0 => data.selection_entity = SelectionMode::ServingNetworkSelectedbyUE,
-                1 => data.selection_entity = SelectionMode::ServingNetworkSelectedbyNetwork,
-                2 | 3 => data.selection_entity = SelectionMode::ServingNetworkSelectedbyNetwork,
+                0 => data.selection_entity = SelectMode::ServingNetworkSelectedbyUE,
+                1 => data.selection_entity = SelectMode::ServingNetworkSelectedbyNetwork,
+                2 | 3 => data.selection_entity = SelectMode::ServingNetworkSelectedbyNetwork,
                 _ => return Err(GTPV2Error::IEIncorrect(CNOSE)),
             }
             Ok(data)
@@ -94,7 +94,7 @@ fn cnose_ie_unmarshal_test() {
         t: CNOSE,
         length: CNOSE_LENGTH as u16,
         ins: 0,
-        selection_entity: SelectionMode::ServingNetworkSelectedbyNetwork,
+        selection_entity: SelectMode::ServingNetworkSelectedbyNetwork,
     };
     let i = CnOperatorSelectionEntity::unmarshal(&encoded_ie);
     assert_eq!(i.unwrap(), test_struct);
@@ -107,7 +107,7 @@ fn cnose_ie_marshal_test() {
         t: CNOSE,
         length: CNOSE_LENGTH as u16,
         ins: 0,
-        selection_entity: SelectionMode::ServingNetworkSelectedbyNetwork,
+        selection_entity: SelectMode::ServingNetworkSelectedbyNetwork,
     };
     let mut buffer: Vec<u8> = vec![];
     test_struct.marshal(&mut buffer);

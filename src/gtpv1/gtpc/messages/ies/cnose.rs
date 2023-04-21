@@ -13,12 +13,12 @@ pub const CNOSE_LENGTH: u16 = 1;
 pub struct CnOperatorSelectionEntity {
     pub t: u8,
     pub length: u16,
-    pub selection_entity: SelectionMode, // LAPI - Low Access Priority Indication
+    pub selection_entity: SelectMode, // LAPI - Low Access Priority Indication
 }
 
 // Selection Mode enum
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum SelectionMode {
+pub enum SelectMode {
     ServingNetworkSelectedbyUE,
     ServingNetworkSelectedbyNetwork,
 }
@@ -28,7 +28,7 @@ impl Default for CnOperatorSelectionEntity {
         CnOperatorSelectionEntity {
             t: CNOSE,
             length: CNOSE_LENGTH,
-            selection_entity: SelectionMode::ServingNetworkSelectedbyUE,
+            selection_entity: SelectMode::ServingNetworkSelectedbyUE,
         }
     }
 }
@@ -39,8 +39,8 @@ impl IEs for CnOperatorSelectionEntity {
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         match self.selection_entity {
-            SelectionMode::ServingNetworkSelectedbyUE => buffer_ie.push(0x00),
-            SelectionMode::ServingNetworkSelectedbyNetwork => buffer_ie.push(0x01),
+            SelectMode::ServingNetworkSelectedbyUE => buffer_ie.push(0x00),
+            SelectMode::ServingNetworkSelectedbyNetwork => buffer_ie.push(0x01),
         }
         set_tlv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -56,10 +56,10 @@ impl IEs for CnOperatorSelectionEntity {
                 ..Default::default()
             };
             match buffer[3] {
-                0 => data.selection_entity = SelectionMode::ServingNetworkSelectedbyUE,
-                1 => data.selection_entity = SelectionMode::ServingNetworkSelectedbyNetwork,
+                0 => data.selection_entity = SelectMode::ServingNetworkSelectedbyUE,
+                1 => data.selection_entity = SelectMode::ServingNetworkSelectedbyNetwork,
                 i if i == 2 || i == 3 => {
-                    data.selection_entity = SelectionMode::ServingNetworkSelectedbyNetwork
+                    data.selection_entity = SelectMode::ServingNetworkSelectedbyNetwork
                 }
                 _ => return Err(GTPV1Error::IEIncorrect),
             }
@@ -83,7 +83,7 @@ fn cnose_ie_unmarshal_test() {
     let test_struct = CnOperatorSelectionEntity {
         t: CNOSE,
         length: CNOSE_LENGTH,
-        selection_entity: SelectionMode::ServingNetworkSelectedbyNetwork,
+        selection_entity: SelectMode::ServingNetworkSelectedbyNetwork,
     };
     let i = CnOperatorSelectionEntity::unmarshal(&encoded_ie);
     assert_eq!(i.unwrap(), test_struct);
@@ -95,7 +95,7 @@ fn cnose_ie_marshal_test() {
     let test_struct = CnOperatorSelectionEntity {
         t: CNOSE,
         length: CNOSE_LENGTH,
-        selection_entity: SelectionMode::ServingNetworkSelectedbyNetwork,
+        selection_entity: SelectMode::ServingNetworkSelectedbyNetwork,
     };
     let mut buffer: Vec<u8> = vec![];
     test_struct.marshal(&mut buffer);
