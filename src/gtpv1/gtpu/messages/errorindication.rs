@@ -212,3 +212,17 @@ fn test_error_indication_without_mandatory_ie_unmarshal() {
         Err(GTPV1Error::MessageMandatoryIEMissing)
     );
 }
+
+#[test]
+fn overflow_test () {  // Panic (addition overflow) when trying to unmarshalling ErrorIndication GTPU message #1
+    let mut buffer: Vec<u8> = vec![];
+    let mut message = ErrorIndication::default();
+
+    message.teid_data = Teid {
+        t: 255,
+        teid: 4294967295,
+    };
+
+    message.marshal(&mut buffer);
+    let _result = ErrorIndication::unmarshal(&buffer);
+}

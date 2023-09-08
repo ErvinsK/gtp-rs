@@ -138,7 +138,7 @@ impl IEs for RemoteUserId {
                     if cursor > buffer.len() {
                         return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID));
                     }
-                    l = buffer[(cursor - 1)] as usize;
+                    l = buffer[cursor - 1] as usize;
                     if (cursor + l) > buffer.len() {
                         return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID));
                     }
@@ -155,7 +155,7 @@ impl IEs for RemoteUserId {
                     if cursor > buffer.len() {
                         return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID));
                     }
-                    l = buffer[(cursor - 1)] as usize;
+                    l = buffer[cursor - 1] as usize;
                     if (cursor + l) > buffer.len() {
                         return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID));
                     }
@@ -172,7 +172,7 @@ impl IEs for RemoteUserId {
                     if cursor > buffer.len() {
                         return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID));
                     }
-                    l = buffer[(cursor - 1)] as usize;
+                    l = buffer[cursor - 1] as usize;
                     if (cursor + l) > buffer.len() {
                         return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID));
                     }
@@ -181,7 +181,7 @@ impl IEs for RemoteUserId {
                     if cursor > buffer.len() {
                         return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID));
                     }
-                    l = buffer[(cursor - 1)] as usize;
+                    l = buffer[cursor - 1] as usize;
                     if (cursor + l) > buffer.len() {
                         return Err(GTPV2Error::IEInvalidLength(REMOTE_USR_ID));
                     }

@@ -49,7 +49,6 @@ pub fn tbcd_decode(buffer: &[u8]) -> String {
     let result: String = data
         .iter()
         .flat_map(|c| char::from_digit(*c as u32, 10))
-        .into_iter()
         .collect();
     result
 }

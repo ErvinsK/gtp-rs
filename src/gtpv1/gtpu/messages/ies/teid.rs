@@ -26,7 +26,7 @@ impl Default for Teid {
 
 impl IEs for Teid {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.push(self.t);
+        buffer.push(TEID_DATA);
         buffer.extend_from_slice(&self.teid.to_be_bytes());
     }
 
