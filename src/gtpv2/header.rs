@@ -60,7 +60,10 @@ impl Gtpv2Header {
                         _ => data.piggyback = true,
                     }
                     data.msgtype = buffer[1];
-                    data.length = u16::from_be_bytes([buffer[2], buffer[3]]);
+                    data.length = match u16::from_be_bytes([buffer[2], buffer[3]]) {
+                        0 => return Err(GTPV2Error::HeaderInvalidLength),
+                        _ => u16::from_be_bytes([buffer[2], buffer[3]]),
+                    };
                     if data.length < (MIN_HEADER_LENGTH - 4) as u16 {
                         return Err(GTPV2Error::MessageInvalidLength(0));
                     }

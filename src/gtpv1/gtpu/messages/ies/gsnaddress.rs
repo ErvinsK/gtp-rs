@@ -42,7 +42,10 @@ impl IEs for GsnAddress {
     fn unmarshal(buffer: &[u8]) -> Result<GsnAddress, GTPV1Error> {
         if buffer.len() >= 3 {
             let mut data = GsnAddress {
-                length: u16::from_be_bytes([buffer[1], buffer[2]]),
+                length: match u16::from_be_bytes([buffer[1], buffer[2]]) {
+                    0 => return Err(GTPV1Error::IEInvalidLength),
+                    _ => u16::from_be_bytes([buffer[1], buffer[2]]),
+                },
                 ..Default::default()
             };
             if check_tlv_ie_buffer(data.length, buffer) {

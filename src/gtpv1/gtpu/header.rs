@@ -185,7 +185,10 @@ impl Gtpv1Header {
                 (_, _) => return Err(GTPV1Error::HeaderVersionNotSupported),
             }
             data.msgtype = buffer[1];
-            data.length = u16::from_be_bytes([buffer[2], buffer[3]]);
+            data.length = match u16::from_be_bytes([buffer[2], buffer[3]]) {
+                0 => return Err(GTPV1Error::HeaderInvalidLength),
+                _ => u16::from_be_bytes([buffer[2], buffer[3]]), 
+            };
             data.teid = u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
             match (
                 (buffer[0] & 0x02) >> 1,
@@ -620,4 +623,18 @@ fn test_gtpv1_hdr_with_sqn_npdu_and_two_ext_header_marshal() {
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);
+}
+
+#[test]
+fn infinite_loop_issue_2() {
+    let mut ext_header = UDPPort::default();
+    ext_header.length = 0;
+     
+    // we add it to the header
+    let mut header = Gtpv1Header::default();
+    header.extension_headers = Some(vec![ExtensionHeader::UDPPort(ext_header)]);
+ 
+    let mut array:Vec<u8> = vec![];
+    header.marshal(&mut array);
+    assert_eq!(Gtpv1Header::unmarshal(&array),Err(GTPV1Error::ExtHeaderInvalidLength));
 }

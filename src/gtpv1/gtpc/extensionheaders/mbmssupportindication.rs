@@ -31,7 +31,10 @@ impl ExtensionHeaders for MBMSSupportIndication {
 
     fn unmarshal(buffer: &[u8]) -> Result<MBMSSupportIndication, GTPV1Error> {
         let mut data = MBMSSupportIndication {
-            length: buffer[1],
+            length: match buffer[1] {
+                0 => return Err(GTPV1Error::ExtHeaderInvalidLength),
+                _ => buffer[1],
+            },
             ..Default::default()
         };
         if (data.length * 4) as usize <= buffer.len() {

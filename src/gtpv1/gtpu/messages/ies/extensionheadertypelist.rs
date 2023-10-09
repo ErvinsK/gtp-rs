@@ -37,7 +37,10 @@ impl IEs for ExtensionHeaderTypeList {
 
     fn unmarshal(buffer: &[u8]) -> Result<ExtensionHeaderTypeList, GTPV1Error> {
         let mut data = ExtensionHeaderTypeList {
-            length: buffer[1],
+            length: match buffer[1] {
+                0 => return Err(GTPV1Error::ExtHeaderInvalidLength),
+                _ => buffer[1],
+            },
             ..Default::default()
         };
         if (data.length + 2) as usize <= buffer.len() {

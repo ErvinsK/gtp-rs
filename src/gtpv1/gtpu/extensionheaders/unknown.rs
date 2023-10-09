@@ -29,7 +29,10 @@ impl ExtensionHeaders for Unknown {
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV1Error> {
         let mut data = Unknown {
             extension_header_type: buffer[0],
-            length: buffer[1],
+            length: match buffer[1] {
+                0 => return Err(GTPV1Error::ExtHeaderInvalidLength),
+                _ => buffer[1],
+            },
             ..Default::default()
         };
         if (data.length * 4) as usize <= buffer.len() {

@@ -166,7 +166,10 @@ impl Gtpv1Header {
                 (_, _) => return Err(GTPV1Error::HeaderVersionNotSupported),
             }
             data.msgtype = buffer[1];
-            data.length = u16::from_be_bytes([buffer[2], buffer[3]]);
+            data.length = match u16::from_be_bytes([buffer[2], buffer[3]]) {
+                0 => return Err(GTPV1Error::HeaderInvalidLength),
+                _ => u16::from_be_bytes([buffer[2], buffer[3]]), 
+            };
             data.teid = u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
             match (
                 (buffer[0] & 0x02) >> 1,
