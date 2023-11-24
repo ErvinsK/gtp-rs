@@ -162,28 +162,28 @@ fn test_change_notification_resp_unmarshal() {
         0x62, 0xf2, 0x10, 0xff, 0xff, 0xaa, 0xff, 0x62, 0xf2, 0x10, 0xff, 0xff, 0xdd, 0xdd, 0x62,
         0xf2, 0x10, 0xff, 0xff, 0xaa, 0xaa, 0x01, 0x62, 0xf2, 0x10, 0x0f, 0xff, 0xff,
     ];
-    let mut decoded = ChangeNotificationResponse::default();
-    decoded.header = Gtpv2Header {
+    let decoded = ChangeNotificationResponse {
+    header : Gtpv2Header {
         msgtype: CHNG_NOTIF_RESP,
         piggyback: false,
         message_prio: None,
         length: 114,
         teid: Some(0xa4789580),
         sqn: 0x4b291e,
-    };
-    decoded.imsi = Some(Imsi {
+    },
+    imsi : Some(Imsi {
         t: IMSI,
         length: 8,
         ins: 0,
         imsi: "901405101073874".to_string(),
-    });
-    decoded.mei = Some(Mei {
+    }),
+    mei : Some(Mei {
         t: MEI,
         length: 8,
         ins: 0,
         mei: "8694920510054907".to_string(),
-    });
-    decoded.cause = Cause {
+    }),
+    cause : Cause {
         t: CAUSE,
         length: 2,
         ins: 0,
@@ -192,20 +192,20 @@ fn test_change_notification_resp_unmarshal() {
         bce: false,
         cs: false,
         offend_ie_type: None,
-    };
-    decoded.cra = Some(ChangeReportingAction {
+    },
+    cra : Some(ChangeReportingAction {
         t: CHANGE_RPRT,
         length: CHANGE_RPRT_LENGTH as u16,
         ins: 0,
         action: 1,
-    });
-    decoded.csg_ira = Some(CSGInformationReportingAction {
+    }),
+    csg_ira : Some(CSGInformationReportingAction {
         t: CSG_INFO_REPORT,
         length: 1,
         ins: 0,
         action: 7,
-    });
-    decoded.praa = Some(PresenceReportingAreaAction {
+    }),
+    praa : Some(PresenceReportingAreaAction {
         t: PRAA,
         length: 62,
         ins: 0,
@@ -256,7 +256,9 @@ fn test_change_notification_resp_unmarshal() {
             smenb: false,
             ext_macro_id: 0x0fffff,
         }],
-    });
+    }),
+    ..ChangeNotificationResponse ::default()
+    };
     let message = ChangeNotificationResponse::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -273,28 +275,28 @@ fn test_change_notification_resp_marshal() {
         0x62, 0xf2, 0x10, 0xff, 0xff, 0xaa, 0xff, 0x62, 0xf2, 0x10, 0xff, 0xff, 0xdd, 0xdd, 0x62,
         0xf2, 0x10, 0xff, 0xff, 0xaa, 0xaa, 0x01, 0x62, 0xf2, 0x10, 0x0f, 0xff, 0xff,
     ];
-    let mut decoded = ChangeNotificationResponse::default();
-    decoded.header = Gtpv2Header {
+    let decoded = ChangeNotificationResponse {
+    header : Gtpv2Header {
         msgtype: CHNG_NOTIF_RESP,
         piggyback: false,
         message_prio: None,
         length: 114,
         teid: Some(0xa4789580),
         sqn: 0x4b291e,
-    };
-    decoded.imsi = Some(Imsi {
+    },
+    imsi : Some(Imsi {
         t: IMSI,
         length: 8,
         ins: 0,
         imsi: "901405101073874".to_string(),
-    });
-    decoded.mei = Some(Mei {
+    }),
+    mei : Some(Mei {
         t: MEI,
         length: 8,
         ins: 0,
         mei: "8694920510054907".to_string(),
-    });
-    decoded.cause = Cause {
+    }),
+    cause : Cause {
         t: CAUSE,
         length: 2,
         ins: 0,
@@ -303,20 +305,20 @@ fn test_change_notification_resp_marshal() {
         bce: false,
         cs: false,
         offend_ie_type: None,
-    };
-    decoded.cra = Some(ChangeReportingAction {
+    },
+    cra : Some(ChangeReportingAction {
         t: CHANGE_RPRT,
         length: CHANGE_RPRT_LENGTH as u16,
         ins: 0,
         action: 1,
-    });
-    decoded.csg_ira = Some(CSGInformationReportingAction {
+    }),
+    csg_ira : Some(CSGInformationReportingAction {
         t: CSG_INFO_REPORT,
         length: 1,
         ins: 0,
         action: 7,
-    });
-    decoded.praa = Some(PresenceReportingAreaAction {
+    }),
+    praa : Some(PresenceReportingAreaAction {
         t: PRAA,
         length: 62,
         ins: 0,
@@ -367,7 +369,9 @@ fn test_change_notification_resp_marshal() {
             smenb: false,
             ext_macro_id: 0x0fffff,
         }],
-    });
+    }),
+    ..ChangeNotificationResponse ::default()
+    };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     //buffer.iter().for_each( |x| print!(" {:#04x},", x));

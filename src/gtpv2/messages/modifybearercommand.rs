@@ -146,30 +146,30 @@ fn test_modify_bearer_command_unmarshal() {
         0xaa, 0xee, 0x22, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7e, 0x57, 0x00,
         0x09, 0x00, 0x86, 0x06, 0xd1, 0x82, 0x4c, 0xc1, 0xfe, 0x8b, 0x2d,
     ];
-    let mut decoded = ModifyBearerCommand::default();
-    decoded.header = Gtpv2Header {
+    let decoded = ModifyBearerCommand {
+    header : Gtpv2Header {
         msgtype: MODIFY_BEARER_CMD,
         piggyback: false,
         message_prio: None,
         length: 112,
         teid: Some(0),
         sqn: 0x68,
-    };
-    decoded.apnambr = ApnAmbr {
+    },
+    apnambr : ApnAmbr {
         t: APNAMBR,
-        length: APNAMBR_LENGTH as u16,
+        length: APNAMBR_LENGTH,
         ins: 0,
         ambr_ul: 50000,
         ambr_dl: 150000,
-    };
-    let mut bearer = BearerContext::default();
-    bearer.ebi = Ebi {
+    },
+    bearer_ctxs : vec! [BearerContext {
+    ebi : Ebi {
         t: EBI,
         length: EBI_LENGTH as u16,
         ins: 0,
         value: 5,
-    };
-    bearer.bearer_qos = Some(BearerQos {
+    },
+    bearer_qos : Some(BearerQos {
         t: BEARERQOS,
         length: BEARERQOS_LENGTH as u16,
         ins: 0,
@@ -181,10 +181,10 @@ fn test_modify_bearer_command_unmarshal() {
         maxbr_dl: 0,
         gbr_ul: 0,
         gbr_dl: 0,
-    });
-    bearer.length = 31;
-    decoded.bearer_ctxs = vec![bearer];
-    decoded.fteid_control = Some(Fteid {
+    }),
+    ..BearerContext::default()
+    }],
+    fteid_control : Some(Fteid {
         t: FTEID,
         length: 9,
         ins: 0,
@@ -192,8 +192,8 @@ fn test_modify_bearer_command_unmarshal() {
         teid: 0x06d1824c,
         ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
         ipv6: None,
-    });
-    decoded.overload_info = vec![
+    }),
+    overload_info : vec![
         OverloadControlInfo {
             t: OVERLOAD_CNTRL,
             length: 18,
@@ -244,7 +244,9 @@ fn test_modify_bearer_command_unmarshal() {
             },
             list: None,
         },
-    ];
+    ],
+    ..ModifyBearerCommand::default()
+    };
     let message = ModifyBearerCommand::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -262,104 +264,108 @@ fn test_modify_bearer_command_marshal() {
         0xaa, 0xee, 0x22, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7e, 0x57, 0x00,
         0x09, 0x00, 0x86, 0x06, 0xd1, 0x82, 0x4c, 0xc1, 0xfe, 0x8b, 0x2d,
     ];
-    let mut decoded = ModifyBearerCommand::default();
-    decoded.header = Gtpv2Header {
-        msgtype: MODIFY_BEARER_CMD,
-        piggyback: false,
-        message_prio: None,
-        length: 112,
-        teid: Some(0),
-        sqn: 0x68,
-    };
-    decoded.apnambr = ApnAmbr {
-        t: APNAMBR,
-        length: APNAMBR_LENGTH as u16,
-        ins: 0,
-        ambr_ul: 50000,
-        ambr_dl: 150000,
-    };
-    let mut bearer = BearerContext::default();
-    bearer.ebi = Ebi {
-        t: EBI,
-        length: EBI_LENGTH as u16,
-        ins: 0,
-        value: 5,
-    };
-    bearer.bearer_qos = Some(BearerQos {
-        t: BEARERQOS,
-        length: BEARERQOS_LENGTH as u16,
-        ins: 0,
-        pre_emption_vulnerability: 0,
-        priority_level: 9,
-        pre_emption_capability: 1,
-        qci: 9,
-        maxbr_ul: 0,
-        maxbr_dl: 0,
-        gbr_ul: 0,
-        gbr_dl: 0,
-    });
-    decoded.bearer_ctxs = vec![bearer];
-    decoded.fteid_control = Some(Fteid {
-        t: FTEID,
-        length: 9,
-        ins: 0,
-        interface: 6,
-        teid: 0x06d1824c,
-        ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
-        ipv6: None,
-    });
-    decoded.overload_info = vec![
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
+    let decoded = ModifyBearerCommand {
+        header : Gtpv2Header {
+            msgtype: MODIFY_BEARER_CMD,
+            piggyback: false,
+            message_prio: None,
+            length: 112,
+            teid: Some(0),
+            sqn: 0x68,
+        },
+        apnambr : ApnAmbr {
+            t: APNAMBR,
+            length: APNAMBR_LENGTH,
             ins: 0,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee11,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 31,
-            },
-            list: None,
+            ambr_ul: 50000,
+            ambr_dl: 150000,
         },
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
-            ins: 1,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee22,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 30,
-            },
-            list: None,
+        bearer_ctxs : vec! [BearerContext {
+        length: 24,
+        ebi : Ebi {
+            t: EBI,
+            length: EBI_LENGTH as u16,
+            ins: 0,
+            value: 5,
         },
-    ];
+        bearer_qos : Some(BearerQos {
+            t: BEARERQOS,
+            length: BEARERQOS_LENGTH as u16,
+            ins: 0,
+            pre_emption_vulnerability: 0,
+            priority_level: 9,
+            pre_emption_capability: 1,
+            qci: 9,
+            maxbr_ul: 0,
+            maxbr_dl: 0,
+            gbr_ul: 0,
+            gbr_dl: 0,
+        }),
+        ..BearerContext::default()
+        }],
+        fteid_control : Some(Fteid {
+            t: FTEID,
+            length: 9,
+            ins: 0,
+            interface: 6,
+            teid: 0x06d1824c,
+            ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
+            ipv6: None,
+        }),
+        overload_info : vec![
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
+                ins: 0,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee11,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 31,
+                },
+                list: None,
+            },
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
+                ins: 1,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee22,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 30,
+                },
+                list: None,
+            },
+        ],
+        ..ModifyBearerCommand::default()
+        };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     //buffer.iter().for_each( |x| print!("{:#04x},", x));

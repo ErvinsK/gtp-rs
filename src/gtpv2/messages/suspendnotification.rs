@@ -184,28 +184,28 @@ fn test_suspend_notification_unmarshal() {
         0x10, 0x71, 0x00, 0x01, 0x00, 0x08, 0x57, 0x00, 0x09, 0x00, 0x86, 0x06, 0xd1, 0x82, 0x4c,
         0xc1, 0xfe, 0x8b, 0x2d,
     ];
-    let mut decoded = SuspendNotification::default();
-    decoded.header = Gtpv2Header {
+    let decoded = SuspendNotification {
+    header : Gtpv2Header {
         msgtype: SUSPEND_NOTIF,
         piggyback: false,
         message_prio: None,
         length: 45,
         teid: Some(0xa4789580),
         sqn: 0x4b291e,
-    };
-    decoded.linked_ebi = Some(Ebi {
+    },
+    linked_ebi : Some(Ebi {
         t: EBI,
         length: 1,
         ins: 0,
         value: 5,
-    });
-    decoded.ip_control = Some(IpAddress {
+    }),
+    ip_control : Some(IpAddress {
         t: IP_ADDRESS,
         length: 4,
         ins: 0,
         ip: IpAddr::V4(Ipv4Addr::new(62, 107, 88, 94)),
-    });
-    decoded.fteid_control = Some(Fteid {
+    }),
+    fteid_control : Some(Fteid {
         t: FTEID,
         length: 9,
         ins: 0,
@@ -213,19 +213,21 @@ fn test_suspend_notification_unmarshal() {
         teid: 0x06d1824c,
         ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
         ipv6: None,
-    });
-    decoded.udp_port = Some(PortNumber {
+    }),
+    udp_port : Some(PortNumber {
         t: PORT_NBR,
         length: PORT_NBR_LENGTH as u16,
         ins: 0,
         port: 3344,
-    });
-    decoded.hop_counter = Some(HopCounter {
+    }),
+    hop_counter : Some(HopCounter {
         t: HOP_CNTR,
         length: HOP_CNTR_LENGTH as u16,
         ins: 0,
         hop_counter: 8,
-    });
+    }),
+    ..SuspendNotification::default()
+    };
     let message = SuspendNotification::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -239,48 +241,50 @@ fn test_suspend_notification_marshal() {
         0x10, 0x71, 0x00, 0x01, 0x00, 0x08, 0x57, 0x00, 0x09, 0x00, 0x86, 0x06, 0xd1, 0x82, 0x4c,
         0xc1, 0xfe, 0x8b, 0x2d,
     ];
-    let mut decoded = SuspendNotification::default();
-    decoded.header = Gtpv2Header {
-        msgtype: SUSPEND_NOTIF,
-        piggyback: false,
-        message_prio: None,
-        length: 45,
-        teid: Some(0xa4789580),
-        sqn: 0x4b291e,
-    };
-    decoded.linked_ebi = Some(Ebi {
-        t: EBI,
-        length: 1,
-        ins: 0,
-        value: 5,
-    });
-    decoded.ip_control = Some(IpAddress {
-        t: IP_ADDRESS,
-        length: 4,
-        ins: 0,
-        ip: IpAddr::V4(Ipv4Addr::new(62, 107, 88, 94)),
-    });
-    decoded.fteid_control = Some(Fteid {
-        t: FTEID,
-        length: 9,
-        ins: 0,
-        interface: 6,
-        teid: 0x06d1824c,
-        ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
-        ipv6: None,
-    });
-    decoded.udp_port = Some(PortNumber {
-        t: PORT_NBR,
-        length: PORT_NBR_LENGTH as u16,
-        ins: 0,
-        port: 3344,
-    });
-    decoded.hop_counter = Some(HopCounter {
-        t: HOP_CNTR,
-        length: HOP_CNTR_LENGTH as u16,
-        ins: 0,
-        hop_counter: 8,
-    });
+    let decoded = SuspendNotification {
+        header : Gtpv2Header {
+            msgtype: SUSPEND_NOTIF,
+            piggyback: false,
+            message_prio: None,
+            length: 45,
+            teid: Some(0xa4789580),
+            sqn: 0x4b291e,
+        },
+        linked_ebi : Some(Ebi {
+            t: EBI,
+            length: 1,
+            ins: 0,
+            value: 5,
+        }),
+        ip_control : Some(IpAddress {
+            t: IP_ADDRESS,
+            length: 4,
+            ins: 0,
+            ip: IpAddr::V4(Ipv4Addr::new(62, 107, 88, 94)),
+        }),
+        fteid_control : Some(Fteid {
+            t: FTEID,
+            length: 9,
+            ins: 0,
+            interface: 6,
+            teid: 0x06d1824c,
+            ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
+            ipv6: None,
+        }),
+        udp_port : Some(PortNumber {
+            t: PORT_NBR,
+            length: PORT_NBR_LENGTH as u16,
+            ins: 0,
+            port: 3344,
+        }),
+        hop_counter : Some(HopCounter {
+            t: HOP_CNTR,
+            length: HOP_CNTR_LENGTH as u16,
+            ins: 0,
+            hop_counter: 8,
+        }),
+        ..SuspendNotification::default()
+        };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     //buffer.iter().for_each( |x| print!(" {:#04x},", x));

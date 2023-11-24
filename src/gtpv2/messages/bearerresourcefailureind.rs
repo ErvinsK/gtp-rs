@@ -169,16 +169,16 @@ fn test_bearer_failure_ind_unmarshal() {
         0x9c, 0x00, 0x01, 0x00, 0x7f, 0xb4, 0x00, 0x12, 0x01, 0xb7, 0x00, 0x04, 0x00, 0xff, 0xaa,
         0xee, 0x22, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7e,
     ];
-    let mut decoded = BearerResourceFailureInd::default();
-    decoded.header = Gtpv2Header {
+    let decoded = BearerResourceFailureInd {
+    header : Gtpv2Header {
         msgtype: BEARER_RSRC_FAIL,
         piggyback: false,
         message_prio: None,
         length: 68,
         teid: Some(0),
         sqn: 0x68,
-    };
-    decoded.cause = Cause {
+    },
+    cause : Cause {
         t: CAUSE,
         length: 2,
         ins: 0,
@@ -187,20 +187,20 @@ fn test_bearer_failure_ind_unmarshal() {
         bce: false,
         cs: false,
         offend_ie_type: None,
-    };
-    decoded.linked_ebi = Ebi {
+    },
+    linked_ebi : Ebi {
         t: 73,
         length: 1,
         ins: 0,
         value: 5,
-    };
-    decoded.pti = Pti {
+    },
+    pti : Pti {
         t: PTI,
         length: 1,
         ins: 0,
         pti: 0xff,
-    };
-    decoded.overload_info = vec![
+    },
+    overload_info : vec![
         OverloadControlInfo {
             t: OVERLOAD_CNTRL,
             length: 18,
@@ -251,7 +251,9 @@ fn test_bearer_failure_ind_unmarshal() {
             },
             list: None,
         },
-    ];
+    ],
+    ..BearerResourceFailureInd::default()
+    };
     let message = BearerResourceFailureInd::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -265,16 +267,16 @@ fn test_bearer_failure_ind_marshal() {
         0x9c, 0x00, 0x01, 0x00, 0x7f, 0xb4, 0x00, 0x12, 0x01, 0xb7, 0x00, 0x04, 0x00, 0xff, 0xaa,
         0xee, 0x22, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7e,
     ];
-    let mut decoded = BearerResourceFailureInd::default();
-    decoded.header = Gtpv2Header {
+    let decoded = BearerResourceFailureInd {
+    header : Gtpv2Header {
         msgtype: BEARER_RSRC_FAIL,
         piggyback: false,
         message_prio: None,
         length: 68,
         teid: Some(0),
         sqn: 0x68,
-    };
-    decoded.cause = Cause {
+    },
+    cause : Cause {
         t: CAUSE,
         length: 2,
         ins: 0,
@@ -283,20 +285,20 @@ fn test_bearer_failure_ind_marshal() {
         bce: false,
         cs: false,
         offend_ie_type: None,
-    };
-    decoded.linked_ebi = Ebi {
+    },
+    linked_ebi : Ebi {
         t: 73,
         length: 1,
         ins: 0,
         value: 5,
-    };
-    decoded.pti = Pti {
+    },
+    pti : Pti {
         t: PTI,
         length: 1,
         ins: 0,
         pti: 0xff,
-    };
-    decoded.overload_info = vec![
+    },
+    overload_info : vec![
         OverloadControlInfo {
             t: OVERLOAD_CNTRL,
             length: 18,
@@ -347,7 +349,9 @@ fn test_bearer_failure_ind_marshal() {
             },
             list: None,
         },
-    ];
+    ],
+    ..BearerResourceFailureInd::default()
+    };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);

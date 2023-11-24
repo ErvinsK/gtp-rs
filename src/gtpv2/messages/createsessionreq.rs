@@ -758,34 +758,34 @@ fn test_create_session_req_unmarshal() {
         0x72, 0x00, 0x02, 0x00, 0x80, 0x01, 0x5f, 0x00, /* r....._. */
         0x02, 0x00, 0x08, 0x00,
     ];
-    let mut decoded = CreateSessionRequest::default();
-    decoded.header = Gtpv2Header {
+    let decoded = CreateSessionRequest {
+    header : Gtpv2Header {
         msgtype: CREATE_SESSION_REQ,
         piggyback: false,
         message_prio: None,
         length: 262,
         teid: Some(0),
         sqn: 0x68,
-    };
-    decoded.imsi = Some(Imsi {
+    },
+    imsi : Some(Imsi {
         t: IMSI,
         length: 8,
         ins: 0,
         imsi: "901405101073874".to_string(),
-    });
-    decoded.msisdn = Some(Msisdn {
+    }),
+    msisdn : Some(Msisdn {
         t: MSISDN,
         length: 8,
         ins: 0,
         msisdn: "882285101073874".to_string(),
-    });
-    decoded.mei = Some(Mei {
+    }),
+    mei : Some(Mei {
         t: MEI,
         length: 8,
         ins: 0,
         mei: "8601950564358107".to_string(),
-    });
-    decoded.uli = Some(Uli {
+    }),
+    uli : Some(Uli {
         t: ULI,
         length: 13,
         ins: 0,
@@ -801,21 +801,21 @@ fn test_create_session_req_unmarshal() {
                 eci: 28983298,
             }),
         ],
-    });
-    decoded.servingnetwork = Some(ServingNetwork {
+    }),
+    servingnetwork : Some(ServingNetwork {
         t: SERVINGNW,
         length: 3,
         ins: 0,
         mcc: 262,
         mnc: 1,
-    });
-    decoded.rattype = RatType {
+    }),
+    rattype : RatType {
         t: RATTYPE,
         length: 1,
         ins: 0,
         rat_type: Rat::Eutran,
-    };
-    decoded.fteid_control = Fteid {
+    },
+    fteid_control : Fteid {
         t: FTEID,
         length: 9,
         ins: 0,
@@ -823,45 +823,45 @@ fn test_create_session_req_unmarshal() {
         teid: 0x06d1824c,
         ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
         ipv6: None,
-    };
-    decoded.apn = Apn {
+    },
+    apn : Apn {
         t: APN,
         length: 32,
         ins: 0,
         name: "iot.1nce.net.mnc040.mcc901.gprs".to_string(),
-    };
-    decoded.selectionmode = Some(SelectionMode {
+    },
+    selectionmode : Some(SelectionMode {
         t: SELECTION_MODE,
         length: 1,
         ins: 0,
         mode: 0,
-    });
-    decoded.pdntype = Some(PdnType {
+    }),
+    pdntype : Some(PdnType {
         t: PDNTYPE,
         length: 1,
         ins: 0,
         pdn_type: Pdn::Ipv4,
-    });
-    decoded.paa = Some(PdnAddressAllocation {
+    }),
+    paa : Some(PdnAddressAllocation {
         t: PAA,
         length: 5,
         ins: 0,
         ip: PdnAddress::V4(Ipv4Addr::new(0, 0, 0, 0)),
-    });
-    decoded.max_apnrestriction = Some(ApnRestriction {
+    }),
+    max_apnrestriction : Some(ApnRestriction {
         t: APNRESTRICTION,
         length: 1,
         ins: 0,
         restriction_type: Restriction::NoApnRestriction,
-    });
-    decoded.apnambr = Some(ApnAmbr {
+    }),
+    apnambr : Some(ApnAmbr {
         t: APNAMBR,
         length: 8,
         ins: 0,
         ambr_ul: 1000,
         ambr_dl: 1000,
-    });
-    decoded.pco = Some(Pco {
+    }),
+    pco : Some(Pco {
         t: PCO,
         length: 35,
         ins: 0,
@@ -870,8 +870,8 @@ fn test_create_session_req_unmarshal() {
             0x83, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x00, 0x03, 0x00, 0x00, 0x0a,
             0x00, 0x00, 0x05, 0x00, 0x00, 0x10, 0x00,
         ],
-    });
-    decoded.bearer_ctxs = vec![BearerContext {
+    }),
+    bearer_ctxs : vec![BearerContext {
         t: 93,
         length: 44,
         ins: 0,
@@ -912,26 +912,28 @@ fn test_create_session_req_unmarshal() {
             gbr_ul: 0,
             gbr_dl: 0,
         }),
-    }];
-    decoded.recovery = Some(Recovery {
+    }],
+    recovery : Some(Recovery {
         t: RECOVERY,
         length: 1,
         ins: 0,
         recovery: 187,
-    });
-    decoded.uetimezone = Some(UeTimeZone {
+    }),
+    uetimezone : Some(UeTimeZone {
         t: UETIMEZONE,
         length: 2,
         ins: 0,
         time_zone: 2,
         dst: 1,
-    });
-    decoded.chargingchar = Some(ChargingCharacteristics {
+    }),
+    chargingchar : Some(ChargingCharacteristics {
         t: CHARGINGCHAR,
         length: 2,
         ins: 0,
         charging_char: 0x0800,
-    });
+    }),
+    ..CreateSessionRequest::default()
+};
 
     let message = CreateSessionRequest::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
@@ -976,180 +978,182 @@ fn test_create_session_req_marshal() {
         0x72, 0x00, 0x02, 0x00, 0x80, 0x01, 0x5f, 0x00, /* r....._. */
         0x02, 0x00, 0x08, 0x00,
     ];
-    let mut decoded = CreateSessionRequest::default();
-    decoded.header = Gtpv2Header {
-        msgtype: CREATE_SESSION_REQ,
-        piggyback: false,
-        message_prio: None,
-        length: 262,
-        teid: Some(0),
-        sqn: 0x68,
-    };
-    decoded.imsi = Some(Imsi {
-        t: IMSI,
-        length: 8,
-        ins: 0,
-        imsi: "901405101073874".to_string(),
-    });
-    decoded.msisdn = Some(Msisdn {
-        t: MSISDN,
-        length: 8,
-        ins: 0,
-        msisdn: "882285101073874".to_string(),
-    });
-    decoded.mei = Some(Mei {
-        t: MEI,
-        length: 8,
-        ins: 0,
-        mei: "8601950564358107".to_string(),
-    });
-    decoded.uli = Some(Uli {
-        t: ULI,
-        length: 13,
-        ins: 0,
-        loc: vec![
-            Location::Tai(Tai {
-                mcc: 262,
-                mnc: 1,
-                tac: 0x0bd9,
-            }),
-            Location::Ecgi(Ecgi {
-                mcc: 262,
-                mnc: 1,
-                eci: 28983298,
-            }),
-        ],
-    });
-    decoded.servingnetwork = Some(ServingNetwork {
-        t: SERVINGNW,
-        length: 3,
-        ins: 0,
-        mcc: 262,
-        mnc: 1,
-    });
-    decoded.rattype = RatType {
-        t: RATTYPE,
-        length: 1,
-        ins: 0,
-        rat_type: Rat::Eutran,
-    };
-    decoded.fteid_control = Fteid {
-        t: FTEID,
-        length: 9,
-        ins: 0,
-        interface: 6,
-        teid: 0x06d1824c,
-        ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
-        ipv6: None,
-    };
-    decoded.apn = Apn {
-        t: APN,
-        length: 32,
-        ins: 0,
-        name: "iot.1nce.net.mnc040.mcc901.gprs".to_string(),
-    };
-    decoded.selectionmode = Some(SelectionMode {
-        t: SELECTION_MODE,
-        length: 1,
-        ins: 0,
-        mode: 0,
-    });
-    decoded.pdntype = Some(PdnType {
-        t: PDNTYPE,
-        length: 1,
-        ins: 0,
-        pdn_type: Pdn::Ipv4,
-    });
-    decoded.paa = Some(PdnAddressAllocation {
-        t: PAA,
-        length: 5,
-        ins: 0,
-        ip: PdnAddress::V4(Ipv4Addr::new(0, 0, 0, 0)),
-    });
-    decoded.max_apnrestriction = Some(ApnRestriction {
-        t: APNRESTRICTION,
-        length: 1,
-        ins: 0,
-        restriction_type: Restriction::NoApnRestriction,
-    });
-    decoded.apnambr = Some(ApnAmbr {
-        t: APNAMBR,
-        length: 8,
-        ins: 0,
-        ambr_ul: 1000,
-        ambr_dl: 1000,
-    });
-    decoded.pco = Some(Pco {
-        t: PCO,
-        length: 35,
-        ins: 0,
-        pco: vec![
-            0x80, 0x80, 0x21, 0x10, 0x01, 0x00, 0x00, 0x10, 0x81, 0x06, 0x00, 0x00, 0x00, 0x00,
-            0x83, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x00, 0x03, 0x00, 0x00, 0x0a,
-            0x00, 0x00, 0x05, 0x00, 0x00, 0x10, 0x00,
-        ],
-    });
-    decoded.bearer_ctxs = vec![BearerContext {
-        t: 93,
-        length: 44,
-        ins: 0,
-        cause: None,
-        tft: None,
-        charging_id: None,
-        bearer_flags: None,
-        pco: None,
-        apco: None,
-        epco: None,
-        max_packet_loss: None,
-        ran_nas_cause: None,
-        ebi: Ebi {
-            t: 73,
+    let decoded = CreateSessionRequest {
+        header : Gtpv2Header {
+            msgtype: CREATE_SESSION_REQ,
+            piggyback: false,
+            message_prio: None,
+            length: 262,
+            teid: Some(0),
+            sqn: 0x68,
+        },
+        imsi : Some(Imsi {
+            t: IMSI,
+            length: 8,
+            ins: 0,
+            imsi: "901405101073874".to_string(),
+        }),
+        msisdn : Some(Msisdn {
+            t: MSISDN,
+            length: 8,
+            ins: 0,
+            msisdn: "882285101073874".to_string(),
+        }),
+        mei : Some(Mei {
+            t: MEI,
+            length: 8,
+            ins: 0,
+            mei: "8601950564358107".to_string(),
+        }),
+        uli : Some(Uli {
+            t: ULI,
+            length: 13,
+            ins: 0,
+            loc: vec![
+                Location::Tai(Tai {
+                    mcc: 262,
+                    mnc: 1,
+                    tac: 0x0bd9,
+                }),
+                Location::Ecgi(Ecgi {
+                    mcc: 262,
+                    mnc: 1,
+                    eci: 28983298,
+                }),
+            ],
+        }),
+        servingnetwork : Some(ServingNetwork {
+            t: SERVINGNW,
+            length: 3,
+            ins: 0,
+            mcc: 262,
+            mnc: 1,
+        }),
+        rattype : RatType {
+            t: RATTYPE,
             length: 1,
             ins: 0,
-            value: 5,
+            rat_type: Rat::Eutran,
         },
-        fteids: vec![Fteid {
-            t: 87,
+        fteid_control : Fteid {
+            t: FTEID,
             length: 9,
-            ins: 2,
-            interface: 4,
-            teid: 114393676,
+            ins: 0,
+            interface: 6,
+            teid: 0x06d1824c,
             ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
             ipv6: None,
-        }],
-        bearer_qos: Some(BearerQos {
-            t: 80,
-            length: 22,
+        },
+        apn : Apn {
+            t: APN,
+            length: 32,
             ins: 0,
-            pre_emption_vulnerability: 0,
-            priority_level: 11,
-            pre_emption_capability: 1,
-            qci: 9,
-            maxbr_ul: 0,
-            maxbr_dl: 0,
-            gbr_ul: 0,
-            gbr_dl: 0,
+            name: "iot.1nce.net.mnc040.mcc901.gprs".to_string(),
+        },
+        selectionmode : Some(SelectionMode {
+            t: SELECTION_MODE,
+            length: 1,
+            ins: 0,
+            mode: 0,
         }),
-    }];
-    decoded.recovery = Some(Recovery {
-        t: RECOVERY,
-        length: 1,
-        ins: 0,
-        recovery: 187,
-    });
-    decoded.uetimezone = Some(UeTimeZone {
-        t: UETIMEZONE,
-        length: 2,
-        ins: 0,
-        time_zone: 2,
-        dst: 1,
-    });
-    decoded.chargingchar = Some(ChargingCharacteristics {
-        t: CHARGINGCHAR,
-        length: 2,
-        ins: 0,
-        charging_char: 0x0800,
-    });
+        pdntype : Some(PdnType {
+            t: PDNTYPE,
+            length: 1,
+            ins: 0,
+            pdn_type: Pdn::Ipv4,
+        }),
+        paa : Some(PdnAddressAllocation {
+            t: PAA,
+            length: 5,
+            ins: 0,
+            ip: PdnAddress::V4(Ipv4Addr::new(0, 0, 0, 0)),
+        }),
+        max_apnrestriction : Some(ApnRestriction {
+            t: APNRESTRICTION,
+            length: 1,
+            ins: 0,
+            restriction_type: Restriction::NoApnRestriction,
+        }),
+        apnambr : Some(ApnAmbr {
+            t: APNAMBR,
+            length: 8,
+            ins: 0,
+            ambr_ul: 1000,
+            ambr_dl: 1000,
+        }),
+        pco : Some(Pco {
+            t: PCO,
+            length: 35,
+            ins: 0,
+            pco: vec![
+                0x80, 0x80, 0x21, 0x10, 0x01, 0x00, 0x00, 0x10, 0x81, 0x06, 0x00, 0x00, 0x00, 0x00,
+                0x83, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x00, 0x03, 0x00, 0x00, 0x0a,
+                0x00, 0x00, 0x05, 0x00, 0x00, 0x10, 0x00,
+            ],
+        }),
+        bearer_ctxs : vec![BearerContext {
+            t: 93,
+            length: 44,
+            ins: 0,
+            cause: None,
+            tft: None,
+            charging_id: None,
+            bearer_flags: None,
+            pco: None,
+            apco: None,
+            epco: None,
+            max_packet_loss: None,
+            ran_nas_cause: None,
+            ebi: Ebi {
+                t: 73,
+                length: 1,
+                ins: 0,
+                value: 5,
+            },
+            fteids: vec![Fteid {
+                t: 87,
+                length: 9,
+                ins: 2,
+                interface: 4,
+                teid: 114393676,
+                ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
+                ipv6: None,
+            }],
+            bearer_qos: Some(BearerQos {
+                t: 80,
+                length: 22,
+                ins: 0,
+                pre_emption_vulnerability: 0,
+                priority_level: 11,
+                pre_emption_capability: 1,
+                qci: 9,
+                maxbr_ul: 0,
+                maxbr_dl: 0,
+                gbr_ul: 0,
+                gbr_dl: 0,
+            }),
+        }],
+        recovery : Some(Recovery {
+            t: RECOVERY,
+            length: 1,
+            ins: 0,
+            recovery: 187,
+        }),
+        uetimezone : Some(UeTimeZone {
+            t: UETIMEZONE,
+            length: 2,
+            ins: 0,
+            time_zone: 2,
+            dst: 1,
+        }),
+        chargingchar : Some(ChargingCharacteristics {
+            t: CHARGINGCHAR,
+            length: 2,
+            ins: 0,
+            charging_char: 0x0800,
+        }),
+        ..CreateSessionRequest::default()
+    };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);

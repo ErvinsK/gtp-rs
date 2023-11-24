@@ -213,34 +213,34 @@ fn test_change_notification_req_unmarshal() {
         0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x00, 0x06, 0x00, 0x07,
         0xdb, 0x07, 0x00, 0x01, 0x00,
     ];
-    let mut decoded = ChangeNotificationRequest::default();
-    decoded.header = Gtpv2Header {
+    let decoded = ChangeNotificationRequest {
+    header : Gtpv2Header {
         msgtype: CHNG_NOTIF_REQ,
         piggyback: false,
         message_prio: None,
         length: 121,
         teid: Some(0xe64da4ef),
         sqn: 0x26002e,
-    };
-    decoded.imsi = Some(Imsi {
+    },
+    imsi : Some(Imsi {
         t: IMSI,
         length: 8,
         ins: 0,
         imsi: "901405101073874".to_string(),
-    });
-    decoded.mei = Some(Mei {
+    }),
+    mei : Some(Mei {
         t: MEI,
         length: 8,
         ins: 0,
         mei: "8694920510054907".to_string(),
-    });
-    decoded.rattype = RatType {
+    }),
+    rattype : RatType {
         t: RATTYPE,
         length: 1,
         ins: 0,
         rat_type: Rat::Eutran,
-    };
-    decoded.uli = Some(Uli {
+    },
+    uli : Some(Uli {
         t: ULI,
         length: 13,
         ins: 0,
@@ -256,28 +256,28 @@ fn test_change_notification_req_unmarshal() {
                 eci: 12933122,
             }),
         ],
-    });
-    decoded.linked_ebi = Some(Ebi {
+    }),
+    linked_ebi : Some(Ebi {
         t: EBI,
         length: EBI_LENGTH as u16,
         ins: 0,
         value: 5,
-    });
-    decoded.prai = Some(PresenceReportingAreaInformation {
+    }),
+    prai : Some(PresenceReportingAreaInformation {
         t: PRAI,
         length: 8,
         ins: 0,
         prai: PresenceReportingArea::Ipra(0x00),
         add_prai: Some(vec![PresenceReportingArea::Opra(0xff)]),
-    });
-    decoded.mo_exception_data_counter = Some(Counter {
+    }),
+    mo_exception_data_counter : Some(Counter {
         t: COUNTER,
         length: COUNTER_LENGTH as u16,
         ins: 0,
         timestamp: 4000000000,
         counter: 9,
-    });
-    decoded.secondary_rat_usage_report = vec![SecondaryRatUsageDataReport {
+    }),
+    secondary_rat_usage_report : vec![SecondaryRatUsageDataReport {
         t: SCND_RAT_UDR,
         length: SCND_RAT_UDR_LENGTH as u16,
         ins: 0,
@@ -289,14 +289,16 @@ fn test_change_notification_req_unmarshal() {
         end_timestamp: 0xffff,
         usg_data_dl: 0xffffff00,
         usg_data_ul: 0xffff,
-    }];
-    decoded.private_ext = vec![PrivateExtension {
+    }],
+    private_ext : vec![PrivateExtension {
         t: PRIVATE_EXT,
         length: 6,
         ins: 0,
         enterprise_id: 2011,
         value: vec![0x07, 0x00, 0x01, 0x00],
-    }];
+    }],
+    ..ChangeNotificationRequest::default() 
+    };
     let message = ChangeNotificationRequest::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -314,34 +316,34 @@ fn test_change_notification_req_marshal() {
         0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0x00, 0x06, 0x00, 0x07,
         0xdb, 0x07, 0x00, 0x01, 0x00,
     ];
-    let mut decoded = ChangeNotificationRequest::default();
-    decoded.header = Gtpv2Header {
+    let decoded = ChangeNotificationRequest {
+    header : Gtpv2Header {
         msgtype: CHNG_NOTIF_REQ,
         piggyback: false,
         message_prio: None,
         length: 121,
         teid: Some(0xe64da4ef),
         sqn: 0x26002e,
-    };
-    decoded.imsi = Some(Imsi {
+    },
+    imsi : Some(Imsi {
         t: IMSI,
         length: 8,
         ins: 0,
         imsi: "901405101073874".to_string(),
-    });
-    decoded.mei = Some(Mei {
+    }),
+    mei : Some(Mei {
         t: MEI,
         length: 8,
         ins: 0,
         mei: "8694920510054907".to_string(),
-    });
-    decoded.rattype = RatType {
+    }),
+    rattype : RatType {
         t: RATTYPE,
         length: 1,
         ins: 0,
         rat_type: Rat::Eutran,
-    };
-    decoded.uli = Some(Uli {
+    },
+    uli : Some(Uli {
         t: ULI,
         length: 13,
         ins: 0,
@@ -357,28 +359,28 @@ fn test_change_notification_req_marshal() {
                 eci: 12933122,
             }),
         ],
-    });
-    decoded.linked_ebi = Some(Ebi {
+    }),
+    linked_ebi : Some(Ebi {
         t: EBI,
         length: EBI_LENGTH as u16,
         ins: 0,
         value: 5,
-    });
-    decoded.prai = Some(PresenceReportingAreaInformation {
+    }),
+    prai : Some(PresenceReportingAreaInformation {
         t: PRAI,
         length: 8,
         ins: 0,
         prai: PresenceReportingArea::Ipra(0x00),
         add_prai: Some(vec![PresenceReportingArea::Opra(0xff)]),
-    });
-    decoded.mo_exception_data_counter = Some(Counter {
+    }),
+    mo_exception_data_counter : Some(Counter {
         t: COUNTER,
         length: COUNTER_LENGTH as u16,
         ins: 0,
         timestamp: 4000000000,
         counter: 9,
-    });
-    decoded.secondary_rat_usage_report = vec![SecondaryRatUsageDataReport {
+    }),
+    secondary_rat_usage_report : vec![SecondaryRatUsageDataReport {
         t: SCND_RAT_UDR,
         length: SCND_RAT_UDR_LENGTH as u16,
         ins: 0,
@@ -390,14 +392,16 @@ fn test_change_notification_req_marshal() {
         end_timestamp: 0xffff,
         usg_data_dl: 0xffffff00,
         usg_data_ul: 0xffff,
-    }];
-    decoded.private_ext = vec![PrivateExtension {
+    }],
+    private_ext : vec![PrivateExtension {
         t: PRIVATE_EXT,
         length: 6,
         ins: 0,
         enterprise_id: 2011,
         value: vec![0x07, 0x00, 0x01, 0x00],
-    }];
+    }],
+    ..ChangeNotificationRequest::default() 
+    };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     //buffer.iter().for_each( |x| print!(" {:#04x},", x));

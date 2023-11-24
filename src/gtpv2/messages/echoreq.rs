@@ -54,7 +54,7 @@ impl Messages for EchoRequest {
         }
 
         if (message.header.length as usize) + 4 <= buffer.len() {
-            match InformationElement::decoder(&buffer[MIN_HEADER_LENGTH as usize..]) {
+            match InformationElement::decoder(&buffer[MIN_HEADER_LENGTH..]) {
                 Ok(i) => match message.fromvec(i) {
                     Ok(_) => Ok(message),
                     Err(j) => Err(j),

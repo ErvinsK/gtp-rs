@@ -283,34 +283,34 @@ fn test_bearer_resource_command_unmarshal() {
         0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7e, 0x57, 0x00, 0x09, 0x02, 0x86, 0x06, 0xd1, 0x82,
         0x4c, 0xc1, 0xfe, 0x8b, 0x2d,
     ];
-    let mut decoded = BearerResourceCommand::default();
-    decoded.header = Gtpv2Header {
+    let decoded = BearerResourceCommand {
+    header : Gtpv2Header {
         msgtype: BEARER_RSRC_CMD,
         piggyback: false,
         message_prio: None,
         length: 151,
         teid: Some(0),
         sqn: 0x68,
-    };
-    decoded.linked_ebi = Ebi {
+    },
+    linked_ebi : Ebi {
         t: 73,
         length: 1,
         ins: 0,
         value: 5,
-    };
-    decoded.pti = Pti {
+    },
+    pti : Pti {
         t: PTI,
         length: 1,
         ins: 0,
         pti: 0xff,
-    };
-    decoded.tad = Some(TrafficAggregateDescription {
+    },
+    tad : Some(TrafficAggregateDescription {
         t: TAD,
         length: 4,
         ins: 0,
         tad: vec![0, 0, 0, 0],
-    });
-    decoded.uli = Some(Uli {
+    }),
+    uli : Some(Uli {
         t: ULI,
         length: 13,
         ins: 0,
@@ -326,21 +326,21 @@ fn test_bearer_resource_command_unmarshal() {
                 eci: 28983298,
             }),
         ],
-    });
-    decoded.servingnetwork = Some(ServingNetwork {
+    }),
+    servingnetwork : Some(ServingNetwork {
         t: SERVINGNW,
         length: 3,
         ins: 0,
         mcc: 262,
         mnc: 1,
-    });
-    decoded.rattype = Some(RatType {
+    }),
+    rattype : Some(RatType {
         t: RATTYPE,
         length: 1,
         ins: 0,
         rat_type: Rat::Eutran,
-    });
-    decoded.fteid_control = Some(Fteid {
+    }),
+    fteid_control : Some(Fteid {
         t: FTEID,
         length: 9,
         ins: 2,
@@ -348,8 +348,8 @@ fn test_bearer_resource_command_unmarshal() {
         teid: 0x06d1824c,
         ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
         ipv6: None,
-    });
-    decoded.pco = Some(Pco {
+    }),
+    pco : Some(Pco {
         t: PCO,
         length: 35,
         ins: 0,
@@ -358,8 +358,8 @@ fn test_bearer_resource_command_unmarshal() {
             0x83, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x00, 0x03, 0x00, 0x00, 0x0a,
             0x00, 0x00, 0x05, 0x00, 0x00, 0x10, 0x00,
         ],
-    });
-    decoded.overload_info = vec![
+    }),
+    overload_info : vec![
         OverloadControlInfo {
             t: OVERLOAD_CNTRL,
             length: 18,
@@ -410,7 +410,9 @@ fn test_bearer_resource_command_unmarshal() {
             },
             list: None,
         },
-    ];
+    ],
+    ..BearerResourceCommand::default()
+};
     let message = BearerResourceCommand::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -431,34 +433,34 @@ fn test_bearer_resource_command_marshal() {
         0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7e, 0x57, 0x00, 0x09, 0x02, 0x86, 0x06, 0xd1, 0x82,
         0x4c, 0xc1, 0xfe, 0x8b, 0x2d,
     ];
-    let mut decoded = BearerResourceCommand::default();
-    decoded.header = Gtpv2Header {
+    let decoded = BearerResourceCommand {
+    header : Gtpv2Header {
         msgtype: BEARER_RSRC_CMD,
         piggyback: false,
         message_prio: None,
         length: 151,
         teid: Some(0),
         sqn: 0x68,
-    };
-    decoded.linked_ebi = Ebi {
+    },
+    linked_ebi : Ebi {
         t: 73,
         length: 1,
         ins: 0,
         value: 5,
-    };
-    decoded.pti = Pti {
+    },
+    pti : Pti {
         t: PTI,
         length: 1,
         ins: 0,
         pti: 0xff,
-    };
-    decoded.tad = Some(TrafficAggregateDescription {
+    },
+    tad : Some(TrafficAggregateDescription {
         t: TAD,
         length: 4,
         ins: 0,
         tad: vec![0, 0, 0, 0],
-    });
-    decoded.uli = Some(Uli {
+    }),
+    uli : Some(Uli {
         t: ULI,
         length: 13,
         ins: 0,
@@ -474,21 +476,21 @@ fn test_bearer_resource_command_marshal() {
                 eci: 28983298,
             }),
         ],
-    });
-    decoded.servingnetwork = Some(ServingNetwork {
+    }),
+    servingnetwork : Some(ServingNetwork {
         t: SERVINGNW,
         length: 3,
         ins: 0,
         mcc: 262,
         mnc: 1,
-    });
-    decoded.rattype = Some(RatType {
+    }),
+    rattype : Some(RatType {
         t: RATTYPE,
         length: 1,
         ins: 0,
         rat_type: Rat::Eutran,
-    });
-    decoded.fteid_control = Some(Fteid {
+    }),
+    fteid_control : Some(Fteid {
         t: FTEID,
         length: 9,
         ins: 2,
@@ -496,8 +498,8 @@ fn test_bearer_resource_command_marshal() {
         teid: 0x06d1824c,
         ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
         ipv6: None,
-    });
-    decoded.pco = Some(Pco {
+    }),
+    pco : Some(Pco {
         t: PCO,
         length: 35,
         ins: 0,
@@ -506,8 +508,8 @@ fn test_bearer_resource_command_marshal() {
             0x83, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x00, 0x03, 0x00, 0x00, 0x0a,
             0x00, 0x00, 0x05, 0x00, 0x00, 0x10, 0x00,
         ],
-    });
-    decoded.overload_info = vec![
+    }),
+    overload_info : vec![
         OverloadControlInfo {
             t: OVERLOAD_CNTRL,
             length: 22,
@@ -558,7 +560,9 @@ fn test_bearer_resource_command_marshal() {
             },
             list: None,
         },
-    ];
+    ],
+    ..BearerResourceCommand::default()
+    };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     //buffer.iter().for_each( |x| print!("{:#04x},", x));

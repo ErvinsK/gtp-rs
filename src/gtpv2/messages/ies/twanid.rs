@@ -57,7 +57,7 @@ impl IEs for TwanId {
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        let flags: u8 = vec![
+        let flags: u8 = [
             self.relay_id.is_some(),
             self.twan_op_name.is_some(),
             self.twan_plmnid.is_some(),

@@ -341,8 +341,10 @@ fn indication_ie_unmarshal_test() {
     let encoded: [u8; 11] = [
         0x4d, 0x00, 0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
     ];
-    let mut decoded = Indication::default();
-    decoded.tspcmi = true;
-    decoded.sgwci = true;
+    let decoded = Indication {
+    tspcmi : true,
+    sgwci : true,
+    ..Default::default()
+    };
     assert_eq!(Indication::unmarshal(&encoded).unwrap(), decoded);
 }

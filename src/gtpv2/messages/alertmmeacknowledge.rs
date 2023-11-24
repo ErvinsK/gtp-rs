@@ -1,6 +1,6 @@
 use crate::gtpv2::{
     errors::*,
-    header::*,
+    header::{*},
     messages::{commons::*, ies::*},
     utils::*,
 };
@@ -104,32 +104,33 @@ fn test_alert_mme_ack_unmarshal() {
         0x48, 0x9a, 0x00, 0x18, 0xa4, 0x78, 0x95, 0x80, 0x4b, 0x29, 0x1e, 0x00, 0x02, 0x00, 0x02,
         0x00, 0x10, 0x00, 0xff, 0x00, 0x06, 0x00, 0x07, 0xdb, 0x07, 0x00, 0x01, 0x00,
     ];
-    let mut decoded = AlertMmeAcknowledge::default();
-    decoded.header = Gtpv2Header {
-        msgtype: ALERT_MME_ACK,
-        piggyback: false,
-        message_prio: None,
-        length: 24,
-        teid: Some(0xa4789580),
-        sqn: 0x4b291e,
+    let decoded = AlertMmeAcknowledge {
+        header: Gtpv2Header {
+            msgtype: ALERT_MME_ACK,
+            piggyback: false,
+            message_prio: None,
+            length: 24,
+            teid: Some(0xa4789580),
+            sqn: 0x4b291e,
+        },
+        cause: Cause {
+            t: CAUSE,
+            length: 2,
+            ins: 0,
+            value: 16,
+            pce: false,
+            bce: false,
+            cs: false,
+            offend_ie_type: None,
+        },
+        private_ext: vec![PrivateExtension {
+            t: PRIVATE_EXT,
+            length: 6,
+            ins: 0,
+            enterprise_id: 2011,
+            value: vec![0x07, 0x00, 0x01, 0x00],
+        }],
     };
-    decoded.cause = Cause {
-        t: CAUSE,
-        length: 2,
-        ins: 0,
-        value: 16,
-        pce: false,
-        bce: false,
-        cs: false,
-        offend_ie_type: None,
-    };
-    decoded.private_ext = vec![PrivateExtension {
-        t: PRIVATE_EXT,
-        length: 6,
-        ins: 0,
-        enterprise_id: 2011,
-        value: vec![0x07, 0x00, 0x01, 0x00],
-    }];
     let message = AlertMmeAcknowledge::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -140,16 +141,16 @@ fn test_alert_mme_ack_marshal() {
         0x48, 0x9a, 0x00, 0x18, 0xa4, 0x78, 0x95, 0x80, 0x4b, 0x29, 0x1e, 0x00, 0x02, 0x00, 0x02,
         0x00, 0x10, 0x00, 0xff, 0x00, 0x06, 0x00, 0x07, 0xdb, 0x07, 0x00, 0x01, 0x00,
     ];
-    let mut decoded = AlertMmeAcknowledge::default();
-    decoded.header = Gtpv2Header {
+    let decoded = AlertMmeAcknowledge {
+    header : Gtpv2Header {
         msgtype: ALERT_MME_ACK,
         piggyback: false,
         message_prio: None,
         length: 24,
         teid: Some(0xa4789580),
         sqn: 0x4b291e,
-    };
-    decoded.cause = Cause {
+    },
+    cause : Cause {
         t: CAUSE,
         length: 2,
         ins: 0,
@@ -158,14 +159,15 @@ fn test_alert_mme_ack_marshal() {
         bce: false,
         cs: false,
         offend_ie_type: None,
-    };
-    decoded.private_ext = vec![PrivateExtension {
+    },
+    private_ext : vec![PrivateExtension {
         t: PRIVATE_EXT,
         length: 6,
         ins: 0,
         enterprise_id: 2011,
         value: vec![0x07, 0x00, 0x01, 0x00],
-    }];
+    }],
+};
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     //buffer.iter().for_each( |x| print!(" {:#04x},", x));

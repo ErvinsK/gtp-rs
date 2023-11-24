@@ -89,22 +89,23 @@ fn test_ue_activity_notification_unmarshal() {
         0x48, 0x9b, 0x00, 0x12, 0xa4, 0x78, 0x95, 0x80, 0x4b, 0x29, 0x1e, 0x00, 0xff, 0x00, 0x06,
         0x00, 0x07, 0xdb, 0x07, 0x00, 0x01, 0x00,
     ];
-    let mut decoded = UeActivityNotification::default();
-    decoded.header = Gtpv2Header {
+    let decoded = UeActivityNotification {
+    header : Gtpv2Header {
         msgtype: UE_ACTIVITY_NOTIF,
         piggyback: false,
         message_prio: None,
         length: 18,
         teid: Some(0xa4789580),
         sqn: 0x4b291e,
-    };
-    decoded.private_ext = vec![PrivateExtension {
+    },
+    private_ext : vec![PrivateExtension {
         t: PRIVATE_EXT,
         length: 6,
         ins: 0,
         enterprise_id: 2011,
         value: vec![0x07, 0x00, 0x01, 0x00],
-    }];
+    }],
+};
     let message = UeActivityNotification::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -115,22 +116,23 @@ fn test_ue_activity_notification_marshal() {
         0x48, 0x9b, 0x00, 0x12, 0xa4, 0x78, 0x95, 0x80, 0x4b, 0x29, 0x1e, 0x00, 0xff, 0x00, 0x06,
         0x00, 0x07, 0xdb, 0x07, 0x00, 0x01, 0x00,
     ];
-    let mut decoded = UeActivityNotification::default();
-    decoded.header = Gtpv2Header {
-        msgtype: UE_ACTIVITY_NOTIF,
-        piggyback: false,
-        message_prio: None,
-        length: 18,
-        teid: Some(0xa4789580),
-        sqn: 0x4b291e,
+    let decoded = UeActivityNotification {
+        header : Gtpv2Header {
+            msgtype: UE_ACTIVITY_NOTIF,
+            piggyback: false,
+            message_prio: None,
+            length: 18,
+            teid: Some(0xa4789580),
+            sqn: 0x4b291e,
+        },
+        private_ext : vec![PrivateExtension {
+            t: PRIVATE_EXT,
+            length: 6,
+            ins: 0,
+            enterprise_id: 2011,
+            value: vec![0x07, 0x00, 0x01, 0x00],
+        }],
     };
-    decoded.private_ext = vec![PrivateExtension {
-        t: PRIVATE_EXT,
-        length: 6,
-        ins: 0,
-        enterprise_id: 2011,
-        value: vec![0x07, 0x00, 0x01, 0x00],
-    }];
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     //buffer.iter().for_each( |x| print!(" {:#04x},", x));
