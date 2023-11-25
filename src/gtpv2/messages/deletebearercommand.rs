@@ -182,16 +182,16 @@ fn test_delete_bearer_cmd_unmarshal() {
         0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x27, 0xff, 0x00, 0x06, 0x00,
         0x07, 0xdb, 0x07, 0x00, 0x01, 0x00,
     ];
-    let mut decoded = DeleteBearerCommand::default();
-    decoded.header = Gtpv2Header {
+    let decoded = DeleteBearerCommand {
+    header : Gtpv2Header {
         msgtype: DELETE_BEARER_CMD,
         piggyback: false,
         message_prio: None,
         length: 152,
         teid: Some(0xe64da4ef),
         sqn: 0x26002e,
-    };
-    decoded.uli = Some(Uli {
+    },
+    uli : Some(Uli {
         t: ULI,
         length: 13,
         ins: 0,
@@ -207,8 +207,8 @@ fn test_delete_bearer_cmd_unmarshal() {
                 eci: 12933122,
             }),
         ],
-    });
-    decoded.fteid_control = Some(Fteid {
+    }),
+    fteid_control : Some(Fteid {
         t: FTEID,
         length: 25,
         ins: 0,
@@ -216,15 +216,15 @@ fn test_delete_bearer_cmd_unmarshal() {
         teid: 0x23ed3820,
         ipv4: Some(Ipv4Addr::new(217, 171, 141, 242)),
         ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x27)),
-    });
-    decoded.uetimezone = Some(UeTimeZone {
+    }),
+    uetimezone : Some(UeTimeZone {
         t: UETIMEZONE,
         length: 2,
         ins: 0,
         time_zone: 0,
         dst: 0,
-    });
-    decoded.bearer_ctxs = vec![BearerContext {
+    }),
+    bearer_ctxs : vec![BearerContext {
         t: BEARER_CTX,
         length: 34,
         ins: 0,
@@ -253,8 +253,8 @@ fn test_delete_bearer_cmd_unmarshal() {
             ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x28)),
         }],
         bearer_qos: None,
-    }];
-    decoded.overload_info = vec![
+    }],
+    overload_info : vec![
         OverloadControlInfo {
             t: OVERLOAD_CNTRL,
             length: 18,
@@ -305,14 +305,16 @@ fn test_delete_bearer_cmd_unmarshal() {
             },
             list: None,
         },
-    ];
-    decoded.private_ext = vec![PrivateExtension {
+    ],
+    private_ext : vec![PrivateExtension {
         t: PRIVATE_EXT,
         length: 6,
         ins: 0,
         enterprise_id: 2011,
         value: vec![0x07, 0x00, 0x01, 0x00],
-    }];
+    }],
+    ..DeleteBearerCommand::default()
+};
     let message = DeleteBearerCommand::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -333,137 +335,139 @@ fn test_delete_bearer_cmd_marshal() {
         0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x27, 0xff, 0x00, 0x06, 0x00,
         0x07, 0xdb, 0x07, 0x00, 0x01, 0x00,
     ];
-    let mut decoded = DeleteBearerCommand::default();
-    decoded.header = Gtpv2Header {
-        msgtype: DELETE_BEARER_CMD,
-        piggyback: false,
-        message_prio: None,
-        length: 152,
-        teid: Some(0xe64da4ef),
-        sqn: 0x26002e,
-    };
-    decoded.uli = Some(Uli {
-        t: ULI,
-        length: 13,
-        ins: 0,
-        loc: vec![
-            Location::Tai(Tai {
-                mcc: 234,
-                mnc: 20,
-                tac: 0x0d59,
-            }),
-            Location::Ecgi(Ecgi {
-                mcc: 234,
-                mnc: 20,
-                eci: 12933122,
-            }),
-        ],
-    });
-    decoded.fteid_control = Some(Fteid {
-        t: FTEID,
-        length: 25,
-        ins: 0,
-        interface: 6,
-        teid: 0x23ed3820,
-        ipv4: Some(Ipv4Addr::new(217, 171, 141, 242)),
-        ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x27)),
-    });
-    decoded.uetimezone = Some(UeTimeZone {
-        t: UETIMEZONE,
-        length: 2,
-        ins: 0,
-        time_zone: 0,
-        dst: 0,
-    });
-    decoded.bearer_ctxs = vec![BearerContext {
-        t: BEARER_CTX,
-        length: 34,
-        ins: 0,
-        cause: None,
-        tft: None,
-        charging_id: None,
-        bearer_flags: None,
-        pco: None,
-        apco: None,
-        epco: None,
-        max_packet_loss: None,
-        ran_nas_cause: None,
-        ebi: Ebi {
-            t: EBI,
-            length: 1,
-            ins: 0,
-            value: 5,
+    let decoded = DeleteBearerCommand {
+        header : Gtpv2Header {
+            msgtype: DELETE_BEARER_CMD,
+            piggyback: false,
+            message_prio: None,
+            length: 152,
+            teid: Some(0xe64da4ef),
+            sqn: 0x26002e,
         },
-        fteids: vec![Fteid {
+        uli : Some(Uli {
+            t: ULI,
+            length: 13,
+            ins: 0,
+            loc: vec![
+                Location::Tai(Tai {
+                    mcc: 234,
+                    mnc: 20,
+                    tac: 0x0d59,
+                }),
+                Location::Ecgi(Ecgi {
+                    mcc: 234,
+                    mnc: 20,
+                    eci: 12933122,
+                }),
+            ],
+        }),
+        fteid_control : Some(Fteid {
             t: FTEID,
             length: 25,
-            ins: 1,
-            interface: 4,
-            teid: 0x23ed3825,
-            ipv4: Some(Ipv4Addr::new(217, 171, 141, 243)),
-            ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x28)),
-        }],
-        bearer_qos: None,
-    }];
-    decoded.overload_info = vec![
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
             ins: 0,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
+            interface: 6,
+            teid: 0x23ed3820,
+            ipv4: Some(Ipv4Addr::new(217, 171, 141, 242)),
+            ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x27)),
+        }),
+        uetimezone : Some(UeTimeZone {
+            t: UETIMEZONE,
+            length: 2,
+            ins: 0,
+            time_zone: 0,
+            dst: 0,
+        }),
+        bearer_ctxs : vec![BearerContext {
+            t: BEARER_CTX,
+            length: 34,
+            ins: 0,
+            cause: None,
+            tft: None,
+            charging_id: None,
+            bearer_flags: None,
+            pco: None,
+            apco: None,
+            epco: None,
+            max_packet_loss: None,
+            ran_nas_cause: None,
+            ebi: Ebi {
+                t: EBI,
+                length: 1,
                 ins: 0,
-                sqn: 0xffaaee11,
+                value: 5,
             },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
+            fteids: vec![Fteid {
+                t: FTEID,
+                length: 25,
+                ins: 1,
+                interface: 4,
+                teid: 0x23ed3825,
+                ipv4: Some(Ipv4Addr::new(217, 171, 141, 243)),
+                ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x28)),
+            }],
+            bearer_qos: None,
+        }],
+        overload_info : vec![
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
                 ins: 0,
-                metric: 0x60,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee11,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 31,
+                },
+                list: None,
             },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 31,
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
+                ins: 1,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee22,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 30,
+                },
+                list: None,
             },
-            list: None,
-        },
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
-            ins: 1,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee22,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 30,
-            },
-            list: None,
-        },
-    ];
-    decoded.private_ext = vec![PrivateExtension {
-        t: PRIVATE_EXT,
-        length: 6,
-        ins: 0,
-        enterprise_id: 2011,
-        value: vec![0x07, 0x00, 0x01, 0x00],
-    }];
+        ],
+        private_ext : vec![PrivateExtension {
+            t: PRIVATE_EXT,
+            length: 6,
+            ins: 0,
+            enterprise_id: 2011,
+            value: vec![0x07, 0x00, 0x01, 0x00],
+        }],
+        ..DeleteBearerCommand::default()
+    };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     //buffer.iter().for_each( |x| print!(" {:#04x},", x));

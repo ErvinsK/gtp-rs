@@ -316,16 +316,16 @@ fn test_delete_bearer_resp_unmarshal() {
         0x00, 0x0d, 0x00, 0x18, 0x42, 0xf7, 0x10, 0xab, 0xea, 0x42, 0xf7, 0x10, 0x00, 0x2a, 0x46,
         0x10, 0xaa, 0x00, 0x04, 0x00, 0xe5, 0xce, 0x77, 0xef,
     ];
-    let mut decoded = DeleteBearerResponse::default();
-    decoded.header = Gtpv2Header {
+    let decoded = DeleteBearerResponse {
+    header : Gtpv2Header {
         msgtype: DELETE_BEARER_RESP,
         piggyback: false,
         message_prio: None,
         length: 50,
         teid: Some(0x787daf3c),
         sqn: 0x1b7aae,
-    };
-    decoded.cause = Cause {
+    },
+    cause : Cause {
         t: CAUSE,
         length: 2,
         ins: 0,
@@ -334,14 +334,14 @@ fn test_delete_bearer_resp_unmarshal() {
         bce: false,
         cs: false,
         offend_ie_type: None,
-    };
-    decoded.linked_ebi = Some(Ebi {
+    },
+    linked_ebi : Some(Ebi {
         t: EBI,
         length: 1,
         ins: 0,
         value: 5,
-    });
-    decoded.uli = Some(Uli {
+    }),
+    uli : Some(Uli {
         t: ULI,
         length: 13,
         ins: 0,
@@ -357,20 +357,22 @@ fn test_delete_bearer_resp_unmarshal() {
                 eci: 2770448,
             }),
         ],
-    });
-    decoded.uli_timestamp = Some(UliTimestamp {
+    }),
+    uli_timestamp : Some(UliTimestamp {
         t: ULI_TIMESTAMP,
         length: 4,
         ins: 0,
         timestamp: 0xe5ce77ef,
-    });
-    decoded.uetimezone = Some(UeTimeZone {
+    }),
+    uetimezone : Some(UeTimeZone {
         t: UETIMEZONE,
         length: 2,
         ins: 0,
         time_zone: 2,
         dst: 0,
-    });
+    }),
+    ..DeleteBearerResponse::default()
+};
 
     let message = DeleteBearerResponse::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
@@ -384,61 +386,63 @@ fn test_delete_bearer_resp_marshal() {
         0x00, 0x0d, 0x00, 0x18, 0x42, 0xf7, 0x10, 0xab, 0xea, 0x42, 0xf7, 0x10, 0x00, 0x2a, 0x46,
         0x10, 0xaa, 0x00, 0x04, 0x00, 0xe5, 0xce, 0x77, 0xef,
     ];
-    let mut decoded = DeleteBearerResponse::default();
-    decoded.header = Gtpv2Header {
-        msgtype: DELETE_BEARER_RESP,
-        piggyback: false,
-        message_prio: None,
-        length: 50,
-        teid: Some(0x787daf3c),
-        sqn: 0x1b7aae,
+    let decoded = DeleteBearerResponse {
+        header : Gtpv2Header {
+            msgtype: DELETE_BEARER_RESP,
+            piggyback: false,
+            message_prio: None,
+            length: 50,
+            teid: Some(0x787daf3c),
+            sqn: 0x1b7aae,
+        },
+        cause : Cause {
+            t: CAUSE,
+            length: 2,
+            ins: 0,
+            value: 16,
+            pce: false,
+            bce: false,
+            cs: false,
+            offend_ie_type: None,
+        },
+        linked_ebi : Some(Ebi {
+            t: EBI,
+            length: 1,
+            ins: 0,
+            value: 5,
+        }),
+        uli : Some(Uli {
+            t: ULI,
+            length: 13,
+            ins: 0,
+            loc: vec![
+                Location::Tai(Tai {
+                    mcc: 247,
+                    mnc: 1,
+                    tac: 0xabea,
+                }),
+                Location::Ecgi(Ecgi {
+                    mcc: 247,
+                    mnc: 1,
+                    eci: 2770448,
+                }),
+            ],
+        }),
+        uli_timestamp : Some(UliTimestamp {
+            t: ULI_TIMESTAMP,
+            length: 4,
+            ins: 0,
+            timestamp: 0xe5ce77ef,
+        }),
+        uetimezone : Some(UeTimeZone {
+            t: UETIMEZONE,
+            length: 2,
+            ins: 0,
+            time_zone: 2,
+            dst: 0,
+        }),
+        ..DeleteBearerResponse::default()
     };
-    decoded.cause = Cause {
-        t: CAUSE,
-        length: 2,
-        ins: 0,
-        value: 16,
-        pce: false,
-        bce: false,
-        cs: false,
-        offend_ie_type: None,
-    };
-    decoded.linked_ebi = Some(Ebi {
-        t: EBI,
-        length: 1,
-        ins: 0,
-        value: 5,
-    });
-    decoded.uli = Some(Uli {
-        t: ULI,
-        length: 13,
-        ins: 0,
-        loc: vec![
-            Location::Tai(Tai {
-                mcc: 247,
-                mnc: 1,
-                tac: 0xabea,
-            }),
-            Location::Ecgi(Ecgi {
-                mcc: 247,
-                mnc: 1,
-                eci: 2770448,
-            }),
-        ],
-    });
-    decoded.uli_timestamp = Some(UliTimestamp {
-        t: ULI_TIMESTAMP,
-        length: 4,
-        ins: 0,
-        timestamp: 0xe5ce77ef,
-    });
-    decoded.uetimezone = Some(UeTimeZone {
-        t: UETIMEZONE,
-        length: 2,
-        ins: 0,
-        time_zone: 2,
-        dst: 0,
-    });
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     //buffer.iter().for_each( |x| print!(" {:#04x},", x));

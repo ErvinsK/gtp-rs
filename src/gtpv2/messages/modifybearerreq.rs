@@ -445,28 +445,28 @@ fn test_modify_bearer_req_unmarshal() {
         0x28, 0xff, 0x00, 0x06, 0x00, 0x07, /* ........ */
         0xdb, 0x07, 0x00, 0x01, 0x00, /* ( */
     ];
-    let mut decoded = ModifyBearerRequest::default();
-    decoded.header = Gtpv2Header {
+    let decoded = ModifyBearerRequest { 
+    header : Gtpv2Header {
         msgtype: MODIFY_BEARER_REQ,
         piggyback: false,
         message_prio: None,
         length: 149,
         teid: Some(0xe64da4ef),
         sqn: 0x26002e,
-    };
-    decoded.mei = Some(Mei {
-        t: MEI,
+    },
+    mei : Some(Mei {
+        t: MEI, 
         length: 8,
         ins: 0,
         mei: "8694920510054907".to_string(),
-    });
-    decoded.rattype = Some(RatType {
+    }),
+    rattype : Some(RatType {
         t: RATTYPE,
         length: 1,
         ins: 0,
         rat_type: Rat::Eutran,
-    });
-    decoded.uli = Some(Uli {
+    }),
+    uli : Some(Uli {
         t: ULI,
         length: 13,
         ins: 0,
@@ -482,15 +482,15 @@ fn test_modify_bearer_req_unmarshal() {
                 eci: 12933122,
             }),
         ],
-    });
-    decoded.servingnetwork = Some(ServingNetwork {
+    }),
+    servingnetwork : Some(ServingNetwork {
         t: SERVINGNW,
         length: 3,
         ins: 0,
         mcc: 234,
         mnc: 20,
-    });
-    decoded.fteid_control = Some(Fteid {
+    }),
+    fteid_control : Some(Fteid {
         t: FTEID,
         length: 25,
         ins: 0,
@@ -498,28 +498,28 @@ fn test_modify_bearer_req_unmarshal() {
         teid: 0x23ed3820,
         ipv4: Some(Ipv4Addr::new(217, 171, 141, 242)),
         ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x27)),
-    });
-    decoded.apnambr = Some(ApnAmbr {
+    }),
+    apnambr : Some(ApnAmbr {
         t: APNAMBR,
         length: 8,
         ins: 0,
         ambr_ul: 1000,
         ambr_dl: 1000,
-    });
-    decoded.recovery = Some(Recovery {
+    }),
+    recovery : Some(Recovery {
         t: RECOVERY,
         length: 1,
         ins: 0,
         recovery: 22,
-    });
-    decoded.uetimezone = Some(UeTimeZone {
+    }),
+    uetimezone : Some(UeTimeZone {
         t: UETIMEZONE,
         length: 2,
         ins: 0,
         time_zone: 0,
         dst: 0,
-    });
-    decoded.bearer_ctxs = vec![BearerContext {
+    }),
+    bearer_ctxs : vec![BearerContext {
         t: BEARER_CTX,
         length: 34,
         ins: 0,
@@ -548,14 +548,16 @@ fn test_modify_bearer_req_unmarshal() {
             ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x28)),
         }],
         bearer_qos: None,
-    }];
-    decoded.private_ext = vec![PrivateExtension {
+    }],
+    private_ext : vec![PrivateExtension {
         t: PRIVATE_EXT,
         length: 6,
         ins: 0,
         enterprise_id: 2011,
         value: vec![0x07, 0x00, 0x01, 0x00],
-    }];
+    }],
+    ..ModifyBearerRequest::default()
+};
     let message = ModifyBearerRequest::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -581,28 +583,28 @@ fn test_modify_bearer_req_marshal() {
         0x00, 0x40, 0x00, 0xff, 0x00, 0x06, 0x00, 0x07, /* ........ */
         0xdb, 0x07, 0x00, 0x01, 0x00,
     ];
-    let mut decoded = ModifyBearerRequest::default();
-    decoded.header = Gtpv2Header {
+    let decoded = ModifyBearerRequest {
+    header : Gtpv2Header {
         msgtype: MODIFY_BEARER_REQ,
         piggyback: false,
         message_prio: None,
         length: 117,
         teid: Some(0x8b2926fd),
         sqn: 0xc3,
-    };
-    decoded.mei = Some(Mei {
+    },
+    mei : Some(Mei {
         t: MEI,
         length: 8,
         ins: 0,
         mei: "8653340408693723".to_string(),
-    });
-    decoded.rattype = Some(RatType {
+    }),
+    rattype : Some(RatType {
         t: RATTYPE,
         length: 1,
         ins: 0,
         rat_type: Rat::Eutran,
-    });
-    decoded.uli = Some(Uli {
+    }),
+    uli : Some(Uli {
         t: ULI,
         length: 13,
         ins: 0,
@@ -618,15 +620,15 @@ fn test_modify_bearer_req_marshal() {
                 eci: 46196230,
             }),
         ],
-    });
-    decoded.servingnetwork = Some(ServingNetwork {
+    }),
+    servingnetwork : Some(ServingNetwork {
         t: SERVINGNW,
         length: 3,
         ins: 0,
         mcc: 206,
         mnc: 1,
-    });
-    decoded.fteid_control = Some(Fteid {
+    }),
+    fteid_control : Some(Fteid {
         t: FTEID,
         length: 9,
         ins: 0,
@@ -634,28 +636,28 @@ fn test_modify_bearer_req_marshal() {
         teid: 0x15e9e7cc,
         ipv4: Some(Ipv4Addr::new(213, 181, 60, 112)),
         ipv6: None,
-    });
-    decoded.apnambr = Some(ApnAmbr {
+    }),
+    apnambr : Some(ApnAmbr {
         t: APNAMBR,
         length: 8,
         ins: 0,
         ambr_ul: 1000,
         ambr_dl: 1000,
-    });
-    decoded.recovery = Some(Recovery {
+    }),
+    recovery : Some(Recovery {
         t: RECOVERY,
         length: 1,
         ins: 0,
         recovery: 21,
-    });
-    decoded.uetimezone = Some(UeTimeZone {
+    }),
+    uetimezone : Some(UeTimeZone {
         t: UETIMEZONE,
         length: 2,
         ins: 0,
         time_zone: 1,
         dst: 0,
-    });
-    decoded.bearer_ctxs = vec![BearerContext {
+    }),
+    bearer_ctxs : vec![BearerContext {
         t: BEARER_CTX,
         length: 34,
         ins: 0,
@@ -684,14 +686,16 @@ fn test_modify_bearer_req_marshal() {
             ipv6: None,
         }],
         bearer_qos: None,
-    }];
-    decoded.private_ext = vec![PrivateExtension {
+    }],
+    private_ext : vec![PrivateExtension {
         t: PRIVATE_EXT,
         length: 6,
         ins: 0,
         enterprise_id: 2011,
         value: vec![0x07, 0x00, 0x01, 0x00],
-    }];
+    }],
+    ..ModifyBearerRequest::default()
+};
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);

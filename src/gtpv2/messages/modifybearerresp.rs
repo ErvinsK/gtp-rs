@@ -335,16 +335,16 @@ fn test_modify_bearer_resp_unmarshal() {
         0x05, 0x5e, 0x00, 0x04, 0x00, 0x01, 0x76, 0x4f, /* .^....vO */
         0xbb, 0x7f, 0x00, 0x01, 0x00, 0x00
     ]; */
-    let mut decoded = ModifyBearerResponse::default();
-    decoded.header = Gtpv2Header {
+    let decoded = ModifyBearerResponse {
+    header : Gtpv2Header {
         msgtype: MODIFY_BEARER_RESP,
         piggyback: false,
         message_prio: None,
         length: 64,
         teid: Some(0xa4789580),
         sqn: 0x4b291e,
-    };
-    decoded.cause = Cause {
+    },
+    cause : Cause {
         t: CAUSE,
         length: 2,
         ins: 0,
@@ -353,26 +353,26 @@ fn test_modify_bearer_resp_unmarshal() {
         bce: false,
         cs: false,
         offend_ie_type: None,
-    };
-    decoded.recovery = Some(Recovery {
+    },
+    recovery : Some(Recovery {
         t: RECOVERY,
         length: 1,
         ins: 0,
         recovery: 8,
-    });
-    decoded.linked_ebi = Some(Ebi {
+    }),
+    linked_ebi : Some(Ebi {
         t: EBI,
         length: 1,
         ins: 0,
         value: 5,
-    });
-    decoded.msisdn = Some(Msisdn {
+    }),
+    msisdn : Some(Msisdn {
         t: MSISDN,
         length: 8,
         ins: 0,
         msisdn: "882285102039650".to_string(),
-    });
-    decoded.bearer_ctxs = vec![BearerContext {
+    }),
+    bearer_ctxs : vec![BearerContext {
         t: BEARER_CTX,
         length: 19,
         ins: 0,
@@ -407,13 +407,15 @@ fn test_modify_bearer_resp_unmarshal() {
         },
         fteids: vec![],
         bearer_qos: None,
-    }];
-    decoded.apn_restriction = Some(ApnRestriction {
+    }],
+    apn_restriction : Some(ApnRestriction {
         t: APNRESTRICTION,
         length: 1,
         ins: 0,
         restriction_type: Restriction::NoApnRestriction,
-    });
+    }),
+    ..ModifyBearerResponse::default()
+};
 
     let message = ModifyBearerResponse::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
@@ -428,48 +430,16 @@ fn test_modify_bearer_resp_marshal() {
         0x00, 0x02, 0x00, 0x10, 0x00, 0x49, 0x00, 0x01, 0x00, 0x05, 0x5e, 0x00, 0x04, 0x00, 0x01,
         0x76, 0x4f, 0xbb, 0x03, 0x00, 0x01, 0x00, 0x08,
     ];
-    let mut decoded = ModifyBearerResponse::default();
-    decoded.header = Gtpv2Header {
-        msgtype: MODIFY_BEARER_RESP,
-        piggyback: false,
-        message_prio: None,
-        length: 64,
-        teid: Some(0xa4789580),
-        sqn: 0x4b291e,
-    };
-    decoded.cause = Cause {
-        t: CAUSE,
-        length: 2,
-        ins: 0,
-        value: 16,
-        pce: false,
-        bce: false,
-        cs: false,
-        offend_ie_type: None,
-    };
-    decoded.recovery = Some(Recovery {
-        t: RECOVERY,
-        length: 1,
-        ins: 0,
-        recovery: 8,
-    });
-    decoded.linked_ebi = Some(Ebi {
-        t: EBI,
-        length: 1,
-        ins: 0,
-        value: 5,
-    });
-    decoded.msisdn = Some(Msisdn {
-        t: MSISDN,
-        length: 8,
-        ins: 0,
-        msisdn: "882285102039650".to_string(),
-    });
-    decoded.bearer_ctxs = vec![BearerContext {
-        t: BEARER_CTX,
-        length: 19,
-        ins: 0,
-        cause: Some(Cause {
+    let decoded = ModifyBearerResponse {
+        header : Gtpv2Header {
+            msgtype: MODIFY_BEARER_RESP,
+            piggyback: false,
+            message_prio: None,
+            length: 64,
+            teid: Some(0xa4789580),
+            sqn: 0x4b291e,
+        },
+        cause : Cause {
             t: CAUSE,
             length: 2,
             ins: 0,
@@ -478,35 +448,69 @@ fn test_modify_bearer_resp_marshal() {
             bce: false,
             cs: false,
             offend_ie_type: None,
-        }),
-        tft: None,
-        charging_id: Some(ChargingId {
-            t: CHARGINGID,
-            length: 4,
+        },
+        recovery : Some(Recovery {
+            t: RECOVERY,
+            length: 1,
             ins: 0,
-            charging_id: 24530875,
+            recovery: 8,
         }),
-        bearer_flags: None,
-        pco: None,
-        apco: None,
-        epco: None,
-        max_packet_loss: None,
-        ran_nas_cause: None,
-        ebi: Ebi {
+        linked_ebi : Some(Ebi {
             t: EBI,
             length: 1,
             ins: 0,
             value: 5,
-        },
-        fteids: vec![],
-        bearer_qos: None,
-    }];
-    decoded.apn_restriction = Some(ApnRestriction {
-        t: APNRESTRICTION,
-        length: 1,
-        ins: 0,
-        restriction_type: Restriction::NoApnRestriction,
-    });
+        }),
+        msisdn : Some(Msisdn {
+            t: MSISDN,
+            length: 8,
+            ins: 0,
+            msisdn: "882285102039650".to_string(),
+        }),
+        bearer_ctxs : vec![BearerContext {
+            t: BEARER_CTX,
+            length: 19,
+            ins: 0,
+            cause: Some(Cause {
+                t: CAUSE,
+                length: 2,
+                ins: 0,
+                value: 16,
+                pce: false,
+                bce: false,
+                cs: false,
+                offend_ie_type: None,
+            }),
+            tft: None,
+            charging_id: Some(ChargingId {
+                t: CHARGINGID,
+                length: 4,
+                ins: 0,
+                charging_id: 24530875,
+            }),
+            bearer_flags: None,
+            pco: None,
+            apco: None,
+            epco: None,
+            max_packet_loss: None,
+            ran_nas_cause: None,
+            ebi: Ebi {
+                t: EBI,
+                length: 1,
+                ins: 0,
+                value: 5,
+            },
+            fteids: vec![],
+            bearer_qos: None,
+        }],
+        apn_restriction : Some(ApnRestriction {
+            t: APNRESTRICTION,
+            length: 1,
+            ins: 0,
+            restriction_type: Restriction::NoApnRestriction,
+        }),
+        ..ModifyBearerResponse::default()
+    };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     //buffer.iter().for_each( |x| print!(" {:#04x},", x));

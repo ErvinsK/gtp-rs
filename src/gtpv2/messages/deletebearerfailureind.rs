@@ -152,16 +152,16 @@ fn test_delete_bearer_failure_ind_unmarshal() {
         0x00, 0x04, 0x00, 0xff, 0xaa, 0xee, 0x22, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01,
         0x00, 0x7e,
     ];
-    let mut decoded = DeleteBearerFailureInd::default();
-    decoded.header = Gtpv2Header {
+    let decoded = DeleteBearerFailureInd {
+    header : Gtpv2Header {
         msgtype: DELETE_BEARER_FAIL,
         piggyback: false,
         message_prio: None,
         length: 73,
         teid: Some(0),
         sqn: 0x68,
-    };
-    decoded.cause = Cause {
+    },
+    cause : Cause {
         t: CAUSE,
         length: 2,
         ins: 0,
@@ -170,8 +170,8 @@ fn test_delete_bearer_failure_ind_unmarshal() {
         bce: false,
         cs: false,
         offend_ie_type: None,
-    };
-    decoded.bearer_ctxs = vec![BearerContext {
+    },
+    bearer_ctxs : vec![BearerContext {
         t: BEARER_CTX,
         length: 11,
         ins: 0,
@@ -201,8 +201,8 @@ fn test_delete_bearer_failure_ind_unmarshal() {
         },
         fteids: vec![],
         bearer_qos: None,
-    }];
-    decoded.overload_info = vec![
+    }],
+    overload_info : vec![
         OverloadControlInfo {
             t: OVERLOAD_CNTRL,
             length: 18,
@@ -253,7 +253,9 @@ fn test_delete_bearer_failure_ind_unmarshal() {
             },
             list: None,
         },
-    ];
+    ],
+    ..DeleteBearerFailureInd::default()
+    };
     let message = DeleteBearerFailureInd::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -268,30 +270,16 @@ fn test_delete_bearer_failure_ind_marshal() {
         0x00, 0x04, 0x00, 0xff, 0xaa, 0xee, 0x22, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01,
         0x00, 0x7e,
     ];
-    let mut decoded = DeleteBearerFailureInd::default();
-    decoded.header = Gtpv2Header {
-        msgtype: DELETE_BEARER_FAIL,
-        piggyback: false,
-        message_prio: None,
-        length: 73,
-        teid: Some(0),
-        sqn: 0x68,
-    };
-    decoded.cause = Cause {
-        t: CAUSE,
-        length: 2,
-        ins: 0,
-        value: 77,
-        pce: false,
-        bce: false,
-        cs: false,
-        offend_ie_type: None,
-    };
-    decoded.bearer_ctxs = vec![BearerContext {
-        t: BEARER_CTX,
-        length: 11,
-        ins: 0,
-        cause: Some(Cause {
+    let decoded = DeleteBearerFailureInd {
+        header : Gtpv2Header {
+            msgtype: DELETE_BEARER_FAIL,
+            piggyback: false,
+            message_prio: None,
+            length: 73,
+            teid: Some(0),
+            sqn: 0x68,
+        },
+        cause : Cause {
             t: CAUSE,
             length: 2,
             ins: 0,
@@ -300,76 +288,92 @@ fn test_delete_bearer_failure_ind_marshal() {
             bce: false,
             cs: false,
             offend_ie_type: None,
-        }),
-        tft: None,
-        charging_id: None,
-        bearer_flags: None,
-        pco: None,
-        apco: None,
-        epco: None,
-        max_packet_loss: None,
-        ran_nas_cause: None,
-        ebi: Ebi {
-            t: EBI,
-            length: 1,
+        },
+        bearer_ctxs : vec![BearerContext {
+            t: BEARER_CTX,
+            length: 11,
             ins: 0,
-            value: 5,
-        },
-        fteids: vec![],
-        bearer_qos: None,
-    }];
-    decoded.overload_info = vec![
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
-            ins: 0,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
+            cause: Some(Cause {
+                t: CAUSE,
+                length: 2,
                 ins: 0,
-                sqn: 0xffaaee11,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
+                value: 77,
+                pce: false,
+                bce: false,
+                cs: false,
+                offend_ie_type: None,
+            }),
+            tft: None,
+            charging_id: None,
+            bearer_flags: None,
+            pco: None,
+            apco: None,
+            epco: None,
+            max_packet_loss: None,
+            ran_nas_cause: None,
+            ebi: Ebi {
+                t: EBI,
+                length: 1,
                 ins: 0,
-                metric: 0x60,
+                value: 5,
             },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
+            fteids: vec![],
+            bearer_qos: None,
+        }],
+        overload_info : vec![
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
                 ins: 0,
-                timer_unit: 3,
-                timer_value: 31,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee11,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 31,
+                },
+                list: None,
             },
-            list: None,
-        },
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
-            ins: 1,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee22,
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
+                ins: 1,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee22,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 30,
+                },
+                list: None,
             },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 30,
-            },
-            list: None,
-        },
-    ];
+        ],
+        ..DeleteBearerFailureInd::default()
+        };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     //buffer.iter().for_each( |x| print!(" {:#04x},", x));

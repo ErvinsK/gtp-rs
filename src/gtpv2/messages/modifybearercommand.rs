@@ -169,6 +169,7 @@ fn test_modify_bearer_command_unmarshal() {
         ins: 0,
         value: 5,
     },
+    length : 31,
     bearer_qos : Some(BearerQos {
         t: BEARERQOS,
         length: BEARERQOS_LENGTH as u16,
@@ -281,7 +282,7 @@ fn test_modify_bearer_command_marshal() {
             ambr_dl: 150000,
         },
         bearer_ctxs : vec! [BearerContext {
-        length: 24,
+        length: 31,
         ebi : Ebi {
             t: EBI,
             length: EBI_LENGTH as u16,
