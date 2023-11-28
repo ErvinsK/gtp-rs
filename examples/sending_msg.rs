@@ -3,26 +3,29 @@ use std::net::UdpSocket;
 use std::net::{IpAddr, Ipv6Addr};
 
 fn main() {
-    let mut send_header = Gtpv1Header::default();
-    send_header.msgtype = ERROR_INDICATION;
-    send_header.sequence_number = Some(2000);
-    send_header.teid = 4001;
-    let mut port = UDPPort::default();
-    port.udp_port = 6511;
-    send_header.extension_headers = Some(vec![ExtensionHeader::UDPPort(port)]);
     let mut buffer: Vec<u8> = vec![];
-    let mut message = ErrorIndication::default();
-    message.header = send_header;
-    message.teid_data = Teid {
-        t: TEID_DATA,
-        teid: 5000,
-    };
-    message.peer_addr = GsnAddress {
-        t: GSN_ADDRESS,
-        length: 16,
-        ip: IpAddr::V6(Ipv6Addr::new(
-            0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-        )),
+    let message = ErrorIndication {
+        header: Gtpv1Header {
+            msgtype: ERROR_INDICATION,
+            sequence_number: Some(2000),
+            teid: 4001,
+            extension_headers: Some(vec![ExtensionHeader::UDPPort(UDPPort {
+                udp_port: 6511,
+                ..UDPPort::default()
+            })]),
+            ..Gtpv1Header::default()
+        },
+        teid_data: Teid {
+            teid: 5000,
+            ..Teid::default()
+        },
+        peer_addr: GsnAddress {
+            ip: IpAddr::V6(Ipv6Addr::new(
+                0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+            )),
+            ..GsnAddress::default()
+        },
+        ..ErrorIndication::default()
     };
     println!("Message to be sent {:?}", message);
     message.marshal(&mut buffer);

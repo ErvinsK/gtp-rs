@@ -298,45 +298,15 @@ fn test_update_bearer_resp_unmarshal() {
         0x00, 0x01, 0x00, 0x11,
     ];
     let decoded = UpdateBearerResponse {
-    header : Gtpv2Header {
-        msgtype: UPD_BEARER_RESP,
-        piggyback: false,
-        message_prio: None,
-        length: 105,
-        teid: Some(0x0909a456),
-        sqn: 0x2f,
-    },
-    cause : Cause {
-        t: CAUSE,
-        length: 2,
-        ins: 0,
-        value: 16,
-        pce: false,
-        bce: false,
-        cs: false,
-        offend_ie_type: None,
-    },
-    recovery : Some(Recovery {
-        t: RECOVERY,
-        length: 1,
-        ins: 0,
-        recovery: 17,
-    }),
-    pco : Some(Pco {
-        t: PCO,
-        length: 20,
-        ins: 0,
-        pco: vec![
-            0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08,
-            0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
-        ],
-    }),
-
-    bearer_ctxs : vec![BearerContext {
-        t: 93,
-        length: 58,
-        ins: 0,
-        cause: Some(Cause {
+        header: Gtpv2Header {
+            msgtype: UPD_BEARER_RESP,
+            piggyback: false,
+            message_prio: None,
+            length: 105,
+            teid: Some(0x0909a456),
+            sqn: 0x2f,
+        },
+        cause: Cause {
             t: CAUSE,
             length: 2,
             ins: 0,
@@ -345,51 +315,81 @@ fn test_update_bearer_resp_unmarshal() {
             bce: false,
             cs: false,
             offend_ie_type: None,
-        }),
-        tft: None,
-        charging_id: Some(ChargingId {
-            t: CHARGINGID,
-            length: 4,
-            ins: 0,
-            charging_id: 23239876,
-        }),
-        bearer_flags: None,
-        pco: None,
-        apco: None,
-        epco: None,
-        max_packet_loss: None,
-        ran_nas_cause: None,
-        ebi: Ebi {
-            t: EBI,
+        },
+        recovery: Some(Recovery {
+            t: RECOVERY,
             length: 1,
             ins: 0,
-            value: 5,
-        },
-        fteids: vec![Fteid {
-            t: 87,
-            length: 9,
-            ins: 2,
-            interface: 5,
-            teid: 0x3b95985a,
-            ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
-            ipv6: None,
-        }],
-        bearer_qos: Some(BearerQos {
-            t: 80,
-            length: 22,
-            ins: 0,
-            pre_emption_vulnerability: 0,
-            priority_level: 11,
-            pre_emption_capability: 0,
-            qci: 9,
-            maxbr_ul: 0,
-            maxbr_dl: 0,
-            gbr_ul: 0,
-            gbr_dl: 0,
+            recovery: 17,
         }),
-    }],
-    ..UpdateBearerResponse::default()
-};
+        pco: Some(Pco {
+            t: PCO,
+            length: 20,
+            ins: 0,
+            pco: vec![
+                0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08,
+                0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
+            ],
+        }),
+
+        bearer_ctxs: vec![BearerContext {
+            t: 93,
+            length: 58,
+            ins: 0,
+            cause: Some(Cause {
+                t: CAUSE,
+                length: 2,
+                ins: 0,
+                value: 16,
+                pce: false,
+                bce: false,
+                cs: false,
+                offend_ie_type: None,
+            }),
+            tft: None,
+            charging_id: Some(ChargingId {
+                t: CHARGINGID,
+                length: 4,
+                ins: 0,
+                charging_id: 23239876,
+            }),
+            bearer_flags: None,
+            pco: None,
+            apco: None,
+            epco: None,
+            max_packet_loss: None,
+            ran_nas_cause: None,
+            ebi: Ebi {
+                t: EBI,
+                length: 1,
+                ins: 0,
+                value: 5,
+            },
+            fteids: vec![Fteid {
+                t: 87,
+                length: 9,
+                ins: 2,
+                interface: 5,
+                teid: 0x3b95985a,
+                ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
+                ipv6: None,
+            }],
+            bearer_qos: Some(BearerQos {
+                t: 80,
+                length: 22,
+                ins: 0,
+                pre_emption_vulnerability: 0,
+                priority_level: 11,
+                pre_emption_capability: 0,
+                qci: 9,
+                maxbr_ul: 0,
+                maxbr_dl: 0,
+                gbr_ul: 0,
+                gbr_dl: 0,
+            }),
+        }],
+        ..UpdateBearerResponse::default()
+    };
 
     let message = UpdateBearerResponse::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
@@ -409,7 +409,7 @@ fn test_update_bearer_resp_marshal() {
         0x00, 0x01, 0x00, 0x11,
     ];
     let decoded = UpdateBearerResponse {
-        header : Gtpv2Header {
+        header: Gtpv2Header {
             msgtype: UPD_BEARER_RESP,
             piggyback: false,
             message_prio: None,
@@ -417,7 +417,7 @@ fn test_update_bearer_resp_marshal() {
             teid: Some(0x0909a456),
             sqn: 0x2f,
         },
-        cause : Cause {
+        cause: Cause {
             t: CAUSE,
             length: 2,
             ins: 0,
@@ -427,13 +427,13 @@ fn test_update_bearer_resp_marshal() {
             cs: false,
             offend_ie_type: None,
         },
-        recovery : Some(Recovery {
+        recovery: Some(Recovery {
             t: RECOVERY,
             length: 1,
             ins: 0,
             recovery: 17,
         }),
-        pco : Some(Pco {
+        pco: Some(Pco {
             t: PCO,
             length: 20,
             ins: 0,
@@ -442,8 +442,8 @@ fn test_update_bearer_resp_marshal() {
                 0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
             ],
         }),
-    
-        bearer_ctxs : vec![BearerContext {
+
+        bearer_ctxs: vec![BearerContext {
             t: 93,
             length: 58,
             ins: 0,

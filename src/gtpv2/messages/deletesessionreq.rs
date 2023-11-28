@@ -320,67 +320,67 @@ fn test_delete_session_req_unmarshal() {
         0x00, 0x02, 0x00, 0x10, 0x1a,
     ];
     let decoded = DeleteSessionRequest {
-    header : Gtpv2Header {
-        msgtype: DELETE_SESSION_REQ,
-        piggyback: false,
-        message_prio: None,
-        length: 87,
-        teid: Some(0x9a33deaf),
-        sqn: 0x47821c,
-    },
-    linked_ebi : Some(Ebi {
-        t: EBI,
-        length: 1,
-        ins: 0,
-        value: 5,
-    }),
-    uli : Some(Uli {
-        t: ULI,
-        length: 13,
-        ins: 0,
-        loc: vec![
-            Location::Tai(Tai {
-                mcc: 310,
-                mnc: 410,
-                tac: 0x2700,
-            }),
-            Location::Ecgi(Ecgi {
-                mcc: 310,
-                mnc: 410,
-                eci: 195475590,
-            }),
-        ],
-    }),
-    fteid_control : Some(Fteid {
-        t: FTEID,
-        length: 25,
-        ins: 0,
-        interface: 6,
-        teid: 0x8215621c,
-        ipv4: Some(Ipv4Addr::new(166, 137, 249, 215)),
-        ipv6: Some(Ipv6Addr::new(0x2600, 0x300, 0x2020, 0x1eff, 0, 0, 0, 0x7)),
-    }),
-    uli_timestamp : Some(UliTimestamp {
-        t: ULI_TIMESTAMP,
-        length: ULI_TIMESTAMP_LENGTH as u16,
-        ins: 0,
-        timestamp: 0xe5ce77f3,
-    }),
-    ran_nas_cause : Some(RanNasCause {
-        t: RAN_NAS_CAUSE,
-        length: 2,
-        ins: 0,
-        cause: CauseValue::S1ap(S1APCause::RadioLayer(26)),
-    }),
-    private_ext : vec![PrivateExtension {
-        t: PRIVATE_EXT,
-        length: 10,
-        ins: 0,
-        enterprise_id: 0x4a,
-        value: vec![0x01, 0x00, 0x05, 0x05, 0x01, 0x02, 0x00, 0x1a],
-    }],
-    ..DeleteSessionRequest::default()
-};
+        header: Gtpv2Header {
+            msgtype: DELETE_SESSION_REQ,
+            piggyback: false,
+            message_prio: None,
+            length: 87,
+            teid: Some(0x9a33deaf),
+            sqn: 0x47821c,
+        },
+        linked_ebi: Some(Ebi {
+            t: EBI,
+            length: 1,
+            ins: 0,
+            value: 5,
+        }),
+        uli: Some(Uli {
+            t: ULI,
+            length: 13,
+            ins: 0,
+            loc: vec![
+                Location::Tai(Tai {
+                    mcc: 310,
+                    mnc: 410,
+                    tac: 0x2700,
+                }),
+                Location::Ecgi(Ecgi {
+                    mcc: 310,
+                    mnc: 410,
+                    eci: 195475590,
+                }),
+            ],
+        }),
+        fteid_control: Some(Fteid {
+            t: FTEID,
+            length: 25,
+            ins: 0,
+            interface: 6,
+            teid: 0x8215621c,
+            ipv4: Some(Ipv4Addr::new(166, 137, 249, 215)),
+            ipv6: Some(Ipv6Addr::new(0x2600, 0x300, 0x2020, 0x1eff, 0, 0, 0, 0x7)),
+        }),
+        uli_timestamp: Some(UliTimestamp {
+            t: ULI_TIMESTAMP,
+            length: ULI_TIMESTAMP_LENGTH as u16,
+            ins: 0,
+            timestamp: 0xe5ce77f3,
+        }),
+        ran_nas_cause: Some(RanNasCause {
+            t: RAN_NAS_CAUSE,
+            length: 2,
+            ins: 0,
+            cause: CauseValue::S1ap(S1APCause::RadioLayer(26)),
+        }),
+        private_ext: vec![PrivateExtension {
+            t: PRIVATE_EXT,
+            length: 10,
+            ins: 0,
+            enterprise_id: 0x4a,
+            value: vec![0x01, 0x00, 0x05, 0x05, 0x01, 0x02, 0x00, 0x1a],
+        }],
+        ..DeleteSessionRequest::default()
+    };
     let message = DeleteSessionRequest::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -403,7 +403,7 @@ fn test_delete_session_req_marshal() {
         0x00, 0x1a,
     ];
     let decoded = DeleteSessionRequest {
-        header : Gtpv2Header {
+        header: Gtpv2Header {
             msgtype: DELETE_SESSION_REQ,
             piggyback: false,
             message_prio: None,
@@ -411,13 +411,13 @@ fn test_delete_session_req_marshal() {
             teid: Some(0x9a33deaf),
             sqn: 0x47821c,
         },
-        linked_ebi : Some(Ebi {
+        linked_ebi: Some(Ebi {
             t: EBI,
             length: 1,
             ins: 0,
             value: 5,
         }),
-        uli : Some(Uli {
+        uli: Some(Uli {
             t: ULI,
             length: 13,
             ins: 0,
@@ -434,7 +434,7 @@ fn test_delete_session_req_marshal() {
                 }),
             ],
         }),
-        fteid_control : Some(Fteid {
+        fteid_control: Some(Fteid {
             t: FTEID,
             length: 25,
             ins: 0,
@@ -443,19 +443,19 @@ fn test_delete_session_req_marshal() {
             ipv4: Some(Ipv4Addr::new(166, 137, 249, 215)),
             ipv6: Some(Ipv6Addr::new(0x2600, 0x300, 0x2020, 0x1eff, 0, 0, 0, 0x7)),
         }),
-        uli_timestamp : Some(UliTimestamp {
+        uli_timestamp: Some(UliTimestamp {
             t: ULI_TIMESTAMP,
             length: ULI_TIMESTAMP_LENGTH as u16,
             ins: 0,
             timestamp: 0xe5ce77f3,
         }),
-        ran_nas_cause : Some(RanNasCause {
+        ran_nas_cause: Some(RanNasCause {
             t: RAN_NAS_CAUSE,
             length: 2,
             ins: 0,
             cause: CauseValue::S1ap(S1APCause::RadioLayer(26)),
         }),
-        private_ext : vec![PrivateExtension {
+        private_ext: vec![PrivateExtension {
             t: PRIVATE_EXT,
             length: 10,
             ins: 0,

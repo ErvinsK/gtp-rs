@@ -412,148 +412,7 @@ fn test_create_session_resp_unmarshal() {
         0x5e, 0x00, 0x04, 0x00, 0x01, 0x62, 0x9c, 0xc4, 0x03, 0x00, 0x01, 0x00, 0x11,
     ];
     let decoded = CreateSessionResponse {
-    header : Gtpv2Header {
-        msgtype: CREATE_SESSION_RESP,
-        piggyback: false,
-        message_prio: None,
-        length: 144,
-        teid: Some(0x0909a456),
-        sqn: 0x2f,
-    },
-    cause : Cause {
-        t: CAUSE,
-        length: 2,
-        ins: 0,
-        value: 16,
-        pce: false,
-        bce: false,
-        cs: false,
-        offend_ie_type: None,
-    },
-    recovery : Some(Recovery {
-        t: RECOVERY,
-        length: 1,
-        ins: 0,
-        recovery: 17,
-    }),
-    apn_ambr : Some(ApnAmbr {
-        t: APNAMBR,
-        length: 8,
-        ins: 0,
-        ambr_ul: 1000,
-        ambr_dl: 1000,
-    }),
-    pco : Some(Pco {
-        t: PCO,
-        length: 20,
-        ins: 0,
-        pco: vec![
-            0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08,
-            0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
-        ],
-    }),
-    paa : Some(PdnAddressAllocation {
-        t: PAA,
-        length: 5,
-        ins: 0,
-        ip: PdnAddress::V4(Ipv4Addr::new(10, 216, 113, 95)),
-    }),
-    fteid_pgw : Some(Fteid {
-        t: FTEID,
-        length: 9,
-        ins: 1,
-        interface: 7,
-        teid: 0xb97bbe07,
-        ipv4: Some(Ipv4Addr::new(62, 153, 137, 78)),
-        ipv6: None,
-    }),
-
-    bearer_ctxs : vec![BearerContext {
-        t: 93,
-        length: 58,
-        ins: 0,
-        cause: Some(Cause {
-            t: CAUSE,
-            length: 2,
-            ins: 0,
-            value: 16,
-            pce: false,
-            bce: false,
-            cs: false,
-            offend_ie_type: None,
-        }),
-        tft: None,
-        charging_id: Some(ChargingId {
-            t: CHARGINGID,
-            length: 4,
-            ins: 0,
-            charging_id: 23239876,
-        }),
-        bearer_flags: None,
-        pco: None,
-        apco: None,
-        epco: None,
-        max_packet_loss: None,
-        ran_nas_cause: None,
-        ebi: Ebi {
-            t: EBI,
-            length: 1,
-            ins: 0,
-            value: 5,
-        },
-        fteids: vec![Fteid {
-            t: 87,
-            length: 9,
-            ins: 2,
-            interface: 5,
-            teid: 0x3b95985a,
-            ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
-            ipv6: None,
-        }],
-        bearer_qos: Some(BearerQos {
-            t: 80,
-            length: 22,
-            ins: 0,
-            pre_emption_vulnerability: 0,
-            priority_level: 11,
-            pre_emption_capability: 0,
-            qci: 9,
-            maxbr_ul: 0,
-            maxbr_dl: 0,
-            gbr_ul: 0,
-            gbr_dl: 0,
-        }),
-    }],
-    apn_restriction : Some(ApnRestriction {
-        t: APNRESTRICTION,
-        length: 1,
-        ins: 0,
-        restriction_type: Restriction::NoApnRestriction,
-    }),
-    ..CreateSessionResponse::default()
-};
-
-    let message = CreateSessionResponse::unmarshal(&encoded).unwrap();
-    assert_eq!(message, decoded);
-}
-
-#[test]
-fn test_create_session_resp_marshal() {
-    use std::net::Ipv4Addr;
-    let encoded: [u8; 148] = [
-        0x48, 0x21, 0x00, 0x90, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x02, 0x00, 0x02,
-        0x00, 0x10, 0x00, 0x57, 0x00, 0x09, 0x01, 0x87, 0xb9, 0x7b, 0xbe, 0x07, 0x3e, 0x99, 0x89,
-        0x4e, 0x4f, 0x00, 0x05, 0x00, 0x01, 0x0a, 0xd8, 0x71, 0x5f, 0x7f, 0x00, 0x01, 0x00, 0x00,
-        0x48, 0x00, 0x08, 0x00, 0x00, 0x00, 0x03, 0xe8, 0x00, 0x00, 0x03, 0xe8, 0x4e, 0x00, 0x14,
-        0x00, 0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08,
-        0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61, 0x5d, 0x00, 0x3a, 0x00, 0x02, 0x00, 0x02, 0x00, 0x10,
-        0x00, 0x49, 0x00, 0x01, 0x00, 0x05, 0x57, 0x00, 0x09, 0x02, 0x85, 0x3b, 0x95, 0x98, 0x5a,
-        0x3e, 0x99, 0x89, 0x55, 0x50, 0x00, 0x16, 0x00, 0x2c, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x5e, 0x00, 0x04, 0x00, 0x01, 0x62, 0x9c, 0xc4, 0x03, 0x00, 0x01, 0x00, 0x11,
-    ];
-    let decoded = CreateSessionResponse {
-        header : Gtpv2Header {
+        header: Gtpv2Header {
             msgtype: CREATE_SESSION_RESP,
             piggyback: false,
             message_prio: None,
@@ -561,7 +420,7 @@ fn test_create_session_resp_marshal() {
             teid: Some(0x0909a456),
             sqn: 0x2f,
         },
-        cause : Cause {
+        cause: Cause {
             t: CAUSE,
             length: 2,
             ins: 0,
@@ -571,20 +430,20 @@ fn test_create_session_resp_marshal() {
             cs: false,
             offend_ie_type: None,
         },
-        recovery : Some(Recovery {
+        recovery: Some(Recovery {
             t: RECOVERY,
             length: 1,
             ins: 0,
             recovery: 17,
         }),
-        apn_ambr : Some(ApnAmbr {
+        apn_ambr: Some(ApnAmbr {
             t: APNAMBR,
             length: 8,
             ins: 0,
             ambr_ul: 1000,
             ambr_dl: 1000,
         }),
-        pco : Some(Pco {
+        pco: Some(Pco {
             t: PCO,
             length: 20,
             ins: 0,
@@ -593,13 +452,13 @@ fn test_create_session_resp_marshal() {
                 0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
             ],
         }),
-        paa : Some(PdnAddressAllocation {
+        paa: Some(PdnAddressAllocation {
             t: PAA,
             length: 5,
             ins: 0,
             ip: PdnAddress::V4(Ipv4Addr::new(10, 216, 113, 95)),
         }),
-        fteid_pgw : Some(Fteid {
+        fteid_pgw: Some(Fteid {
             t: FTEID,
             length: 9,
             ins: 1,
@@ -608,8 +467,8 @@ fn test_create_session_resp_marshal() {
             ipv4: Some(Ipv4Addr::new(62, 153, 137, 78)),
             ipv6: None,
         }),
-    
-        bearer_ctxs : vec![BearerContext {
+
+        bearer_ctxs: vec![BearerContext {
             t: 93,
             length: 58,
             ins: 0,
@@ -665,7 +524,148 @@ fn test_create_session_resp_marshal() {
                 gbr_dl: 0,
             }),
         }],
-        apn_restriction : Some(ApnRestriction {
+        apn_restriction: Some(ApnRestriction {
+            t: APNRESTRICTION,
+            length: 1,
+            ins: 0,
+            restriction_type: Restriction::NoApnRestriction,
+        }),
+        ..CreateSessionResponse::default()
+    };
+
+    let message = CreateSessionResponse::unmarshal(&encoded).unwrap();
+    assert_eq!(message, decoded);
+}
+
+#[test]
+fn test_create_session_resp_marshal() {
+    use std::net::Ipv4Addr;
+    let encoded: [u8; 148] = [
+        0x48, 0x21, 0x00, 0x90, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x02, 0x00, 0x02,
+        0x00, 0x10, 0x00, 0x57, 0x00, 0x09, 0x01, 0x87, 0xb9, 0x7b, 0xbe, 0x07, 0x3e, 0x99, 0x89,
+        0x4e, 0x4f, 0x00, 0x05, 0x00, 0x01, 0x0a, 0xd8, 0x71, 0x5f, 0x7f, 0x00, 0x01, 0x00, 0x00,
+        0x48, 0x00, 0x08, 0x00, 0x00, 0x00, 0x03, 0xe8, 0x00, 0x00, 0x03, 0xe8, 0x4e, 0x00, 0x14,
+        0x00, 0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08,
+        0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61, 0x5d, 0x00, 0x3a, 0x00, 0x02, 0x00, 0x02, 0x00, 0x10,
+        0x00, 0x49, 0x00, 0x01, 0x00, 0x05, 0x57, 0x00, 0x09, 0x02, 0x85, 0x3b, 0x95, 0x98, 0x5a,
+        0x3e, 0x99, 0x89, 0x55, 0x50, 0x00, 0x16, 0x00, 0x2c, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x5e, 0x00, 0x04, 0x00, 0x01, 0x62, 0x9c, 0xc4, 0x03, 0x00, 0x01, 0x00, 0x11,
+    ];
+    let decoded = CreateSessionResponse {
+        header: Gtpv2Header {
+            msgtype: CREATE_SESSION_RESP,
+            piggyback: false,
+            message_prio: None,
+            length: 144,
+            teid: Some(0x0909a456),
+            sqn: 0x2f,
+        },
+        cause: Cause {
+            t: CAUSE,
+            length: 2,
+            ins: 0,
+            value: 16,
+            pce: false,
+            bce: false,
+            cs: false,
+            offend_ie_type: None,
+        },
+        recovery: Some(Recovery {
+            t: RECOVERY,
+            length: 1,
+            ins: 0,
+            recovery: 17,
+        }),
+        apn_ambr: Some(ApnAmbr {
+            t: APNAMBR,
+            length: 8,
+            ins: 0,
+            ambr_ul: 1000,
+            ambr_dl: 1000,
+        }),
+        pco: Some(Pco {
+            t: PCO,
+            length: 20,
+            ins: 0,
+            pco: vec![
+                0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08,
+                0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
+            ],
+        }),
+        paa: Some(PdnAddressAllocation {
+            t: PAA,
+            length: 5,
+            ins: 0,
+            ip: PdnAddress::V4(Ipv4Addr::new(10, 216, 113, 95)),
+        }),
+        fteid_pgw: Some(Fteid {
+            t: FTEID,
+            length: 9,
+            ins: 1,
+            interface: 7,
+            teid: 0xb97bbe07,
+            ipv4: Some(Ipv4Addr::new(62, 153, 137, 78)),
+            ipv6: None,
+        }),
+
+        bearer_ctxs: vec![BearerContext {
+            t: 93,
+            length: 58,
+            ins: 0,
+            cause: Some(Cause {
+                t: CAUSE,
+                length: 2,
+                ins: 0,
+                value: 16,
+                pce: false,
+                bce: false,
+                cs: false,
+                offend_ie_type: None,
+            }),
+            tft: None,
+            charging_id: Some(ChargingId {
+                t: CHARGINGID,
+                length: 4,
+                ins: 0,
+                charging_id: 23239876,
+            }),
+            bearer_flags: None,
+            pco: None,
+            apco: None,
+            epco: None,
+            max_packet_loss: None,
+            ran_nas_cause: None,
+            ebi: Ebi {
+                t: EBI,
+                length: 1,
+                ins: 0,
+                value: 5,
+            },
+            fteids: vec![Fteid {
+                t: 87,
+                length: 9,
+                ins: 2,
+                interface: 5,
+                teid: 0x3b95985a,
+                ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
+                ipv6: None,
+            }],
+            bearer_qos: Some(BearerQos {
+                t: 80,
+                length: 22,
+                ins: 0,
+                pre_emption_vulnerability: 0,
+                priority_level: 11,
+                pre_emption_capability: 0,
+                qci: 9,
+                maxbr_ul: 0,
+                maxbr_dl: 0,
+                gbr_ul: 0,
+                gbr_dl: 0,
+            }),
+        }],
+        apn_restriction: Some(ApnRestriction {
             t: APNRESTRICTION,
             length: 1,
             ins: 0,

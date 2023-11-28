@@ -50,7 +50,7 @@ impl IEs for Apn {
             let mut data = Apn {
                 length: match u16::from_be_bytes([buffer[2], buffer[3]]) {
                     0 => return Err(GTPV1Error::IEInvalidLength),
-                    _ => u16::from_be_bytes([buffer[2], buffer[3]]), 
+                    _ => u16::from_be_bytes([buffer[2], buffer[3]]),
                 },
                 ..Default::default()
             };

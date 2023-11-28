@@ -1,4 +1,4 @@
-use crate::{gtpv2::{errors::GTPV2Error, messages::ies::*}};
+use crate::gtpv2::{errors::GTPV2Error, messages::ies::*};
 
 use super::transactionid::TransactionIdentifier;
 

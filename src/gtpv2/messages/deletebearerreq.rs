@@ -238,40 +238,14 @@ fn test_delete_bearer_req_unmarshal() {
         0x00, 0x05, 0x64, 0x00, 0x01, 0x00, 0xfa, 0x02, 0x00, 0x02, 0x00, 0x08, 0x00,
     ];
     let decoded = DeleteBearerRequest {
-    header : Gtpv2Header {
-        msgtype: DELETE_BEARER_REQ,
-        piggyback: false,
-        message_prio: None,
-        length: 39,
-        teid: Some(0xa4789580),
-        sqn: 0x4b291e,
-    },
-    cause : Some(Cause {
-        t: CAUSE,
-        length: 2,
-        ins: 0,
-        value: 8,
-        pce: false,
-        bce: false,
-        cs: false,
-        offend_ie_type: None,
-    }),
-    linked_ebi : Some(Ebi {
-        t: EBI,
-        length: 1,
-        ins: 0,
-        value: 5,
-    }),
-    pti : Some(Pti {
-        t: PTI,
-        length: PTI_LENGTH as u16,
-        ins: 0,
-        pti: 0xfa,
-    }),
-    bearer_ctxs : vec![BearerContext {
-        t: BEARER_CTX,
-        length: 11,
-        ins: 0,
+        header: Gtpv2Header {
+            msgtype: DELETE_BEARER_REQ,
+            piggyback: false,
+            message_prio: None,
+            length: 39,
+            teid: Some(0xa4789580),
+            sqn: 0x4b291e,
+        },
         cause: Some(Cause {
             t: CAUSE,
             length: 2,
@@ -282,25 +256,51 @@ fn test_delete_bearer_req_unmarshal() {
             cs: false,
             offend_ie_type: None,
         }),
-        tft: None,
-        charging_id: None,
-        bearer_flags: None,
-        pco: None,
-        apco: None,
-        epco: None,
-        max_packet_loss: None,
-        ran_nas_cause: None,
-        ebi: Ebi {
+        linked_ebi: Some(Ebi {
             t: EBI,
             length: 1,
             ins: 0,
             value: 5,
-        },
-        fteids: vec![],
-        bearer_qos: None,
-    }],
-    ..DeleteBearerRequest::default()
-};
+        }),
+        pti: Some(Pti {
+            t: PTI,
+            length: PTI_LENGTH as u16,
+            ins: 0,
+            pti: 0xfa,
+        }),
+        bearer_ctxs: vec![BearerContext {
+            t: BEARER_CTX,
+            length: 11,
+            ins: 0,
+            cause: Some(Cause {
+                t: CAUSE,
+                length: 2,
+                ins: 0,
+                value: 8,
+                pce: false,
+                bce: false,
+                cs: false,
+                offend_ie_type: None,
+            }),
+            tft: None,
+            charging_id: None,
+            bearer_flags: None,
+            pco: None,
+            apco: None,
+            epco: None,
+            max_packet_loss: None,
+            ran_nas_cause: None,
+            ebi: Ebi {
+                t: EBI,
+                length: 1,
+                ins: 0,
+                value: 5,
+            },
+            fteids: vec![],
+            bearer_qos: None,
+        }],
+        ..DeleteBearerRequest::default()
+    };
     let message = DeleteBearerRequest::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -313,7 +313,7 @@ fn test_delete_bearer_req_marshal() {
         0x00, 0x05, 0x64, 0x00, 0x01, 0x00, 0xfa, 0x02, 0x00, 0x02, 0x00, 0x08, 0x00,
     ];
     let decoded = DeleteBearerRequest {
-        header : Gtpv2Header {
+        header: Gtpv2Header {
             msgtype: DELETE_BEARER_REQ,
             piggyback: false,
             message_prio: None,
@@ -321,7 +321,7 @@ fn test_delete_bearer_req_marshal() {
             teid: Some(0xa4789580),
             sqn: 0x4b291e,
         },
-        cause : Some(Cause {
+        cause: Some(Cause {
             t: CAUSE,
             length: 2,
             ins: 0,
@@ -331,19 +331,19 @@ fn test_delete_bearer_req_marshal() {
             cs: false,
             offend_ie_type: None,
         }),
-        linked_ebi : Some(Ebi {
+        linked_ebi: Some(Ebi {
             t: EBI,
             length: 1,
             ins: 0,
             value: 5,
         }),
-        pti : Some(Pti {
+        pti: Some(Pti {
             t: PTI,
             length: PTI_LENGTH as u16,
             ins: 0,
             pti: 0xfa,
         }),
-        bearer_ctxs : vec![BearerContext {
+        bearer_ctxs: vec![BearerContext {
             t: BEARER_CTX,
             length: 11,
             ins: 0,

@@ -105,32 +105,32 @@ fn test_resume_ack_unmarshal() {
         0x00, 0x10, 0x00, 0xff, 0x00, 0x06, 0x00, 0x07, 0xdb, 0x07, 0x00, 0x01, 0x00,
     ];
     let decoded = ResumeAcknowledge {
-    header : Gtpv2Header {
-        msgtype: RESUME_ACK,
-        piggyback: false,
-        message_prio: None,
-        length: 24,
-        teid: Some(0xa4789580),
-        sqn: 0x4b291e,
-    },
-    cause : Cause {
-        t: CAUSE,
-        length: 2,
-        ins: 0,
-        value: 16,
-        pce: false,
-        bce: false,
-        cs: false,
-        offend_ie_type: None,
-    },
-    private_ext : vec![PrivateExtension {
-        t: PRIVATE_EXT,
-        length: 6,
-        ins: 0,
-        enterprise_id: 2011,
-        value: vec![0x07, 0x00, 0x01, 0x00],
-    }],
-};
+        header: Gtpv2Header {
+            msgtype: RESUME_ACK,
+            piggyback: false,
+            message_prio: None,
+            length: 24,
+            teid: Some(0xa4789580),
+            sqn: 0x4b291e,
+        },
+        cause: Cause {
+            t: CAUSE,
+            length: 2,
+            ins: 0,
+            value: 16,
+            pce: false,
+            bce: false,
+            cs: false,
+            offend_ie_type: None,
+        },
+        private_ext: vec![PrivateExtension {
+            t: PRIVATE_EXT,
+            length: 6,
+            ins: 0,
+            enterprise_id: 2011,
+            value: vec![0x07, 0x00, 0x01, 0x00],
+        }],
+    };
     let message = ResumeAcknowledge::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -142,7 +142,7 @@ fn test_resume_ack_marshal() {
         0x00, 0x10, 0x00, 0xff, 0x00, 0x06, 0x00, 0x07, 0xdb, 0x07, 0x00, 0x01, 0x00,
     ];
     let decoded = ResumeAcknowledge {
-        header : Gtpv2Header {
+        header: Gtpv2Header {
             msgtype: RESUME_ACK,
             piggyback: false,
             message_prio: None,
@@ -150,7 +150,7 @@ fn test_resume_ack_marshal() {
             teid: Some(0xa4789580),
             sqn: 0x4b291e,
         },
-        cause : Cause {
+        cause: Cause {
             t: CAUSE,
             length: 2,
             ins: 0,
@@ -160,7 +160,7 @@ fn test_resume_ack_marshal() {
             cs: false,
             offend_ie_type: None,
         },
-        private_ext : vec![PrivateExtension {
+        private_ext: vec![PrivateExtension {
             t: PRIVATE_EXT,
             length: 6,
             ins: 0,

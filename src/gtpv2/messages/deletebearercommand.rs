@@ -183,160 +183,7 @@ fn test_delete_bearer_cmd_unmarshal() {
         0x07, 0xdb, 0x07, 0x00, 0x01, 0x00,
     ];
     let decoded = DeleteBearerCommand {
-    header : Gtpv2Header {
-        msgtype: DELETE_BEARER_CMD,
-        piggyback: false,
-        message_prio: None,
-        length: 152,
-        teid: Some(0xe64da4ef),
-        sqn: 0x26002e,
-    },
-    uli : Some(Uli {
-        t: ULI,
-        length: 13,
-        ins: 0,
-        loc: vec![
-            Location::Tai(Tai {
-                mcc: 234,
-                mnc: 20,
-                tac: 0x0d59,
-            }),
-            Location::Ecgi(Ecgi {
-                mcc: 234,
-                mnc: 20,
-                eci: 12933122,
-            }),
-        ],
-    }),
-    fteid_control : Some(Fteid {
-        t: FTEID,
-        length: 25,
-        ins: 0,
-        interface: 6,
-        teid: 0x23ed3820,
-        ipv4: Some(Ipv4Addr::new(217, 171, 141, 242)),
-        ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x27)),
-    }),
-    uetimezone : Some(UeTimeZone {
-        t: UETIMEZONE,
-        length: 2,
-        ins: 0,
-        time_zone: 0,
-        dst: 0,
-    }),
-    bearer_ctxs : vec![BearerContext {
-        t: BEARER_CTX,
-        length: 34,
-        ins: 0,
-        cause: None,
-        tft: None,
-        charging_id: None,
-        bearer_flags: None,
-        pco: None,
-        apco: None,
-        epco: None,
-        max_packet_loss: None,
-        ran_nas_cause: None,
-        ebi: Ebi {
-            t: EBI,
-            length: 1,
-            ins: 0,
-            value: 5,
-        },
-        fteids: vec![Fteid {
-            t: FTEID,
-            length: 25,
-            ins: 1,
-            interface: 4,
-            teid: 0x23ed3825,
-            ipv4: Some(Ipv4Addr::new(217, 171, 141, 243)),
-            ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x28)),
-        }],
-        bearer_qos: None,
-    }],
-    overload_info : vec![
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
-            ins: 0,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee11,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 31,
-            },
-            list: None,
-        },
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
-            ins: 1,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee22,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 30,
-            },
-            list: None,
-        },
-    ],
-    private_ext : vec![PrivateExtension {
-        t: PRIVATE_EXT,
-        length: 6,
-        ins: 0,
-        enterprise_id: 2011,
-        value: vec![0x07, 0x00, 0x01, 0x00],
-    }],
-    ..DeleteBearerCommand::default()
-};
-    let message = DeleteBearerCommand::unmarshal(&encoded).unwrap();
-    assert_eq!(message, decoded);
-}
-
-#[test]
-fn test_delete_bearer_cmd_marshal() {
-    use std::net::{Ipv4Addr, Ipv6Addr};
-    let encoded: [u8; 156] = [
-        0x48, 0x42, 0x00, 0x98, 0xe6, 0x4d, 0xa4, 0xef, 0x26, 0x00, 0x2e, 0x00, 0x5d, 0x00, 0x22,
-        0x00, 0x49, 0x00, 0x01, 0x00, 0x05, 0x57, 0x00, 0x19, 0x01, 0xc4, 0x23, 0xed, 0x38, 0x25,
-        0xd9, 0xab, 0x8d, 0xf3, 0x2a, 0x04, 0x4a, 0x45, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x28, 0x56, 0x00, 0x0d, 0x00, 0x18, 0x32, 0xf4, 0x02, 0x0d, 0x59,
-        0x32, 0xf4, 0x02, 0x00, 0xc5, 0x58, 0x02, 0x72, 0x00, 0x02, 0x00, 0x00, 0x00, 0xb4, 0x00,
-        0x12, 0x00, 0xb7, 0x00, 0x04, 0x00, 0xff, 0xaa, 0xee, 0x11, 0xb6, 0x00, 0x01, 0x00, 0x60,
-        0x9c, 0x00, 0x01, 0x00, 0x7f, 0xb4, 0x00, 0x12, 0x01, 0xb7, 0x00, 0x04, 0x00, 0xff, 0xaa,
-        0xee, 0x22, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7e, 0x57, 0x00, 0x19,
-        0x00, 0xc6, 0x23, 0xed, 0x38, 0x20, 0xd9, 0xab, 0x8d, 0xf2, 0x2a, 0x04, 0x4a, 0x45, 0x00,
-        0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x27, 0xff, 0x00, 0x06, 0x00,
-        0x07, 0xdb, 0x07, 0x00, 0x01, 0x00,
-    ];
-    let decoded = DeleteBearerCommand {
-        header : Gtpv2Header {
+        header: Gtpv2Header {
             msgtype: DELETE_BEARER_CMD,
             piggyback: false,
             message_prio: None,
@@ -344,7 +191,7 @@ fn test_delete_bearer_cmd_marshal() {
             teid: Some(0xe64da4ef),
             sqn: 0x26002e,
         },
-        uli : Some(Uli {
+        uli: Some(Uli {
             t: ULI,
             length: 13,
             ins: 0,
@@ -361,7 +208,7 @@ fn test_delete_bearer_cmd_marshal() {
                 }),
             ],
         }),
-        fteid_control : Some(Fteid {
+        fteid_control: Some(Fteid {
             t: FTEID,
             length: 25,
             ins: 0,
@@ -370,14 +217,14 @@ fn test_delete_bearer_cmd_marshal() {
             ipv4: Some(Ipv4Addr::new(217, 171, 141, 242)),
             ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x27)),
         }),
-        uetimezone : Some(UeTimeZone {
+        uetimezone: Some(UeTimeZone {
             t: UETIMEZONE,
             length: 2,
             ins: 0,
             time_zone: 0,
             dst: 0,
         }),
-        bearer_ctxs : vec![BearerContext {
+        bearer_ctxs: vec![BearerContext {
             t: BEARER_CTX,
             length: 34,
             ins: 0,
@@ -407,7 +254,7 @@ fn test_delete_bearer_cmd_marshal() {
             }],
             bearer_qos: None,
         }],
-        overload_info : vec![
+        overload_info: vec![
             OverloadControlInfo {
                 t: OVERLOAD_CNTRL,
                 length: 18,
@@ -459,7 +306,160 @@ fn test_delete_bearer_cmd_marshal() {
                 list: None,
             },
         ],
-        private_ext : vec![PrivateExtension {
+        private_ext: vec![PrivateExtension {
+            t: PRIVATE_EXT,
+            length: 6,
+            ins: 0,
+            enterprise_id: 2011,
+            value: vec![0x07, 0x00, 0x01, 0x00],
+        }],
+        ..DeleteBearerCommand::default()
+    };
+    let message = DeleteBearerCommand::unmarshal(&encoded).unwrap();
+    assert_eq!(message, decoded);
+}
+
+#[test]
+fn test_delete_bearer_cmd_marshal() {
+    use std::net::{Ipv4Addr, Ipv6Addr};
+    let encoded: [u8; 156] = [
+        0x48, 0x42, 0x00, 0x98, 0xe6, 0x4d, 0xa4, 0xef, 0x26, 0x00, 0x2e, 0x00, 0x5d, 0x00, 0x22,
+        0x00, 0x49, 0x00, 0x01, 0x00, 0x05, 0x57, 0x00, 0x19, 0x01, 0xc4, 0x23, 0xed, 0x38, 0x25,
+        0xd9, 0xab, 0x8d, 0xf3, 0x2a, 0x04, 0x4a, 0x45, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x28, 0x56, 0x00, 0x0d, 0x00, 0x18, 0x32, 0xf4, 0x02, 0x0d, 0x59,
+        0x32, 0xf4, 0x02, 0x00, 0xc5, 0x58, 0x02, 0x72, 0x00, 0x02, 0x00, 0x00, 0x00, 0xb4, 0x00,
+        0x12, 0x00, 0xb7, 0x00, 0x04, 0x00, 0xff, 0xaa, 0xee, 0x11, 0xb6, 0x00, 0x01, 0x00, 0x60,
+        0x9c, 0x00, 0x01, 0x00, 0x7f, 0xb4, 0x00, 0x12, 0x01, 0xb7, 0x00, 0x04, 0x00, 0xff, 0xaa,
+        0xee, 0x22, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7e, 0x57, 0x00, 0x19,
+        0x00, 0xc6, 0x23, 0xed, 0x38, 0x20, 0xd9, 0xab, 0x8d, 0xf2, 0x2a, 0x04, 0x4a, 0x45, 0x00,
+        0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x27, 0xff, 0x00, 0x06, 0x00,
+        0x07, 0xdb, 0x07, 0x00, 0x01, 0x00,
+    ];
+    let decoded = DeleteBearerCommand {
+        header: Gtpv2Header {
+            msgtype: DELETE_BEARER_CMD,
+            piggyback: false,
+            message_prio: None,
+            length: 152,
+            teid: Some(0xe64da4ef),
+            sqn: 0x26002e,
+        },
+        uli: Some(Uli {
+            t: ULI,
+            length: 13,
+            ins: 0,
+            loc: vec![
+                Location::Tai(Tai {
+                    mcc: 234,
+                    mnc: 20,
+                    tac: 0x0d59,
+                }),
+                Location::Ecgi(Ecgi {
+                    mcc: 234,
+                    mnc: 20,
+                    eci: 12933122,
+                }),
+            ],
+        }),
+        fteid_control: Some(Fteid {
+            t: FTEID,
+            length: 25,
+            ins: 0,
+            interface: 6,
+            teid: 0x23ed3820,
+            ipv4: Some(Ipv4Addr::new(217, 171, 141, 242)),
+            ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x27)),
+        }),
+        uetimezone: Some(UeTimeZone {
+            t: UETIMEZONE,
+            length: 2,
+            ins: 0,
+            time_zone: 0,
+            dst: 0,
+        }),
+        bearer_ctxs: vec![BearerContext {
+            t: BEARER_CTX,
+            length: 34,
+            ins: 0,
+            cause: None,
+            tft: None,
+            charging_id: None,
+            bearer_flags: None,
+            pco: None,
+            apco: None,
+            epco: None,
+            max_packet_loss: None,
+            ran_nas_cause: None,
+            ebi: Ebi {
+                t: EBI,
+                length: 1,
+                ins: 0,
+                value: 5,
+            },
+            fteids: vec![Fteid {
+                t: FTEID,
+                length: 25,
+                ins: 1,
+                interface: 4,
+                teid: 0x23ed3825,
+                ipv4: Some(Ipv4Addr::new(217, 171, 141, 243)),
+                ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x28)),
+            }],
+            bearer_qos: None,
+        }],
+        overload_info: vec![
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
+                ins: 0,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee11,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 31,
+                },
+                list: None,
+            },
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
+                ins: 1,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee22,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 30,
+                },
+                list: None,
+            },
+        ],
+        private_ext: vec![PrivateExtension {
             t: PRIVATE_EXT,
             length: 6,
             ins: 0,

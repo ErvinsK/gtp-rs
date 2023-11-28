@@ -138,36 +138,36 @@ fn test_resume_notification_unmarshal() {
         0x00, 0x09, 0x00, 0x86, 0x06, 0xd1, 0x82, 0x4c, 0xc1, 0xfe, 0x8b, 0x2d,
     ];
     let decoded = ResumeNotification {
-    header : Gtpv2Header {
-        msgtype: RESUME_NOTIF,
-        piggyback: false,
-        message_prio: None,
-        length: 38,
-        teid: Some(0xa4789580),
-        sqn: 0x4b291e,
-    },
-    imsi : Imsi {
-        t: 0x01,
-        length: 0x08,
-        ins: 0x00,
-        imsi: "901405101961873".to_string(),
-    },
-    linked_ebi : Some(Ebi {
-        t: EBI,
-        length: 1,
-        ins: 0,
-        value: 5,
-    }),
-    fteid_control : Some(Fteid {
-        t: FTEID,
-        length: 9,
-        ins: 0,
-        interface: 6,
-        teid: 0x06d1824c,
-        ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
-        ipv6: None,
-    }),
-    ..ResumeNotification::default()
+        header: Gtpv2Header {
+            msgtype: RESUME_NOTIF,
+            piggyback: false,
+            message_prio: None,
+            length: 38,
+            teid: Some(0xa4789580),
+            sqn: 0x4b291e,
+        },
+        imsi: Imsi {
+            t: 0x01,
+            length: 0x08,
+            ins: 0x00,
+            imsi: "901405101961873".to_string(),
+        },
+        linked_ebi: Some(Ebi {
+            t: EBI,
+            length: 1,
+            ins: 0,
+            value: 5,
+        }),
+        fteid_control: Some(Fteid {
+            t: FTEID,
+            length: 9,
+            ins: 0,
+            interface: 6,
+            teid: 0x06d1824c,
+            ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
+            ipv6: None,
+        }),
+        ..ResumeNotification::default()
     };
     let message = ResumeNotification::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
@@ -182,7 +182,7 @@ fn test_resume_notification_marshal() {
         0x00, 0x09, 0x00, 0x86, 0x06, 0xd1, 0x82, 0x4c, 0xc1, 0xfe, 0x8b, 0x2d,
     ];
     let decoded = ResumeNotification {
-        header : Gtpv2Header {
+        header: Gtpv2Header {
             msgtype: RESUME_NOTIF,
             piggyback: false,
             message_prio: None,
@@ -190,19 +190,19 @@ fn test_resume_notification_marshal() {
             teid: Some(0xa4789580),
             sqn: 0x4b291e,
         },
-        imsi : Imsi {
+        imsi: Imsi {
             t: 0x01,
             length: 0x08,
             ins: 0x00,
             imsi: "901405101961873".to_string(),
         },
-        linked_ebi : Some(Ebi {
+        linked_ebi: Some(Ebi {
             t: EBI,
             length: 1,
             ins: 0,
             value: 5,
         }),
-        fteid_control : Some(Fteid {
+        fteid_control: Some(Fteid {
             t: FTEID,
             length: 9,
             ins: 0,
@@ -212,7 +212,7 @@ fn test_resume_notification_marshal() {
             ipv6: None,
         }),
         ..ResumeNotification::default()
-        };
+    };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     //buffer.iter().for_each( |x| print!(" {:#04x},", x));

@@ -170,89 +170,89 @@ fn test_bearer_failure_ind_unmarshal() {
         0xee, 0x22, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7e,
     ];
     let decoded = BearerResourceFailureInd {
-    header : Gtpv2Header {
-        msgtype: BEARER_RSRC_FAIL,
-        piggyback: false,
-        message_prio: None,
-        length: 68,
-        teid: Some(0),
-        sqn: 0x68,
-    },
-    cause : Cause {
-        t: CAUSE,
-        length: 2,
-        ins: 0,
-        value: 77,
-        pce: false,
-        bce: false,
-        cs: false,
-        offend_ie_type: None,
-    },
-    linked_ebi : Ebi {
-        t: 73,
-        length: 1,
-        ins: 0,
-        value: 5,
-    },
-    pti : Pti {
-        t: PTI,
-        length: 1,
-        ins: 0,
-        pti: 0xff,
-    },
-    overload_info : vec![
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
+        header: Gtpv2Header {
+            msgtype: BEARER_RSRC_FAIL,
+            piggyback: false,
+            message_prio: None,
+            length: 68,
+            teid: Some(0),
+            sqn: 0x68,
+        },
+        cause: Cause {
+            t: CAUSE,
+            length: 2,
             ins: 0,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee11,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 31,
-            },
-            list: None,
+            value: 77,
+            pce: false,
+            bce: false,
+            cs: false,
+            offend_ie_type: None,
         },
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
-            ins: 1,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee22,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 30,
-            },
-            list: None,
+        linked_ebi: Ebi {
+            t: 73,
+            length: 1,
+            ins: 0,
+            value: 5,
         },
-    ],
-    ..BearerResourceFailureInd::default()
+        pti: Pti {
+            t: PTI,
+            length: 1,
+            ins: 0,
+            pti: 0xff,
+        },
+        overload_info: vec![
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
+                ins: 0,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee11,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 31,
+                },
+                list: None,
+            },
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
+                ins: 1,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee22,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 30,
+                },
+                list: None,
+            },
+        ],
+        ..BearerResourceFailureInd::default()
     };
     let message = BearerResourceFailureInd::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
@@ -268,89 +268,89 @@ fn test_bearer_failure_ind_marshal() {
         0xee, 0x22, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7e,
     ];
     let decoded = BearerResourceFailureInd {
-    header : Gtpv2Header {
-        msgtype: BEARER_RSRC_FAIL,
-        piggyback: false,
-        message_prio: None,
-        length: 68,
-        teid: Some(0),
-        sqn: 0x68,
-    },
-    cause : Cause {
-        t: CAUSE,
-        length: 2,
-        ins: 0,
-        value: 77,
-        pce: false,
-        bce: false,
-        cs: false,
-        offend_ie_type: None,
-    },
-    linked_ebi : Ebi {
-        t: 73,
-        length: 1,
-        ins: 0,
-        value: 5,
-    },
-    pti : Pti {
-        t: PTI,
-        length: 1,
-        ins: 0,
-        pti: 0xff,
-    },
-    overload_info : vec![
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
+        header: Gtpv2Header {
+            msgtype: BEARER_RSRC_FAIL,
+            piggyback: false,
+            message_prio: None,
+            length: 68,
+            teid: Some(0),
+            sqn: 0x68,
+        },
+        cause: Cause {
+            t: CAUSE,
+            length: 2,
             ins: 0,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee11,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 31,
-            },
-            list: None,
+            value: 77,
+            pce: false,
+            bce: false,
+            cs: false,
+            offend_ie_type: None,
         },
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
-            ins: 1,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee22,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 30,
-            },
-            list: None,
+        linked_ebi: Ebi {
+            t: 73,
+            length: 1,
+            ins: 0,
+            value: 5,
         },
-    ],
-    ..BearerResourceFailureInd::default()
+        pti: Pti {
+            t: PTI,
+            length: 1,
+            ins: 0,
+            pti: 0xff,
+        },
+        overload_info: vec![
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
+                ins: 0,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee11,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 31,
+                },
+                list: None,
+            },
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
+                ins: 1,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee22,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 30,
+                },
+                list: None,
+            },
+        ],
+        ..BearerResourceFailureInd::default()
     };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);

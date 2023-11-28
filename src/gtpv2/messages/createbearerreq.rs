@@ -254,98 +254,7 @@ fn test_create_bearer_req_unmarshal() {
         0x00, 0x04, 0x00, 0x01, 0x62, 0x9c, 0xc4,
     ];
     let decoded = CreateBearerRequest {
-    header : Gtpv2Header {
-        msgtype: CREATE_BEARER_REQ,
-        piggyback: false,
-        message_prio: None,
-        length: 93,
-        teid: Some(0x0909a456),
-        sqn: 0x2f,
-    },
-    linked_ebi : Ebi {
-        t: EBI,
-        length: EBI_LENGTH as u16,
-        ins: 0,
-        value: 5,
-    },
-    pco : Some(Pco {
-        t: PCO,
-        length: 20,
-        ins: 0,
-        pco: vec![
-            0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08,
-            0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
-        ],
-    }),
-
-    bearer_ctxs : vec![BearerContext {
-        t: 93,
-        length: 52,
-        ins: 0,
-        cause: None,
-        tft: None,
-        charging_id: Some(ChargingId {
-            t: CHARGINGID,
-            length: 4,
-            ins: 0,
-            charging_id: 23239876,
-        }),
-        bearer_flags: None,
-        pco: None,
-        apco: None,
-        epco: None,
-        max_packet_loss: None,
-        ran_nas_cause: None,
-        ebi: Ebi {
-            t: EBI,
-            length: 1,
-            ins: 0,
-            value: 0,
-        },
-        fteids: vec![Fteid {
-            t: 87,
-            length: 9,
-            ins: 2,
-            interface: 5,
-            teid: 0x3b95985a,
-            ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
-            ipv6: None,
-        }],
-        bearer_qos: Some(BearerQos {
-            t: 80,
-            length: 22,
-            ins: 0,
-            pre_emption_vulnerability: 0,
-            priority_level: 11,
-            pre_emption_capability: 0,
-            qci: 9,
-            maxbr_ul: 0,
-            maxbr_dl: 0,
-            gbr_ul: 0,
-            gbr_dl: 0,
-        }),
-    }],
-    ..CreateBearerRequest::default()
-    };
-
-    let message = CreateBearerRequest::unmarshal(&encoded).unwrap();
-    assert_eq!(message, decoded);
-}
-
-#[test]
-fn test_create_bearer_req_marshal() {
-    use std::net::Ipv4Addr;
-    let encoded: [u8; 97] = [
-        0x48, 0x5f, 0x00, 0x5d, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x49, 0x00, 0x01,
-        0x00, 0x05, 0x4e, 0x00, 0x14, 0x00, 0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81,
-        0x06, 0x08, 0x08, 0x08, 0x08, 0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61, 0x5d, 0x00, 0x34, 0x00,
-        0x49, 0x00, 0x01, 0x00, 0x00, 0x57, 0x00, 0x09, 0x02, 0x85, 0x3b, 0x95, 0x98, 0x5a, 0x3e,
-        0x99, 0x89, 0x55, 0x50, 0x00, 0x16, 0x00, 0x2c, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5e,
-        0x00, 0x04, 0x00, 0x01, 0x62, 0x9c, 0xc4,
-    ];
-    let decoded = CreateBearerRequest {
-        header : Gtpv2Header {
+        header: Gtpv2Header {
             msgtype: CREATE_BEARER_REQ,
             piggyback: false,
             message_prio: None,
@@ -353,13 +262,13 @@ fn test_create_bearer_req_marshal() {
             teid: Some(0x0909a456),
             sqn: 0x2f,
         },
-        linked_ebi : Ebi {
+        linked_ebi: Ebi {
             t: EBI,
             length: EBI_LENGTH as u16,
             ins: 0,
             value: 5,
         },
-        pco : Some(Pco {
+        pco: Some(Pco {
             t: PCO,
             length: 20,
             ins: 0,
@@ -368,8 +277,8 @@ fn test_create_bearer_req_marshal() {
                 0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
             ],
         }),
-    
-        bearer_ctxs : vec![BearerContext {
+
+        bearer_ctxs: vec![BearerContext {
             t: 93,
             length: 52,
             ins: 0,
@@ -417,7 +326,98 @@ fn test_create_bearer_req_marshal() {
             }),
         }],
         ..CreateBearerRequest::default()
-        };
+    };
+
+    let message = CreateBearerRequest::unmarshal(&encoded).unwrap();
+    assert_eq!(message, decoded);
+}
+
+#[test]
+fn test_create_bearer_req_marshal() {
+    use std::net::Ipv4Addr;
+    let encoded: [u8; 97] = [
+        0x48, 0x5f, 0x00, 0x5d, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x49, 0x00, 0x01,
+        0x00, 0x05, 0x4e, 0x00, 0x14, 0x00, 0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81,
+        0x06, 0x08, 0x08, 0x08, 0x08, 0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61, 0x5d, 0x00, 0x34, 0x00,
+        0x49, 0x00, 0x01, 0x00, 0x00, 0x57, 0x00, 0x09, 0x02, 0x85, 0x3b, 0x95, 0x98, 0x5a, 0x3e,
+        0x99, 0x89, 0x55, 0x50, 0x00, 0x16, 0x00, 0x2c, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5e,
+        0x00, 0x04, 0x00, 0x01, 0x62, 0x9c, 0xc4,
+    ];
+    let decoded = CreateBearerRequest {
+        header: Gtpv2Header {
+            msgtype: CREATE_BEARER_REQ,
+            piggyback: false,
+            message_prio: None,
+            length: 93,
+            teid: Some(0x0909a456),
+            sqn: 0x2f,
+        },
+        linked_ebi: Ebi {
+            t: EBI,
+            length: EBI_LENGTH as u16,
+            ins: 0,
+            value: 5,
+        },
+        pco: Some(Pco {
+            t: PCO,
+            length: 20,
+            ins: 0,
+            pco: vec![
+                0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08,
+                0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
+            ],
+        }),
+
+        bearer_ctxs: vec![BearerContext {
+            t: 93,
+            length: 52,
+            ins: 0,
+            cause: None,
+            tft: None,
+            charging_id: Some(ChargingId {
+                t: CHARGINGID,
+                length: 4,
+                ins: 0,
+                charging_id: 23239876,
+            }),
+            bearer_flags: None,
+            pco: None,
+            apco: None,
+            epco: None,
+            max_packet_loss: None,
+            ran_nas_cause: None,
+            ebi: Ebi {
+                t: EBI,
+                length: 1,
+                ins: 0,
+                value: 0,
+            },
+            fteids: vec![Fteid {
+                t: 87,
+                length: 9,
+                ins: 2,
+                interface: 5,
+                teid: 0x3b95985a,
+                ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
+                ipv6: None,
+            }],
+            bearer_qos: Some(BearerQos {
+                t: 80,
+                length: 22,
+                ins: 0,
+                pre_emption_vulnerability: 0,
+                priority_level: 11,
+                pre_emption_capability: 0,
+                qci: 9,
+                maxbr_ul: 0,
+                maxbr_dl: 0,
+                gbr_ul: 0,
+                gbr_dl: 0,
+            }),
+        }],
+        ..CreateBearerRequest::default()
+    };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);

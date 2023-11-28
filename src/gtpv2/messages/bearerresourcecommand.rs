@@ -284,135 +284,135 @@ fn test_bearer_resource_command_unmarshal() {
         0x4c, 0xc1, 0xfe, 0x8b, 0x2d,
     ];
     let decoded = BearerResourceCommand {
-    header : Gtpv2Header {
-        msgtype: BEARER_RSRC_CMD,
-        piggyback: false,
-        message_prio: None,
-        length: 151,
-        teid: Some(0),
-        sqn: 0x68,
-    },
-    linked_ebi : Ebi {
-        t: 73,
-        length: 1,
-        ins: 0,
-        value: 5,
-    },
-    pti : Pti {
-        t: PTI,
-        length: 1,
-        ins: 0,
-        pti: 0xff,
-    },
-    tad : Some(TrafficAggregateDescription {
-        t: TAD,
-        length: 4,
-        ins: 0,
-        tad: vec![0, 0, 0, 0],
-    }),
-    uli : Some(Uli {
-        t: ULI,
-        length: 13,
-        ins: 0,
-        loc: vec![
-            Location::Tai(Tai {
-                mcc: 262,
-                mnc: 1,
-                tac: 0x0bd9,
-            }),
-            Location::Ecgi(Ecgi {
-                mcc: 262,
-                mnc: 1,
-                eci: 28983298,
-            }),
-        ],
-    }),
-    servingnetwork : Some(ServingNetwork {
-        t: SERVINGNW,
-        length: 3,
-        ins: 0,
-        mcc: 262,
-        mnc: 1,
-    }),
-    rattype : Some(RatType {
-        t: RATTYPE,
-        length: 1,
-        ins: 0,
-        rat_type: Rat::Eutran,
-    }),
-    fteid_control : Some(Fteid {
-        t: FTEID,
-        length: 9,
-        ins: 2,
-        interface: 6,
-        teid: 0x06d1824c,
-        ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
-        ipv6: None,
-    }),
-    pco : Some(Pco {
-        t: PCO,
-        length: 35,
-        ins: 0,
-        pco: vec![
-            0x80, 0x80, 0x21, 0x10, 0x01, 0x00, 0x00, 0x10, 0x81, 0x06, 0x00, 0x00, 0x00, 0x00,
-            0x83, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x00, 0x03, 0x00, 0x00, 0x0a,
-            0x00, 0x00, 0x05, 0x00, 0x00, 0x10, 0x00,
-        ],
-    }),
-    overload_info : vec![
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
+        header: Gtpv2Header {
+            msgtype: BEARER_RSRC_CMD,
+            piggyback: false,
+            message_prio: None,
+            length: 151,
+            teid: Some(0),
+            sqn: 0x68,
+        },
+        linked_ebi: Ebi {
+            t: 73,
+            length: 1,
             ins: 0,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee11,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 31,
-            },
-            list: None,
+            value: 5,
         },
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
-            ins: 1,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee22,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 30,
-            },
-            list: None,
+        pti: Pti {
+            t: PTI,
+            length: 1,
+            ins: 0,
+            pti: 0xff,
         },
-    ],
-    ..BearerResourceCommand::default()
-};
+        tad: Some(TrafficAggregateDescription {
+            t: TAD,
+            length: 4,
+            ins: 0,
+            tad: vec![0, 0, 0, 0],
+        }),
+        uli: Some(Uli {
+            t: ULI,
+            length: 13,
+            ins: 0,
+            loc: vec![
+                Location::Tai(Tai {
+                    mcc: 262,
+                    mnc: 1,
+                    tac: 0x0bd9,
+                }),
+                Location::Ecgi(Ecgi {
+                    mcc: 262,
+                    mnc: 1,
+                    eci: 28983298,
+                }),
+            ],
+        }),
+        servingnetwork: Some(ServingNetwork {
+            t: SERVINGNW,
+            length: 3,
+            ins: 0,
+            mcc: 262,
+            mnc: 1,
+        }),
+        rattype: Some(RatType {
+            t: RATTYPE,
+            length: 1,
+            ins: 0,
+            rat_type: Rat::Eutran,
+        }),
+        fteid_control: Some(Fteid {
+            t: FTEID,
+            length: 9,
+            ins: 2,
+            interface: 6,
+            teid: 0x06d1824c,
+            ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
+            ipv6: None,
+        }),
+        pco: Some(Pco {
+            t: PCO,
+            length: 35,
+            ins: 0,
+            pco: vec![
+                0x80, 0x80, 0x21, 0x10, 0x01, 0x00, 0x00, 0x10, 0x81, 0x06, 0x00, 0x00, 0x00, 0x00,
+                0x83, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x00, 0x03, 0x00, 0x00, 0x0a,
+                0x00, 0x00, 0x05, 0x00, 0x00, 0x10, 0x00,
+            ],
+        }),
+        overload_info: vec![
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
+                ins: 0,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee11,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 31,
+                },
+                list: None,
+            },
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
+                ins: 1,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee22,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 30,
+                },
+                list: None,
+            },
+        ],
+        ..BearerResourceCommand::default()
+    };
     let message = BearerResourceCommand::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -434,134 +434,134 @@ fn test_bearer_resource_command_marshal() {
         0x4c, 0xc1, 0xfe, 0x8b, 0x2d,
     ];
     let decoded = BearerResourceCommand {
-    header : Gtpv2Header {
-        msgtype: BEARER_RSRC_CMD,
-        piggyback: false,
-        message_prio: None,
-        length: 151,
-        teid: Some(0),
-        sqn: 0x68,
-    },
-    linked_ebi : Ebi {
-        t: 73,
-        length: 1,
-        ins: 0,
-        value: 5,
-    },
-    pti : Pti {
-        t: PTI,
-        length: 1,
-        ins: 0,
-        pti: 0xff,
-    },
-    tad : Some(TrafficAggregateDescription {
-        t: TAD,
-        length: 4,
-        ins: 0,
-        tad: vec![0, 0, 0, 0],
-    }),
-    uli : Some(Uli {
-        t: ULI,
-        length: 13,
-        ins: 0,
-        loc: vec![
-            Location::Tai(Tai {
-                mcc: 262,
-                mnc: 1,
-                tac: 0x0bd9,
-            }),
-            Location::Ecgi(Ecgi {
-                mcc: 262,
-                mnc: 1,
-                eci: 28983298,
-            }),
-        ],
-    }),
-    servingnetwork : Some(ServingNetwork {
-        t: SERVINGNW,
-        length: 3,
-        ins: 0,
-        mcc: 262,
-        mnc: 1,
-    }),
-    rattype : Some(RatType {
-        t: RATTYPE,
-        length: 1,
-        ins: 0,
-        rat_type: Rat::Eutran,
-    }),
-    fteid_control : Some(Fteid {
-        t: FTEID,
-        length: 9,
-        ins: 2,
-        interface: 6,
-        teid: 0x06d1824c,
-        ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
-        ipv6: None,
-    }),
-    pco : Some(Pco {
-        t: PCO,
-        length: 35,
-        ins: 0,
-        pco: vec![
-            0x80, 0x80, 0x21, 0x10, 0x01, 0x00, 0x00, 0x10, 0x81, 0x06, 0x00, 0x00, 0x00, 0x00,
-            0x83, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x00, 0x03, 0x00, 0x00, 0x0a,
-            0x00, 0x00, 0x05, 0x00, 0x00, 0x10, 0x00,
-        ],
-    }),
-    overload_info : vec![
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 22,
+        header: Gtpv2Header {
+            msgtype: BEARER_RSRC_CMD,
+            piggyback: false,
+            message_prio: None,
+            length: 151,
+            teid: Some(0),
+            sqn: 0x68,
+        },
+        linked_ebi: Ebi {
+            t: 73,
+            length: 1,
             ins: 0,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee11,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 31,
-            },
-            list: None,
+            value: 5,
         },
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 22,
-            ins: 1,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee22,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 30,
-            },
-            list: None,
+        pti: Pti {
+            t: PTI,
+            length: 1,
+            ins: 0,
+            pti: 0xff,
         },
-    ],
-    ..BearerResourceCommand::default()
+        tad: Some(TrafficAggregateDescription {
+            t: TAD,
+            length: 4,
+            ins: 0,
+            tad: vec![0, 0, 0, 0],
+        }),
+        uli: Some(Uli {
+            t: ULI,
+            length: 13,
+            ins: 0,
+            loc: vec![
+                Location::Tai(Tai {
+                    mcc: 262,
+                    mnc: 1,
+                    tac: 0x0bd9,
+                }),
+                Location::Ecgi(Ecgi {
+                    mcc: 262,
+                    mnc: 1,
+                    eci: 28983298,
+                }),
+            ],
+        }),
+        servingnetwork: Some(ServingNetwork {
+            t: SERVINGNW,
+            length: 3,
+            ins: 0,
+            mcc: 262,
+            mnc: 1,
+        }),
+        rattype: Some(RatType {
+            t: RATTYPE,
+            length: 1,
+            ins: 0,
+            rat_type: Rat::Eutran,
+        }),
+        fteid_control: Some(Fteid {
+            t: FTEID,
+            length: 9,
+            ins: 2,
+            interface: 6,
+            teid: 0x06d1824c,
+            ipv4: Some(Ipv4Addr::new(193, 254, 139, 45)),
+            ipv6: None,
+        }),
+        pco: Some(Pco {
+            t: PCO,
+            length: 35,
+            ins: 0,
+            pco: vec![
+                0x80, 0x80, 0x21, 0x10, 0x01, 0x00, 0x00, 0x10, 0x81, 0x06, 0x00, 0x00, 0x00, 0x00,
+                0x83, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d, 0x00, 0x00, 0x03, 0x00, 0x00, 0x0a,
+                0x00, 0x00, 0x05, 0x00, 0x00, 0x10, 0x00,
+            ],
+        }),
+        overload_info: vec![
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 22,
+                ins: 0,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee11,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 31,
+                },
+                list: None,
+            },
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 22,
+                ins: 1,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee22,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 30,
+                },
+                list: None,
+            },
+        ],
+        ..BearerResourceCommand::default()
     };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);

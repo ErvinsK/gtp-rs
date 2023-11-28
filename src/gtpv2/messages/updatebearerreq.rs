@@ -251,7 +251,7 @@ fn test_update_bearer_req_unmarshal() {
         0xff, 0xaa, 0xee, 0x22, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7e,
     ];
     let decoded = UpdateBearerRequest {
-        header : Gtpv2Header {
+        header: Gtpv2Header {
             msgtype: UPD_BEARER_REQ,
             piggyback: false,
             message_prio: None,
@@ -259,7 +259,7 @@ fn test_update_bearer_req_unmarshal() {
             teid: Some(0x0909a456),
             sqn: 0x2f,
         },
-        bearer_ctxs : vec![BearerContext {
+        bearer_ctxs: vec![BearerContext {
             t: 93,
             length: 52,
             ins: 0,
@@ -306,13 +306,13 @@ fn test_update_bearer_req_unmarshal() {
                 gbr_dl: 0,
             }),
         }],
-        pti : Some(Pti {
+        pti: Some(Pti {
             t: PTI,
             length: PTI_LENGTH as u16,
             ins: 0,
             pti: 0xfa,
         }),
-        pco : Some(Pco {
+        pco: Some(Pco {
             t: PCO,
             length: 20,
             ins: 0,
@@ -321,21 +321,21 @@ fn test_update_bearer_req_unmarshal() {
                 0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
             ],
         }),
-        apnambr : ApnAmbr {
+        apnambr: ApnAmbr {
             t: APNAMBR,
             length: APNAMBR_LENGTH,
             ins: 0,
             ambr_ul: 50000,
             ambr_dl: 150000,
         },
-        pgw_fqcsid : Some(Fqcsid {
+        pgw_fqcsid: Some(Fqcsid {
             t: FQCSID,
             length: 7,
             ins: 0,
             nodeid: NodeId::V4(Ipv4Addr::new(139, 7, 133, 184)),
             csid: vec![0xffff],
         }),
-        overload_info : vec![
+        overload_info: vec![
             OverloadControlInfo {
                 t: OVERLOAD_CNTRL,
                 length: 18,
@@ -388,7 +388,7 @@ fn test_update_bearer_req_unmarshal() {
             },
         ],
         ..UpdateBearerRequest::default()
-        };
+    };
     let message = UpdateBearerRequest::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -410,143 +410,143 @@ fn test_update_bearer_req_marshal() {
         0xff, 0xaa, 0xee, 0x22, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7e,
     ];
     let decoded = UpdateBearerRequest {
-    header : Gtpv2Header {
-        msgtype: UPD_BEARER_REQ,
-        piggyback: false,
-        message_prio: None,
-        length: 160,
-        teid: Some(0x0909a456),
-        sqn: 0x2f,
-    },
-    bearer_ctxs : vec![BearerContext {
-        t: 93,
-        length: 52,
-        ins: 0,
-        cause: None,
-        tft: None,
-        charging_id: Some(ChargingId {
-            t: CHARGINGID,
-            length: 4,
-            ins: 0,
-            charging_id: 23239876,
-        }),
-        bearer_flags: None,
-        pco: None,
-        apco: None,
-        epco: None,
-        max_packet_loss: None,
-        ran_nas_cause: None,
-        ebi: Ebi {
-            t: EBI,
-            length: 1,
-            ins: 0,
-            value: 0,
+        header: Gtpv2Header {
+            msgtype: UPD_BEARER_REQ,
+            piggyback: false,
+            message_prio: None,
+            length: 160,
+            teid: Some(0x0909a456),
+            sqn: 0x2f,
         },
-        fteids: vec![Fteid {
-            t: 87,
-            length: 9,
-            ins: 2,
-            interface: 5,
-            teid: 0x3b95985a,
-            ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
-            ipv6: None,
+        bearer_ctxs: vec![BearerContext {
+            t: 93,
+            length: 52,
+            ins: 0,
+            cause: None,
+            tft: None,
+            charging_id: Some(ChargingId {
+                t: CHARGINGID,
+                length: 4,
+                ins: 0,
+                charging_id: 23239876,
+            }),
+            bearer_flags: None,
+            pco: None,
+            apco: None,
+            epco: None,
+            max_packet_loss: None,
+            ran_nas_cause: None,
+            ebi: Ebi {
+                t: EBI,
+                length: 1,
+                ins: 0,
+                value: 0,
+            },
+            fteids: vec![Fteid {
+                t: 87,
+                length: 9,
+                ins: 2,
+                interface: 5,
+                teid: 0x3b95985a,
+                ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
+                ipv6: None,
+            }],
+            bearer_qos: Some(BearerQos {
+                t: 80,
+                length: 22,
+                ins: 0,
+                pre_emption_vulnerability: 0,
+                priority_level: 11,
+                pre_emption_capability: 0,
+                qci: 9,
+                maxbr_ul: 0,
+                maxbr_dl: 0,
+                gbr_ul: 0,
+                gbr_dl: 0,
+            }),
         }],
-        bearer_qos: Some(BearerQos {
-            t: 80,
-            length: 22,
+        pti: Some(Pti {
+            t: PTI,
+            length: PTI_LENGTH as u16,
             ins: 0,
-            pre_emption_vulnerability: 0,
-            priority_level: 11,
-            pre_emption_capability: 0,
-            qci: 9,
-            maxbr_ul: 0,
-            maxbr_dl: 0,
-            gbr_ul: 0,
-            gbr_dl: 0,
+            pti: 0xfa,
         }),
-    }],
-    pti : Some(Pti {
-        t: PTI,
-        length: PTI_LENGTH as u16,
-        ins: 0,
-        pti: 0xfa,
-    }),
-    pco : Some(Pco {
-        t: PCO,
-        length: 20,
-        ins: 0,
-        pco: vec![
-            0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08,
-            0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
-        ],
-    }),
-    apnambr : ApnAmbr {
-        t: APNAMBR,
-        length: APNAMBR_LENGTH,
-        ins: 0,
-        ambr_ul: 50000,
-        ambr_dl: 150000,
-    },
-    pgw_fqcsid : Some(Fqcsid {
-        t: FQCSID,
-        length: 7,
-        ins: 0,
-        nodeid: NodeId::V4(Ipv4Addr::new(139, 7, 133, 184)),
-        csid: vec![0xffff],
-    }),
-    overload_info : vec![
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
+        pco: Some(Pco {
+            t: PCO,
+            length: 20,
             ins: 0,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
-                ins: 0,
-                sqn: 0xffaaee11,
-            },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
-            },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 31,
-            },
-            list: None,
+            pco: vec![
+                0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08,
+                0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
+            ],
+        }),
+        apnambr: ApnAmbr {
+            t: APNAMBR,
+            length: APNAMBR_LENGTH,
+            ins: 0,
+            ambr_ul: 50000,
+            ambr_dl: 150000,
         },
-        OverloadControlInfo {
-            t: OVERLOAD_CNTRL,
-            length: 18,
-            ins: 1,
-            sqn: Sqn {
-                t: SQN,
-                length: SQN_LENGTH as u16,
+        pgw_fqcsid: Some(Fqcsid {
+            t: FQCSID,
+            length: 7,
+            ins: 0,
+            nodeid: NodeId::V4(Ipv4Addr::new(139, 7, 133, 184)),
+            csid: vec![0xffff],
+        }),
+        overload_info: vec![
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
                 ins: 0,
-                sqn: 0xffaaee22,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee11,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 31,
+                },
+                list: None,
             },
-            metric: Metric {
-                t: METRIC,
-                length: METRIC_LENGTH as u16,
-                ins: 0,
-                metric: 0x60,
+            OverloadControlInfo {
+                t: OVERLOAD_CNTRL,
+                length: 18,
+                ins: 1,
+                sqn: Sqn {
+                    t: SQN,
+                    length: SQN_LENGTH as u16,
+                    ins: 0,
+                    sqn: 0xffaaee22,
+                },
+                metric: Metric {
+                    t: METRIC,
+                    length: METRIC_LENGTH as u16,
+                    ins: 0,
+                    metric: 0x60,
+                },
+                validity: EpcTimer {
+                    t: EPC_TIMER,
+                    length: EPC_TIMER_LENGTH as u16,
+                    ins: 0,
+                    timer_unit: 3,
+                    timer_value: 30,
+                },
+                list: None,
             },
-            validity: EpcTimer {
-                t: EPC_TIMER,
-                length: EPC_TIMER_LENGTH as u16,
-                ins: 0,
-                timer_unit: 3,
-                timer_value: 30,
-            },
-            list: None,
-        },
-    ],
-    ..UpdateBearerRequest::default()
+        ],
+        ..UpdateBearerRequest::default()
     };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
