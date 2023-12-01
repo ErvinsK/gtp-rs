@@ -44,6 +44,10 @@ impl IEs for Recovery {
     fn len(&self) -> usize {
         RECOVERY_LENGTH + 1
     }
+
+    fn is_empty(&self) -> bool {
+        self.value == 0
+    }
 }
 
 #[test]

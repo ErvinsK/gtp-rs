@@ -52,13 +52,13 @@ impl Messages for SupportedExtensionHeadersNotification {
         }
 
         if ((message.header.length + 8) as usize) <= buffer.len() {
-            if message.header.get_header_size() == buffer.len() {
+            if message.header.len() == buffer.len() {
                 return Err(GTPV1Error::MessageMandatoryIEMissing);
             }
-            match buffer[message.header.get_header_size()] {
+            match buffer[message.header.len()] {
                 EXTENSION_HEADER_TYPE_LIST => {
                     match ExtensionHeaderTypeList::unmarshal(
-                        &buffer[message.header.get_header_size()..],
+                        &buffer[message.header.len()..],
                     ) {
                         Ok(i) => message.list = i,
                         Err(_) => return Err(GTPV1Error::MessageMandatoryIEMissing),

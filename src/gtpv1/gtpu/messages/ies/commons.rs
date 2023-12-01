@@ -8,4 +8,5 @@ pub trait IEs {
     where
         Self: Sized;
     fn len(&self) -> usize; // Total IE length including Type+Value for TV messages, Type+Length+Value for TLV messages
+    fn is_empty(&self) -> bool;
 }

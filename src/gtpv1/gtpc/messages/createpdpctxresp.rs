@@ -266,7 +266,7 @@ impl Messages for CreatePDPContextResponse {
         }
 
         if (message.header.length + 8) as usize <= buffer.len() {
-            let mut cursor = message.header.get_header_size();
+            let mut cursor = message.header.len();
             let mut increment: u8 = 0;
             loop {
                 if cursor >= buffer.len() {

@@ -48,6 +48,10 @@ impl ExtensionHeaders for PDCPPDUNumber {
     fn len(&self) -> usize {
         (self.length * 4) as usize
     }
+
+    fn is_empty(&self) -> bool {
+        self.pdcp_pdu_number == 0
+    }
 }
 
 #[test]

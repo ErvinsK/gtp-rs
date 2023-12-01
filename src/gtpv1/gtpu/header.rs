@@ -95,6 +95,21 @@ impl ExtensionHeader {
             ExtensionHeader::Unknown(i) => i.len(),
         }
     }
+
+    pub fn is_empty(self) -> bool {
+        match self {
+            ExtensionHeader::NoMoreExtensionHeaders => true,
+            ExtensionHeader::PDCPPDUNumber(i) => i.is_empty(),
+            ExtensionHeader::LongPDCPPDUNumber(i) => i.is_empty(),
+            ExtensionHeader::Sci(i) => i.is_empty(),
+            ExtensionHeader::UDPPort(i) => i.is_empty(),
+            ExtensionHeader::RanContainer(i) => i.is_empty(),
+            ExtensionHeader::XwRanContainer(i) => i.is_empty(),
+            ExtensionHeader::NrRanContainer(i) => i.is_empty(),
+            ExtensionHeader::PduSessionContainer(i) => i.is_empty(),
+            ExtensionHeader::Unknown(i) => i.is_empty(),
+        }
+    }
 }
 
 // Definition of GTPv1-U Header
@@ -627,13 +642,12 @@ fn test_gtpv1_hdr_with_sqn_npdu_and_two_ext_header_marshal() {
 
 #[test]
 fn infinite_loop_issue_2() {
-    let mut ext_header = UDPPort::default();
-    ext_header.length = 0;
-
+    // This is a packet that caused an infinite loop in the unmarshal function
     // we add it to the header
-    let mut header = Gtpv1Header::default();
-    header.extension_headers = Some(vec![ExtensionHeader::UDPPort(ext_header)]);
-
+    let header = Gtpv1Header {
+        extension_headers : Some(vec![ExtensionHeader::UDPPort( UDPPort { length:0, ..UDPPort::default() })]),
+        ..Gtpv1Header::default()
+    };
     let mut array: Vec<u8> = vec![];
     header.marshal(&mut array);
     assert_eq!(

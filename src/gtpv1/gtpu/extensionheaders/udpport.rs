@@ -48,6 +48,10 @@ impl ExtensionHeaders for UDPPort {
     fn len(&self) -> usize {
         (self.length * 4) as usize
     }
+
+    fn is_empty(&self) -> bool {
+        self.udp_port == 0
+    }
 }
 
 #[test]

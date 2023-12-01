@@ -74,6 +74,10 @@ impl IEs for GsnAddress {
     fn len(&self) -> usize {
         (self.length + 3) as usize
     }
+
+    fn is_empty(&self) -> bool {
+        self.ip == IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0))
+    }
 }
 
 #[test]

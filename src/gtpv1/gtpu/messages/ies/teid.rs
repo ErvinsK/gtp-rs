@@ -45,6 +45,10 @@ impl IEs for Teid {
     fn len(&self) -> usize {
         TEID_LENGTH + 1
     }
+
+    fn is_empty(&self) -> bool {
+        self.teid == 0
+    }
 }
 
 #[test]

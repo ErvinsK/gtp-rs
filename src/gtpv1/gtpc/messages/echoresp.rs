@@ -59,7 +59,7 @@ impl Messages for EchoResponse {
         }
 
         if (message.header.length as usize + 4) < buffer.len() {
-            let mut cursor = message.header.get_header_size();
+            let mut cursor = message.header.len();
             if cursor < buffer.len() {
                 if let RECOVERY = buffer[cursor] {
                     match Recovery::unmarshal(&buffer[cursor..]) {

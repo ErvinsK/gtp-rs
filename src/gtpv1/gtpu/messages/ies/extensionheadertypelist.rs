@@ -54,6 +54,10 @@ impl IEs for ExtensionHeaderTypeList {
     fn len(&self) -> usize {
         (self.length + 2) as usize
     }
+
+    fn is_empty(&self) -> bool {
+        self.list.is_empty()
+    }
 }
 
 #[test]

@@ -49,6 +49,10 @@ impl ExtensionHeaders for NrRanContainer {
     fn len(&self) -> usize {
         (self.length * 4) as usize
     }
+
+    fn is_empty(&self) -> bool {
+        self.container.is_empty()
+    }
 }
 
 #[test]

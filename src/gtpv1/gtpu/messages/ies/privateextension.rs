@@ -62,6 +62,10 @@ impl IEs for PrivateExtension {
     fn len(&self) -> usize {
         (self.length + 3) as usize
     }
+
+    fn is_empty(&self) -> bool {
+        self.extension_value.is_empty()
+    }
 }
 
 #[test]

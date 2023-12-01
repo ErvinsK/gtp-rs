@@ -47,6 +47,10 @@ impl ExtensionHeaders for Unknown {
     fn len(&self) -> usize {
         (self.length * 4) as usize
     }
+
+    fn is_empty(&self) -> bool {
+        self.value.is_empty()
+    }
 }
 
 #[test]
