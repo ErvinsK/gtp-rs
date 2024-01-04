@@ -1,7 +1,5 @@
 use crate::gtpv2::{errors::GTPV2Error, messages::ies::*};
 
-use super::transactionid::TransactionIdentifier;
-
 #[derive(Debug, Clone, PartialEq)]
 pub enum InformationElement {
     Imsi(Imsi),
@@ -27,8 +25,8 @@ pub enum InformationElement {
     Fteid(Fteid),
     Tmsi(Tmsi),
     GlobalCnId(GlobalCnId),
-    // S103 PDN Data Forwarding Info
-    // S1-U Data Forwarding Info
+    S103pdf(S103pdf),
+    S1udf(S1udf),
     DelayValue(DelayValue),
     BearerContext(BearerContext),
     ChargingId(ChargingId),
@@ -71,8 +69,8 @@ pub enum InformationElement {
     Fqdn(Fqdn),
     TransactionIdentifier(TransactionIdentifier),
     // MBMS Session Duration
-    // MBMS Service Area
-    // MBMS Session Identifier
+    MbmsSa(MbmsSa),
+    MbmsSd(MbmsSd),
     // MBMS Flow Identifier
     // MBMS IP Multicast Distribution
     // MBMS Distribution Acknowledge
@@ -169,8 +167,8 @@ impl InformationElement {
             InformationElement::Fteid(i) => i.marshal(buffer),
             InformationElement::Tmsi(i) => i.marshal(buffer),
             InformationElement::GlobalCnId(i) => i.marshal(buffer),
-            // S103 PDN Data Forwarding Info
-            // S1-U Data Forwarding Info
+            InformationElement::S103pdf(i) => i.marshal(buffer), 
+            InformationElement::S1udf(i) => i.marshal(buffer),
             InformationElement::DelayValue(i) => i.marshal(buffer),
             InformationElement::BearerContext(i) => i.marshal(buffer),
             InformationElement::ChargingId(i) => i.marshal(buffer),
@@ -213,8 +211,8 @@ impl InformationElement {
             InformationElement::Fqdn(i) => i.marshal(buffer),
             InformationElement::TransactionIdentifier(i) => i.marshal(buffer),
             // MBMS Session Duration
-            // MBMS Service Area
-            // MBMS Session Identifier
+            InformationElement::MbmsSa(i) => i.marshal(buffer),
+            InformationElement::MbmsSd(i) => i.marshal(buffer),
             // MBMS Flow Identifier
             // MBMS IP Multicast Distribution
             // MBMS Distribution Acknowledge
@@ -455,8 +453,20 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // S103 PDN Data Forwarding Info
-                // S1-U Data Forwarding Info
+                90 => match S103pdf::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::S103pdf(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                91 => match S1udf::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::S1udf(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 92 => match DelayValue::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
@@ -696,8 +706,20 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // MBMS Session Duration
-                // MBMS Service Area
+                138 => match MbmsSd::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MbmsSd(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                139 => match MbmsSa::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MbmsSa(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 // MBMS Session Identifier
                 // MBMS Flow Identifier
                 // MBMS IP Multicast Distribution

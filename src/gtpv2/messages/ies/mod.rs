@@ -17,7 +17,7 @@ pub use {
     servingplmnratecontrol::*, spi::*, sqn::*, srcrncpdcpctxinfo::*, tad::*, throttling::*,
     tmsi::*, traceinfo::*, tracereference::*, transactionid::*, twanid::*, twanidtimestamp::*,
     twmi::*, uci::*, uetimezone::*, uli::*, ulitimestamp::*, unknown::*, upfsif::*,
-    wlanoffloadindication::*,
+    wlanoffloadindication::*, s103pdf::*, s1udf::*, mbmssa::*, mbmssd::*,
 };
 
 mod actionindication;
@@ -127,3 +127,7 @@ mod ulitimestamp;
 mod unknown;
 mod upfsif;
 mod wlanoffloadindication;
+mod s103pdf;
+mod s1udf;
+mod mbmssa;
+mod mbmssd;
