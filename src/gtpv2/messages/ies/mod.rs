@@ -17,7 +17,8 @@ pub use {
     servingplmnratecontrol::*, spi::*, sqn::*, srcrncpdcpctxinfo::*, tad::*, throttling::*,
     tmsi::*, traceinfo::*, tracereference::*, transactionid::*, twanid::*, twanidtimestamp::*,
     twmi::*, uci::*, uetimezone::*, uli::*, ulitimestamp::*, unknown::*, upfsif::*,
-    wlanoffloadindication::*, s103pdf::*, s1udf::*, mbmssa::*, mbmssd::*,
+    wlanoffloadindication::*, s103pdf::*, s1udf::*, mbmssa::*, mbmssd::*, mbmsflags::*, hdrcomprconfig::*,
+    monitoringeventextinfo::*,
 };
 
 mod actionindication;
@@ -131,3 +132,6 @@ mod s103pdf;
 mod s1udf;
 mod mbmssa;
 mod mbmssd;
+mod mbmsflags;
+mod hdrcomprconfig;
+mod monitoringeventextinfo;

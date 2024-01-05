@@ -100,7 +100,7 @@ pub enum InformationElement {
     ActionIndication(ActionIndication),
     TwanId(TwanId),
     UliTimestamp(UliTimestamp),
-    // MBMS Flags
+    MbmsFlags(MbmsFlags),
     RanNasCause(RanNasCause),
     CnOperatorSelectionEntity(CnOperatorSelectionEntity),
     Twmi(Twmi),
@@ -125,7 +125,7 @@ pub enum InformationElement {
     RemoteUeIpInformation(RemoteUeIpInformation),
     CIoTOptimizationSupportIndication(CIoTOptimizationSupportIndication),
     ScefPdnConnection(GroupedIe),
-    // Header Compression Configuration
+    HeaderCompressionConfiguration(HeaderCompressionConfiguration),
     Epco(Epco),
     ServingPlmnRateControl(ServingPlmnRateControl),
     Counter(Counter),
@@ -135,7 +135,7 @@ pub enum InformationElement {
     MaxPacketLossRate(MaxPacketLossRate),
     ApnRateControlStatus(ApnRateControlStatus),
     // Extended Trace Information
-    // Monitoring Event Extension Information
+    MonitoringEventExtensionInfo(MonitoringEventExtensionInfo),
     // Special IE type for IE Type Extension
     PrivateExtension(PrivateExtension),
     Unknown(Unknown),
@@ -242,7 +242,7 @@ impl InformationElement {
             InformationElement::ActionIndication(i) => i.marshal(buffer),
             InformationElement::TwanId(i) => i.marshal(buffer),
             InformationElement::UliTimestamp(i) => i.marshal(buffer),
-            // MBMS Flags
+            InformationElement::MbmsFlags(i) => i.marshal(buffer),
             InformationElement::RanNasCause(i) => i.marshal(buffer),
             InformationElement::CnOperatorSelectionEntity(i) => i.marshal(buffer),
             InformationElement::Twmi(i) => i.marshal(buffer),
@@ -267,7 +267,7 @@ impl InformationElement {
             InformationElement::RemoteUeIpInformation(i) => i.marshal(buffer),
             InformationElement::CIoTOptimizationSupportIndication(i) => i.marshal(buffer),
             InformationElement::ScefPdnConnection(i) => i.marshal(buffer),
-            // Header Compression Configuration
+            InformationElement::HeaderCompressionConfiguration(i) => i.marshal(buffer),
             InformationElement::Epco(i) => i.marshal(buffer),
             InformationElement::ServingPlmnRateControl(i) => i.marshal(buffer),
             InformationElement::Counter(i) => i.marshal(buffer),
@@ -277,7 +277,7 @@ impl InformationElement {
             InformationElement::MaxPacketLossRate(i) => i.marshal(buffer),
             InformationElement::ApnRateControlStatus(i) => i.marshal(buffer),
             // Extended Trace Information
-            // Monitoring Event Extension Information
+            InformationElement::MonitoringEventExtensionInfo(i)=> i.marshal(buffer),
             // Special IE type for IE Type Extension
             InformationElement::PrivateExtension(i) => i.marshal(buffer),
             InformationElement::Unknown(i) => i.marshal(buffer),
@@ -864,7 +864,13 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // MBMS Flags
+                171 => match MbmsFlags::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MbmsFlags(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 172 => match RanNasCause::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
@@ -1033,7 +1039,13 @@ impl InformationElement {
                         Err(j) => return Err(j),
                     }
                 }
-                // Header Compression Configuration
+                196 => match HeaderCompressionConfiguration::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::HeaderCompressionConfiguration(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 197 => match Epco::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
@@ -1091,7 +1103,13 @@ impl InformationElement {
                     Err(j) => return Err(j),
                 },
                 // Extended Trace Information
-                // Monitoring Event Extension Information
+                206 => match MonitoringEventExtensionInfo::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MonitoringEventExtensionInfo(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 // Special IE type for IE Type Extension
                 255 => match PrivateExtension::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
