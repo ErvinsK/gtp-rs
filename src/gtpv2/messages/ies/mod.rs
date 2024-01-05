@@ -18,7 +18,8 @@ pub use {
     tmsi::*, traceinfo::*, tracereference::*, transactionid::*, twanid::*, twanidtimestamp::*,
     twmi::*, uci::*, uetimezone::*, uli::*, ulitimestamp::*, unknown::*, upfsif::*,
     wlanoffloadindication::*, s103pdf::*, s1udf::*, mbmssa::*, mbmssd::*, mbmsflags::*, hdrcomprconfig::*,
-    monitoringeventextinfo::*,
+    monitoringeventextinfo::*, mbmsflowid::*, mbmssessionid::*, mbmsdistributionack::*, addflagssrvcc::*,
+    abstimembmsdatatransfer::*,
 };
 
 mod actionindication;
@@ -135,3 +136,8 @@ mod mbmssd;
 mod mbmsflags;
 mod hdrcomprconfig;
 mod monitoringeventextinfo;
+mod mbmsflowid;
+mod mbmssessionid;
+mod mbmsdistributionack;
+mod addflagssrvcc;
+mod abstimembmsdatatransfer;

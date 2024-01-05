@@ -68,12 +68,12 @@ pub enum InformationElement {
     NodeType(NodeType),
     Fqdn(Fqdn),
     TransactionIdentifier(TransactionIdentifier),
-    // MBMS Session Duration
     MbmsSa(MbmsSa),
     MbmsSd(MbmsSd),
-    // MBMS Flow Identifier
+    MbmsSessionId(MbmsSessionId),
+    MbmsFlowId(MbmsFlowId),
     // MBMS IP Multicast Distribution
-    // MBMS Distribution Acknowledge
+    MbmsDistributionAck(MbmsDistributionAck),
     RfspIndex(RfspIndex),
     Uci(Uci),
     CSGInformationReportingAction(CSGInformationReportingAction),
@@ -90,10 +90,10 @@ pub enum InformationElement {
     Spi(Spi),
     // Temporary Mobile Group Identity
     // Additional MM context SRVCC
-    // Additional flags SRVCC
+    AdditionalFlagsSrvcc(AdditionalFlagsSrvcc),
     // MDT Configuration
     Apco(Apco),
-    // Absolute Time of MBMS Data Transfer
+    AbsoluteTimeMbmsDataTransfer(AbsoluteTimeMbmsDataTransfer),
     HenbInfoReporting(HenbInfoReporting),
     Ip4Cp(Ip4Cp),
     ChangeToReportFlags(ChangeToReportFlags),
@@ -210,12 +210,12 @@ impl InformationElement {
             InformationElement::NodeType(i) => i.marshal(buffer),
             InformationElement::Fqdn(i) => i.marshal(buffer),
             InformationElement::TransactionIdentifier(i) => i.marshal(buffer),
-            // MBMS Session Duration
             InformationElement::MbmsSa(i) => i.marshal(buffer),
             InformationElement::MbmsSd(i) => i.marshal(buffer),
-            // MBMS Flow Identifier
+            InformationElement::MbmsSessionId(i) => i.marshal(buffer),
+            InformationElement::MbmsFlowId(i) => i.marshal(buffer),
             // MBMS IP Multicast Distribution
-            // MBMS Distribution Acknowledge
+            InformationElement::MbmsDistributionAck(i) => i.marshal(buffer),
             InformationElement::RfspIndex(i) => i.marshal(buffer),
             InformationElement::Uci(i) => i.marshal(buffer),
             InformationElement::CSGInformationReportingAction(i) => i.marshal(buffer),
@@ -232,10 +232,10 @@ impl InformationElement {
             InformationElement::Spi(i) => i.marshal(buffer),
             // Temporary Mobile Group Identity
             // Additional MM context SRVCC
-            // Additional flags SRVCC
+            InformationElement::AdditionalFlagsSrvcc(i) => i.marshal(buffer),
             // MDT Configuration
             InformationElement::Apco(i) => i.marshal(buffer),
-            // Absolute Time of MBMS Data Transfer
+            InformationElement::AbsoluteTimeMbmsDataTransfer(i) => i.marshal(buffer),
             InformationElement::HenbInfoReporting(i) => i.marshal(buffer),
             InformationElement::Ip4Cp(i) => i.marshal(buffer),
             InformationElement::ChangeToReportFlags(i) => i.marshal(buffer),
@@ -720,10 +720,28 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // MBMS Session Identifier
-                // MBMS Flow Identifier
+                140 => match MbmsSessionId::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MbmsSessionId(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                141 => match MbmsFlowId::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MbmsFlowId(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 // MBMS IP Multicast Distribution
-                // MBMS Distribution Acknowledge
+                143 => match MbmsDistributionAck::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MbmsDistributionAck(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 144 => match RfspIndex::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
@@ -812,7 +830,13 @@ impl InformationElement {
                 },
                 // Temporary Mobile Group Identity
                 // Additional MM context SRVCC
-                // Additional flags SRVCC
+                160 => match AdditionalFlagsSrvcc::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::AdditionalFlagsSrvcc(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 // MDT Configuration
                 163 => match Apco::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
@@ -821,7 +845,13 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // Absolute Time of MBMS Data Transfer
+                164 => match AbsoluteTimeMbmsDataTransfer::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::AbsoluteTimeMbmsDataTransfer(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 165 => match HenbInfoReporting::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
