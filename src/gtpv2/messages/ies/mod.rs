@@ -19,7 +19,8 @@ pub use {
     twmi::*, uci::*, uetimezone::*, uli::*, ulitimestamp::*, unknown::*, upfsif::*,
     wlanoffloadindication::*, s103pdf::*, s1udf::*, mbmssa::*, mbmssd::*, mbmsflags::*, hdrcomprconfig::*,
     monitoringeventextinfo::*, mbmsflowid::*, mbmssessionid::*, mbmsdistributionack::*, addflagssrvcc::*,
-    abstimembmsdatatransfer::*, specialiewithtypeext::*,
+    abstimembmsdatatransfer::*, specialiewithtypeext::*, mmctxgsmkeytriplets::*, mmctxumtskeycipherquintuplets::*,
+    
 };
 
 mod actionindication;
@@ -142,3 +143,5 @@ mod mbmsdistributionack;
 mod addflagssrvcc;
 mod abstimembmsdatatransfer;
 mod specialiewithtypeext;
+mod mmctxgsmkeytriplets;
+mod mmctxumtskeycipherquintuplets;

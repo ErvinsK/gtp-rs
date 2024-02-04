@@ -667,6 +667,7 @@ fn test_apn_rate_control_status_unmarshal () {
     assert_eq!(ApnRateControlStatusMM::unmarshal(&encoded_ie).unwrap(), test_struct);
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub enum SecurityMode {
     GsmKeyAndTriplets,
     UmtsKeyUsedCipherAndQuintuplets,
@@ -674,6 +675,7 @@ pub enum SecurityMode {
     UmtsKeyAndQuintuplets,
     EpsSecurityContextAndQuadruplets,
     UmtsKeyQuadrupletsAndQuintuplets,
+    Spare,
 }
 
 impl From<SecurityMode> for u8 {
@@ -685,11 +687,28 @@ impl From<SecurityMode> for u8 {
             SecurityMode::UmtsKeyAndQuintuplets => 3,
             SecurityMode::EpsSecurityContextAndQuadruplets => 4,
             SecurityMode::UmtsKeyQuadrupletsAndQuintuplets => 5,
+            SecurityMode::Spare => 6,
         }
     }
 }
 
+impl From<u8> for SecurityMode {
+    fn from(value: u8) -> SecurityMode {
+        match value {
+            0 => SecurityMode::GsmKeyAndTriplets,
+            1 => SecurityMode::UmtsKeyUsedCipherAndQuintuplets,
+            2 => SecurityMode::GsmKeyUsedCipherAndQuintuplets,
+            3 => SecurityMode::UmtsKeyAndQuintuplets,
+            4 => SecurityMode::EpsSecurityContextAndQuadruplets,
+            5 => SecurityMode::UmtsKeyQuadrupletsAndQuintuplets,
+            _ => SecurityMode::Spare,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
 pub enum NasCipherValues {
+    #[default]
     NoChiper,
     Eea1,
     Eea2,
@@ -698,6 +717,7 @@ pub enum NasCipherValues {
     Eea5,
     Eea6,
     Eea7,
+    Spare,
 }
 
 impl From<NasCipherValues> for u8 {
@@ -711,11 +731,30 @@ impl From<NasCipherValues> for u8 {
             NasCipherValues::Eea5 => 5,
             NasCipherValues::Eea6 => 6,
             NasCipherValues::Eea7 => 7,
+            NasCipherValues::Spare => 8,
         }
     }
 }
 
+impl From<u8> for NasCipherValues {
+    fn from(value: u8) -> NasCipherValues {
+        match value {
+            0 => NasCipherValues::NoChiper,
+            1 => NasCipherValues::Eea1,
+            2 => NasCipherValues::Eea2,
+            3 => NasCipherValues::Eea3,
+            4 => NasCipherValues::Eea4,
+            5 => NasCipherValues::Eea5,
+            6 => NasCipherValues::Eea6,
+            7 => NasCipherValues::Eea7,
+            _ => NasCipherValues::Spare,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
 pub enum NasIntegrityProtectionValues {
+    #[default]
     NoIntegrity,
     Eia1,
     Eia2,
@@ -741,7 +780,24 @@ impl From<NasIntegrityProtectionValues> for u8 {
     }
 }
 
+impl From<u8> for NasIntegrityProtectionValues {
+    fn from(value: u8) -> NasIntegrityProtectionValues {
+        match value {
+            1 => NasIntegrityProtectionValues::Eia1,
+            2 => NasIntegrityProtectionValues::Eia2,
+            3 => NasIntegrityProtectionValues::Eia3,
+            4 => NasIntegrityProtectionValues::Eia4,
+            5 => NasIntegrityProtectionValues::Eia5,
+            6 => NasIntegrityProtectionValues::Eia6,
+            7 => NasIntegrityProtectionValues::Eia7,
+            _ => NasIntegrityProtectionValues::NoIntegrity,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
 pub enum CipherValues {
+    #[default]
     NoCipher,
     Gea1,
     Gea2,
@@ -767,7 +823,24 @@ impl From<CipherValues> for u8 {
     }
 }
 
+impl From<u8> for CipherValues {
+    fn from(value: u8) -> CipherValues {
+        match value {
+            1 => CipherValues::Gea1,
+            2 => CipherValues::Gea2,
+            3 => CipherValues::Gea3,
+            4 => CipherValues::Gea4,
+            5 => CipherValues::Gea5,
+            6 => CipherValues::Gea6,
+            7 => CipherValues::Gea7,
+            _ => CipherValues::NoCipher,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
 pub enum GprsIntegrityProtectionValues {
+    #[default]
     NoIntegrity,
     Gia4,
     Gia5,
@@ -779,6 +852,16 @@ impl From<GprsIntegrityProtectionValues> for u8 {
             GprsIntegrityProtectionValues::NoIntegrity => 0,
             GprsIntegrityProtectionValues::Gia4 => 4,
             GprsIntegrityProtectionValues::Gia5 => 5,
+        }
+    }
+}
+
+impl From<u8> for GprsIntegrityProtectionValues {
+    fn from(value: u8) -> GprsIntegrityProtectionValues {
+        match value {
+            4 => GprsIntegrityProtectionValues::Gia4,
+            5 => GprsIntegrityProtectionValues::Gia5,
+            _ => GprsIntegrityProtectionValues::NoIntegrity,
         }
     }
 }
@@ -835,8 +918,41 @@ fn test_access_restriction_mm() {
         ena: true,
         hnna: true,
         nbna: true,
-        ecna: true,
+        ecna: false,
     };
-    assert_eq!(AccessRestrictionMM::from(0xff),test_struct);
-    assert_eq!(u8::from(test_struct),0xff);
+    assert_eq!(AccessRestrictionMM::from(0x7f),test_struct);
+    assert_eq!(u8::from(test_struct),0x7f);
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
+pub struct AmbrMM {
+    pub uplink: u32,
+    pub downlink: u32,
+}
+
+impl IEs for AmbrMM {
+    fn marshal(&self, buffer: &mut Vec<u8>) {
+        buffer.extend_from_slice(&self.uplink.to_be_bytes());
+        buffer.extend_from_slice(&self.downlink.to_be_bytes());
+    }
+
+    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
+        if buffer.len() >= 8 {
+            let data = AmbrMM {
+                uplink: u32::from_be_bytes([buffer[0], buffer[1], buffer[2], buffer[3]]),
+                downlink: u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]),
+            };
+            Ok(data)
+        } else {
+            Err(GTPV2Error::IEIncorrect(0))
+        }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.uplink == 0 && self.downlink == 0
+    }
+
+    fn len(&self) -> usize {
+        8
+    }
 }

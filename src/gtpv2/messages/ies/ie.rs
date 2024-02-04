@@ -35,8 +35,8 @@ pub enum InformationElement {
     BearerFlags(BearerFlags),
     PdnType(PdnType),
     Pti(Pti),
-    // MM Context (GSM Keys and Triplets)
-    // MM Context (UMTS Keys, Used Chiper, and Quintuplets)
+    MmContextGsmKeyTriplets(MmContextGsmKeyTriplets),
+    MmContextUmtsKeyCipherQuintuplets(MmContextUmtsKeyCipherQuintuplets),
     // MM Context (GSM Keys, Used Chiper, and Quintuplets)
     // MM Context (UMTS Keys and Quintuplets)
     // MM Context (EPS Security Context, Quadruplets and Quintuplets)
@@ -177,8 +177,8 @@ impl InformationElement {
             InformationElement::BearerFlags(i) => i.marshal(buffer),
             InformationElement::PdnType(i) => i.marshal(buffer),
             InformationElement::Pti(i) => i.marshal(buffer),
-            // MM Context (GSM Keys and Triplets)
-            // MM Context (UMTS Keys, Used Chiper, and Quintuplets)
+            InformationElement::MmContextGsmKeyTriplets(i) => i.marshal(buffer),
+            InformationElement::MmContextUmtsKeyCipherQuintuplets(i) => i.marshal(buffer),
             // MM Context (GSM Keys, Used Chiper, and Quintuplets)
             // MM Context (UMTS Keys and Quintuplets)
             // MM Context (EPS Security Context, Quadruplets and Quintuplets)
@@ -523,8 +523,20 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // MM Context (GSM Keys and Triplets)
-                // MM Context (UMTS Keys, Used Chiper, and Quintuplets)
+                103 => match MmContextGsmKeyTriplets::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MmContextGsmKeyTriplets(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                104 => match MmContextUmtsKeyCipherQuintuplets::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MmContextUmtsKeyCipherQuintuplets(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 // MM Context (GSM Keys, Used Chiper, and Quintuplets)
                 // MM Context (UMTS Keys and Quintuplets)
                 // MM Context (EPS Security Context, Quadruplets and Quintuplets)
