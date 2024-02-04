@@ -136,7 +136,7 @@ pub enum InformationElement {
     ApnRateControlStatus(ApnRateControlStatus),
     // Extended Trace Information
     MonitoringEventExtensionInfo(MonitoringEventExtensionInfo),
-    // Special IE type for IE Type Extension
+    SpecialIEWithTypeExt(SpecialIEWithTypeExt),
     PrivateExtension(PrivateExtension),
     Unknown(Unknown),
 }
@@ -278,7 +278,7 @@ impl InformationElement {
             InformationElement::ApnRateControlStatus(i) => i.marshal(buffer),
             // Extended Trace Information
             InformationElement::MonitoringEventExtensionInfo(i)=> i.marshal(buffer),
-            // Special IE type for IE Type Extension
+            InformationElement::SpecialIEWithTypeExt(i) => i.marshal(buffer),
             InformationElement::PrivateExtension(i) => i.marshal(buffer),
             InformationElement::Unknown(i) => i.marshal(buffer),
         }
@@ -1140,7 +1140,13 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // Special IE type for IE Type Extension
+                254 => match SpecialIEWithTypeExt::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::SpecialIEWithTypeExt(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 255 => match PrivateExtension::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();

@@ -2,7 +2,7 @@
 
 use crate::gtpv2::{
     errors::GTPV2Error,
-    messages::ies::{commons::*, ie::*},
+    messages::ies::*,
     utils::*,
 };
 
