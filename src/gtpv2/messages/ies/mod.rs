@@ -20,7 +20,8 @@ pub use {
     wlanoffloadindication::*, s103pdf::*, s1udf::*, mbmssa::*, mbmssd::*, mbmsflags::*, hdrcomprconfig::*,
     monitoringeventextinfo::*, mbmsflowid::*, mbmssessionid::*, mbmsdistributionack::*, addflagssrvcc::*,
     abstimembmsdatatransfer::*, specialiewithtypeext::*, mmctxgsmkeytriplets::*, mmctxumtskeycipherquintuplets::*,
-    
+    mmctxgsmkeycipherquintuplets::*, mmctxumtskeyquintuplets::*, mmctxumtskeyquadrupletsquintuplets::*,
+    mmctxepssecurityctxquadruplets::*,
 };
 
 mod actionindication;
@@ -145,3 +146,7 @@ mod abstimembmsdatatransfer;
 mod specialiewithtypeext;
 mod mmctxgsmkeytriplets;
 mod mmctxumtskeycipherquintuplets;
+mod mmctxgsmkeycipherquintuplets;
+mod mmctxumtskeyquintuplets;
+mod mmctxumtskeyquadrupletsquintuplets;
+mod mmctxepssecurityctxquadruplets;

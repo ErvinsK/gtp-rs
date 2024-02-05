@@ -634,7 +634,7 @@ impl IEs for ApnRateControlStatusMM {
     }
 
     fn len(&self) -> usize {
-        33+self.apn.len()
+        24+self.apn.len()
     }
 }
 
@@ -783,6 +783,7 @@ impl From<NasIntegrityProtectionValues> for u8 {
 impl From<u8> for NasIntegrityProtectionValues {
     fn from(value: u8) -> NasIntegrityProtectionValues {
         match value {
+            0 => NasIntegrityProtectionValues::NoIntegrity,
             1 => NasIntegrityProtectionValues::Eia1,
             2 => NasIntegrityProtectionValues::Eia2,
             3 => NasIntegrityProtectionValues::Eia3,
@@ -925,6 +926,30 @@ fn test_access_restriction_mm() {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
+pub struct ExtendedAccessRestrictionMM {
+    pub ussrna: bool,       // Unlicensed Spectrum in the form of LAA or LWA/LWIP as Secondary RAT Not Allowed
+    pub nrsrna: bool,       // NR as Secondary RAT Not Allowed
+}
+
+impl From<ExtendedAccessRestrictionMM> for u8 {
+    fn from(mode: ExtendedAccessRestrictionMM) -> u8 {
+        let mut value:u8 = 0;
+        value += if mode.nrsrna { 0x01 } else { 0 };
+        value += if mode.ussrna { 0x02 } else { 0 };
+        value
+    }
+}
+
+impl From<u8> for ExtendedAccessRestrictionMM {
+    fn from(value: u8) -> ExtendedAccessRestrictionMM {
+        ExtendedAccessRestrictionMM {
+            nrsrna: (value & 0x01) != 0,
+            ussrna: (value & 0x02) != 0,
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
 pub struct AmbrMM {
     pub uplink: u32,
     pub downlink: u32,
@@ -955,4 +980,149 @@ impl IEs for AmbrMM {
     fn len(&self) -> usize {
         8
     }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
+pub struct OldEpsSecurityContext {
+    pub old_ksi: u8,
+    pub old_ncc: Option<u8>,
+    pub old_kasme: [u8; 32],
+    pub old_next_hop: Option<[u8; 32]>,
+}
+
+impl IEs for OldEpsSecurityContext {
+    fn marshal(&self, buffer: &mut Vec<u8>) {
+        {
+            let mut byte:u8 = if self.old_next_hop.is_some() { 0x80 } else { 0x00 };
+            byte |= (self.old_ksi & 0x07) << 3;
+            if let Some(ncc) = self.old_ncc {
+                byte |= ncc & 0x07;
+            }
+            buffer.push(byte); 
+        }
+        buffer.extend_from_slice(&self.old_kasme[..]);
+        if let Some(next_hop) = self.old_next_hop {
+            buffer.extend_from_slice(&next_hop[..]);
+        }        
+    }
+
+    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
+        match buffer[0] >> 7 {
+            0x00 => {
+                if buffer.len() >= 33 {
+                    let data = OldEpsSecurityContext {
+                        old_ksi: (buffer[0] & 0x38) >> 3,
+                        old_ncc: None,
+                        old_kasme: buffer[1..33].try_into().unwrap(),
+                        old_next_hop: None,
+                    };
+                    Ok(data)
+                } else {
+                    Err(GTPV2Error::IEIncorrect(0))
+                }
+            },
+            0x01 => {
+                if buffer.len() >= 65 {
+                    let data = OldEpsSecurityContext {
+                        old_ksi: (buffer[0] & 0x38) >> 3,
+                        old_ncc: Some(buffer[0] & 0x07),
+                        old_kasme: buffer[1..33].try_into().unwrap(),
+                        old_next_hop: Some(buffer[33..65].try_into().unwrap()),
+                    };
+                    Ok(data)
+                } else {
+                    Err(GTPV2Error::IEIncorrect(0))
+                }
+            },
+            _ => Err(GTPV2Error::IEIncorrect(0)),
+        }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.old_ksi == 0 && self.old_kasme == [0; 32] && self.old_next_hop.is_none()
+    }
+
+    fn len(&self) -> usize {
+        if self.old_next_hop.is_some() {
+            65
+        } else {
+            33
+        }
+    }
+}
+
+#[test]
+fn test_old_eps_security_context_short_marshal() {
+    let encoded_ie: [u8;33]= [0x28, 
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, ];
+    let test_struct = OldEpsSecurityContext {
+        old_ksi: 5,
+        old_ncc: None,
+        old_kasme: [0xff; 32],
+        old_next_hop: None,
+    };
+    let mut buffer: Vec<u8> = vec![];
+    test_struct.marshal(&mut buffer);
+    assert_eq!(buffer, encoded_ie);
+}
+
+#[test]
+fn test_old_eps_security_context_short_unmarshal() {
+    let encoded_ie: [u8;33]= [0x28, 
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,];
+    let test_struct = OldEpsSecurityContext {
+        old_ksi: 5,
+        old_ncc: None,
+        old_kasme: [0xff; 32],
+        old_next_hop: None,
+    };
+    assert_eq!(OldEpsSecurityContext::unmarshal(&encoded_ie).unwrap(), test_struct);
+}
+
+#[test]
+fn test_old_eps_security_context_long_marshal() {
+    let encoded_ie: [u8;65]= [0xad, 
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, ];
+    let test_struct = OldEpsSecurityContext {
+        old_ksi: 5,
+        old_ncc: Some(5),
+        old_kasme: [0xff; 32],
+        old_next_hop: Some([0xff;32]),
+    };
+    let mut buffer: Vec<u8> = vec![];
+    test_struct.marshal(&mut buffer);
+    assert_eq!(buffer, encoded_ie);
+}
+
+#[test]
+fn test_old_eps_security_context_long_unmarshal() {
+    let encoded_ie: [u8;65]= [0xad, 
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, ];
+    let test_struct = OldEpsSecurityContext {
+        old_ksi: 5,
+        old_ncc: Some(5),
+        old_kasme: [0xff; 32],
+        old_next_hop: Some([0xff;32]),
+    };
+    assert_eq!(OldEpsSecurityContext::unmarshal(&encoded_ie).unwrap(), test_struct);
 }
