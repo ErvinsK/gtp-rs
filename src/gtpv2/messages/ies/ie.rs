@@ -72,24 +72,24 @@ pub enum InformationElement {
     MbmsSd(MbmsSd),
     MbmsSessionId(MbmsSessionId),
     MbmsFlowId(MbmsFlowId),
-    // MBMS IP Multicast Distribution
+    MbmsIpMulticastDistribution(MbmsIpMulticastDistribution),
     MbmsDistributionAck(MbmsDistributionAck),
     RfspIndex(RfspIndex),
     Uci(Uci),
     CSGInformationReportingAction(CSGInformationReportingAction),
     CsgId(CsgId),
-    // CSG Membership Indication
+    CsgMembershipIndication(CsgMembershipIndication),
     ServiceIndicator(ServiceIndicator),
     DetachType(DetachType),
     Ldn(Ldn),
     NodeFeatures(NodeFeatures),
-    // MBMS Time to Data Transfer
+    MbmsTimeToDataTransfer(MbmsTimeToDataTransfer),
     Throttling(Throttling),
     Arp(Arp),
     EpcTimer(EpcTimer),
     Spi(Spi),
-    // Temporary Mobile Group Identity
-    // Additional MM context SRVCC
+    Tmgi(Tmgi),
+    AdditionalMmContextForSrvcc(AdditionalMmContextForSrvcc),
     AdditionalFlagsSrvcc(AdditionalFlagsSrvcc),
     // MDT Configuration
     Apco(Apco),
@@ -119,7 +119,7 @@ pub enum InformationElement {
     IntegerNumber(IntegerNumber),
     MilliSecondTimeStamp(MilliSecondTimeStamp),
     // Monitoring Event Information
-    // ECGI List
+    EcgiList(EcgiList),
     RemoteUeContext(RemoteUeContext),
     RemoteUserId(RemoteUserId),
     RemoteUeIpInformation(RemoteUeIpInformation),
@@ -214,24 +214,24 @@ impl InformationElement {
             InformationElement::MbmsSd(i) => i.marshal(buffer),
             InformationElement::MbmsSessionId(i) => i.marshal(buffer),
             InformationElement::MbmsFlowId(i) => i.marshal(buffer),
-            // MBMS IP Multicast Distribution
+            InformationElement::MbmsIpMulticastDistribution(i) => i.marshal(buffer),
             InformationElement::MbmsDistributionAck(i) => i.marshal(buffer),
             InformationElement::RfspIndex(i) => i.marshal(buffer),
             InformationElement::Uci(i) => i.marshal(buffer),
             InformationElement::CSGInformationReportingAction(i) => i.marshal(buffer),
             InformationElement::CsgId(i) => i.marshal(buffer),
-            // CSG Membership Indication
+            InformationElement::CsgMembershipIndication(i) => i.marshal(buffer),
             InformationElement::ServiceIndicator(i) => i.marshal(buffer),
             InformationElement::DetachType(i) => i.marshal(buffer),
             InformationElement::Ldn(i) => i.marshal(buffer),
             InformationElement::NodeFeatures(i) => i.marshal(buffer),
-            // MBMS Time to Data Transfer
+            InformationElement::MbmsTimeToDataTransfer(i) => i.marshal(buffer),
             InformationElement::Throttling(i) => i.marshal(buffer),
             InformationElement::Arp(i) => i.marshal(buffer),
             InformationElement::EpcTimer(i) => i.marshal(buffer),
             InformationElement::Spi(i) => i.marshal(buffer),
-            // Temporary Mobile Group Identity
-            // Additional MM context SRVCC
+            InformationElement::Tmgi(i) => i.marshal(buffer),  
+            InformationElement::AdditionalMmContextForSrvcc(i) => i.marshal(buffer),
             InformationElement::AdditionalFlagsSrvcc(i) => i.marshal(buffer),
             // MDT Configuration
             InformationElement::Apco(i) => i.marshal(buffer),
@@ -261,7 +261,7 @@ impl InformationElement {
             InformationElement::IntegerNumber(i) => i.marshal(buffer),
             InformationElement::MilliSecondTimeStamp(i) => i.marshal(buffer),
             // Monitoring Event Information
-            // ECGI List
+            InformationElement::EcgiList(i) => i.marshal(buffer),
             InformationElement::RemoteUeContext(i) => i.marshal(buffer),
             InformationElement::RemoteUserId(i) => i.marshal(buffer),
             InformationElement::RemoteUeIpInformation(i) => i.marshal(buffer),
@@ -770,7 +770,13 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // MBMS IP Multicast Distribution
+                142 => match MbmsIpMulticastDistribution::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MbmsIpMulticastDistribution(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 143 => match MbmsDistributionAck::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
@@ -806,7 +812,13 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // CSG Membership Indication
+                148 => match CsgMembershipIndication::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
                 149 => match ServiceIndicator::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
@@ -835,7 +847,13 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // MBMS Time to Data Transfer
+                153 => match MbmsTimeToDataTransfer::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MbmsTimeToDataTransfer(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 154 => match Throttling::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
@@ -864,8 +882,20 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // Temporary Mobile Group Identity
-                // Additional MM context SRVCC
+                158 => match Tmgi::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
+                159 => match AdditionalMmContextForSrvcc::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::AdditionalMmContextForSrvcc(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 160 => match AdditionalFlagsSrvcc::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
@@ -1063,7 +1093,13 @@ impl InformationElement {
                     Err(j) => return Err(j),
                 },
                 // Monitoring Event Information
-                // ECGI List
+                190 => match EcgiList::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::EcgiList(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 191 => {
                     // Remote UE Context
                     match RemoteUeContext::unmarshal(&buffer[cursor..]) {

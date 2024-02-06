@@ -21,7 +21,8 @@ pub use {
     monitoringeventextinfo::*, mbmsflowid::*, mbmssessionid::*, mbmsdistributionack::*, addflagssrvcc::*,
     abstimembmsdatatransfer::*, specialiewithtypeext::*, mmctxgsmkeytriplets::*, mmctxumtskeycipherquintuplets::*,
     mmctxgsmkeycipherquintuplets::*, mmctxumtskeyquintuplets::*, mmctxumtskeyquadrupletsquintuplets::*,
-    mmctxepssecurityctxquadruplets::*,
+    mmctxepssecurityctxquadruplets::*, mbmsipmulticastdistribution::*, cmi::*, mbmstimetodatatransfer::*,
+    tmgi::*, additionalmmctxsrvcc::*, ecgilist::*,
 };
 
 mod actionindication;
@@ -150,3 +151,9 @@ mod mmctxgsmkeycipherquintuplets;
 mod mmctxumtskeyquintuplets;
 mod mmctxumtskeyquadrupletsquintuplets;
 mod mmctxepssecurityctxquadruplets;
+mod mbmsipmulticastdistribution;
+mod cmi;
+mod mbmstimetodatatransfer;
+mod tmgi;
+mod additionalmmctxsrvcc;
+mod ecgilist;
