@@ -118,7 +118,7 @@ pub enum InformationElement {
     PagingServiceInfo(PagingServiceInfo),
     IntegerNumber(IntegerNumber),
     MilliSecondTimeStamp(MilliSecondTimeStamp),
-    // Monitoring Event Information
+    MonitoringEventInformation(MonitoringEventInformation),
     EcgiList(EcgiList),
     RemoteUeContext(RemoteUeContext),
     RemoteUserId(RemoteUserId),
@@ -260,7 +260,7 @@ impl InformationElement {
             InformationElement::PagingServiceInfo(i) => i.marshal(buffer),
             InformationElement::IntegerNumber(i) => i.marshal(buffer),
             InformationElement::MilliSecondTimeStamp(i) => i.marshal(buffer),
-            // Monitoring Event Information
+            InformationElement::MonitoringEventInformation(i) => i.marshal(buffer),
             InformationElement::EcgiList(i) => i.marshal(buffer),
             InformationElement::RemoteUeContext(i) => i.marshal(buffer),
             InformationElement::RemoteUserId(i) => i.marshal(buffer),
@@ -1092,7 +1092,13 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // Monitoring Event Information
+                189 => match MonitoringEventInformation::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
                 190 => match EcgiList::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();

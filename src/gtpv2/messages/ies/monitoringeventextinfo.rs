@@ -19,7 +19,7 @@ pub struct MonitoringEventExtensionInfo {
     pub ins: u8,
     pub scef_ref_id: u32,
     pub scef_id: String,
-    pub rmplrt: Option<u32>,
+    pub rmplrt: Option<u32>,                                // Remaining Minimum Periodic Location Report Time
 }
 
 impl Default for MonitoringEventExtensionInfo {

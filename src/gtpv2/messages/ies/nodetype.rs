@@ -19,18 +19,21 @@ pub enum Node {
     Sgsn,
 }
 
-impl Node {
-    fn enum_to_value(i: &Node) -> u8 {
+impl From<&Node> for u8 {
+    fn from(i: &Node) -> u8 {
         match i {
             Node::Mme => 0,
             Node::Sgsn => 1,
         }
     }
-    fn value_to_enum(i: u8) -> Result<Node, GTPV2Error> {
+}
+
+impl From<u8> for Node {
+    fn from(i: u8) -> Node {
         match i {
-            0 => Ok(Node::Mme),
-            1 => Ok(Node::Sgsn),
-            _ => Err(GTPV2Error::IEIncorrect(NODETYPE)),
+            0 => Node::Mme,
+            1 => Node::Sgsn,
+            _ => Node::Sgsn,
         }
     }
 }
@@ -68,22 +71,19 @@ impl IEs for NodeType {
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.push(Node::enum_to_value(&self.node));
+        buffer_ie.push(u8::from(&self.node));
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= NODETYPE_LENGTH + MIN_IE_SIZE {
-            let mut data = NodeType {
+            let data = NodeType {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
+                ins : buffer[3],
+                node : Node::from(buffer[4]),
                 ..Default::default()
             };
-            data.ins = buffer[3];
-            match Node::value_to_enum(buffer[4]) {
-                Ok(i) => data.node = i,
-                Err(j) => return Err(j),
-            }
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(NODETYPE))
