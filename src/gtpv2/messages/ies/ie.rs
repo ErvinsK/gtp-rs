@@ -53,7 +53,7 @@ pub enum InformationElement {
     Fcontainer(Fcontainer),
     Fcause(Fcause),
     PlmnId(PlmnId),
-    // Target Identification
+    TargetIdentification(TargetIdentification),
     PacketFlowId(PacketFlowId),
     RabContext(RabContext),
     SrcRncPdcpCtxInfo(SrcRncPdcpCtxInfo),
@@ -195,7 +195,7 @@ impl InformationElement {
             InformationElement::Fcontainer(i) => i.marshal(buffer),
             InformationElement::Fcause(i) => i.marshal(buffer),
             InformationElement::PlmnId(i) => i.marshal(buffer),
-            // Target Identification
+            InformationElement::TargetIdentification(i) => i.marshal(buffer),
             InformationElement::PacketFlowId(i) => i.marshal(buffer),
             InformationElement::RabContext(i) => i.marshal(buffer),
             InformationElement::SrcRncPdcpCtxInfo(i) => i.marshal(buffer),
@@ -649,7 +649,13 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // Target Identification
+                121 => match TargetIdentification::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
                 123 => match PacketFlowId::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();

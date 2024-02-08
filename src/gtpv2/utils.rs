@@ -58,7 +58,13 @@ fn tbcd_decode_test() {
 // Encode MCC and MNC
 
 pub fn mcc_mnc_encode(mcc: u16, mnc: u16) -> Vec<u8> {
-    let mcc_digits: Vec<u8> = to_digits(mcc);
+    let mcc_digits: Vec<u8> = if mcc<10 {
+        let mut v = to_digits(mcc);
+        v.insert(0, 0);
+        v
+    } else {
+        to_digits(mcc)
+    };
     let mnc_digits: Vec<u8> = to_digits(mnc);
     let mut result: Vec<u8> = vec![];
     result.push(mcc_digits[1] << 4 | mcc_digits[0]);
