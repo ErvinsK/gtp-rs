@@ -142,7 +142,7 @@ pub fn to_digits<T: ToString>(i: T) -> Vec<u8> {
 
 // Set the right size of GTP message based on buffer size
 
-pub fn set_length(buffer: &mut Vec<u8>) {
+pub fn set_length(buffer: &mut [u8]) {
     let size = ((buffer.len() - 8) as u16).to_be_bytes();
     buffer[2] = size[0];
     buffer[3] = size[1];
@@ -150,7 +150,7 @@ pub fn set_length(buffer: &mut Vec<u8>) {
 
 // Set the right size of IE based on buffer size
 
-pub fn set_tlv_ie_length(buffer: &mut Vec<u8>) {
+pub fn set_tlv_ie_length(buffer: &mut [u8]) {
     let size = ((buffer.len() - 3) as u16).to_be_bytes();
     buffer[1] = size[0];
     buffer[2] = size[1];

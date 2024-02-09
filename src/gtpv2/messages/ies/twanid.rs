@@ -122,17 +122,11 @@ impl IEs for TwanId {
             data.ins = buffer[3];
             let flags = buffer[4];
             let mut cursor = buffer[5] as usize;
-            match buffer[6..6 + cursor].try_into() {
-                Ok(i) => data.ssid = i,
-                Err(_) => return Err(GTPV2Error::IEInvalidLength(TWAN_ID)),
-            }
+            data.ssid = buffer[6..6 + cursor].to_vec();
             cursor += 6;
             match flags & 0x01 {
                 1 => {
-                    match buffer[cursor..cursor + 6].try_into() {
-                        Ok(i) => data.bssid = Some(i),
-                        Err(_) => return Err(GTPV2Error::IEInvalidLength(TWAN_ID)),
-                    }
+                    data.bssid = Some(buffer[cursor..cursor + 6].into());
                     cursor += 6;
                 }
                 _ => data.bssid = None,
@@ -142,10 +136,7 @@ impl IEs for TwanId {
                     if cursor <= buffer.len() {
                         let field = buffer[cursor] as usize;
                         cursor += 1;
-                        match buffer[cursor..cursor + field].try_into() {
-                            Ok(i) => data.civic_address = Some(i),
-                            Err(_) => return Err(GTPV2Error::IEInvalidLength(TWAN_ID)),
-                        }
+                        data.civic_address = Some(buffer[cursor..cursor + field].to_vec());
                         cursor += field;
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(TWAN_ID));
@@ -188,20 +179,23 @@ impl IEs for TwanId {
                         let relay_id = buffer[cursor];
                         let field = buffer[cursor + 1] as usize;
                         cursor += 2;
-                        match buffer[cursor..cursor + field].try_into() {
-                            Ok(i) => data.relay_id = Some((relay_id, i)),
-                            Err(_) => return Err(GTPV2Error::IEInvalidLength(TWAN_ID)),
+                        if cursor + field <= buffer.len() {
+                            data.relay_id = Some((relay_id, buffer[cursor..cursor + field].to_vec()));
+                            cursor += field;
+                        } else {
+                            return Err(GTPV2Error::IEInvalidLength(TWAN_ID));
                         }
-                        cursor += field;
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(TWAN_ID));
                     }
                     if cursor <= buffer.len() {
                         let field = buffer[cursor] as usize;
                         cursor += 1;
-                        match buffer[cursor..cursor + field].try_into() {
-                            Ok(i) => data.circuit_id = Some(i),
-                            Err(_) => return Err(GTPV2Error::IEInvalidLength(TWAN_ID)),
+                        if cursor + field <= buffer.len() {
+                            data.circuit_id = Some(buffer[cursor..cursor + field].to_vec());
+
+                        } else {
+                            return Err(GTPV2Error::IEInvalidLength(TWAN_ID));
                         }
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(TWAN_ID));

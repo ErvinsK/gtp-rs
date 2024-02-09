@@ -50,7 +50,12 @@ impl IEs for RncIdentifier {
                 Ok(data)
             },
             j if j >= 10 => {
-                let rai = Rai::unmarshal(&buffer[0..6])?;
+                let rai = if let Ok(i) = Rai::unmarshal(&buffer[0..6]) {
+                    i
+                } else {
+                    return Err(GTPV2Error::IEIncorrect(0));
+                
+                };
                 let data = RncIdentifier {
                     rai,
                     rnc_id: u16::from_be_bytes([buffer[6], buffer[7]]),
@@ -382,19 +387,15 @@ impl IEs for EnGNbIdentifier {
                 en_gnb_id: u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]),
                 ..Default::default()
             };
-            if buffer[3] & 0x40 != 0 {
-                if buffer.len() >= 10 {
-                    data.tac = Some(u16::from_be_bytes([buffer[8], buffer[9]]));
-                } else {
-                    return Err(GTPV2Error::IEInvalidLength(0));
-                }
+            if buffer[3] & 0x40 != 0 && buffer.len() >= 10 {
+                data.tac = Some(u16::from_be_bytes([buffer[8], buffer[9]]));
+            } else {
+                return Err(GTPV2Error::IEInvalidLength(0));
             }
-            if buffer[3] & 0x80 != 0 {
-                if buffer.len() >= 13 {
-                    data.etac = Some([buffer[10], buffer[11], buffer[12]]);
-                } else {    
-                    return Err(GTPV2Error::IEInvalidLength(0));
-               }
+            if buffer[3] & 0x80 != 0 && buffer.len() >= 13 {
+                data.etac = Some([buffer[10], buffer[11], buffer[12]]);
+            } else {    
+                return Err(GTPV2Error::IEInvalidLength(0));
             }
             Ok(data)
         } else {

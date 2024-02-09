@@ -96,34 +96,12 @@ impl IEs for Fcontainer {
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4] {
                     0 => data.container = Container::Reserved,
-                    1 => match buffer[5..].try_into() {
-                        Ok(i) => data.container = Container::Utran(i),
-                        Err(_) => return Err(GTPV2Error::IEInvalidLength(FCONTAINER)),
-                    },
-                    2 => match buffer[5..].try_into() {
-                        Ok(i) => data.container = Container::Bss(i),
-                        Err(_) => return Err(GTPV2Error::IEInvalidLength(FCONTAINER)),
-                    },
-                    3 => match buffer[5..].try_into() {
-                        Ok(i) => data.container = Container::Eutran(i),
-                        Err(_) => return Err(GTPV2Error::IEInvalidLength(FCONTAINER)),
-                    },
-                    4 => match buffer[5..].try_into() {
-                        Ok(i) => data.container = Container::Nbifom(i),
-                        Err(_) => return Err(GTPV2Error::IEInvalidLength(FCONTAINER)),
-                    },
-                    5 => match buffer[5..].try_into() {
-                        Ok(i) => data.container = Container::EnDc(i),
-                        Err(_) => return Err(GTPV2Error::IEInvalidLength(FCONTAINER)),
-                    },
-                    _ => match buffer[5..].try_into() {
-                        Ok(mut i) => {
-                            let mut container = vec![buffer[4]];
-                            container.append(&mut i);
-                            data.container = Container::Unknown(container);
-                        }
-                        Err(_) => return Err(GTPV2Error::IEInvalidLength(FCONTAINER)),
-                    },
+                    1 => data.container = Container::Utran(buffer[5..].to_vec()),
+                    2 => data.container = Container::Bss(buffer[5..].to_vec()),
+                    3 => data.container = Container::Eutran(buffer[5..].to_vec()),
+                    4 => data.container = Container::Nbifom(buffer[5..].to_vec()),
+                    5 => data.container = Container::EnDc(buffer[5..].to_vec()),
+                    _ => data.container = Container::Unknown(buffer[4..].to_vec()),
                 }
                 Ok(data)
             } else {

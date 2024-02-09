@@ -75,14 +75,8 @@ impl IEs for CompleteRequestMessage {
             data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4] {
-                    0 => match buffer[5..].try_into() {
-                        Ok(i) => data.message = RequestMessage::AttachRequest(i),
-                        Err(_) => return Err(GTPV2Error::IEInvalidLength(COMPLETE_REQ_MSG)),
-                    },
-                    1 => match buffer[5..].try_into() {
-                        Ok(i) => data.message = RequestMessage::TauRequest(i),
-                        Err(_) => return Err(GTPV2Error::IEInvalidLength(COMPLETE_REQ_MSG)),
-                    },
+                    0 => data.message = RequestMessage::AttachRequest(buffer[5..].to_vec()),
+                    1 => data.message = RequestMessage::TauRequest(buffer[5..].to_vec()),
                     _ => data.message = RequestMessage::Spare,
                 }
                 Ok(data)

@@ -60,7 +60,7 @@ pub enum InformationElement {
     PortNumber(PortNumber),
     ApnRestriction(ApnRestriction),
     SelectionMode(SelectionMode),
-    // Source Identification
+    SourceIdentification(SourceIdentification),
     ChangeReportingAction(ChangeReportingAction),
     Fqcsid(Fqcsid),
     ChannelNeeded(ChannelNeeded),
@@ -202,7 +202,7 @@ impl InformationElement {
             InformationElement::PortNumber(i) => i.marshal(buffer),
             InformationElement::ApnRestriction(i) => i.marshal(buffer),
             InformationElement::SelectionMode(i) => i.marshal(buffer),
-            // Source Identification
+            InformationElement::SourceIdentification(i) => i.marshal(buffer),
             InformationElement::ChangeReportingAction(i) => i.marshal(buffer),
             InformationElement::Fqcsid(i) => i.marshal(buffer),
             InformationElement::ChannelNeeded(i) => i.marshal(buffer),
@@ -698,7 +698,13 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // Source Identification
+                129 => match SourceIdentification::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(i.into());
+                    }
+                    Err(j) => return Err(j),
+                },
                 131 => match ChangeReportingAction::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();

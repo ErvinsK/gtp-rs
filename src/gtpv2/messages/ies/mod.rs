@@ -22,7 +22,7 @@ pub use {
     abstimembmsdatatransfer::*, specialiewithtypeext::*, mmctxgsmkeytriplets::*, mmctxumtskeycipherquintuplets::*,
     mmctxgsmkeycipherquintuplets::*, mmctxumtskeyquintuplets::*, mmctxumtskeyquadrupletsquintuplets::*,
     mmctxepssecurityctxquadruplets::*, mbmsipmulticastdistribution::*, cmi::*, mbmstimetodatatransfer::*,
-    tmgi::*, additionalmmctxsrvcc::*, ecgilist::*, monitoringeventinfo::*, targetid::*,
+    tmgi::*, additionalmmctxsrvcc::*, ecgilist::*, monitoringeventinfo::*, targetid::*, sourceid::*,
 };
 
 mod actionindication;
@@ -159,3 +159,4 @@ mod additionalmmctxsrvcc;
 mod ecgilist;
 mod monitoringeventinfo;
 mod targetid;
+mod sourceid;
