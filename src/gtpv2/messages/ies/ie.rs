@@ -91,7 +91,7 @@ pub enum InformationElement {
     Tmgi(Tmgi),
     AdditionalMmContextForSrvcc(AdditionalMmContextForSrvcc),
     AdditionalFlagsSrvcc(AdditionalFlagsSrvcc),
-    // MDT Configuration
+    MdtConfiguration(MdtConfiguration),
     Apco(Apco),
     AbsoluteTimeMbmsDataTransfer(AbsoluteTimeMbmsDataTransfer),
     HenbInfoReporting(HenbInfoReporting),
@@ -233,7 +233,7 @@ impl InformationElement {
             InformationElement::Tmgi(i) => i.marshal(buffer),  
             InformationElement::AdditionalMmContextForSrvcc(i) => i.marshal(buffer),
             InformationElement::AdditionalFlagsSrvcc(i) => i.marshal(buffer),
-            // MDT Configuration
+            InformationElement::MdtConfiguration(i) => i.marshal(buffer),
             InformationElement::Apco(i) => i.marshal(buffer),
             InformationElement::AbsoluteTimeMbmsDataTransfer(i) => i.marshal(buffer),
             InformationElement::HenbInfoReporting(i) => i.marshal(buffer),
@@ -915,7 +915,13 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // MDT Configuration
+                162 => match MdtConfiguration::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::MdtConfiguration(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 163 => match Apco::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();

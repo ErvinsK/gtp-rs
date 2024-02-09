@@ -23,6 +23,7 @@ pub use {
     mmctxgsmkeycipherquintuplets::*, mmctxumtskeyquintuplets::*, mmctxumtskeyquadrupletsquintuplets::*,
     mmctxepssecurityctxquadruplets::*, mbmsipmulticastdistribution::*, cmi::*, mbmstimetodatatransfer::*,
     tmgi::*, additionalmmctxsrvcc::*, ecgilist::*, monitoringeventinfo::*, targetid::*, sourceid::*,
+    mdtconfiguration::*,
 };
 
 mod actionindication;
@@ -160,3 +161,4 @@ mod ecgilist;
 mod monitoringeventinfo;
 mod targetid;
 mod sourceid;
+mod mdtconfiguration;
