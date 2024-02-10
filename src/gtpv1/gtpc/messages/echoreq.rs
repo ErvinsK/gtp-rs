@@ -52,8 +52,7 @@ impl Messages for EchoRequest {
         }
 
         if (message.header.length as usize) < buffer.len() {
-            if let Ok(i) = PrivateExtension::unmarshal(&buffer[message.header.len()..])
-            {
+            if let Ok(i) = PrivateExtension::unmarshal(&buffer[message.header.len()..]) {
                 message.private_ext = Some(i)
             };
         }

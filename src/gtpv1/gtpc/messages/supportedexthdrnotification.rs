@@ -57,9 +57,7 @@ impl Messages for SupportedExtensionHeadersNotification {
             }
             match buffer[message.header.len()] {
                 EXTENSION_HEADER_TYPE_LIST => {
-                    match ExtensionHeaderTypeList::unmarshal(
-                        &buffer[message.header.len()..],
-                    ) {
+                    match ExtensionHeaderTypeList::unmarshal(&buffer[message.header.len()..]) {
                         Ok(i) => message.list = i,
                         Err(_) => return Err(GTPV1Error::MessageMandatoryIEMissing),
                     }

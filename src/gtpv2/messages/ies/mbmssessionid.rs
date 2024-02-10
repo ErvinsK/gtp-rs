@@ -95,8 +95,5 @@ fn mbms_sessionid_ie_unmarshal_test() {
         ins: 0,
         mbms_sessionid: 0x0a,
     };
-    assert_eq!(
-        MbmsSessionId::unmarshal(&encoded).unwrap(),
-        decoded
-    );
+    assert_eq!(MbmsSessionId::unmarshal(&encoded).unwrap(), decoded);
 }

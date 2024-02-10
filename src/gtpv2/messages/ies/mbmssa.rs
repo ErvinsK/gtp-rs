@@ -26,7 +26,7 @@ impl Default for MbmsSa {
             t: MBMSSA,
             length: 10,
             ins: 0,
-            mbms_sa: vec!(0),
+            mbms_sa: vec![0],
         }
     }
 }
@@ -48,11 +48,11 @@ impl IEs for MbmsSa {
                 buffer_ie.push(0x00);
                 buffer_ie.push(0x00);
                 buffer_ie.push(0x00);
-            },
+            }
             _ => {
                 buffer_ie.push((self.mbms_sa.len() - 1) as u8);
                 buffer_ie.extend(self.mbms_sa.iter().flat_map(|&i| i.to_be_bytes().to_vec()));
-            },
+            }
         }
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -66,11 +66,14 @@ impl IEs for MbmsSa {
             };
             data.ins = buffer[3] & 0x0f;
             if check_tliv_ie_buffer(data.length, buffer) {
-                    if buffer.len() >= 5+(buffer[4] as usize + 1)*2 {
-                        data.mbms_sa = buffer[5..(5+(buffer[4] as usize + 1)*2)].chunks_exact(2).map(|x| u16::from_be_bytes([x[0], x[1]])).collect();
-                    } else {
-                        return Err(GTPV2Error::IEInvalidLength(MBMSSA));
-                    }
+                if buffer.len() >= 5 + (buffer[4] as usize + 1) * 2 {
+                    data.mbms_sa = buffer[5..(5 + (buffer[4] as usize + 1) * 2)]
+                        .chunks_exact(2)
+                        .map(|x| u16::from_be_bytes([x[0], x[1]]))
+                        .collect();
+                } else {
+                    return Err(GTPV2Error::IEInvalidLength(MBMSSA));
+                }
                 Ok(data)
             } else {
                 Err(GTPV2Error::IEInvalidLength(MBMSSA))
@@ -96,7 +99,7 @@ fn mbmssa_ie_unmarshal_test() {
         t: MBMSSA,
         length: 5,
         ins: 0,
-        mbms_sa: vec!(0, 0xffff),
+        mbms_sa: vec![0, 0xffff],
     };
     let i = MbmsSa::unmarshal(&encoded_ie);
     assert_eq!(i.unwrap(), test_struct);
@@ -109,13 +112,12 @@ fn mbmssa_ie_marshal_test() {
         t: MBMSSA,
         length: 5,
         ins: 0,
-        mbms_sa: vec!(0, 0xffff),
+        mbms_sa: vec![0, 0xffff],
     };
     let mut buffer: Vec<u8> = vec![];
     test_struct.marshal(&mut buffer);
     assert_eq!(buffer, encoded_ie);
 }
-
 
 #[test]
 fn mbmssa_ie_wrong_msmssa_length() {

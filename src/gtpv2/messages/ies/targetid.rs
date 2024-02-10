@@ -15,7 +15,7 @@ pub const TARGETID: u8 = 121;
 // RNC ID
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 pub struct RncIdentifier {
-    pub rai:Rai,
+    pub rai: Rai,
     pub rnc_id: u16,
     pub ext_rnc_id: Option<u16>,
 }
@@ -26,7 +26,7 @@ impl IEs for RncIdentifier {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut rai_buffer: Vec<u8> = vec![];
         self.rai.marshal(&mut rai_buffer);
-        buffer.extend_from_slice(&rai_buffer[..rai_buffer.len()-1]);
+        buffer.extend_from_slice(&rai_buffer[..rai_buffer.len() - 1]);
         buffer.extend_from_slice(&self.rnc_id.to_be_bytes());
         if let Some(ext_rnc_id) = self.ext_rnc_id {
             buffer.extend_from_slice(&ext_rnc_id.to_be_bytes());
@@ -40,7 +40,6 @@ impl IEs for RncIdentifier {
                     i
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
-                
                 };
                 let data = RncIdentifier {
                     rai,
@@ -48,13 +47,12 @@ impl IEs for RncIdentifier {
                     ext_rnc_id: None,
                 };
                 Ok(data)
-            },
+            }
             j if j >= 10 => {
                 let rai = if let Ok(i) = Rai::unmarshal(&buffer[0..6]) {
                     i
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
-                
                 };
                 let data = RncIdentifier {
                     rai,
@@ -62,7 +60,7 @@ impl IEs for RncIdentifier {
                     ext_rnc_id: Some(u16::from_be_bytes([buffer[8], buffer[9]])),
                 };
                 Ok(data)
-            },
+            }
             _ => Err(GTPV2Error::IEInvalidLength(0)),
         }
     }
@@ -77,14 +75,13 @@ impl IEs for RncIdentifier {
     fn is_empty(&self) -> bool {
         self.rai.is_empty() && self.rnc_id == 0 && self.ext_rnc_id.is_none()
     }
-
 }
 
 // Macro eNB ID
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 pub struct MacroEnbIdentifier {
     pub macro_enb_id: MacroEnbId,
-    pub tac: u16, 
+    pub tac: u16,
 }
 
 impl IEs for MacroEnbIdentifier {
@@ -99,7 +96,7 @@ impl IEs for MacroEnbIdentifier {
                 i
             } else {
                 return Err(GTPV2Error::IEIncorrect(0));
-            };    
+            };
             let data = MacroEnbIdentifier {
                 macro_enb_id,
                 tac: u16::from_be_bytes([buffer[6], buffer[7]]),
@@ -117,7 +114,6 @@ impl IEs for MacroEnbIdentifier {
     fn is_empty(&self) -> bool {
         self.macro_enb_id.is_empty() && self.tac == 0
     }
-
 }
 
 // Extended Macro eNB ID
@@ -134,7 +130,7 @@ impl IEs for ExtendedMacroEnbIdentifier {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len() >= 8 {  
+        if buffer.len() >= 8 {
             let data = ExtendedMacroEnbIdentifier {
                 ext_macro_enb_id: if let Ok(i) = ExtMacroEnbId::unmarshal(&buffer[0..6]) {
                     i
@@ -179,8 +175,8 @@ impl IEs for CellIdentifier {
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= 8 {
             let data = CellIdentifier {
-                mcc : mcc_mnc_decode(&buffer[..=2]).0,
-                mnc : mcc_mnc_decode(&buffer[..=2]).1,
+                mcc: mcc_mnc_decode(&buffer[..=2]).0,
+                mnc: mcc_mnc_decode(&buffer[..=2]).1,
                 lac: u16::from_be_bytes([buffer[3], buffer[4]]),
                 rac: buffer[5],
                 ci: u16::from_be_bytes([buffer[6], buffer[7]]),
@@ -198,7 +194,6 @@ impl IEs for CellIdentifier {
     fn is_empty(&self) -> bool {
         self.mcc == 0 && self.mnc == 0 && self.lac == 0 && self.rac == 0 && self.ci == 0
     }
-
 }
 
 // gNodeB ID
@@ -206,10 +201,10 @@ impl IEs for CellIdentifier {
 pub struct GNbIdentifier {
     pub mcc: u16,
     pub mnc: u16,
-    pub gnb_id_length: u8,            // gNodeB ID length from 22 to 32 bits
-    pub gnb_id: u32,            // gNodeB ID length from 22 to 32 bits
-    pub etac: [u8;3],           // 5GS Tracking Area Code (24 bits)
-}  
+    pub gnb_id_length: u8, // gNodeB ID length from 22 to 32 bits
+    pub gnb_id: u32,       // gNodeB ID length from 22 to 32 bits
+    pub etac: [u8; 3],     // 5GS Tracking Area Code (24 bits)
+}
 
 impl Default for GNbIdentifier {
     fn default() -> Self {
@@ -253,17 +248,14 @@ impl IEs for GNbIdentifier {
     fn is_empty(&self) -> bool {
         self.mcc == 0 && self.mnc == 0 && self.gnb_id == 0 && self.etac == [0; 3]
     }
-
-
 }
 
 // Macro NG-eNB ID
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 pub struct MacronGeNbIdentifier {
     pub macro_ng_enb_id: MacroEnbId,
-    pub etac: [u8; 3],          // 5GS Tracking Area Code
-}  
-
+    pub etac: [u8; 3], // 5GS Tracking Area Code
+}
 
 impl IEs for MacronGeNbIdentifier {
     fn marshal(&self, buffer: &mut Vec<u8>) {
@@ -294,15 +286,14 @@ impl IEs for MacronGeNbIdentifier {
     fn is_empty(&self) -> bool {
         self.macro_ng_enb_id.is_empty() && self.etac == [0; 3]
     }
-
 }
 
 // Extended NG-eNB ID
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 pub struct ExtendedGeNbIdentifier {
     pub macro_ng_enb_id: ExtMacroEnbId,
-    pub etac: [u8; 3],          // 5GS Tracking Area Code
-} 
+    pub etac: [u8; 3], // 5GS Tracking Area Code
+}
 
 impl IEs for ExtendedGeNbIdentifier {
     fn marshal(&self, buffer: &mut Vec<u8>) {
@@ -313,7 +304,7 @@ impl IEs for ExtendedGeNbIdentifier {
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= 9 {
             let data = ExtendedGeNbIdentifier {
-                macro_ng_enb_id : if let Ok(i) = ExtMacroEnbId::unmarshal(&buffer[0..6]) {
+                macro_ng_enb_id: if let Ok(i) = ExtMacroEnbId::unmarshal(&buffer[0..6]) {
                     i
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
@@ -333,7 +324,6 @@ impl IEs for ExtendedGeNbIdentifier {
     fn is_empty(&self) -> bool {
         self.macro_ng_enb_id.is_empty() && self.etac == [0; 3]
     }
-
 }
 
 // en-gNB ID
@@ -341,11 +331,11 @@ impl IEs for ExtendedGeNbIdentifier {
 pub struct EnGNbIdentifier {
     pub mcc: u16,
     pub mnc: u16,
-    pub en_gnb_id_length: u8,       // gNodeB ID length from 22 to 32 bits
-    pub en_gnb_id: u32,            // gNodeB ID length from 22 to 32 bits
+    pub en_gnb_id_length: u8, // gNodeB ID length from 22 to 32 bits
+    pub en_gnb_id: u32,       // gNodeB ID length from 22 to 32 bits
     pub tac: Option<u16>,
-    pub etac: Option<[u8; 3]>,    // 5GS Tracking Area Code (24 bits)
-}   
+    pub etac: Option<[u8; 3]>, // 5GS Tracking Area Code (24 bits)
+}
 
 impl Default for EnGNbIdentifier {
     fn default() -> Self {
@@ -394,7 +384,7 @@ impl IEs for EnGNbIdentifier {
             }
             if buffer[3] & 0x80 != 0 && buffer.len() >= 13 {
                 data.etac = Some([buffer[10], buffer[11], buffer[12]]);
-            } else {    
+            } else {
                 return Err(GTPV2Error::IEInvalidLength(0));
             }
             Ok(data)
@@ -412,7 +402,11 @@ impl IEs for EnGNbIdentifier {
     }
 
     fn is_empty(&self) -> bool {
-        self.mcc == 0 && self.mnc == 0 && self.en_gnb_id == 0 && self.tac.is_none() && self.etac.is_none()
+        self.mcc == 0
+            && self.mnc == 0
+            && self.en_gnb_id == 0
+            && self.tac.is_none()
+            && self.etac.is_none()
     }
 }
 // Target Type Enum
@@ -484,64 +478,73 @@ impl IEs for TargetType {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
-            let data = match buffer[0] {
-                0 => if let Ok(i) = RncIdentifier::unmarshal(&buffer[1..]) {
+        let data = match buffer[0] {
+            0 => {
+                if let Ok(i) = RncIdentifier::unmarshal(&buffer[1..]) {
                     TargetType::RncId(i)
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
-                
-                },
-                1 => if let Ok(i) = MacroEnbIdentifier::unmarshal(&buffer[1..]) {
+                }
+            }
+            1 => {
+                if let Ok(i) = MacroEnbIdentifier::unmarshal(&buffer[1..]) {
                     TargetType::MacroeNbId(i)
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
-                
-                },
-                2 => if let Ok(i) = CellIdentifier::unmarshal(&buffer[1..]) {
+                }
+            }
+            2 => {
+                if let Ok(i) = CellIdentifier::unmarshal(&buffer[1..]) {
                     TargetType::CellId(i)
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
-                
-                },
-                3=> if let Ok(i) = MacroEnbIdentifier::unmarshal(&buffer[1..]) {
+                }
+            }
+            3 => {
+                if let Ok(i) = MacroEnbIdentifier::unmarshal(&buffer[1..]) {
                     TargetType::HomeeNbId(i)
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
-                
-                },
-                4 => if let Ok(i) = ExtendedMacroEnbIdentifier::unmarshal(&buffer[1..]) {
+                }
+            }
+            4 => {
+                if let Ok(i) = ExtendedMacroEnbIdentifier::unmarshal(&buffer[1..]) {
                     TargetType::ExtendedMacroeNbId(i)
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
-                
-                },
-                5 => if let Ok(i) = GNbIdentifier::unmarshal(&buffer[1..]) {
+                }
+            }
+            5 => {
+                if let Ok(i) = GNbIdentifier::unmarshal(&buffer[1..]) {
                     TargetType::GNbId(i)
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
-                
-                },
-                6 => if let Ok(i) = MacronGeNbIdentifier::unmarshal(&buffer[1..]) {
+                }
+            }
+            6 => {
+                if let Ok(i) = MacronGeNbIdentifier::unmarshal(&buffer[1..]) {
                     TargetType::MacrongeNbId(i)
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
-                
-                },
-                7 => if let Ok(i) = ExtendedGeNbIdentifier::unmarshal(&buffer[1..]) {
+                }
+            }
+            7 => {
+                if let Ok(i) = ExtendedGeNbIdentifier::unmarshal(&buffer[1..]) {
                     TargetType::ExtendedngeNbId(i)
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
-                
-                },
-                8 => if let Ok(i) = EnGNbIdentifier::unmarshal(&buffer[1..]) {
+                }
+            }
+            8 => {
+                if let Ok(i) = EnGNbIdentifier::unmarshal(&buffer[1..]) {
                     TargetType::EngNbId(i)
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
-                
-                },
-                _ => TargetType::Spare,
-            };
-            Ok(data)
+                }
+            }
+            _ => TargetType::Spare,
+        };
+        Ok(data)
     }
 
     fn len(&self) -> usize {
@@ -647,8 +650,8 @@ impl IEs for TargetIdentification {
 #[test]
 fn target_id_ie_rnc_id_marshal_test() {
     let encoded: [u8; 15] = [
-    0x79,    0x00,    0x0b,    0x00,    0x00,    0x62,    0xf3,    0x10,
-    0xff,    0xff,    0xaa,    0xff,    0xaa,    0x10,    0x02,    ];
+        0x79, 0x00, 0x0b, 0x00, 0x00, 0x62, 0xf3, 0x10, 0xff, 0xff, 0xaa, 0xff, 0xaa, 0x10, 0x02,
+    ];
     let decoded = TargetIdentification {
         length: 11,
         ins: 0,
@@ -672,8 +675,8 @@ fn target_id_ie_rnc_id_marshal_test() {
 #[test]
 fn target_id_ie_unmarshal_test() {
     let encoded: [u8; 15] = [
-    0x79,    0x00,    0x0b,    0x00,    0x00,    0x62,    0xf3,    0x10,
-    0xff,    0xff,    0xaa,    0xff,    0xaa,    0x10,    0x02,    ];
+        0x79, 0x00, 0x0b, 0x00, 0x00, 0x62, 0xf3, 0x10, 0xff, 0xff, 0xaa, 0xff, 0xaa, 0x10, 0x02,
+    ];
     let decoded = TargetIdentification {
         length: 11,
         ins: 0,
@@ -697,9 +700,8 @@ fn target_id_ie_unmarshal_test() {
 #[test]
 fn target_id_ie_macro_enb_id_marshal_test() {
     let encoded: [u8; 13] = [
-        0x79,        0x00,        0x09,        0x00,        0x01,        0x62,        0xf3,        0x10,
-        0x00,        0xff,        0xff,        0x10,        0x02,
-        ];
+        0x79, 0x00, 0x09, 0x00, 0x01, 0x62, 0xf3, 0x10, 0x00, 0xff, 0xff, 0x10, 0x02,
+    ];
     let decoded = TargetIdentification {
         length: 9,
         ins: 0,
@@ -721,9 +723,8 @@ fn target_id_ie_macro_enb_id_marshal_test() {
 #[test]
 fn target_id_ie_macro_enb_unmarshal_test() {
     let encoded: [u8; 13] = [
-        0x79,        0x00,        0x09,        0x00,        0x01,        0x62,        0xf3,        0x10,
-        0x00,        0xff,        0xff,        0x10,        0x02,
-        ];
+        0x79, 0x00, 0x09, 0x00, 0x01, 0x62, 0xf3, 0x10, 0x00, 0xff, 0xff, 0x10, 0x02,
+    ];
     let decoded = TargetIdentification {
         length: 9,
         ins: 0,
@@ -745,8 +746,7 @@ fn target_id_ie_macro_enb_unmarshal_test() {
 #[test]
 fn target_id_ie_ext_macro_enb_id_marshal_test() {
     let encoded: [u8; 13] = [
-    0x79,    0x00,    0x09,    0x00,    0x04,    0x62,    0xf3,    0x40,
-    0x02,    0x00,    0x00,    0x10,    0x02,
+        0x79, 0x00, 0x09, 0x00, 0x04, 0x62, 0xf3, 0x40, 0x02, 0x00, 0x00, 0x10, 0x02,
     ];
     let decoded = TargetIdentification {
         length: 9,
@@ -770,8 +770,7 @@ fn target_id_ie_ext_macro_enb_id_marshal_test() {
 #[test]
 fn target_id_ie_ext_macro_enb_unmarshal_test() {
     let encoded: [u8; 13] = [
-    0x79,    0x00,    0x09,    0x00,    0x04,    0x62,    0xf3,    0x40,
-    0x02,    0x00,    0x00,    0x10,    0x02,
+        0x79, 0x00, 0x09, 0x00, 0x04, 0x62, 0xf3, 0x40, 0x02, 0x00, 0x00, 0x10, 0x02,
     ];
     let decoded = TargetIdentification {
         length: 9,
@@ -795,8 +794,7 @@ fn target_id_ie_ext_macro_enb_unmarshal_test() {
 #[test]
 fn target_id_ie_cell_id_marshal_test() {
     let encoded: [u8; 13] = [
-        0x79,        0x00,        0x09,        0x00,        0x02,        0x62,        0xf3,        0x40,
-        0x10,        0x02,        0x02,        0x00,        0x10,
+        0x79, 0x00, 0x09, 0x00, 0x02, 0x62, 0xf3, 0x40, 0x10, 0x02, 0x02, 0x00, 0x10,
     ];
     let decoded = TargetIdentification {
         length: 9,
@@ -818,8 +816,7 @@ fn target_id_ie_cell_id_marshal_test() {
 #[test]
 fn target_id_ie_cell_id_unmarshal_test() {
     let encoded: [u8; 13] = [
-        0x79,        0x00,        0x09,        0x00,        0x02,        0x62,        0xf3,        0x40,
-        0x10,        0x02,        0x02,        0x00,        0x10,
+        0x79, 0x00, 0x09, 0x00, 0x02, 0x62, 0xf3, 0x40, 0x10, 0x02, 0x02, 0x00, 0x10,
     ];
     let decoded = TargetIdentification {
         length: 9,
@@ -841,8 +838,8 @@ fn target_id_ie_cell_id_unmarshal_test() {
 #[test]
 fn target_id_ie_gnodeb_id_marshal_test() {
     let encoded: [u8; 16] = [
-    0x79,    0x00,    0x0c,    0x00,    0x05,    0x62,    0xf3,    0x40,
-    0x16,    0x00,    0x00,    0x10,    0x02,    0x00,    0x10,    0x02,
+        0x79, 0x00, 0x0c, 0x00, 0x05, 0x62, 0xf3, 0x40, 0x16, 0x00, 0x00, 0x10, 0x02, 0x00, 0x10,
+        0x02,
     ];
     let decoded = TargetIdentification {
         length: 12,
@@ -864,21 +861,21 @@ fn target_id_ie_gnodeb_id_marshal_test() {
 #[test]
 fn target_id_ie_gnodeb_id_unmarshal_test() {
     let encoded: [u8; 16] = [
-        0x79,    0x00,    0x0c,    0x00,    0x05,    0x62,    0xf3,    0x40,
-        0x16,    0x00,    0x00,    0x10,    0x02,    0x00,    0x10,    0x02,
-        ];
-        let decoded = TargetIdentification {
-            length: 12,
-            ins: 0,
-            target_type: TargetType::GNbId(GNbIdentifier {
-                mcc: 263,
-                mnc: 4,
-                gnb_id_length: 22,
-                gnb_id: 4098,
-                etac: [0, 16, 2],
-            }),
-            ..Default::default()
-        };
+        0x79, 0x00, 0x0c, 0x00, 0x05, 0x62, 0xf3, 0x40, 0x16, 0x00, 0x00, 0x10, 0x02, 0x00, 0x10,
+        0x02,
+    ];
+    let decoded = TargetIdentification {
+        length: 12,
+        ins: 0,
+        target_type: TargetType::GNbId(GNbIdentifier {
+            mcc: 263,
+            mnc: 4,
+            gnb_id_length: 22,
+            gnb_id: 4098,
+            etac: [0, 16, 2],
+        }),
+        ..Default::default()
+    };
     assert_eq!(TargetIdentification::unmarshal(&encoded).unwrap(), decoded);
 }
 
@@ -887,8 +884,7 @@ fn target_id_ie_gnodeb_id_unmarshal_test() {
 #[test]
 fn target_id_ie_macro_gnodeb_id_marshal_test() {
     let encoded: [u8; 14] = [
-        0x79,        0x00,        0x0a,        0x00,        0x06,        0x62,        0xf3,        0x40,
-        0x00,        0x10,        0x02,        0x00,        0x10,        0x02,
+        0x79, 0x00, 0x0a, 0x00, 0x06, 0x62, 0xf3, 0x40, 0x00, 0x10, 0x02, 0x00, 0x10, 0x02,
     ];
     let decoded = TargetIdentification {
         length: 10,
@@ -911,8 +907,7 @@ fn target_id_ie_macro_gnodeb_id_marshal_test() {
 #[test]
 fn target_id_ie_macro_gnodeb_id_unmarshal_test() {
     let encoded: [u8; 14] = [
-        0x79,        0x00,        0x0a,        0x00,        0x06,        0x62,        0xf3,        0x40,
-        0x00,        0x10,        0x02,        0x00,        0x10,        0x02,
+        0x79, 0x00, 0x0a, 0x00, 0x06, 0x62, 0xf3, 0x40, 0x00, 0x10, 0x02, 0x00, 0x10, 0x02,
     ];
     let decoded = TargetIdentification {
         length: 10,
@@ -935,8 +930,7 @@ fn target_id_ie_macro_gnodeb_id_unmarshal_test() {
 #[test]
 fn target_id_ie_extended_macro_gnodeb_id_marshal_test() {
     let encoded: [u8; 14] = [
-        0x79,        0x00,        0x0a,        0x00,        0x07,        0x62,        0xf3,        0x40,
-        0x00,        0x10,        0x02,        0x00,        0x10,        0x02,
+        0x79, 0x00, 0x0a, 0x00, 0x07, 0x62, 0xf3, 0x40, 0x00, 0x10, 0x02, 0x00, 0x10, 0x02,
     ];
     let decoded = TargetIdentification {
         length: 10,
@@ -960,8 +954,7 @@ fn target_id_ie_extended_macro_gnodeb_id_marshal_test() {
 #[test]
 fn target_id_ie_extended_macro_gnodeb_id_unmarshal_test() {
     let encoded: [u8; 14] = [
-        0x79,        0x00,        0x0a,        0x00,        0x07,        0x62,        0xf3,        0x40,
-        0x00,        0x10,        0x02,        0x00,        0x10,        0x02,
+        0x79, 0x00, 0x0a, 0x00, 0x07, 0x62, 0xf3, 0x40, 0x00, 0x10, 0x02, 0x00, 0x10, 0x02,
     ];
     let decoded = TargetIdentification {
         length: 10,
@@ -985,9 +978,8 @@ fn target_id_ie_extended_macro_gnodeb_id_unmarshal_test() {
 #[test]
 fn target_id_ie_engnodeb_id_marshal_test() {
     let encoded: [u8; 18] = [
-        0x79,        0x00,        0x0e,        0x00,        0x08,        0x62,        0xf3,        0x40,
-        0xd6,        0x00,        0x00,        0x10,        0x02,        0x10,        0x02,        0x00,
-        0x10,        0x02,
+        0x79, 0x00, 0x0e, 0x00, 0x08, 0x62, 0xf3, 0x40, 0xd6, 0x00, 0x00, 0x10, 0x02, 0x10, 0x02,
+        0x00, 0x10, 0x02,
     ];
     let decoded = TargetIdentification {
         length: 14,
@@ -1011,9 +1003,8 @@ fn target_id_ie_engnodeb_id_marshal_test() {
 #[test]
 fn target_id_ie_engnodeb_id_unmarshal_test() {
     let encoded: [u8; 18] = [
-        0x79,        0x00,        0x0e,        0x00,        0x08,        0x62,        0xf3,        0x40,
-        0xd6,        0x00,        0x00,        0x10,        0x02,        0x10,        0x02,        0x00,
-        0x10,        0x02,
+        0x79, 0x00, 0x0e, 0x00, 0x08, 0x62, 0xf3, 0x40, 0xd6, 0x00, 0x00, 0x10, 0x02, 0x10, 0x02,
+        0x00, 0x10, 0x02,
     ];
     let decoded = TargetIdentification {
         length: 14,

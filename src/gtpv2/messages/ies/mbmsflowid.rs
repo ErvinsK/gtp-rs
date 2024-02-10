@@ -95,8 +95,5 @@ fn mbms_flowid_ie_unmarshal_test() {
         ins: 0,
         mbms_flowid: 0xffff,
     };
-    assert_eq!(
-        MbmsFlowId::unmarshal(&encoded).unwrap(),
-        decoded
-    );
+    assert_eq!(MbmsFlowId::unmarshal(&encoded).unwrap(), decoded);
 }

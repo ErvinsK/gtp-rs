@@ -19,7 +19,7 @@ pub struct MonitoringEventExtensionInfo {
     pub ins: u8,
     pub scef_ref_id: u32,
     pub scef_id: String,
-    pub rmplrt: Option<u32>,                                // Remaining Minimum Periodic Location Report Time
+    pub rmplrt: Option<u32>, // Remaining Minimum Periodic Location Report Time
 }
 
 impl Default for MonitoringEventExtensionInfo {
@@ -70,11 +70,18 @@ impl IEs for MonitoringEventExtensionInfo {
             data.ins = buffer[3] & 0x0f;
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.scef_ref_id = u32::from_be_bytes([buffer[5], buffer[6], buffer[7], buffer[8]]);
-                if buffer.len() >= 9+(buffer[9] as usize) {
-                    data.scef_id = String::from_utf8(buffer[10..(10+(buffer[9] as usize))].to_vec()).unwrap();
+                if buffer.len() >= 9 + (buffer[9] as usize) {
+                    data.scef_id =
+                        String::from_utf8(buffer[10..(10 + (buffer[9] as usize))].to_vec())
+                            .unwrap();
                     if buffer[4] == 0x01 {
-                        if buffer.len() >= 13+(buffer[9] as usize) {
-                            data.rmplrt = Some(u32::from_be_bytes([0x00, buffer[10+(buffer[9] as usize)], buffer[11+(buffer[9] as usize)], buffer[12+(buffer[9] as usize)]]));
+                        if buffer.len() >= 13 + (buffer[9] as usize) {
+                            data.rmplrt = Some(u32::from_be_bytes([
+                                0x00,
+                                buffer[10 + (buffer[9] as usize)],
+                                buffer[11 + (buffer[9] as usize)],
+                                buffer[12 + (buffer[9] as usize)],
+                            ]));
                         } else {
                             return Err(GTPV2Error::IEInvalidLength(MONITEVENTEXTINFO));
                         }
@@ -102,9 +109,10 @@ impl IEs for MonitoringEventExtensionInfo {
 
 #[test]
 fn monitoringeventextinfo_ie_unmarshal_test() {
-    let encoded_ie: [u8; 24] = [0xce, 0x00, 0x14, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x0b,
-                                0x65, 0x78, 0x61,0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6d,
-                                0x00, 0x00, 0xff];
+    let encoded_ie: [u8; 24] = [
+        0xce, 0x00, 0x14, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x0b, 0x65, 0x78, 0x61, 0x6d, 0x70,
+        0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x00, 0x00, 0xff,
+    ];
     let test_struct = MonitoringEventExtensionInfo {
         t: MONITEVENTEXTINFO,
         length: 20,
@@ -119,9 +127,10 @@ fn monitoringeventextinfo_ie_unmarshal_test() {
 
 #[test]
 fn monitoringeventextinfo_ie_marshal_test() {
-    let encoded_ie: [u8; 24] = [0xce, 0x00, 0x14, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x0b,
-                                0x65, 0x78, 0x61,0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6d,
-                                0x00, 0x00, 0xff];
+    let encoded_ie: [u8; 24] = [
+        0xce, 0x00, 0x14, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x0b, 0x65, 0x78, 0x61, 0x6d, 0x70,
+        0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x00, 0x00, 0xff,
+    ];
     let test_struct = MonitoringEventExtensionInfo {
         t: MONITEVENTEXTINFO,
         length: 20,
@@ -135,7 +144,6 @@ fn monitoringeventextinfo_ie_marshal_test() {
     test_struct.marshal(&mut buffer);
     assert_eq!(buffer, encoded_ie);
 }
-
 
 #[test]
 fn monitoringeventextinfo_ie_wrong_scefid_length() {

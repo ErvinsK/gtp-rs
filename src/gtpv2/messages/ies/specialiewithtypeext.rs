@@ -58,7 +58,7 @@ impl IEs for SpecialIEWithTypeExt {
                 ..Default::default()
             };
             data.ins = buffer[3];
-            data.ie_type_ext = u16::from_be_bytes([buffer[4],buffer[5]]);
+            data.ie_type_ext = u16::from_be_bytes([buffer[4], buffer[5]]);
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.ie_data.extend_from_slice(&buffer[6..]);
                 Ok(data)

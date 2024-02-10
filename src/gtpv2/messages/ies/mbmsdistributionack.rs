@@ -95,8 +95,5 @@ fn mbms_distrack_ie_unmarshal_test() {
         ins: 0,
         distr_id: 0x02,
     };
-    assert_eq!(
-        MbmsDistributionAck::unmarshal(&encoded).unwrap(),
-        decoded
-    );
+    assert_eq!(MbmsDistributionAck::unmarshal(&encoded).unwrap(), decoded);
 }

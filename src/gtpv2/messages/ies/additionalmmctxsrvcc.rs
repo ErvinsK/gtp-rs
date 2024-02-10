@@ -76,13 +76,14 @@ impl IEs for AdditionalMmContextForSrvcc {
                 ins: buffer[3] & 0x0f,
                 ..Default::default()
             };
-            let mut cursor:usize = 4;
+            let mut cursor: usize = 4;
             {
                 let len = buffer[cursor] as usize;
                 cursor += 1;
                 if len > 0 {
                     if buffer.len() >= cursor + len {
-                        data.mobile_station_classmark2 = Some(buffer[cursor..cursor+len].to_vec());
+                        data.mobile_station_classmark2 =
+                            Some(buffer[cursor..cursor + len].to_vec());
                         cursor += len;
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(ADDMMCTXSRVCC));
@@ -96,7 +97,8 @@ impl IEs for AdditionalMmContextForSrvcc {
                 cursor += 1;
                 if len > 0 {
                     if buffer.len() >= cursor + len {
-                        data.mobile_station_classmark3 = Some(buffer[cursor..cursor+len].to_vec());
+                        data.mobile_station_classmark3 =
+                            Some(buffer[cursor..cursor + len].to_vec());
                         cursor += len;
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(ADDMMCTXSRVCC));
@@ -110,11 +112,11 @@ impl IEs for AdditionalMmContextForSrvcc {
                 cursor += 1;
                 if len > 0 {
                     if buffer.len() >= cursor + len {
-                        data.supported_codec_list = Some(buffer[cursor..cursor+len].to_vec());
+                        data.supported_codec_list = Some(buffer[cursor..cursor + len].to_vec());
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(ADDMMCTXSRVCC));
                     }
-                } 
+                }
             }
             Ok(data)
         } else {
@@ -133,10 +135,10 @@ impl IEs for AdditionalMmContextForSrvcc {
 
 #[test]
 fn addmmctxsrvcc_ie_marshal_test() {
-    let ie_marshalled: [u8; 19] =  [0x9f, 0x00, 0x0f, 0x00,
-        0x04, 0x01, 0x02, 0x03, 0x04,
-        0x04, 0x01, 0x02, 0x03, 0x04,
-        0x04, 0x01, 0x02, 0x03, 0x04,    ];
+    let ie_marshalled: [u8; 19] = [
+        0x9f, 0x00, 0x0f, 0x00, 0x04, 0x01, 0x02, 0x03, 0x04, 0x04, 0x01, 0x02, 0x03, 0x04, 0x04,
+        0x01, 0x02, 0x03, 0x04,
+    ];
     let ie_to_marshal = AdditionalMmContextForSrvcc {
         length: 15,
         mobile_station_classmark2: Some(vec![0x01, 0x02, 0x03, 0x04]),
@@ -151,10 +153,10 @@ fn addmmctxsrvcc_ie_marshal_test() {
 
 #[test]
 fn addmmctxsrvcc_ie_unmarshal_test() {
-    let ie_marshalled: [u8; 19] =  [0x9f, 0x00, 0x0f, 0x00,
-                                    0x04, 0x01, 0x02, 0x03, 0x04,
-                                    0x04, 0x01, 0x02, 0x03, 0x04,
-                                    0x04, 0x01, 0x02, 0x03, 0x04,    ];
+    let ie_marshalled: [u8; 19] = [
+        0x9f, 0x00, 0x0f, 0x00, 0x04, 0x01, 0x02, 0x03, 0x04, 0x04, 0x01, 0x02, 0x03, 0x04, 0x04,
+        0x01, 0x02, 0x03, 0x04,
+    ];
     let ie_to_marshal = AdditionalMmContextForSrvcc {
         length: 15,
         mobile_station_classmark2: Some(vec![0x01, 0x02, 0x03, 0x04]),

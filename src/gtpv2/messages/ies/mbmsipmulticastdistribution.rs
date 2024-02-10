@@ -64,7 +64,7 @@ impl IEs for MbmsIpMulticastDistribution {
                 buffer_ie.push(0x04);
                 buffer_ie.extend_from_slice(&i.octets());
             }
-            IpAddr::V6(i )=> {
+            IpAddr::V6(i) => {
                 buffer_ie.push(0x50);
                 buffer_ie.extend_from_slice(&i.octets());
             }
@@ -74,7 +74,7 @@ impl IEs for MbmsIpMulticastDistribution {
                 buffer_ie.push(0x04);
                 buffer_ie.extend_from_slice(&i.octets());
             }
-            IpAddr::V6(i)=> {
+            IpAddr::V6(i) => {
                 buffer_ie.push(0x50);
                 buffer_ie.extend_from_slice(&i.octets());
             }
@@ -88,7 +88,7 @@ impl IEs for MbmsIpMulticastDistribution {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len() >= MIN_IE_SIZE+4 {
+        if buffer.len() >= MIN_IE_SIZE + 4 {
             let mut data = MbmsIpMulticastDistribution {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3],
@@ -96,13 +96,16 @@ impl IEs for MbmsIpMulticastDistribution {
                 ..Default::default()
             };
             if check_tliv_ie_buffer(data.length, buffer) {
-                let mut cursor:usize = 8;
+                let mut cursor: usize = 8;
                 match buffer[cursor] {
                     0x04 => {
                         cursor += 1;
-                        if buffer.len() >= cursor+4 {
+                        if buffer.len() >= cursor + 4 {
                             data.ip_multicast_address_1 = IpAddr::V4(Ipv4Addr::from([
-                                buffer[cursor], buffer[cursor+1], buffer[cursor+2], buffer[cursor+3],
+                                buffer[cursor],
+                                buffer[cursor + 1],
+                                buffer[cursor + 2],
+                                buffer[cursor + 3],
                             ]));
                             cursor += 4;
                         } else {
@@ -111,9 +114,9 @@ impl IEs for MbmsIpMulticastDistribution {
                     }
                     0x50 => {
                         cursor += 1;
-                        if buffer.len() >= cursor+16 {
+                        if buffer.len() >= cursor + 16 {
                             let mut dst = [0; 16];
-                            dst.copy_from_slice(&buffer[cursor..cursor+16]);
+                            dst.copy_from_slice(&buffer[cursor..cursor + 16]);
                             data.ip_multicast_address_1 = IpAddr::V6(Ipv6Addr::from(dst));
                             cursor += 16;
                         } else {
@@ -127,9 +130,12 @@ impl IEs for MbmsIpMulticastDistribution {
                 match buffer[cursor] {
                     0x04 => {
                         cursor += 1;
-                        if buffer.len() >= cursor+4 {
+                        if buffer.len() >= cursor + 4 {
                             data.ip_multicast_address_2 = IpAddr::V4(Ipv4Addr::from([
-                                buffer[cursor], buffer[cursor+1], buffer[cursor+2], buffer[cursor+3],
+                                buffer[cursor],
+                                buffer[cursor + 1],
+                                buffer[cursor + 2],
+                                buffer[cursor + 3],
                             ]));
                             cursor += 4;
                         } else {
@@ -138,9 +144,9 @@ impl IEs for MbmsIpMulticastDistribution {
                     }
                     0x50 => {
                         cursor += 1;
-                        if buffer.len() >= cursor+16 {
+                        if buffer.len() >= cursor + 16 {
                             let mut dst = [0; 16];
-                            dst.copy_from_slice(&buffer[cursor..cursor+16]);
+                            dst.copy_from_slice(&buffer[cursor..cursor + 16]);
                             data.ip_multicast_address_2 = IpAddr::V6(Ipv6Addr::from(dst));
                             cursor += 16;
                         } else {
@@ -151,7 +157,7 @@ impl IEs for MbmsIpMulticastDistribution {
                         return Err(GTPV2Error::IEIncorrect(MBMSIPMULTICASTDISTR));
                     }
                 }
-                if buffer.len() >= cursor{
+                if buffer.len() >= cursor {
                     match buffer[cursor] {
                         0x00 => data.mbms_hc = MbmsHc::UncompressedHeader,
                         0x01 => data.mbms_hc = MbmsHc::CompressedHeader,
@@ -183,11 +189,10 @@ impl IEs for MbmsIpMulticastDistribution {
 #[test]
 fn mbmsipmulticastdistr_ie_marshal_test() {
     let encoded: [u8; 31] = [
-        0x8E,        0x00,        0x1B,        0x00,        0x00,        0x00,        0xFF,        0xFF,
-        0x04,        0x0A,        0x0A,        0x0A,        0x01,        0x50,        0x00,        0xFD,
-        0x00,        0x00,        0x00,        0x00,        0x00,        0x00,        0x00,        0x00,
-        0x00,        0x00,        0x00,        0x00,        0x00,        0xFF,        0x00,
-        ];
+        0x8E, 0x00, 0x1B, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x04, 0x0A, 0x0A, 0x0A, 0x01, 0x50, 0x00,
+        0xFD, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF,
+        0x00,
+    ];
     let decoded = MbmsIpMulticastDistribution {
         t: MBMSIPMULTICASTDISTR,
         length: 27,
@@ -205,11 +210,10 @@ fn mbmsipmulticastdistr_ie_marshal_test() {
 #[test]
 fn mbmsipmulticastdistr_ie_unmarshal_test() {
     let encoded: [u8; 31] = [
-        0x8E,        0x00,        0x1B,        0x00,        0x00,        0x00,        0xFF,        0xFF,
-        0x04,        0x0A,        0x0A,        0x0A,        0x01,        0x50,        0x00,        0xFD,
-        0x00,        0x00,        0x00,        0x00,        0x00,        0x00,        0x00,        0x00,
-        0x00,        0x00,        0x00,        0x00,        0x00,        0xFF,        0x00,
-        ];
+        0x8E, 0x00, 0x1B, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x04, 0x0A, 0x0A, 0x0A, 0x01, 0x50, 0x00,
+        0xFD, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF,
+        0x00,
+    ];
     let decoded = MbmsIpMulticastDistribution {
         t: MBMSIPMULTICASTDISTR,
         length: 27,
@@ -222,5 +226,3 @@ fn mbmsipmulticastdistr_ie_unmarshal_test() {
     let i = MbmsIpMulticastDistribution::unmarshal(&encoded);
     assert_eq!(i.unwrap(), decoded);
 }
-
-

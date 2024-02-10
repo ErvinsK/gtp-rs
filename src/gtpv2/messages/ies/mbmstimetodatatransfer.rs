@@ -91,5 +91,8 @@ fn mbmstimetodatatransfer_ie_unmarshal_test() {
         mbms_time_to_data: 0xff,
         ..Default::default()
     };
-    assert_eq!(MbmsTimeToDataTransfer::unmarshal(&encoded).unwrap(), decoded);
+    assert_eq!(
+        MbmsTimeToDataTransfer::unmarshal(&encoded).unwrap(),
+        decoded
+    );
 }

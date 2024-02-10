@@ -75,9 +75,9 @@ pub struct MdtConfiguration {
     pub rsrp_event_threshold: u8,
     pub rsrq_event_threshold: u8,
     pub area_scope: Option<Vec<u8>>,
-    pub collection_period_rrm: Option<u8>,  // Collection period for RRM measurements LTE
+    pub collection_period_rrm: Option<u8>, // Collection period for RRM measurements LTE
     pub measurement_period_lte: Option<u8>, // Measurement period for LTE measurements
-    pub positioning_method: Option<u8>,     // Positioning method
+    pub positioning_method: Option<u8>,    // Positioning method
     pub mdt_plmns_list: Option<Vec<MdtPlmn>>,
 }
 
@@ -129,7 +129,11 @@ impl IEs for MdtConfiguration {
             buffer_ie.push(0);
         }
         {
-            let mut i = if self.collection_period_rrm.is_some() { 0b00000001 } else { 0 };
+            let mut i = if self.collection_period_rrm.is_some() {
+                0b00000001
+            } else {
+                0
+            };
             if self.measurement_period_lte.is_some() {
                 i |= 0b00000010;
             }
@@ -187,9 +191,9 @@ impl IEs for MdtConfiguration {
                 }
             }
             {
-                let pli = matches!(buffer[cursor]>>3, 0x01);
-                let pmi = matches!(buffer[cursor]>>2 & 0x01, 0x01);
-                let mpi = matches!(buffer[cursor]>>1 & 0x01, 0x01);
+                let pli = matches!(buffer[cursor] >> 3, 0x01);
+                let pmi = matches!(buffer[cursor] >> 2 & 0x01, 0x01);
+                let mpi = matches!(buffer[cursor] >> 1 & 0x01, 0x01);
                 let crrmi = matches!(buffer[cursor] & 0x01, 0x01);
                 cursor += 1;
                 if crrmi && buffer.len() > cursor {
@@ -205,7 +209,11 @@ impl IEs for MdtConfiguration {
                     cursor += 1;
                 }
                 if pli {
-                    let number_plmn = if buffer[cursor] < 16 { buffer[cursor] } else { return Err(GTPV2Error::IEIncorrect(MDTCONFIG)); };
+                    let number_plmn = if buffer[cursor] < 16 {
+                        buffer[cursor]
+                    } else {
+                        return Err(GTPV2Error::IEIncorrect(MDTCONFIG));
+                    };
                     cursor += 1;
                     if buffer.len() >= cursor + number_plmn as usize * 3 {
                         let mut plmns = Vec::new();
@@ -241,12 +249,10 @@ impl IEs for MdtConfiguration {
 
 #[test]
 fn mdtconfig_ie_marshal_test() {
-    let encoded: [u8; 36] =  [
-        0xa2,        0x00,        0x20,        0x00,        0x00,        0x01,        0x02,        0x03,
-        0x04,        0x05,        0x06,        0x07,        0x08,        0x09,        0x04,        0x01,
-        0x02,        0x03,        0x04,        0x0f,        0x01,        0x02,        0x03,        0x04,
-        0x32,        0xf4,        0x10,        0x22,        0xf0,        0x50,        0x62,        0xf5,
-        0x30,        0x31,        0xf4,        0x60,
+    let encoded: [u8; 36] = [
+        0xa2, 0x00, 0x20, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x04,
+        0x01, 0x02, 0x03, 0x04, 0x0f, 0x01, 0x02, 0x03, 0x04, 0x32, 0xf4, 0x10, 0x22, 0xf0, 0x50,
+        0x62, 0xf5, 0x30, 0x31, 0xf4, 0x60,
     ];
     let decoded = MdtConfiguration {
         length: 32,
@@ -261,19 +267,12 @@ fn mdtconfig_ie_marshal_test() {
         collection_period_rrm: Some(0x01),
         measurement_period_lte: Some(0x02),
         positioning_method: Some(0x03),
-        mdt_plmns_list: Some(vec![MdtPlmn {
-            mcc: 234,
-            mnc: 1,
-        }, MdtPlmn {
-            mcc: 220,
-            mnc: 5,
-        }, MdtPlmn {
-            mcc: 265,
-            mnc: 3,
-        }, MdtPlmn {
-            mcc: 134,
-            mnc: 6,
-        }]),
+        mdt_plmns_list: Some(vec![
+            MdtPlmn { mcc: 234, mnc: 1 },
+            MdtPlmn { mcc: 220, mnc: 5 },
+            MdtPlmn { mcc: 265, mnc: 3 },
+            MdtPlmn { mcc: 134, mnc: 6 },
+        ]),
         ..Default::default()
     };
     let mut buffer: Vec<u8> = vec![];
@@ -284,12 +283,10 @@ fn mdtconfig_ie_marshal_test() {
 
 #[test]
 fn mtdconfig_ie_unmarshal_test() {
-    let encoded: [u8; 36] =  [
-        0xa2,        0x00,        0x20,        0x00,        0x00,        0x01,        0x02,        0x03,
-        0x04,        0x05,        0x06,        0x07,        0x08,        0x09,        0x04,        0x01,
-        0x02,        0x03,        0x04,        0x0f,        0x01,        0x02,        0x03,        0x04,
-        0x32,        0xf4,        0x10,        0x22,        0xf0,        0x50,        0x62,        0xf5,
-        0x30,        0x31,        0xf4,        0x60,
+    let encoded: [u8; 36] = [
+        0xa2, 0x00, 0x20, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x04,
+        0x01, 0x02, 0x03, 0x04, 0x0f, 0x01, 0x02, 0x03, 0x04, 0x32, 0xf4, 0x10, 0x22, 0xf0, 0x50,
+        0x62, 0xf5, 0x30, 0x31, 0xf4, 0x60,
     ];
     let decoded = MdtConfiguration {
         length: 32,
@@ -304,19 +301,12 @@ fn mtdconfig_ie_unmarshal_test() {
         collection_period_rrm: Some(0x01),
         measurement_period_lte: Some(0x02),
         positioning_method: Some(0x03),
-        mdt_plmns_list: Some(vec![MdtPlmn {
-            mcc: 234,
-            mnc: 1,
-        }, MdtPlmn {
-            mcc: 220,
-            mnc: 5,
-        }, MdtPlmn {
-            mcc: 265,
-            mnc: 3,
-        }, MdtPlmn {
-            mcc: 134,
-            mnc: 6,
-        }]),
+        mdt_plmns_list: Some(vec![
+            MdtPlmn { mcc: 234, mnc: 1 },
+            MdtPlmn { mcc: 220, mnc: 5 },
+            MdtPlmn { mcc: 265, mnc: 3 },
+            MdtPlmn { mcc: 134, mnc: 6 },
+        ]),
         ..Default::default()
     };
     assert_eq!(MdtConfiguration::unmarshal(&encoded).unwrap(), decoded);

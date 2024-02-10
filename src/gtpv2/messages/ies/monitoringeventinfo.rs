@@ -17,11 +17,11 @@ pub struct MonitoringEventInformation {
     pub t: u8,
     pub length: u16,
     pub ins: u8,
-    pub nsui: bool,                                         // Notify SCEF when UE becomes Idle Flag
-    pub nsur: bool,                                         // Notify SCEF when UE becomes Reachable Flag
+    pub nsui: bool, // Notify SCEF when UE becomes Idle Flag
+    pub nsur: bool, // Notify SCEF when UE becomes Reachable Flag
     pub scef_ref_id: u32,
     pub scef_id: String,
-    pub rem_nbr_reports: u16,                                // Remaining Minimum Periodic Location Report Time
+    pub rem_nbr_reports: u16, // Remaining Minimum Periodic Location Report Time
 }
 
 impl Default for MonitoringEventInformation {
@@ -65,7 +65,7 @@ impl IEs for MonitoringEventInformation {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len() >= MIN_IE_SIZE+5 {
+        if buffer.len() >= MIN_IE_SIZE + 5 {
             let mut data = MonitoringEventInformation {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 nsui: buffer[3] & 0x20 == 0x20,
@@ -73,19 +73,19 @@ impl IEs for MonitoringEventInformation {
                 ins: buffer[3] & 0x0f,
                 scef_ref_id: u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]),
                 ..Default::default()
-            }; 
-            let mut cursor:usize = 8; 
+            };
+            let mut cursor: usize = 8;
             let len = buffer[cursor] as usize;
-            cursor += 1;            
+            cursor += 1;
             if buffer.len() >= cursor + len {
-                if let Ok(scef_id) = String::from_utf8(buffer[cursor..cursor+len].to_vec()) {
+                if let Ok(scef_id) = String::from_utf8(buffer[cursor..cursor + len].to_vec()) {
                     data.scef_id = scef_id;
                     cursor += len;
                 } else {
                     return Err(GTPV2Error::IEIncorrect(MONITOREVENTINFO));
                 }
                 if buffer.len() >= cursor + 2 {
-                    data.rem_nbr_reports = u16::from_be_bytes([buffer[cursor], buffer[cursor+1]]);
+                    data.rem_nbr_reports = u16::from_be_bytes([buffer[cursor], buffer[cursor + 1]]);
                     Ok(data)
                 } else {
                     Err(GTPV2Error::IEInvalidLength(MONITOREVENTINFO))
@@ -95,7 +95,7 @@ impl IEs for MonitoringEventInformation {
             }
         } else {
             Err(GTPV2Error::IEInvalidLength(MONITOREVENTINFO))
-        }   
+        }
     }
 
     fn len(&self) -> usize {
@@ -110,11 +110,9 @@ impl IEs for MonitoringEventInformation {
 #[test]
 fn monitoringeventinfo_ie_marshal_test() {
     let encoded_ie: [u8; 27] = [
-        0xbd,        0x00,        0x17,        0x20,        0x00,        0x00,        0xff,        0xff,
-        0x10,        0x73,        0x63,        0x65,        0x66,        0x2e,        0x65,        0x78,
-        0x61,        0x6d,        0x70,        0x6c,        0x65,        0x2e,        0x63,        0x6f,
-        0x6d,        0x00,        0xff,
-        ];
+        0xbd, 0x00, 0x17, 0x20, 0x00, 0x00, 0xff, 0xff, 0x10, 0x73, 0x63, 0x65, 0x66, 0x2e, 0x65,
+        0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x00, 0xff,
+    ];
     let test_struct = MonitoringEventInformation {
         t: MONITOREVENTINFO,
         length: 23,
@@ -133,11 +131,9 @@ fn monitoringeventinfo_ie_marshal_test() {
 #[test]
 fn monitoringeventinfo_ie_unmarshal_test() {
     let encoded_ie: [u8; 27] = [
-        0xbd,        0x00,        0x17,        0x20,        0x00,        0x00,        0xff,        0xff,
-        0x10,        0x73,        0x63,        0x65,        0x66,        0x2e,        0x65,        0x78,
-        0x61,        0x6d,        0x70,        0x6c,        0x65,        0x2e,        0x63,        0x6f,
-        0x6d,        0x00,        0xff,
-        ];
+        0xbd, 0x00, 0x17, 0x20, 0x00, 0x00, 0xff, 0xff, 0x10, 0x73, 0x63, 0x65, 0x66, 0x2e, 0x65,
+        0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x00, 0xff,
+    ];
     let test_struct = MonitoringEventInformation {
         t: MONITOREVENTINFO,
         length: 23,

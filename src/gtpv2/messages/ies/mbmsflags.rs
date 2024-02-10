@@ -125,8 +125,5 @@ fn mbms_flags_ie_unmarshal_test() {
         msri: true,
         lmri: false,
     };
-    assert_eq!(
-        MbmsFlags::unmarshal(&encoded).unwrap(),
-        decoded
-    );
+    assert_eq!(MbmsFlags::unmarshal(&encoded).unwrap(), decoded);
 }

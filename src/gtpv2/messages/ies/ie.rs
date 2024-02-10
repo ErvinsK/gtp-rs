@@ -5,7 +5,7 @@ pub enum InformationElement {
     Imsi(Imsi),
     Cause(Cause),
     Recovery(Recovery),
-    // STN-SR
+    StnSr(StnSr),
     Apn(Apn),
     ApnAmbr(ApnAmbr),
     Ebi(Ebi),
@@ -134,7 +134,7 @@ pub enum InformationElement {
     UpFunctionSelectionIndicationFlags(UpFunctionSelectionIndicationFlags),
     MaxPacketLossRate(MaxPacketLossRate),
     ApnRateControlStatus(ApnRateControlStatus),
-    // Extended Trace Information
+    ExtendedTraceInformation(ExtendedTraceInformation),
     MonitoringEventExtensionInfo(MonitoringEventExtensionInfo),
     SpecialIEWithTypeExt(SpecialIEWithTypeExt),
     PrivateExtension(PrivateExtension),
@@ -147,7 +147,7 @@ impl InformationElement {
             InformationElement::Imsi(i) => i.marshal(buffer),
             InformationElement::Cause(i) => i.marshal(buffer),
             InformationElement::Recovery(i) => i.marshal(buffer),
-            // STN-SR
+            InformationElement::StnSr(i) => i.marshal(buffer),
             InformationElement::Apn(i) => i.marshal(buffer),
             InformationElement::ApnAmbr(i) => i.marshal(buffer),
             InformationElement::Ebi(i) => i.marshal(buffer),
@@ -167,7 +167,7 @@ impl InformationElement {
             InformationElement::Fteid(i) => i.marshal(buffer),
             InformationElement::Tmsi(i) => i.marshal(buffer),
             InformationElement::GlobalCnId(i) => i.marshal(buffer),
-            InformationElement::S103pdf(i) => i.marshal(buffer), 
+            InformationElement::S103pdf(i) => i.marshal(buffer),
             InformationElement::S1udf(i) => i.marshal(buffer),
             InformationElement::DelayValue(i) => i.marshal(buffer),
             InformationElement::BearerContext(i) => i.marshal(buffer),
@@ -230,7 +230,7 @@ impl InformationElement {
             InformationElement::Arp(i) => i.marshal(buffer),
             InformationElement::EpcTimer(i) => i.marshal(buffer),
             InformationElement::Spi(i) => i.marshal(buffer),
-            InformationElement::Tmgi(i) => i.marshal(buffer),  
+            InformationElement::Tmgi(i) => i.marshal(buffer),
             InformationElement::AdditionalMmContextForSrvcc(i) => i.marshal(buffer),
             InformationElement::AdditionalFlagsSrvcc(i) => i.marshal(buffer),
             InformationElement::MdtConfiguration(i) => i.marshal(buffer),
@@ -276,8 +276,8 @@ impl InformationElement {
             InformationElement::UpFunctionSelectionIndicationFlags(i) => i.marshal(buffer),
             InformationElement::MaxPacketLossRate(i) => i.marshal(buffer),
             InformationElement::ApnRateControlStatus(i) => i.marshal(buffer),
-            // Extended Trace Information
-            InformationElement::MonitoringEventExtensionInfo(i)=> i.marshal(buffer),
+            InformationElement::ExtendedTraceInformation(i) => i.marshal(buffer),
+            InformationElement::MonitoringEventExtensionInfo(i) => i.marshal(buffer),
             InformationElement::SpecialIEWithTypeExt(i) => i.marshal(buffer),
             InformationElement::PrivateExtension(i) => i.marshal(buffer),
             InformationElement::Unknown(i) => i.marshal(buffer),
@@ -319,7 +319,13 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // STN-SR
+                51 => match StnSr::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::StnSr(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 71 => match Apn::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
@@ -554,14 +560,18 @@ impl InformationElement {
                 107 => match MmContextEpsSecurityContextQuadruplets::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
-                        ies.push(InformationElement::MmContextEpsSecurityContextQuadruplets(i));
+                        ies.push(InformationElement::MmContextEpsSecurityContextQuadruplets(
+                            i,
+                        ));
                     }
                     Err(j) => return Err(j),
                 },
                 108 => match MmContextUmtsKeyQuadrupletsQuintuplets::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
-                        ies.push(InformationElement::MmContextUmtsKeyQuadrupletsQuintuplets(i));
+                        ies.push(InformationElement::MmContextUmtsKeyQuadrupletsQuintuplets(
+                            i,
+                        ));
                     }
                     Err(j) => return Err(j),
                 },
@@ -1228,7 +1238,13 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                // Extended Trace Information
+                205 => match ExtendedTraceInformation::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::ExtendedTraceInformation(i));
+                    }
+                    Err(j) => return Err(j),
+                },
                 206 => match MonitoringEventExtensionInfo::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();

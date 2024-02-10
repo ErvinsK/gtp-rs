@@ -80,8 +80,8 @@ impl IEs for NodeType {
         if buffer.len() >= NODETYPE_LENGTH + MIN_IE_SIZE {
             let data = NodeType {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ins : buffer[3],
-                node : Node::from(buffer[4]),
+                ins: buffer[3],
+                node: Node::from(buffer[4]),
                 ..Default::default()
             };
             Ok(data)

@@ -56,7 +56,10 @@ impl IEs for AbsoluteTimeMbmsDataTransfer {
                 ..Default::default()
             };
             data.ins = buffer[3];
-            data.seconds = u64::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7], buffer[8], buffer[9], buffer[10], buffer[11]]);
+            data.seconds = u64::from_be_bytes([
+                buffer[4], buffer[5], buffer[6], buffer[7], buffer[8], buffer[9], buffer[10],
+                buffer[11],
+            ]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(ABSTIME_MBMSDATATRNSFR))
@@ -74,7 +77,9 @@ impl IEs for AbsoluteTimeMbmsDataTransfer {
 
 #[test]
 fn abstime_mbmsdatatransfer_ie_marshal_test() {
-    let encoded: [u8; 12] = [0xa4, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff];
+    let encoded: [u8; 12] = [
+        0xa4, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff,
+    ];
     let decoded = AbsoluteTimeMbmsDataTransfer {
         t: ABSTIME_MBMSDATATRNSFR,
         length: ABSTIME_MBMSDATATRNSFR_LENGTH as u16,
@@ -88,7 +93,9 @@ fn abstime_mbmsdatatransfer_ie_marshal_test() {
 
 #[test]
 fn abstime_mbmsdatatransfer_ie_unmarshal_test() {
-    let encoded: [u8; 12] = [0xa4, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff];
+    let encoded: [u8; 12] = [
+        0xa4, 0x00, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff,
+    ];
     let decoded = AbsoluteTimeMbmsDataTransfer {
         t: ABSTIME_MBMSDATATRNSFR,
         length: ABSTIME_MBMSDATATRNSFR_LENGTH as u16,

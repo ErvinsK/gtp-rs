@@ -21,18 +21,18 @@ pub struct MmContextUmtsKeyQuintuplets {
     pub ksi: u8,
     pub used_cipher: CipherValues,
     pub used_gprs_integrity: Option<GprsIntegrityProtectionValues>,
-    pub gupii: bool,                            // GPRS User Plane Integrity Indication
+    pub gupii: bool, // GPRS User Plane Integrity Indication
     pub ck: [u8; 16],
     pub ik: [u8; 16],
     pub auth_quintuplets: Option<Vec<AuthQuintuplet>>,
-    pub drx_params: Option<[u8;2]>,
+    pub drx_params: Option<[u8; 2]>,
     pub subscr_ue_ambr: Option<AmbrMM>,
     pub used_ue_ambr: Option<AmbrMM>,
     pub ue_ntwk_cap: Option<Vec<u8>>,
     pub ms_ntwk_cap: Option<Vec<u8>>,
     pub mei: Option<Vec<u8>>,
     pub access_res: AccessRestrictionMM,
-    pub vdn_pref_ue_usage: Option<Vec<u8>>,       // Voice domain preference and UE's usage setting
+    pub vdn_pref_ue_usage: Option<Vec<u8>>, // Voice domain preference and UE's usage setting
     pub higher_than_16_mbps: bool,
     pub iov_updates_counter: Option<u8>,
     pub ext_access_res: Option<ExtendedAccessRestrictionMM>,
@@ -88,10 +88,10 @@ impl IEs for MmContextUmtsKeyQuintuplets {
         }
         {
             let mut byte = if let Some(i) = self.auth_quintuplets.clone() {
-                                    (i.len() as u8) << 5
-                                } else {
-                                    0x00
-                                };
+                (i.len() as u8) << 5
+            } else {
+                0x00
+            };
             if self.iov_updates_counter.is_some() {
                 byte |= 0x10;
             }
@@ -188,22 +188,23 @@ impl IEs for MmContextUmtsKeyQuintuplets {
             data.sec_mode = SecurityMode::from(buffer[4] >> 5);
             data.ksi = buffer[4] & 0x07;
             let drxi = matches!(buffer[4] & 0x08, 0x08);
-            let authi = buffer[5]>>5;
+            let authi = buffer[5] >> 5;
             let iovi = matches!(buffer[5] & 0x10, 0x10);
             data.gupii = matches!(buffer[5] & 0x08, 0x08);
             let ugipai = matches!(buffer[5] & 0x04, 0x04);
             let uambri = matches!(buffer[5] & 0x02, 0x02);
             let sambri = matches!(buffer[5] & 0x01, 0x01);
             if ugipai {
-                data.used_gprs_integrity = Some(GprsIntegrityProtectionValues::from(buffer[6] >> 3));
+                data.used_gprs_integrity =
+                    Some(GprsIntegrityProtectionValues::from(buffer[6] >> 3));
             }
             data.used_cipher = CipherValues::from(buffer[6] & 0x07);
             data.ck = buffer[7..23].try_into().unwrap();
             data.ik = buffer[23..39].try_into().unwrap();
-            let mut cursor:usize = 39;
+            let mut cursor: usize = 39;
             match authi {
                 0 => (),
-                i if i<=5 => {
+                i if i <= 5 => {
                     let mut auth_quintuplets = Vec::new();
                     for j in 0..authi {
                         if let Ok(ie) = AuthQuintuplet::unmarshal(&buffer[cursor..]) {
@@ -218,7 +219,7 @@ impl IEs for MmContextUmtsKeyQuintuplets {
                 _ => return Err(GTPV2Error::IEIncorrect(MMCTXUMTSKQ)),
             }
             if drxi && buffer.len() >= cursor + 2 {
-                data.drx_params = Some([buffer[cursor], buffer[cursor+1]]);
+                data.drx_params = Some([buffer[cursor], buffer[cursor + 1]]);
                 cursor += 2;
             }
             if sambri {
@@ -250,7 +251,7 @@ impl IEs for MmContextUmtsKeyQuintuplets {
                 cursor += 1;
                 if len > 0 {
                     if buffer.len() >= cursor + len {
-                        data.ue_ntwk_cap = Some(buffer[cursor..cursor+len].to_vec());
+                        data.ue_ntwk_cap = Some(buffer[cursor..cursor + len].to_vec());
                         cursor += len;
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(MMCTXUMTSKQ));
@@ -264,7 +265,7 @@ impl IEs for MmContextUmtsKeyQuintuplets {
                 cursor += 1;
                 if len > 0 {
                     if buffer.len() >= cursor + len {
-                        data.ms_ntwk_cap = Some(buffer[cursor..cursor+len].to_vec());
+                        data.ms_ntwk_cap = Some(buffer[cursor..cursor + len].to_vec());
                         cursor += len;
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(MMCTXUMTSKQ));
@@ -278,7 +279,7 @@ impl IEs for MmContextUmtsKeyQuintuplets {
                 cursor += 1;
                 if len > 0 {
                     if buffer.len() >= cursor + len {
-                        data.mei = Some(buffer[cursor..cursor+len].to_vec());
+                        data.mei = Some(buffer[cursor..cursor + len].to_vec());
                         cursor += len;
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(MMCTXUMTSKQ));
@@ -294,7 +295,7 @@ impl IEs for MmContextUmtsKeyQuintuplets {
                 cursor += 1;
                 if len > 0 {
                     if buffer.len() >= cursor + len {
-                        data.vdn_pref_ue_usage = Some(buffer[cursor..cursor+len].to_vec());
+                        data.vdn_pref_ue_usage = Some(buffer[cursor..cursor + len].to_vec());
                         cursor += len;
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(MMCTXUMTSKQ));
@@ -302,28 +303,29 @@ impl IEs for MmContextUmtsKeyQuintuplets {
                 } else {
                     cursor += 1;
                 }
-            } 
+            }
             {
                 let len = buffer[cursor] as usize;
                 cursor += 1;
                 if buffer.len() >= cursor + len {
-                   data.higher_than_16_mbps = matches!(buffer[cursor], 0x01);
-                   cursor += len;
-                } 
+                    data.higher_than_16_mbps = matches!(buffer[cursor], 0x01);
+                    cursor += len;
+                }
             }
             if iovi && buffer.len() >= cursor {
                 data.iov_updates_counter = Some(buffer[cursor]);
                 cursor += 1;
             } else {
                 return Err(GTPV2Error::IEInvalidLength(MMCTXUMTSKQ));
-            } 
+            }
             {
                 let len = buffer[cursor] as usize;
                 match len {
                     0x01 => {
                         cursor += 1;
                         if buffer.len() >= cursor {
-                            data.ext_access_res = Some(ExtendedAccessRestrictionMM::from(buffer[cursor]));
+                            data.ext_access_res =
+                                Some(ExtendedAccessRestrictionMM::from(buffer[cursor]));
                         } else {
                             return Err(GTPV2Error::IEInvalidLength(MMCTXUMTSKQ));
                         }
@@ -349,25 +351,18 @@ impl IEs for MmContextUmtsKeyQuintuplets {
 
 #[test]
 fn mmctxumtskq_ie_marshal_test() {
-    let ie_marshalled: [u8; 139] =  [
-        0x6a,        0x00,        0x87,        0x00,        0x68,        0x37,        0x00,        0xff,
-        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,
-        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,
-        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,
-        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0x01,
-        0x02,        0x03,        0x04,        0x05,        0x06,        0x07,        0x08,        0x09,
-        0x0a,        0x0b,        0x0c,        0x0d,        0x0e,        0x0f,        0x10,        0x03,
-        0x02,        0x07,        0x08,        0x01,        0x02,        0x03,        0x04,        0x05,
-        0x06,        0x07,        0x08,        0x09,        0x0a,        0x0b,        0x0c,        0x0d,
-        0x0e,        0x0f,        0x10,        0x01,        0x02,        0x03,        0x04,        0x05,
-        0x06,        0x07,        0x08,        0x09,        0x0a,        0x0b,        0x0c,        0x0d,
-        0x0e,        0x0f,        0x10,        0x03,        0x03,        0x09,        0x0a,        0x01,
-        0x02,        0x00,        0x00,        0x07,        0xd0,        0x00,        0x00,        0x1f,
-        0x40,        0x00,        0x00,        0x07,        0xd0,        0x00,        0x00,        0x1f,
-        0x40,        0x04,        0x01,        0x02,        0x03,        0x04,        0x04,        0x01,
-        0x02,        0x03,        0x04,        0x04,        0x01,        0x02,        0x03,        0x04,
-        0x00,        0x04,        0x01,        0x02,        0x03,        0x04,        0x01,        0x01,
-        0xff,        0x01,        0x01,    ];
+    let ie_marshalled: [u8; 139] = [
+        0x6a, 0x00, 0x87, 0x00, 0x68, 0x37, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
+        0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x03, 0x02, 0x07, 0x08, 0x01,
+        0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10,
+        0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+        0x10, 0x03, 0x03, 0x09, 0x0a, 0x01, 0x02, 0x00, 0x00, 0x07, 0xd0, 0x00, 0x00, 0x1f, 0x40,
+        0x00, 0x00, 0x07, 0xd0, 0x00, 0x00, 0x1f, 0x40, 0x04, 0x01, 0x02, 0x03, 0x04, 0x04, 0x01,
+        0x02, 0x03, 0x04, 0x04, 0x01, 0x02, 0x03, 0x04, 0x00, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01,
+        0x01, 0xff, 0x01, 0x01,
+    ];
     let ie_to_marshal = MmContextUmtsKeyQuintuplets {
         t: MMCTXUMTSKQ,
         length: 135,
@@ -380,14 +375,21 @@ fn mmctxumtskq_ie_marshal_test() {
         ck: [0xff; 16],
         ik: [0xff; 16],
         auth_quintuplets: Some(vec![AuthQuintuplet {
-            rand: [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10],
+            rand: [
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+                0x0f, 0x10,
+            ],
             xres: vec![0x02, 0x07, 0x08],
-            ck: [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
-            0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10],
-            ik: [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
-            0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10],
+            ck: [
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+                0x0f, 0x10,
+            ],
+            ik: [
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+                0x0f, 0x10,
+            ],
             autn: vec![0x03, 0x09, 0x0a],
-            }]),
+        }]),
         drx_params: Some([0x01, 0x02]),
         subscr_ue_ambr: Some(AmbrMM {
             uplink: 2000,
@@ -406,8 +408,8 @@ fn mmctxumtskq_ie_marshal_test() {
         iov_updates_counter: Some(0xff),
         ext_access_res: Some(ExtendedAccessRestrictionMM {
             ussrna: false,
-            nrsrna:true,
-        }),     
+            nrsrna: true,
+        }),
     };
     let mut buffer: Vec<u8> = vec![];
     ie_to_marshal.marshal(&mut buffer);
@@ -416,26 +418,18 @@ fn mmctxumtskq_ie_marshal_test() {
 
 #[test]
 fn mmctxumtskq_ie_unmarshal_test() {
-    let ie_marshalled: [u8; 139] =  [
-        0x6a,        0x00,        0x87,        0x00,        0x68,        0x37,        0x00,        0xff,
-        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,
-        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,
-        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,
-        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0xff,        0x01,
-        0x02,        0x03,        0x04,        0x05,        0x06,        0x07,        0x08,        0x09,
-        0x0a,        0x0b,        0x0c,        0x0d,        0x0e,        0x0f,        0x10,        0x03,
-        0x02,        0x07,        0x08,        0x01,        0x02,        0x03,        0x04,        0x05,
-        0x06,        0x07,        0x08,        0x09,        0x0a,        0x0b,        0x0c,        0x0d,
-        0x0e,        0x0f,        0x10,        0x01,        0x02,        0x03,        0x04,        0x05,
-        0x06,        0x07,        0x08,        0x09,        0x0a,        0x0b,        0x0c,        0x0d,
-        0x0e,        0x0f,        0x10,        0x03,        0x03,        0x09,        0x0a,        0x01,
-        0x02,        0x00,        0x00,        0x07,        0xd0,        0x00,        0x00,        0x1f,
-        0x40,        0x00,        0x00,        0x07,        0xd0,        0x00,        0x00,        0x1f,
-        0x40,        0x04,        0x01,        0x02,        0x03,        0x04,        0x04,        0x01,
-        0x02,        0x03,        0x04,        0x04,        0x01,        0x02,        0x03,        0x04,
-        0x00,        0x04,        0x01,        0x02,        0x03,        0x04,        0x01,        0x01,
-        0xff,        0x01,        0x01,    
-        ];
+    let ie_marshalled: [u8; 139] = [
+        0x6a, 0x00, 0x87, 0x00, 0x68, 0x37, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
+        0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x03, 0x02, 0x07, 0x08, 0x01,
+        0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10,
+        0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+        0x10, 0x03, 0x03, 0x09, 0x0a, 0x01, 0x02, 0x00, 0x00, 0x07, 0xd0, 0x00, 0x00, 0x1f, 0x40,
+        0x00, 0x00, 0x07, 0xd0, 0x00, 0x00, 0x1f, 0x40, 0x04, 0x01, 0x02, 0x03, 0x04, 0x04, 0x01,
+        0x02, 0x03, 0x04, 0x04, 0x01, 0x02, 0x03, 0x04, 0x00, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01,
+        0x01, 0xff, 0x01, 0x01,
+    ];
     let ie_to_marshal = MmContextUmtsKeyQuintuplets {
         t: MMCTXUMTSKQ,
         length: 135,
@@ -448,14 +442,21 @@ fn mmctxumtskq_ie_unmarshal_test() {
         ck: [0xff; 16],
         ik: [0xff; 16],
         auth_quintuplets: Some(vec![AuthQuintuplet {
-            rand: [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10],
+            rand: [
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+                0x0f, 0x10,
+            ],
             xres: vec![0x02, 0x07, 0x08],
-            ck: [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
-            0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10],
-            ik: [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
-            0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10],
+            ck: [
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+                0x0f, 0x10,
+            ],
+            ik: [
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+                0x0f, 0x10,
+            ],
             autn: vec![0x03, 0x09, 0x0a],
-            }]),
+        }]),
         drx_params: Some([0x01, 0x02]),
         subscr_ue_ambr: Some(AmbrMM {
             uplink: 2000,
@@ -474,8 +475,8 @@ fn mmctxumtskq_ie_unmarshal_test() {
         iov_updates_counter: Some(0xff),
         ext_access_res: Some(ExtendedAccessRestrictionMM {
             ussrna: false,
-            nrsrna:true,
-        }),     
+            nrsrna: true,
+        }),
     };
     assert_eq!(
         MmContextUmtsKeyQuintuplets::unmarshal(&ie_marshalled).unwrap(),

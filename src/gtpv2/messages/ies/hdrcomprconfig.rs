@@ -18,7 +18,7 @@ pub struct HeaderCompressionConfiguration {
     pub t: u8,
     pub length: u16,
     pub ins: u8,
-    pub rohc_profiles: Vec<u16>,  // ROHC Profiles (3GPP TS 36.323)
+    pub rohc_profiles: Vec<u16>, // ROHC Profiles (3GPP TS 36.323)
     pub max_cid: u16,
 }
 
@@ -46,30 +46,44 @@ impl IEs for HeaderCompressionConfiguration {
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        let mut i:u8 = 0;
+        let mut i: u8 = 0;
         for profile in &self.rohc_profiles {
             match profile {
-                0x0002 => if (i & 0b00000001) == 0b0 {
-                     i += 0b00000001;
-                    },
-                0x0003 => if (i & 0b00000010) == 0b0 {
-                    i += 0b00000010;
-                   },
-                0x0004 => if (i & 0b00000100) == 0b0 {
-                    i += 0b00000100;
-                   },
-                0x0006 => if (i & 0b00001000) == 0b0 {
-                    i += 0b00001000;
-                   },
-                0x0102 => if (i & 0b00010000) == 0b0 {
-                    i += 0b00010000;
-                   },
-                0x0103 => if (i & 0b00100000) == 0b0 {
-                    i += 0b00100000;
-                   },
-                0x0104 => if (i & 0b01000000) == 0b0 {
-                    i += 0b01000000;
-                   },
+                0x0002 => {
+                    if (i & 0b00000001) == 0b0 {
+                        i += 0b00000001;
+                    }
+                }
+                0x0003 => {
+                    if (i & 0b00000010) == 0b0 {
+                        i += 0b00000010;
+                    }
+                }
+                0x0004 => {
+                    if (i & 0b00000100) == 0b0 {
+                        i += 0b00000100;
+                    }
+                }
+                0x0006 => {
+                    if (i & 0b00001000) == 0b0 {
+                        i += 0b00001000;
+                    }
+                }
+                0x0102 => {
+                    if (i & 0b00010000) == 0b0 {
+                        i += 0b00010000;
+                    }
+                }
+                0x0103 => {
+                    if (i & 0b00100000) == 0b0 {
+                        i += 0b00100000;
+                    }
+                }
+                0x0104 => {
+                    if (i & 0b01000000) == 0b0 {
+                        i += 0b01000000;
+                    }
+                }
                 _ => (),
             }
         }
@@ -87,16 +101,18 @@ impl IEs for HeaderCompressionConfiguration {
                 ..Default::default()
             };
             data.ins = buffer[3];
-            (0u8..=7).map(|i| buffer[4] & (1 << i)).for_each(|bit| match bit {
-                0b01 => data.rohc_profiles.push(0x0002),
-                0b10 => data.rohc_profiles.push(0x0003),
-                0b100 => data.rohc_profiles.push(0x0004),
-                0b1000 => data.rohc_profiles.push(0x0006),
-                0b10000 => data.rohc_profiles.push(0x0102),
-                0b100000 => data.rohc_profiles.push(0x0103),
-                0b1000000 => data.rohc_profiles.push(0x0104),
-                _ => (),
-            });
+            (0u8..=7)
+                .map(|i| buffer[4] & (1 << i))
+                .for_each(|bit| match bit {
+                    0b01 => data.rohc_profiles.push(0x0002),
+                    0b10 => data.rohc_profiles.push(0x0003),
+                    0b100 => data.rohc_profiles.push(0x0004),
+                    0b1000 => data.rohc_profiles.push(0x0006),
+                    0b10000 => data.rohc_profiles.push(0x0102),
+                    0b100000 => data.rohc_profiles.push(0x0103),
+                    0b1000000 => data.rohc_profiles.push(0x0104),
+                    _ => (),
+                });
             data.max_cid = u16::from_be_bytes([buffer[6], buffer[7]]);
             Ok(data)
         } else {
@@ -135,8 +151,13 @@ fn hdr_compr_config_ie_unmarshal_test() {
         t: HDRCOMPRCONFIG,
         length: HDRCOMPRCONFIG_LENGTH as u16,
         ins: 0,
-        rohc_profiles: vec![0x0000, 0x0002, 0x0003, 0x0004, 0x0006, 0x0102, 0x0103, 0x0104],
+        rohc_profiles: vec![
+            0x0000, 0x0002, 0x0003, 0x0004, 0x0006, 0x0102, 0x0103, 0x0104,
+        ],
         max_cid: 0xff,
     };
-    assert_eq!(HeaderCompressionConfiguration::unmarshal(&encoded).unwrap(), decoded);
+    assert_eq!(
+        HeaderCompressionConfiguration::unmarshal(&encoded).unwrap(),
+        decoded
+    );
 }

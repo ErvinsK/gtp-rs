@@ -57,19 +57,19 @@ impl IEs for EcgiList {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len() >= MIN_IE_SIZE+2 {
+        if buffer.len() >= MIN_IE_SIZE + 2 {
             let mut data = EcgiList {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
                 ..Default::default()
             };
-            let mut cursor:usize = 4;
-            let list_size = u16::from_be_bytes([buffer[cursor], buffer[cursor+1]]) as usize;
+            let mut cursor: usize = 4;
+            let list_size = u16::from_be_bytes([buffer[cursor], buffer[cursor + 1]]) as usize;
             cursor += 2;
             match list_size {
                 0 => (),
                 _ => {
-                    if buffer.len() >= cursor + 7*list_size {
+                    if buffer.len() >= cursor + 7 * list_size {
                         let mut ecgi_list = Vec::new();
                         for _ in 0..list_size {
                             if let Ok(ie) = Ecgi::unmarshal(&buffer[cursor..]) {
@@ -83,8 +83,8 @@ impl IEs for EcgiList {
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(ECGILIST));
                     }
-                },
-            }           
+                }
+            }
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(ECGILIST))
@@ -105,11 +105,10 @@ impl IEs for EcgiList {
 
 #[test]
 fn ecgilist_ie_marshal_test() {
-    let ie_marshalled: [u8; 27] =  [
-        0xbe,        0x00,        0x17,        0x00,        0x00,        0x03,        0x62,        0xf2,
-        0x10,        0x01,        0xba,        0x40,        0x02,        0x62,        0xf2,        0x10,
-        0x01,        0xba,        0x40,        0x03,        0x62,        0xf2,        0x10,        0x01,
-        0xba,        0x40,        0x01 ];
+    let ie_marshalled: [u8; 27] = [
+        0xbe, 0x00, 0x17, 0x00, 0x00, 0x03, 0x62, 0xf2, 0x10, 0x01, 0xba, 0x40, 0x02, 0x62, 0xf2,
+        0x10, 0x01, 0xba, 0x40, 0x03, 0x62, 0xf2, 0x10, 0x01, 0xba, 0x40, 0x01,
+    ];
     let ie_to_marshal = EcgiList {
         length: 23,
         ecgi_list: Some(vec![
@@ -127,7 +126,8 @@ fn ecgilist_ie_marshal_test() {
                 mcc: 262,
                 mnc: 1,
                 eci: 28983297,
-            },]),
+            },
+        ]),
         ..Default::default()
     };
     let mut buffer: Vec<u8> = vec![];
@@ -137,11 +137,10 @@ fn ecgilist_ie_marshal_test() {
 
 #[test]
 fn ecgilist_ie_unmarshal_test() {
-    let ie_marshalled: [u8; 27] =  [
-        0xbe,        0x00,        0x17,        0x00,        0x00,        0x03,        0x62,        0xf2,
-        0x10,        0x01,        0xba,        0x40,        0x02,        0x62,        0xf2,        0x10,
-        0x01,        0xba,        0x40,        0x03,        0x62,        0xf2,        0x10,        0x01,
-        0xba,        0x40,        0x01 ];
+    let ie_marshalled: [u8; 27] = [
+        0xbe, 0x00, 0x17, 0x00, 0x00, 0x03, 0x62, 0xf2, 0x10, 0x01, 0xba, 0x40, 0x02, 0x62, 0xf2,
+        0x10, 0x01, 0xba, 0x40, 0x03, 0x62, 0xf2, 0x10, 0x01, 0xba, 0x40, 0x01,
+    ];
     let ie_to_marshal = EcgiList {
         length: 23,
         ecgi_list: Some(vec![
@@ -159,11 +158,9 @@ fn ecgilist_ie_unmarshal_test() {
                 mcc: 262,
                 mnc: 1,
                 eci: 28983297,
-            },]),
+            },
+        ]),
         ..Default::default()
     };
-    assert_eq!(
-        EcgiList::unmarshal(&ie_marshalled).unwrap(),
-        ie_to_marshal
-    );
+    assert_eq!(EcgiList::unmarshal(&ie_marshalled).unwrap(), ie_to_marshal);
 }

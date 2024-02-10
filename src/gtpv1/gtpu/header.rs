@@ -645,7 +645,10 @@ fn infinite_loop_issue_2() {
     // This is a packet that caused an infinite loop in the unmarshal function
     // we add it to the header
     let header = Gtpv1Header {
-        extension_headers : Some(vec![ExtensionHeader::UDPPort( UDPPort { length:0, ..UDPPort::default() })]),
+        extension_headers: Some(vec![ExtensionHeader::UDPPort(UDPPort {
+            length: 0,
+            ..UDPPort::default()
+        })]),
         ..Gtpv1Header::default()
     };
     let mut array: Vec<u8> = vec![];

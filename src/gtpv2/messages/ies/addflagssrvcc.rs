@@ -20,7 +20,6 @@ pub struct AdditionalFlagsSrvcc {
     pub ins: u8,
     pub ics: bool, // ICS (IMS Centralized Service): This flag indicates that UE supports ICS specific service as specified in 3GPP TS 23.292 [47]
     pub vf: bool, // VF (vSRVCC Flag): This flag indicates that the user is subscribed to the vSRVCC.
-
 }
 
 impl Default for AdditionalFlagsSrvcc {
@@ -126,8 +125,5 @@ fn additionalflags_srvcc_ie_unmarshal_test() {
         ics: false,
         vf: true,
     };
-    assert_eq!(
-        AdditionalFlagsSrvcc::unmarshal(&encoded).unwrap(),
-        decoded
-    );
+    assert_eq!(AdditionalFlagsSrvcc::unmarshal(&encoded).unwrap(), decoded);
 }

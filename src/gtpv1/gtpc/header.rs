@@ -167,7 +167,7 @@ impl Gtpv1Header {
             }
             data.msgtype = buffer[1];
             data.length = match u16::from_be_bytes([buffer[2], buffer[3]]) {
-                _s if _s<MIN_HEADER_LENGTH as u16 => return Err(GTPV1Error::HeaderInvalidLength),
+                _s if _s < MIN_HEADER_LENGTH as u16 => return Err(GTPV1Error::HeaderInvalidLength),
                 _ => u16::from_be_bytes([buffer[2], buffer[3]]),
             };
             data.teid = u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
@@ -383,11 +383,11 @@ impl Gtpv1Header {
 
     pub fn is_empty(&self) -> bool {
         self.msgtype == 0
-        && self.length == MIN_HEADER_LENGTH as u16
-        && self.teid == 0
-        && self.sequence_number.is_none()
-        && self.npdu_number.is_none()
-        && self.extension_headers.is_none()
+            && self.length == MIN_HEADER_LENGTH as u16
+            && self.teid == 0
+            && self.sequence_number.is_none()
+            && self.npdu_number.is_none()
+            && self.extension_headers.is_none()
     }
 }
 

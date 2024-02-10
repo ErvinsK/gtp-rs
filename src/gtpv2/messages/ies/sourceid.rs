@@ -34,22 +34,22 @@ impl IEs for SourceRncIdentifier {
         match buffer.len() {
             i if i < 6 => {
                 let data = SourceRncIdentifier {
-                    mcc : mcc_mnc_decode(&buffer[..=2]).0,
-                    mnc : mcc_mnc_decode(&buffer[..=2]).1,
+                    mcc: mcc_mnc_decode(&buffer[..=2]).0,
+                    mnc: mcc_mnc_decode(&buffer[..=2]).1,
                     rnc_id: u16::from_be_bytes([buffer[3], buffer[4]]),
                     ext_rnc_id: None,
                 };
                 Ok(data)
-            },
+            }
             j if j >= 7 => {
                 let data = SourceRncIdentifier {
-                    mcc : mcc_mnc_decode(&buffer[..=2]).0,
-                    mnc : mcc_mnc_decode(&buffer[..=2]).1,
+                    mcc: mcc_mnc_decode(&buffer[..=2]).0,
+                    mnc: mcc_mnc_decode(&buffer[..=2]).1,
                     rnc_id: u16::from_be_bytes([buffer[3], buffer[4]]),
                     ext_rnc_id: Some(u16::from_be_bytes([buffer[5], buffer[6]])),
                 };
                 Ok(data)
-            },
+            }
             _ => Err(GTPV2Error::IEInvalidLength(0)),
         }
     }
@@ -64,7 +64,6 @@ impl IEs for SourceRncIdentifier {
     fn is_empty(&self) -> bool {
         self.mcc == 0 && self.mnc == 0 && self.rnc_id == 0 && self.ext_rnc_id.is_none()
     }
-
 }
 
 // Source Type Enum
@@ -107,27 +106,29 @@ impl IEs for SourceType {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
-            let data = match buffer[0] {
-                0 => if let Ok(i) = CellIdentifier::unmarshal(&buffer[1..]) {
+        let data = match buffer[0] {
+            0 => {
+                if let Ok(i) = CellIdentifier::unmarshal(&buffer[1..]) {
                     SourceType::SourceCellId(i)
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
-                
-                },
-                1 => if let Ok(i) = SourceRncIdentifier::unmarshal(&buffer[1..]) {
+                }
+            }
+            1 => {
+                if let Ok(i) = SourceRncIdentifier::unmarshal(&buffer[1..]) {
                     SourceType::SourceRncId(i)
                 } else {
                     return Err(GTPV2Error::IEIncorrect(0));
-                
-                },
-                _ => SourceType::Spare,
-            };
-            Ok(data)
+                }
+            }
+            _ => SourceType::Spare,
+        };
+        Ok(data)
     }
 
     fn len(&self) -> usize {
         match self {
-            SourceType::SourceRncId(i) => i.len(), 
+            SourceType::SourceRncId(i) => i.len(),
             SourceType::SourceCellId(i) => i.len(),
             _ => 1,
         }
@@ -221,9 +222,9 @@ impl IEs for SourceIdentification {
 #[test]
 fn source_id_ie_rnc_id_marshal_test() {
     let encoded: [u8; 20] = [
-        0x81,        0x00,        0x10,        0x00,        0x62,        0xf3,        0x10,        0xff,
-        0xff,        0xaa,        0xff,        0xaa,        0x01,        0x62,        0xf3,        0x10,
-        0xff,        0xaa,        0x10,        0x02,        ];
+        0x81, 0x00, 0x10, 0x00, 0x62, 0xf3, 0x10, 0xff, 0xff, 0xaa, 0xff, 0xaa, 0x01, 0x62, 0xf3,
+        0x10, 0xff, 0xaa, 0x10, 0x02,
+    ];
     let decoded = SourceIdentification {
         length: 16,
         ins: 0,
@@ -250,9 +251,9 @@ fn source_id_ie_rnc_id_marshal_test() {
 #[test]
 fn source_id_ie_source_rnc_id_unmarshal_test() {
     let encoded: [u8; 20] = [
-        0x81,        0x00,        0x10,        0x00,        0x62,        0xf3,        0x10,        0xff,
-        0xff,        0xaa,        0xff,        0xaa,        0x01,        0x62,        0xf3,        0x10,
-        0xff,        0xaa,        0x10,        0x02,        ];
+        0x81, 0x00, 0x10, 0x00, 0x62, 0xf3, 0x10, 0xff, 0xff, 0xaa, 0xff, 0xaa, 0x01, 0x62, 0xf3,
+        0x10, 0xff, 0xaa, 0x10, 0x02,
+    ];
     let decoded = SourceIdentification {
         length: 16,
         ins: 0,
@@ -274,15 +275,13 @@ fn source_id_ie_source_rnc_id_unmarshal_test() {
     assert_eq!(SourceIdentification::unmarshal(&encoded).unwrap(), decoded);
 }
 
-
 // Unit Tests - Source Identification IE (Cell ID)
 
 #[test]
 fn source_id_ie_cell_id_marshal_test() {
     let encoded: [u8; 21] = [
-        0x81,        0x00,        0x11,        0x00,        0x62,        0xf3,        0x40,        0x10,
-        0x02,        0x02,        0x00,        0x10,        0x00,        0x62,        0xf3,        0x40,
-        0x10,        0x02,        0x02,        0x00,        0x10,
+        0x81, 0x00, 0x11, 0x00, 0x62, 0xf3, 0x40, 0x10, 0x02, 0x02, 0x00, 0x10, 0x00, 0x62, 0xf3,
+        0x40, 0x10, 0x02, 0x02, 0x00, 0x10,
     ];
     let decoded = SourceIdentification {
         length: 17,
@@ -311,9 +310,8 @@ fn source_id_ie_cell_id_marshal_test() {
 #[test]
 fn source_id_ie_cell_id_unmarshal_test() {
     let encoded: [u8; 21] = [
-        0x81,        0x00,        0x11,        0x00,        0x62,        0xf3,        0x40,        0x10,
-        0x02,        0x02,        0x00,        0x10,        0x00,        0x62,        0xf3,        0x40,
-        0x10,        0x02,        0x02,        0x00,        0x10,
+        0x81, 0x00, 0x11, 0x00, 0x62, 0xf3, 0x40, 0x10, 0x02, 0x02, 0x00, 0x10, 0x00, 0x62, 0xf3,
+        0x40, 0x10, 0x02, 0x02, 0x00, 0x10,
     ];
     let decoded = SourceIdentification {
         length: 17,

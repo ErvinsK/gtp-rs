@@ -22,14 +22,14 @@ pub struct MmContextGsmKeyTriplets {
     pub used_cipher: CipherValues,
     pub kc: u64,
     pub auth_triplets: Option<Vec<AuthTriplet>>,
-    pub drx_params: Option<[u8;2]>,
+    pub drx_params: Option<[u8; 2]>,
     pub subscr_ue_ambr: Option<AmbrMM>,
     pub used_ue_ambr: Option<AmbrMM>,
     pub ue_ntwk_cap: Option<Vec<u8>>,
     pub ms_ntwk_cap: Option<Vec<u8>>,
     pub mei: Option<Vec<u8>>,
     pub access_res: AccessRestrictionMM,
-    pub vdn_pref_ue_usage: Option<Vec<u8>>,       // Voice domain preference and UE's usage setting
+    pub vdn_pref_ue_usage: Option<Vec<u8>>, // Voice domain preference and UE's usage setting
 }
 
 impl Default for MmContextGsmKeyTriplets {
@@ -76,10 +76,10 @@ impl IEs for MmContextGsmKeyTriplets {
         }
         {
             let mut byte = if let Some(i) = self.auth_triplets.clone() {
-                                    (i.len() as u8) << 5
-                                } else {
-                                    0x00
-                                };
+                (i.len() as u8) << 5
+            } else {
+                0x00
+            };
             match (self.used_ue_ambr.is_some(), self.subscr_ue_ambr.is_some()) {
                 (true, true) => byte |= 0x03,
                 (true, false) => byte |= 0x02,
@@ -143,15 +143,15 @@ impl IEs for MmContextGsmKeyTriplets {
             data.sec_mode = SecurityMode::from(buffer[4] >> 5);
             data.cksn = buffer[4] & 0x07;
             let drxi = matches!(buffer[4] & 0x08, 0x08);
-            let authi = buffer[5]>>5;
+            let authi = buffer[5] >> 5;
             let uambri = matches!(buffer[5] & 0x02, 0x02);
             let sambri = matches!(buffer[5] & 0x01, 0x01);
             data.used_cipher = CipherValues::from(buffer[6]);
             data.kc = u64::from_slice(&buffer[7..15]);
-            let mut cursor:usize = 15;
+            let mut cursor: usize = 15;
             match authi {
                 0 => (),
-                i if i<=5 => {
+                i if i <= 5 => {
                     if buffer.len() >= cursor + (authi as usize * AuthTriplet::default().len()) {
                         let mut auth_triplets = Vec::new();
                         for _ in 0..authi {
@@ -170,7 +170,7 @@ impl IEs for MmContextGsmKeyTriplets {
                 _ => return Err(GTPV2Error::IEIncorrect(MMCTXGSMKT)),
             }
             if drxi && buffer.len() >= cursor + 2 {
-                data.drx_params = Some([buffer[cursor], buffer[cursor+1]]);
+                data.drx_params = Some([buffer[cursor], buffer[cursor + 1]]);
                 cursor += 2;
             }
             if sambri {
@@ -202,7 +202,7 @@ impl IEs for MmContextGsmKeyTriplets {
                 cursor += 1;
                 if len > 0 {
                     if buffer.len() >= cursor + len {
-                        data.ue_ntwk_cap = Some(buffer[cursor..cursor+len].to_vec());
+                        data.ue_ntwk_cap = Some(buffer[cursor..cursor + len].to_vec());
                         cursor += len;
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(MMCTXGSMKT));
@@ -216,7 +216,7 @@ impl IEs for MmContextGsmKeyTriplets {
                 cursor += 1;
                 if len > 0 {
                     if buffer.len() >= cursor + len {
-                        data.ms_ntwk_cap = Some(buffer[cursor..cursor+len].to_vec());
+                        data.ms_ntwk_cap = Some(buffer[cursor..cursor + len].to_vec());
                         cursor += len;
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(MMCTXGSMKT));
@@ -230,7 +230,7 @@ impl IEs for MmContextGsmKeyTriplets {
                 cursor += 1;
                 if len > 0 {
                     if buffer.len() >= cursor + len {
-                        data.mei = Some(buffer[cursor..cursor+len].to_vec());
+                        data.mei = Some(buffer[cursor..cursor + len].to_vec());
                         cursor += len;
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(MMCTXGSMKT));
@@ -246,12 +246,12 @@ impl IEs for MmContextGsmKeyTriplets {
                 cursor += 1;
                 if len > 0 {
                     if buffer.len() >= cursor + len {
-                        data.vdn_pref_ue_usage = Some(buffer[cursor..cursor+len].to_vec());
+                        data.vdn_pref_ue_usage = Some(buffer[cursor..cursor + len].to_vec());
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(MMCTXGSMKT));
                     }
                 }
-            }           
+            }
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(MMCTXGSMKT))
@@ -269,15 +269,14 @@ impl IEs for MmContextGsmKeyTriplets {
 
 #[test]
 fn mmctxgsmkt_ie_marshal_test() {
-    let ie_marshalled: [u8; 82] =  [0x67, 0x00, 0x4e, 0x00,
-    0x08, 0x23, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
-    0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
-    0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x01, 0x02, 0x00, 0x00, 0x07,
-    0xd0, 0x00, 0x00, 0x1f, 0x40, 0x00, 0x00, 0x07, 0xd0, 0x00, 0x00,
-    0x1f, 0x40, 0x04, 0x01, 0x02, 0x03, 0x04, 0x04, 0x01, 0x02, 0x03,
-    0x04, 0x04, 0x01, 0x02, 0x03, 0x04, 0x00, 0x04, 0x01, 0x02, 0x03,
-    0x04];
+    let ie_marshalled: [u8; 82] = [
+        0x67, 0x00, 0x4e, 0x00, 0x08, 0x23, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+        0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x01, 0x02,
+        0x00, 0x00, 0x07, 0xd0, 0x00, 0x00, 0x1f, 0x40, 0x00, 0x00, 0x07, 0xd0, 0x00, 0x00, 0x1f,
+        0x40, 0x04, 0x01, 0x02, 0x03, 0x04, 0x04, 0x01, 0x02, 0x03, 0x04, 0x04, 0x01, 0x02, 0x03,
+        0x04, 0x00, 0x04, 0x01, 0x02, 0x03, 0x04,
+    ];
     let ie_to_marshal = MmContextGsmKeyTriplets {
         t: MMCTXGSMKT,
         length: 78,
@@ -287,11 +286,13 @@ fn mmctxgsmkt_ie_marshal_test() {
         used_cipher: CipherValues::NoCipher,
         kc: 0xffffffffffffffff,
         auth_triplets: Some(vec![AuthTriplet {
-                rand: [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
-                       0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10],
-                sres: [0x11, 0x12, 0x13, 0x14],
-                kc: [0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c],
-            }]),
+            rand: [
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+                0x0f, 0x10,
+            ],
+            sres: [0x11, 0x12, 0x13, 0x14],
+            kc: [0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c],
+        }]),
         drx_params: Some([0x01, 0x02]),
         subscr_ue_ambr: Some(AmbrMM {
             uplink: 2000,
@@ -314,15 +315,14 @@ fn mmctxgsmkt_ie_marshal_test() {
 
 #[test]
 fn mmctxgsmkt_ie_unmarshal_test() {
-    let ie_marshalled: [u8; 82] =  [0x67, 0x00, 0x4e, 0x00,
-    0x08, 0x23, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
-    0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
-    0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x01, 0x02, 0x00, 0x00, 0x07,
-    0xd0, 0x00, 0x00, 0x1f, 0x40, 0x00, 0x00, 0x07, 0xd0, 0x00, 0x00,
-    0x1f, 0x40, 0x04, 0x01, 0x02, 0x03, 0x04, 0x04, 0x01, 0x02, 0x03,
-    0x04, 0x04, 0x01, 0x02, 0x03, 0x04, 0x00, 0x04, 0x01, 0x02, 0x03,
-    0x04];
+    let ie_marshalled: [u8; 82] = [
+        0x67, 0x00, 0x4e, 0x00, 0x08, 0x23, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+        0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x01, 0x02,
+        0x00, 0x00, 0x07, 0xd0, 0x00, 0x00, 0x1f, 0x40, 0x00, 0x00, 0x07, 0xd0, 0x00, 0x00, 0x1f,
+        0x40, 0x04, 0x01, 0x02, 0x03, 0x04, 0x04, 0x01, 0x02, 0x03, 0x04, 0x04, 0x01, 0x02, 0x03,
+        0x04, 0x00, 0x04, 0x01, 0x02, 0x03, 0x04,
+    ];
     let ie_to_marshal = MmContextGsmKeyTriplets {
         t: MMCTXGSMKT,
         length: 78,
@@ -332,11 +332,13 @@ fn mmctxgsmkt_ie_unmarshal_test() {
         used_cipher: CipherValues::NoCipher,
         kc: 0xffffffffffffffff,
         auth_triplets: Some(vec![AuthTriplet {
-                rand: [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
-                       0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10],
-                sres: [0x11, 0x12, 0x13, 0x14],
-                kc: [0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c],
-            }]),
+            rand: [
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+                0x0f, 0x10,
+            ],
+            sres: [0x11, 0x12, 0x13, 0x14],
+            kc: [0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c],
+        }]),
         drx_params: Some([0x01, 0x02]),
         subscr_ue_ambr: Some(AmbrMM {
             uplink: 2000,

@@ -46,7 +46,7 @@ impl IEs for MbmsSd {
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        let i = (self.seconds<<7) | (self.days as u32);
+        let i = (self.seconds << 7) | (self.days as u32);
         buffer_ie.extend_from_slice(&i.to_be_bytes()[1..]);
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -59,7 +59,7 @@ impl IEs for MbmsSd {
                 ..Default::default()
             };
             data.ins = buffer[3];
-            data.seconds = (u32::from_be_bytes([0x00, buffer[4], buffer[5], buffer[6]]))>>7;
+            data.seconds = (u32::from_be_bytes([0x00, buffer[4], buffer[5], buffer[6]])) >> 7;
             data.days = buffer[6] & 0x7f;
             Ok(data)
         } else {

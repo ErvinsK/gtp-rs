@@ -180,7 +180,8 @@ impl IEs for TwanId {
                         let field = buffer[cursor + 1] as usize;
                         cursor += 2;
                         if cursor + field <= buffer.len() {
-                            data.relay_id = Some((relay_id, buffer[cursor..cursor + field].to_vec()));
+                            data.relay_id =
+                                Some((relay_id, buffer[cursor..cursor + field].to_vec()));
                             cursor += field;
                         } else {
                             return Err(GTPV2Error::IEInvalidLength(TWAN_ID));
@@ -193,7 +194,6 @@ impl IEs for TwanId {
                         cursor += 1;
                         if cursor + field <= buffer.len() {
                             data.circuit_id = Some(buffer[cursor..cursor + field].to_vec());
-
                         } else {
                             return Err(GTPV2Error::IEInvalidLength(TWAN_ID));
                         }

@@ -80,8 +80,8 @@ impl IEs for CsgMembershipIndication {
         if buffer.len() >= CMI_LENGTH + MIN_IE_SIZE {
             let data = CsgMembershipIndication {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ins : buffer[3],
-                cmi : CsgMembership::from(buffer[4]),
+                ins: buffer[3],
+                cmi: CsgMembership::from(buffer[4]),
                 ..Default::default()
             };
             Ok(data)
@@ -118,5 +118,8 @@ fn cmi_ie_unmarshal_test() {
         cmi: CsgMembership::NonCsgMembership,
         ..Default::default()
     };
-    assert_eq!(CsgMembershipIndication::unmarshal(&encoded).unwrap(), decoded);
+    assert_eq!(
+        CsgMembershipIndication::unmarshal(&encoded).unwrap(),
+        decoded
+    );
 }

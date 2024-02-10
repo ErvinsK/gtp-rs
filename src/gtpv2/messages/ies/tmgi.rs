@@ -27,7 +27,7 @@ impl Default for Tmgi {
             t: TMGI,
             length: TMGI_LENGTH as u16,
             ins: 0,
-            tmgi: [0;6],
+            tmgi: [0; 6],
         }
     }
 }
