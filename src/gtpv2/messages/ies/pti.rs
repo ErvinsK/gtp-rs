@@ -41,7 +41,7 @@ impl From<Pti> for InformationElement {
 impl IEs for Pti {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(PTI);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.pti);
@@ -51,12 +51,12 @@ impl IEs for Pti {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + PTI_LENGTH {
-            let mut data = Pti {
+            let data = Pti {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                pti: buffer[4],
+                ..Pti::default()
             };
-            data.ins = buffer[3];
-            data.pti = buffer[4];
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(PTI))

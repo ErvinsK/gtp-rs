@@ -32,7 +32,7 @@ impl Default for Cause {
             t: CAUSE,
             length: SHORT_CAUSE_LENGTH as u16,
             ins: 0,
-            value: 16,
+            value: 0,
             pce: false,
             bce: false,
             cs: false,
@@ -50,7 +50,7 @@ impl From<Cause> for InformationElement {
 impl IEs for Cause {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(CAUSE);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.value);
@@ -76,9 +76,9 @@ impl IEs for Cause {
             let to_bool = |i: u8| -> bool { i == 1 };
             let mut data = Cause {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..Cause::default()
             };
-            data.ins = buffer[3] & 0x0f;
             match data.length as usize {
                 SHORT_CAUSE_LENGTH => {
                     if buffer.len() >= (SHORT_CAUSE_LENGTH + MIN_IE_SIZE) {

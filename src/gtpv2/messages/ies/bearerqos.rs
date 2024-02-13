@@ -55,7 +55,7 @@ impl From<BearerQos> for InformationElement {
 impl IEs for BearerQos {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(BEARERQOS);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(
@@ -73,28 +73,20 @@ impl IEs for BearerQos {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len() >= BEARERQOS_LENGTH + 4 {
-            let mut data = BearerQos {
+        if buffer.len() >= BEARERQOS_LENGTH + MIN_IE_SIZE {
+            let data = BearerQos {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                pre_emption_capability: buffer[4] >> 6 & 0x01,
+                priority_level: buffer[4] >> 2 & 0x0f,
+                pre_emption_vulnerability: buffer[4] & 0x01,
+                qci: buffer[5],
+                maxbr_ul: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[6], buffer[7], buffer[8], buffer[9], buffer[10],]),
+                maxbr_dl: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[11], buffer[12], buffer[13], buffer[14], buffer[15],]),
+                gbr_ul: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[16], buffer[17], buffer[18], buffer[19], buffer[20],]),
+                gbr_dl: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[21], buffer[22], buffer[23], buffer[24], buffer[25],]),
+                ..BearerQos::default()
             };
-            data.ins = buffer[3];
-            data.pre_emption_capability = buffer[4] >> 6 & 0x01;
-            data.priority_level = buffer[4] >> 2 & 0x0f;
-            data.pre_emption_vulnerability = buffer[4] & 0x01;
-            data.qci = buffer[5];
-            data.maxbr_ul = u64::from_be_bytes([
-                0x00, 0x00, 0x00, buffer[6], buffer[7], buffer[8], buffer[9], buffer[10],
-            ]);
-            data.maxbr_dl = u64::from_be_bytes([
-                0x00, 0x00, 0x00, buffer[11], buffer[12], buffer[13], buffer[14], buffer[15],
-            ]);
-            data.gbr_ul = u64::from_be_bytes([
-                0x00, 0x00, 0x00, buffer[16], buffer[17], buffer[18], buffer[19], buffer[20],
-            ]);
-            data.gbr_dl = u64::from_be_bytes([
-                0x00, 0x00, 0x00, buffer[21], buffer[22], buffer[23], buffer[24], buffer[25],
-            ]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(BEARERQOS))
@@ -102,7 +94,7 @@ impl IEs for BearerQos {
     }
 
     fn len(&self) -> usize {
-        BEARERQOS_LENGTH + 4
+        BEARERQOS_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

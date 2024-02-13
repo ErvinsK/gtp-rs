@@ -41,7 +41,7 @@ impl From<Epco> for InformationElement {
 impl IEs for Epco {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(EPCO);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.append(&mut self.epco.clone());
@@ -53,9 +53,9 @@ impl IEs for Epco {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = Epco {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..Epco::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.epco
                     .extend_from_slice(&buffer[4..(data.length + 4) as usize]);

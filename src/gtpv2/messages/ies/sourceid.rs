@@ -175,7 +175,7 @@ impl From<SourceIdentification> for InformationElement {
 impl IEs for SourceIdentification {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(SOURCEID);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         self.target_cell.marshal(&mut buffer_ie);

@@ -20,7 +20,7 @@ impl Default for LoadControl {
     fn default() -> Self {
         LoadControl {
             t: LOAD_CNTRL,
-            length: 12,
+            length: 0,
             ins: 0,
             sqn: Sqn::default(),
             load_metric: Metric::default(),

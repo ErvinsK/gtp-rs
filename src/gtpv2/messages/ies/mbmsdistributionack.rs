@@ -41,7 +41,7 @@ impl From<MbmsDistributionAck> for InformationElement {
 impl IEs for MbmsDistributionAck {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MBMS_DISTRACK);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.distr_id & 0x03);
@@ -51,12 +51,12 @@ impl IEs for MbmsDistributionAck {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MBMS_DISTRACK_LENGTH + MIN_IE_SIZE {
-            let mut data = MbmsDistributionAck {
+            let data = MbmsDistributionAck {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                distr_id: buffer[4] & 0x03,
+                ..MbmsDistributionAck::default()
             };
-            data.ins = buffer[3];
-            data.distr_id = buffer[4] & 0x03;
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(MBMS_DISTRACK))

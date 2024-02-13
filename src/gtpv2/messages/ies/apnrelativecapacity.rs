@@ -25,7 +25,7 @@ impl Default for ApnRelativeCapacity {
     fn default() -> Self {
         ApnRelativeCapacity {
             t: APN_REL_CAP,
-            length: 2,
+            length: 0,
             ins: 0,
             relative_cap: 0,
             name: "".to_string(),
@@ -42,7 +42,7 @@ impl From<ApnRelativeCapacity> for InformationElement {
 impl IEs for ApnRelativeCapacity {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(APN_REL_CAP);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.relative_cap);
@@ -61,9 +61,9 @@ impl IEs for ApnRelativeCapacity {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = ApnRelativeCapacity {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..ApnRelativeCapacity::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4] {
                     i if i <= 100 => data.relative_cap = buffer[4],

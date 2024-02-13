@@ -53,7 +53,7 @@ impl From<ChangeReportingAction> for InformationElement {
 impl IEs for ChangeReportingAction {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(CHANGE_RPRT);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.action);
@@ -63,12 +63,12 @@ impl IEs for ChangeReportingAction {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + CHANGE_RPRT_LENGTH {
-            let mut data = ChangeReportingAction {
+            let data = ChangeReportingAction {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                action: buffer[4],
+                ..ChangeReportingAction::default()
             };
-            data.ins = buffer[3];
-            data.action = buffer[4];
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(CHANGE_RPRT))

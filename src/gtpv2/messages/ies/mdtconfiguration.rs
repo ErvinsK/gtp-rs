@@ -112,7 +112,7 @@ impl From<MdtConfiguration> for InformationElement {
 impl IEs for MdtConfiguration {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MDTCONFIG);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(u8::from(&self.mdt_job_type));
@@ -176,7 +176,7 @@ impl IEs for MdtConfiguration {
                 report_amount: buffer[11],
                 rsrp_event_threshold: buffer[12],
                 rsrq_event_threshold: buffer[13],
-                ..Default::default()
+                ..MdtConfiguration::default()
             };
             let mut cursor: usize = 14;
             {
@@ -239,7 +239,7 @@ impl IEs for MdtConfiguration {
     }
 
     fn len(&self) -> usize {
-        self.length as usize + 4
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {
@@ -277,7 +277,6 @@ fn mdtconfig_ie_marshal_test() {
     };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
-    //println!("{:#04x?}", buffer);
     assert_eq!(buffer, encoded);
 }
 

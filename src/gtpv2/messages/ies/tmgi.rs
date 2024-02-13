@@ -41,7 +41,7 @@ impl From<Tmgi> for InformationElement {
 impl IEs for Tmgi {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(TMGI);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&self.tmgi);
@@ -56,7 +56,7 @@ impl IEs for Tmgi {
                 ins: buffer[3],
                 ..Default::default()
             };
-            if let Ok(tmgi) = buffer[4..10].try_into() {
+            if let Ok(tmgi) = buffer[4..MIN_IE_SIZE+TMGI_LENGTH].try_into() {
                 data.tmgi = tmgi;
                 Ok(data)
             } else {

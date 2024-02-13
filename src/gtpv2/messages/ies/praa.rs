@@ -66,7 +66,7 @@ impl From<PresenceReportingAreaAction> for InformationElement {
 impl IEs for PresenceReportingAreaAction {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(PRAA);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.inapra {
@@ -173,12 +173,12 @@ impl IEs for PresenceReportingAreaAction {
         if buffer.len() >= MIN_IE_SIZE + PRAA_LENGTH {
             let mut data = PresenceReportingAreaAction {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..PresenceReportingAreaAction::default()
             };
             if !check_tliv_ie_buffer(data.length, buffer) {
                 return Err(GTPV2Error::IEInvalidLength(PRAA));
             }
-            data.ins = buffer[3];
             match (buffer[4] >> 3) & 0x01 {
                 0 => data.inapra = false,
                 _ => data.inapra = true,
@@ -345,7 +345,7 @@ impl IEs for PresenceReportingAreaAction {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        PRAA_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

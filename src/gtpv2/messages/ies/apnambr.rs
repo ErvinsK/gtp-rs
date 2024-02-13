@@ -43,7 +43,7 @@ impl From<ApnAmbr> for InformationElement {
 impl IEs for ApnAmbr {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(APNAMBR);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&self.ambr_ul.to_be_bytes());
@@ -54,13 +54,13 @@ impl IEs for ApnAmbr {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= APNAMBR_LENGTH as usize + MIN_IE_SIZE {
-            let mut data = ApnAmbr {
+            let data = ApnAmbr {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ambr_ul: u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]),
+                ambr_dl: u32::from_be_bytes([buffer[8], buffer[9], buffer[10], buffer[11]]),
+                ..ApnAmbr::default()
             };
-            data.ins = buffer[3] & 0x0f;
-            data.ambr_ul = u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
-            data.ambr_dl = u32::from_be_bytes([buffer[8], buffer[9], buffer[10], buffer[11]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(APNAMBR))

@@ -90,7 +90,7 @@ impl From<Fteid> for InformationElement {
 impl IEs for Fteid {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(FTEID);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match (self.ipv4.is_some(), self.ipv6.is_some()) {
@@ -114,9 +114,9 @@ impl IEs for Fteid {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = Fteid {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..Fteid::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.interface = buffer[4] & 0x3f;
                 data.teid = u32::from_be_bytes([buffer[5], buffer[6], buffer[7], buffer[8]]);

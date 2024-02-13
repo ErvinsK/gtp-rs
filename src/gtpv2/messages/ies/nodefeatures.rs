@@ -49,7 +49,7 @@ impl From<NodeFeatures> for InformationElement {
 impl IEs for NodeFeatures {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(NODEFEATURES);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         let flags = self
@@ -71,9 +71,9 @@ impl IEs for NodeFeatures {
         if buffer.len() >= (NODEFEATURES_LENGTH + MIN_IE_SIZE) {
             let mut data = NodeFeatures {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..NodeFeatures::default()
             };
-            data.ins = buffer[3];
             let flags = [buffer[4]; 5]
                 .iter()
                 .enumerate()

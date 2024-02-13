@@ -88,7 +88,7 @@ impl From<RatType> for InformationElement {
 impl IEs for RatType {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(RATTYPE);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(Rat::enum_to_value(&self.rat_type));
@@ -98,15 +98,15 @@ impl IEs for RatType {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + RATTYPE_LENGTH {
-            let mut data = RatType {
+            let data = RatType {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
-            };
-            data.ins = buffer[3];
-            match Rat::value_to_enum(buffer[4]) {
-                Ok(i) => data.rat_type = i,
-                Err(j) => return Err(j),
-            }
+                ins: buffer[3] & 0x0f,
+                rat_type: match Rat::value_to_enum(buffer[4]) {
+                    Ok(i) => i,
+                    Err(j) => return Err(j),
+                },
+                ..RatType::default()
+            };            
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(RATTYPE))
@@ -114,7 +114,7 @@ impl IEs for RatType {
     }
 
     fn len(&self) -> usize {
-        RATTYPE_LENGTH + 4
+        RATTYPE_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

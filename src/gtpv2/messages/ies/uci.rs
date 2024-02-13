@@ -102,7 +102,7 @@ impl From<Uci> for InformationElement {
 impl IEs for Uci {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(UCI);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
@@ -129,11 +129,11 @@ impl IEs for Uci {
         if buffer.len() >= UCI_LENGTH + MIN_IE_SIZE {
             let mut data = Uci {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                csgid: u32::from_be_bytes([buffer[7], buffer[8], buffer[9], buffer[10]]),
+                ..Uci::default()
             };
-            data.ins = buffer[3];
             (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..=6]);
-            data.csgid = u32::from_be_bytes([buffer[7], buffer[8], buffer[9], buffer[10]]);
             match AccessMode::value_to_enum((buffer[11] & 0xc0) >> 6) {
                 Ok(i) => data.access_mode = i,
                 Err(j) => return Err(j),

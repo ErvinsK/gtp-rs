@@ -27,7 +27,7 @@ impl Default for MaxPacketLossRate {
     fn default() -> Self {
         MaxPacketLossRate {
             t: MAX_PACKET_LOSS,
-            length: 1,
+            length: 0,
             ins: 0,
             max_packet_loss_ul: None,
             max_packet_loss_dl: None,
@@ -44,7 +44,7 @@ impl From<MaxPacketLossRate> for InformationElement {
 impl IEs for MaxPacketLossRate {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MAX_PACKET_LOSS);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match (
@@ -74,9 +74,9 @@ impl IEs for MaxPacketLossRate {
         if buffer.len() > MIN_IE_SIZE {
             let mut data = MaxPacketLossRate {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..MaxPacketLossRate::default()
             };
-            data.ins = buffer[3];
             match buffer[4] & 0x03 {
                 0 => {
                     data.max_packet_loss_dl = None;

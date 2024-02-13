@@ -52,7 +52,7 @@ impl From<Fcontainer> for InformationElement {
 impl IEs for Fcontainer {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(FCONTAINER);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.container.clone() {
@@ -90,9 +90,9 @@ impl IEs for Fcontainer {
         if buffer.len() > MIN_IE_SIZE {
             let mut data = Fcontainer {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..Fcontainer::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4] {
                     0 => data.container = Container::Reserved,

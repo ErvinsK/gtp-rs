@@ -43,7 +43,7 @@ impl From<EpcTimer> for InformationElement {
 impl IEs for EpcTimer {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(EPC_TIMER);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.timer_value {
@@ -56,17 +56,17 @@ impl IEs for EpcTimer {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= EPC_TIMER_LENGTH + MIN_IE_SIZE {
-            let mut data = EpcTimer {
+            let data = EpcTimer {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                timer_unit: match buffer[4] >> 5 {
+                    i if i <= 4 => buffer[4] >> 5,
+                    7 => 7,
+                    _ => 1,
+                },
+                timer_value: buffer[4] & 0x1f,
+                ..EpcTimer::default()
             };
-            data.ins = buffer[3];
-            match buffer[4] >> 5 {
-                i if i <= 4 => data.timer_unit = buffer[4] >> 5,
-                7 => data.timer_unit = 7,
-                _ => data.timer_unit = 1,
-            }
-            data.timer_value = buffer[4] & 0x1f;
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(EPC_TIMER))
@@ -74,7 +74,7 @@ impl IEs for EpcTimer {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        EPC_TIMER_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

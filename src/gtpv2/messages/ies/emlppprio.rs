@@ -41,7 +41,7 @@ impl From<EmlppPriority> for InformationElement {
 impl IEs for EmlppPriority {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(EMLPP);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.priority);
@@ -51,12 +51,12 @@ impl IEs for EmlppPriority {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= EMLPP_LENGTH + MIN_IE_SIZE {
-            let mut data = EmlppPriority {
+            let data = EmlppPriority {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                priority: buffer[4] & 0x07,
+                ..EmlppPriority::default()
             };
-            data.ins = buffer[3] & 0x0f;
-            data.priority = buffer[4] & 0x07;
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(EMLPP))

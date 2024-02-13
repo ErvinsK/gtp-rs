@@ -40,7 +40,7 @@ impl From<TrafficAggregateDescription> for InformationElement {
 impl IEs for TrafficAggregateDescription {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(TAD);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.append(&mut self.tad.clone());
@@ -52,9 +52,9 @@ impl IEs for TrafficAggregateDescription {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = TrafficAggregateDescription {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..TrafficAggregateDescription::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.tad.extend_from_slice(
                     &buffer[MIN_IE_SIZE..(MIN_IE_SIZE + (data.length as usize))],
@@ -69,7 +69,7 @@ impl IEs for TrafficAggregateDescription {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

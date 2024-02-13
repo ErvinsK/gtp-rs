@@ -68,7 +68,7 @@ impl From<CsgMembershipIndication> for InformationElement {
 impl IEs for CsgMembershipIndication {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(CMI);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(u8::from(&self.cmi));
@@ -82,7 +82,7 @@ impl IEs for CsgMembershipIndication {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3],
                 cmi: CsgMembership::from(buffer[4]),
-                ..Default::default()
+                ..CsgMembershipIndication::default()
             };
             Ok(data)
         } else {

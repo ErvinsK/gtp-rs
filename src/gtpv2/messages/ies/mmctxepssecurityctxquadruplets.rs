@@ -88,7 +88,7 @@ impl From<MmContextEpsSecurityContextQuadruplets> for InformationElement {
 impl IEs for MmContextEpsSecurityContextQuadruplets {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MMCTXEPSSECCTXQ);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         {
@@ -230,10 +230,10 @@ impl IEs for MmContextEpsSecurityContextQuadruplets {
             let mut data = MmContextEpsSecurityContextQuadruplets {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                ..Default::default()
+                sec_mode: SecurityMode::from(buffer[4] >> 5),
+                ksi: buffer[4] & 0x07,
+                ..MmContextEpsSecurityContextQuadruplets::default()
             };
-            data.sec_mode = SecurityMode::from(buffer[4] >> 5);
-            data.ksi = buffer[4] & 0x07;
             let drxi = matches!(buffer[4] & 0x08, 0x08);
             let nhi = matches!(buffer[4] & 0x10, 0x10);
             let auth_quint_i = buffer[5] >> 5;

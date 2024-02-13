@@ -71,7 +71,7 @@ impl Default for RanNasCause {
     fn default() -> Self {
         RanNasCause {
             t: RAN_NAS_CAUSE,
-            length: 2,
+            length: 0,
             ins: 0,
             cause: CauseValue::Spare,
         }
@@ -87,7 +87,7 @@ impl From<RanNasCause> for InformationElement {
 impl IEs for RanNasCause {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(RAN_NAS_CAUSE);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match &self.cause {
@@ -121,12 +121,12 @@ impl IEs for RanNasCause {
         if buffer.len() >= MIN_IE_SIZE + 2 {
             let mut data = RanNasCause {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..RanNasCause::default()
             };
             if !check_tliv_ie_buffer(data.length, buffer) {
                 return Err(GTPV2Error::IEInvalidLength(RAN_NAS_CAUSE));
             }
-            data.ins = buffer[3] & 0x0f;
             match buffer[4] >> 4 {
                 1 => {
                     let c = S1APCause::from_u8(buffer[4] & 0x0f, buffer[5]);
@@ -158,7 +158,7 @@ impl IEs for RanNasCause {
     }
 
     fn len(&self) -> usize {
-        (self.length + 4) as usize
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

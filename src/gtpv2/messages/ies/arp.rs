@@ -45,7 +45,7 @@ impl From<Arp> for InformationElement {
 impl IEs for Arp {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(ARP);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match (self.pci, self.pvi) {
@@ -62,9 +62,9 @@ impl IEs for Arp {
         if buffer.len() >= ARP_LENGTH + MIN_IE_SIZE {
             let mut data = Arp {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..Arp::default()
             };
-            data.ins = buffer[3];
             match buffer[4] >> 6 {
                 0 => data.pci = false,
                 1 => data.pci = true,

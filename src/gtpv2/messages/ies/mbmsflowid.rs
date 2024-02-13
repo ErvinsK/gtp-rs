@@ -41,7 +41,7 @@ impl From<MbmsFlowId> for InformationElement {
 impl IEs for MbmsFlowId {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MBMS_FLOWID);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&self.mbms_flowid.to_be_bytes());
@@ -51,12 +51,12 @@ impl IEs for MbmsFlowId {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MBMS_FLOWID_LENGTH + MIN_IE_SIZE {
-            let mut data = MbmsFlowId {
+            let data = MbmsFlowId {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                mbms_flowid: u16::from_be_bytes([buffer[4], buffer[5]]),
+                ..MbmsFlowId::default()
             };
-            data.ins = buffer[3];
-            data.mbms_flowid = u16::from_be_bytes([buffer[4], buffer[5]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(MBMS_FLOWID))

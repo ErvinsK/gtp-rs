@@ -48,7 +48,7 @@ impl From<ActionIndication> for InformationElement {
 impl IEs for ActionIndication {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(ACTION_IND);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.indication);
@@ -58,12 +58,12 @@ impl IEs for ActionIndication {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= ACTION_IND_LENGTH + MIN_IE_SIZE {
-            let mut data = ActionIndication {
+            let data = ActionIndication {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                indication: buffer[4] & 0x07,
+                ..ActionIndication::default()
             };
-            data.ins = buffer[3];
-            data.indication = buffer[4] & 0x07;
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(ACTION_IND))

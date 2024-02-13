@@ -41,7 +41,7 @@ impl From<Spi> for InformationElement {
 impl IEs for Spi {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(SPI);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.lapi {
@@ -54,16 +54,16 @@ impl IEs for Spi {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= SPI_LENGTH + MIN_IE_SIZE {
-            let mut data = Spi {
+            let data = Spi {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
-            };
-            data.ins = buffer[3];
-            match buffer[4] {
-                0 => data.lapi = false,
-                1 => data.lapi = true,
-                _ => return Err(GTPV2Error::IEIncorrect(SPI)),
-            }
+                ins: buffer[3] & 0x0f,
+                lapi: match buffer[4] {
+                    0 => false,
+                    1 => true,
+                    _ => return Err(GTPV2Error::IEIncorrect(SPI)),
+                },
+                ..Spi::default()
+            };            
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(SPI))
@@ -71,7 +71,7 @@ impl IEs for Spi {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        SPI_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

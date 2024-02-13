@@ -41,7 +41,7 @@ impl From<Ebi> for InformationElement {
 impl IEs for Ebi {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(EBI);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.value);
@@ -51,12 +51,12 @@ impl IEs for Ebi {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= EBI_LENGTH + MIN_IE_SIZE {
-            let mut data = Ebi {
+            let data = Ebi {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                value: buffer[4] & 0x0f,
+                ..Ebi::default()
             };
-            data.ins = buffer[3] & 0x0f;
-            data.value = buffer[4] & 0x0f;
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(EBI))

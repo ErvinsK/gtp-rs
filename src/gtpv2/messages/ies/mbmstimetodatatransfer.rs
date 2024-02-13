@@ -41,7 +41,7 @@ impl From<MbmsTimeToDataTransfer> for InformationElement {
 impl IEs for MbmsTimeToDataTransfer {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MBMSTIMETODATATRNSF);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.mbms_time_to_data);
@@ -55,7 +55,7 @@ impl IEs for MbmsTimeToDataTransfer {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3],
                 mbms_time_to_data: buffer[4],
-                ..Default::default()
+                ..MbmsTimeToDataTransfer::default()
             };
             Ok(data)
         } else {

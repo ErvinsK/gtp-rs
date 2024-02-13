@@ -25,7 +25,7 @@ impl Default for IpAddress {
     fn default() -> IpAddress {
         IpAddress {
             t: IP_ADDRESS,
-            length: 4,
+            length: 0,
             ins: 0,
             ip: IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)),
         }
@@ -41,7 +41,7 @@ impl From<IpAddress> for InformationElement {
 impl IEs for IpAddress {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(IP_ADDRESS);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.ip {
@@ -56,9 +56,9 @@ impl IEs for IpAddress {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = IpAddress {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..IpAddress::default()
             };
-            data.ins = buffer[3] & 0x0f;
             if check_tliv_ie_buffer(data.length, buffer) {
                 match data.length {
                     0x04 => data.ip = IpAddr::from([buffer[4], buffer[5], buffer[6], buffer[7]]),

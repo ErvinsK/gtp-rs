@@ -40,7 +40,7 @@ impl From<Imsi> for InformationElement {
 impl IEs for Imsi {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(IMSI);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend(tbcd_encode(&self.imsi));
@@ -52,9 +52,9 @@ impl IEs for Imsi {
         if buffer.len() > MIN_IE_SIZE {
             let mut data = Imsi {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..Imsi::default()
             };
-            data.ins = buffer[3] & 0x0f;
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4..=(data.length as usize) + 3].try_into() {
                     Ok(i) => data.imsi = tbcd_decode(i),
@@ -70,7 +70,7 @@ impl IEs for Imsi {
     }
 
     fn len(&self) -> usize {
-        (self.length + 4) as usize
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

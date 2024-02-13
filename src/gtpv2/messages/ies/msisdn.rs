@@ -24,7 +24,7 @@ impl Default for Msisdn {
     fn default() -> Msisdn {
         Msisdn {
             t: MSISDN,
-            length: 2,
+            length: 0,
             ins: 0,
             msisdn: "0".to_string(),
         }
@@ -40,7 +40,7 @@ impl From<Msisdn> for InformationElement {
 impl IEs for Msisdn {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MSISDN);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend(tbcd_encode(&self.msisdn));
@@ -52,9 +52,9 @@ impl IEs for Msisdn {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = Msisdn {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..Msisdn::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4..(data.length + 4) as usize].try_into() {
                     Ok(i) => data.msisdn = tbcd_decode(i),
@@ -70,7 +70,7 @@ impl IEs for Msisdn {
     }
 
     fn len(&self) -> usize {
-        (self.length + 4) as usize
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

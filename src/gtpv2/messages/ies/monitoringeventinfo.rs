@@ -48,7 +48,7 @@ impl From<MonitoringEventInformation> for InformationElement {
 impl IEs for MonitoringEventInformation {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MONITOREVENTINFO);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         match (self.nsui, self.nsur) {
             (true, true) => buffer_ie.push(0x30 | self.ins),
@@ -72,7 +72,7 @@ impl IEs for MonitoringEventInformation {
                 nsur: buffer[3] & 0x10 == 0x10,
                 ins: buffer[3] & 0x0f,
                 scef_ref_id: u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]),
-                ..Default::default()
+                ..MonitoringEventInformation::default()
             };
             let mut cursor: usize = 8;
             let len = buffer[cursor] as usize;

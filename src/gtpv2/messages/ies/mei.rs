@@ -41,7 +41,7 @@ impl From<Mei> for InformationElement {
 impl IEs for Mei {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MEI);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend(tbcd_encode(&self.mei));
@@ -53,9 +53,9 @@ impl IEs for Mei {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = Mei {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..Mei::default()
             };
-            data.ins = buffer[3] & 0x0f;
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4..(data.length + 4) as usize].try_into() {
                     Ok(i) => data.mei = tbcd_decode(i),
@@ -71,7 +71,7 @@ impl IEs for Mei {
     }
 
     fn len(&self) -> usize {
-        MEI_LENGTH + 4
+        MEI_LENGTH + MEI_LENGTH
     }
 
     fn is_empty(&self) -> bool {

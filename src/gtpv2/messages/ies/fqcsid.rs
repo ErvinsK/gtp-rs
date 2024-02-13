@@ -70,7 +70,7 @@ impl From<Fqcsid> for InformationElement {
 impl IEs for Fqcsid {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(FQCSID);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.nodeid {
@@ -103,12 +103,12 @@ impl IEs for Fqcsid {
         if buffer.len() > MIN_IE_SIZE {
             let mut data = Fqcsid {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
+                ins: buffer[3] & 0x0f,
                 ..Default::default()
             };
             if !check_tliv_ie_buffer(data.length, buffer) {
                 return Err(GTPV2Error::IEInvalidLength(FQCSID));
             }
-            data.ins = buffer[3];
             match buffer[4] >> 4 {
                 0 => {
                     let cursor = (9 + 2 * (buffer[4] & 0x0f)) as usize;

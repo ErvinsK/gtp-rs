@@ -55,7 +55,7 @@ impl From<ExtendedTraceInformation> for InformationElement {
 impl IEs for ExtendedTraceInformation {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(EXTTRACEINFO);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
@@ -89,7 +89,7 @@ impl IEs for ExtendedTraceInformation {
                 mcc: mcc_mnc_decode(&buffer[4..=6]).0,
                 mnc: mcc_mnc_decode(&buffer[4..=6]).1,
                 trace_id: u32::from_be_bytes([0x00, buffer[7], buffer[8], buffer[9]]),
-                ..Default::default()
+                ..ExtendedTraceInformation::default()
             };
             let mut cursor: usize = 10;
             {

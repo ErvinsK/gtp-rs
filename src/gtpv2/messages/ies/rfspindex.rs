@@ -27,7 +27,7 @@ impl Default for RfspIndex {
             t: RFSP,
             length: RFSP_LENGTH as u16,
             ins: 0,
-            spid: 1,
+            spid: 0,
         }
     }
 }
@@ -41,7 +41,7 @@ impl From<RfspIndex> for InformationElement {
 impl IEs for RfspIndex {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(RFSP);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&self.spid.to_be_bytes());
@@ -51,12 +51,12 @@ impl IEs for RfspIndex {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + RFSP_LENGTH {
-            let mut data = RfspIndex {
+            let data = RfspIndex {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                spid: u16::from_be_bytes([buffer[4], buffer[5]]),
+                ..RfspIndex::default()
             };
-            data.ins = buffer[3];
-            data.spid = u16::from_be_bytes([buffer[4], buffer[5]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(RFSP))

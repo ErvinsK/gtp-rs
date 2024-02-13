@@ -55,7 +55,7 @@ impl From<MbmsIpMulticastDistribution> for InformationElement {
 impl IEs for MbmsIpMulticastDistribution {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MBMSIPMULTICASTDISTR);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&self.common_teid.to_be_bytes());
@@ -93,7 +93,7 @@ impl IEs for MbmsIpMulticastDistribution {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3],
                 common_teid: u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]),
-                ..Default::default()
+                ..MbmsIpMulticastDistribution::default()
             };
             if check_tliv_ie_buffer(data.length, buffer) {
                 let mut cursor: usize = 8;

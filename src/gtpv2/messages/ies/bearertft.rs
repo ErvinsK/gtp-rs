@@ -40,7 +40,7 @@ impl From<BearerTft> for InformationElement {
 impl IEs for BearerTft {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(BEARERTFT);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.append(&mut self.tft.clone());
@@ -52,9 +52,9 @@ impl IEs for BearerTft {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = BearerTft {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..BearerTft::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.tft.extend_from_slice(
                     &buffer[MIN_IE_SIZE..(MIN_IE_SIZE + (data.length as usize))],

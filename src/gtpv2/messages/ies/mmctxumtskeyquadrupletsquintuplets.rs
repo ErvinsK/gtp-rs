@@ -68,7 +68,7 @@ impl From<MmContextUmtsKeyQuadrupletsQuintuplets> for InformationElement {
 impl IEs for MmContextUmtsKeyQuadrupletsQuintuplets {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MMCTXUMTSKQQ);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         {
@@ -159,10 +159,10 @@ impl IEs for MmContextUmtsKeyQuadrupletsQuintuplets {
             let mut data = MmContextUmtsKeyQuadrupletsQuintuplets {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                ..Default::default()
+                sec_mode: SecurityMode::from(buffer[4] >> 5),
+                ksi: buffer[4] & 0x07,
+                ..MmContextUmtsKeyQuadrupletsQuintuplets::default()
             };
-            data.sec_mode = SecurityMode::from(buffer[4] >> 5);
-            data.ksi = buffer[4] & 0x07;
             let drxi = matches!(buffer[4] & 0x08, 0x08);
             let auth_quint_i = buffer[5] >> 5;
             let auth_quad_i = (buffer[5] & 0x1c) >> 2;
@@ -314,7 +314,7 @@ impl IEs for MmContextUmtsKeyQuadrupletsQuintuplets {
     }
 
     fn len(&self) -> usize {
-        self.length as usize + 4
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

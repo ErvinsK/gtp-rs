@@ -68,7 +68,7 @@ impl From<NodeType> for InformationElement {
 impl IEs for NodeType {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(NODETYPE);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(u8::from(&self.node));
@@ -82,7 +82,7 @@ impl IEs for NodeType {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3],
                 node: Node::from(buffer[4]),
-                ..Default::default()
+                ..NodeType::default()
             };
             Ok(data)
         } else {

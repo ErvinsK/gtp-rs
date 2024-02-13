@@ -84,7 +84,7 @@ impl From<PresenceReportingAreaInformation> for InformationElement {
 impl IEs for PresenceReportingAreaInformation {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(PRAI);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.append(&mut self.prai.clone().into());
@@ -109,10 +109,10 @@ impl IEs for PresenceReportingAreaInformation {
         if buffer.len() >= MIN_IE_SIZE + PRAI_LENGTH {
             let mut data = PresenceReportingAreaInformation {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                prai: PresenceReportingArea::from(&buffer[4..8]),
+                ..PresenceReportingAreaInformation::default()
             };
-            data.ins = buffer[3];
-            data.prai = PresenceReportingArea::from(&buffer[4..8]);
             if (buffer[7] >> 2) & 0x01 == 1 {
                 let mut cursor: usize = 8;
                 let mut add_prai: Vec<PresenceReportingArea> = vec![];
@@ -136,7 +136,7 @@ impl IEs for PresenceReportingAreaInformation {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        PRAI_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

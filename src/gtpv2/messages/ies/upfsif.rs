@@ -41,7 +41,7 @@ impl From<UpFunctionSelectionIndicationFlags> for InformationElement {
 impl IEs for UpFunctionSelectionIndicationFlags {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(UPFSIF);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.dcnr {
@@ -54,16 +54,16 @@ impl IEs for UpFunctionSelectionIndicationFlags {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= UPFSIF_LENGTH + MIN_IE_SIZE {
-            let mut data = UpFunctionSelectionIndicationFlags {
+            let data = UpFunctionSelectionIndicationFlags {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
-            };
-            data.ins = buffer[3];
-            match buffer[4] {
-                0 => data.dcnr = false,
-                1 => data.dcnr = true,
-                _ => return Err(GTPV2Error::IEIncorrect(UPFSIF)),
-            }
+                ins: buffer[3] & 0x0f,
+                dcnr:  match buffer[4] {
+                    0 => false,
+                    1 => true,
+                    _ => return Err(GTPV2Error::IEIncorrect(UPFSIF)),
+                },
+                ..UpFunctionSelectionIndicationFlags::default()
+            };          
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(UPFSIF))
@@ -71,7 +71,7 @@ impl IEs for UpFunctionSelectionIndicationFlags {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        UPFSIF_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

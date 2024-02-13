@@ -43,7 +43,7 @@ impl From<PacketFlowId> for InformationElement {
 impl IEs for PacketFlowId {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(PCKTFLOW);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.ebi);
@@ -54,13 +54,13 @@ impl IEs for PacketFlowId {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= PCKTFLOW_LENGTH + MIN_IE_SIZE {
-            let mut data = PacketFlowId {
+            let data = PacketFlowId {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ebi: buffer[4] & 0x0f,
+                flow_id: u32::from_be_bytes([buffer[5], buffer[6], buffer[7], buffer[8]]),
+                ..PacketFlowId::default()
             };
-            data.ins = buffer[3] & 0x0f;
-            data.ebi = buffer[4] & 0x0f;
-            data.flow_id = u32::from_be_bytes([buffer[5], buffer[6], buffer[7], buffer[8]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(PCKTFLOW))

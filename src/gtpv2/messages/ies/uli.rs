@@ -122,9 +122,9 @@ impl IEs for Uli {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = Uli {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..Uli::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 let order = to_flags(&buffer[4]);
                 let mut cursor: usize = 5;

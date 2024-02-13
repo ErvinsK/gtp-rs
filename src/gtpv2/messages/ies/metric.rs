@@ -41,7 +41,7 @@ impl From<Metric> for InformationElement {
 impl IEs for Metric {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(METRIC);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.metric);
@@ -51,16 +51,16 @@ impl IEs for Metric {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + METRIC_LENGTH {
-            let mut data = Metric {
+            let data = Metric {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
-            };
-            data.ins = buffer[3];
-            if buffer[4] > 100 {
-                data.metric = 0;
-            } else {
-                data.metric = buffer[4];
-            }
+                ins: buffer[3] & 0x0f,
+                metric: if buffer[4] > 100 {
+                    0
+                } else {
+                    buffer[4]
+                },
+                ..Metric::default()
+            };           
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(METRIC))

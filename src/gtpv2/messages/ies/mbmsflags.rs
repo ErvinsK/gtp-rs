@@ -43,7 +43,7 @@ impl From<MbmsFlags> for InformationElement {
 impl IEs for MbmsFlags {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MBMS_FLAGS);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         let flags = match (self.lmri, self.msri) {
@@ -61,9 +61,9 @@ impl IEs for MbmsFlags {
         if buffer.len() >= MBMS_FLAGS_LENGTH + MIN_IE_SIZE {
             let mut data = MbmsFlags {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..MbmsFlags::default()
             };
-            data.ins = buffer[3];
             match buffer[4] & 0b11 {
                 0b00 => {
                     data.lmri = false;
@@ -92,7 +92,7 @@ impl IEs for MbmsFlags {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        MBMS_FLAGS_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

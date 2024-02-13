@@ -41,7 +41,7 @@ impl From<HopCounter> for InformationElement {
 impl IEs for HopCounter {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(HOP_CNTR);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.hop_counter);
@@ -51,12 +51,12 @@ impl IEs for HopCounter {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + HOP_CNTR_LENGTH {
-            let mut data = HopCounter {
+            let data = HopCounter {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                hop_counter: buffer[4],
+                ..HopCounter::default()
             };
-            data.ins = buffer[3];
-            data.hop_counter = buffer[4];
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(HOP_CNTR))

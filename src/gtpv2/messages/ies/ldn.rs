@@ -24,7 +24,7 @@ impl Default for Ldn {
     fn default() -> Self {
         Ldn {
             t: LDN,
-            length: 1,
+            length: 0,
             ins: 0,
             name: "".to_string(),
         }
@@ -40,7 +40,7 @@ impl From<Ldn> for InformationElement {
 impl IEs for Ldn {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(LDN);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(self.name.as_bytes());
@@ -52,9 +52,9 @@ impl IEs for Ldn {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = Ldn {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..Ldn::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 let donor: Vec<u8> = buffer[4..(4 + data.length as usize)].to_vec();
                 data.name = donor.iter().map(|x| *x as char).collect();

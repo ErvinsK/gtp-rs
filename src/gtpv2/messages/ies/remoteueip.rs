@@ -34,7 +34,7 @@ impl Default for RemoteUeIpInformation {
     fn default() -> Self {
         RemoteUeIpInformation {
             t: REMOTE_UE_IP,
-            length: 9,
+            length: 0,
             ins: 0,
             ip: RemoteIpAddress::V4(Ipv4Addr::new(0, 0, 0, 0)),
         }
@@ -50,7 +50,7 @@ impl From<RemoteUeIpInformation> for InformationElement {
 impl IEs for RemoteUeIpInformation {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(REMOTE_UE_IP);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.ip {
@@ -72,9 +72,9 @@ impl IEs for RemoteUeIpInformation {
         if buffer.len() > MIN_IE_SIZE {
             let mut data = RemoteUeIpInformation {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..RemoteUeIpInformation::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4] {
                     0x01 => {

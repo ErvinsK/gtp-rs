@@ -64,7 +64,7 @@ impl From<MmContextGsmKeyTriplets> for InformationElement {
 impl IEs for MmContextGsmKeyTriplets {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MMCTXGSMKT);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         {
@@ -138,10 +138,10 @@ impl IEs for MmContextGsmKeyTriplets {
             let mut data = MmContextGsmKeyTriplets {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                ..Default::default()
+                sec_mode: SecurityMode::from(buffer[4] >> 5),
+                cksn: buffer[4] & 0x07,
+                ..MmContextGsmKeyTriplets::default()
             };
-            data.sec_mode = SecurityMode::from(buffer[4] >> 5);
-            data.cksn = buffer[4] & 0x07;
             let drxi = matches!(buffer[4] & 0x08, 0x08);
             let authi = buffer[5] >> 5;
             let uambri = matches!(buffer[5] & 0x02, 0x02);

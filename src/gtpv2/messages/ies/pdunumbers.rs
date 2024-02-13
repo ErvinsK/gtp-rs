@@ -49,7 +49,7 @@ impl From<PduNumbers> for InformationElement {
 impl IEs for PduNumbers {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(PDUNMBRS);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.nsapi);
@@ -63,16 +63,16 @@ impl IEs for PduNumbers {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + PDUNMBRS_LENGTH {
-            let mut data = PduNumbers {
+            let data = PduNumbers {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                nsapi: buffer[4] & 0x0f,
+                dl_gtpu_sqn: u16::from_be_bytes([buffer[5], buffer[6]]),
+                ul_gtpu_sqn: u16::from_be_bytes([buffer[7], buffer[8]]),
+                send_npdu: u16::from_be_bytes([buffer[9], buffer[10]]),
+                receive_npdu: u16::from_be_bytes([buffer[11], buffer[12]]),
+                ..PduNumbers::default()
             };
-            data.ins = buffer[3];
-            data.nsapi = buffer[4] & 0x0f;
-            data.dl_gtpu_sqn = u16::from_be_bytes([buffer[5], buffer[6]]);
-            data.ul_gtpu_sqn = u16::from_be_bytes([buffer[7], buffer[8]]);
-            data.send_npdu = u16::from_be_bytes([buffer[9], buffer[10]]);
-            data.receive_npdu = u16::from_be_bytes([buffer[11], buffer[12]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(PDUNMBRS))

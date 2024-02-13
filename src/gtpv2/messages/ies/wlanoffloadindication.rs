@@ -48,7 +48,7 @@ impl From<WlanOffloadIndication> for InformationElement {
 impl IEs for WlanOffloadIndication {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(WLAN_OFFLOAD_IND);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match (self.eutran_ind, self.utran_ind) {
@@ -65,9 +65,9 @@ impl IEs for WlanOffloadIndication {
         if buffer.len() >= WLAN_OFFLOAD_IND_LENGTH + MIN_IE_SIZE {
             let mut data = WlanOffloadIndication {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..WlanOffloadIndication::default()
             };
-            data.ins = buffer[3];
             match buffer[4] & 0x03 {
                 0 => (data.eutran_ind, data.utran_ind) = (false, false),
                 1 => (data.eutran_ind, data.utran_ind) = (false, true),
@@ -82,7 +82,7 @@ impl IEs for WlanOffloadIndication {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        WLAN_OFFLOAD_IND_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

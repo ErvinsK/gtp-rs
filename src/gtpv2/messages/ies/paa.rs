@@ -35,7 +35,7 @@ impl Default for PdnAddressAllocation {
     fn default() -> PdnAddressAllocation {
         PdnAddressAllocation {
             t: PAA,
-            length: 5,
+            length: 0,
             ins: 0,
             ip: PdnAddress::V4(Ipv4Addr::new(0, 0, 0, 0)),
         }
@@ -51,7 +51,7 @@ impl From<PdnAddressAllocation> for InformationElement {
 impl IEs for PdnAddressAllocation {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(PAA);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.ip {
@@ -80,9 +80,9 @@ impl IEs for PdnAddressAllocation {
         if buffer.len() > MIN_IE_SIZE {
             let mut data = PdnAddressAllocation {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..PdnAddressAllocation::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4] {
                     0x01 => {
@@ -130,7 +130,7 @@ impl IEs for PdnAddressAllocation {
     }
 
     fn len(&self) -> usize {
-        (self.length + 4) as usize
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

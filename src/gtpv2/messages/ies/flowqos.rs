@@ -49,7 +49,7 @@ impl From<FlowQos> for InformationElement {
 impl IEs for FlowQos {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(FLOWQOS);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.qci);
@@ -62,25 +62,17 @@ impl IEs for FlowQos {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len() >= FLOWQOS_LENGTH + 4 {
-            let mut data = FlowQos {
+        if buffer.len() >= FLOWQOS_LENGTH + MIN_IE_SIZE {
+            let data = FlowQos {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
-            };
-            data.ins = buffer[3];
-            data.qci = buffer[4];
-            data.maxbr_ul = u64::from_be_bytes([
-                0x00, 0x00, 0x00, buffer[5], buffer[6], buffer[7], buffer[8], buffer[9],
-            ]);
-            data.maxbr_dl = u64::from_be_bytes([
-                0x00, 0x00, 0x00, buffer[10], buffer[11], buffer[12], buffer[13], buffer[14],
-            ]);
-            data.gbr_ul = u64::from_be_bytes([
-                0x00, 0x00, 0x00, buffer[15], buffer[16], buffer[17], buffer[18], buffer[19],
-            ]);
-            data.gbr_dl = u64::from_be_bytes([
-                0x00, 0x00, 0x00, buffer[20], buffer[21], buffer[22], buffer[23], buffer[24],
-            ]);
+                ins: buffer[3] & 0x0f,
+                qci: buffer[4],
+                maxbr_ul: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[5], buffer[6], buffer[7], buffer[8], buffer[9],]),
+                maxbr_dl: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[10], buffer[11], buffer[12], buffer[13], buffer[14],]),
+                gbr_ul: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[15], buffer[16], buffer[17], buffer[18], buffer[19],]),
+                gbr_dl: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[20], buffer[21], buffer[22], buffer[23], buffer[24],]),
+                ..FlowQos::default()
+            };          
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(FLOWQOS))
@@ -88,7 +80,7 @@ impl IEs for FlowQos {
     }
 
     fn len(&self) -> usize {
-        FLOWQOS_LENGTH + 4
+        FLOWQOS_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

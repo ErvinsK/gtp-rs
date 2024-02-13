@@ -41,7 +41,7 @@ impl From<ChargingCharacteristics> for InformationElement {
 impl IEs for ChargingCharacteristics {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(CHARGINGCHAR);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&self.charging_char.to_be_bytes());
@@ -51,12 +51,12 @@ impl IEs for ChargingCharacteristics {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + CHARGINGCHAR_LENGTH {
-            let mut data = ChargingCharacteristics {
+            let data = ChargingCharacteristics {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                charging_char: u16::from_be_bytes([buffer[4], buffer[5]]),
+                ..ChargingCharacteristics::default()
             };
-            data.ins = buffer[3];
-            data.charging_char = u16::from_be_bytes([buffer[4], buffer[5]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(CHARGINGCHAR))

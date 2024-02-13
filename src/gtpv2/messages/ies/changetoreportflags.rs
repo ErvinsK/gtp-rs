@@ -46,7 +46,7 @@ impl From<ChangeToReportFlags> for InformationElement {
 impl IEs for ChangeToReportFlags {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(CHNG_TO_RPRT_FLAGS);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match (self.tzcr, self.sncr) {
@@ -63,9 +63,9 @@ impl IEs for ChangeToReportFlags {
         if buffer.len() >= CHNG_TO_RPRT_FLAGS_LENGTH + MIN_IE_SIZE {
             let mut data = ChangeToReportFlags {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..ChangeToReportFlags::default()
             };
-            data.ins = buffer[3];
             match buffer[4] & 0x03 {
                 0 => (data.tzcr, data.sncr) = (false, false),
                 1 => (data.tzcr, data.sncr) = (false, true),
@@ -80,7 +80,7 @@ impl IEs for ChangeToReportFlags {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        CHNG_TO_RPRT_FLAGS_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

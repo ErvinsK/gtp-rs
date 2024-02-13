@@ -43,7 +43,7 @@ impl From<HeaderCompressionConfiguration> for InformationElement {
 impl IEs for HeaderCompressionConfiguration {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(HDRCOMPRCONFIG);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         let mut i: u8 = 0;
@@ -98,9 +98,9 @@ impl IEs for HeaderCompressionConfiguration {
         if buffer.len() >= (HDRCOMPRCONFIG_LENGTH + MIN_IE_SIZE) {
             let mut data = HeaderCompressionConfiguration {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..HeaderCompressionConfiguration::default()
             };
-            data.ins = buffer[3];
             (0u8..=7)
                 .map(|i| buffer[4] & (1 << i))
                 .for_each(|bit| match bit {

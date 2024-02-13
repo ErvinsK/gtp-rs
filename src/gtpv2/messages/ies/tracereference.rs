@@ -45,7 +45,7 @@ impl From<TraceReference> for InformationElement {
 impl IEs for TraceReference {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(TRACEREF);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
@@ -58,11 +58,11 @@ impl IEs for TraceReference {
         if buffer.len() >= MIN_IE_SIZE + TRACEREF_LENGTH {
             let mut data = TraceReference {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                trace_id: u32::from_be_bytes([0x00, buffer[7], buffer[8], buffer[9]]),
+                ..TraceReference::default()
             };
-            data.ins = buffer[3];
             (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..7]);
-            data.trace_id = u32::from_be_bytes([0x00, buffer[7], buffer[8], buffer[9]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(TRACEREF))

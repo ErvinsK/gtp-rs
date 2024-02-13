@@ -41,7 +41,7 @@ impl From<Tmsi> for InformationElement {
 impl IEs for Tmsi {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(TMSI);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&self.tmsi.to_be_bytes());
@@ -51,12 +51,12 @@ impl IEs for Tmsi {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + TMSI_LENGTH {
-            let mut data = Tmsi {
+            let data = Tmsi {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                tmsi: u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]),
+                ..Tmsi::default()
             };
-            data.ins = buffer[3];
-            data.tmsi = u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(TMSI))

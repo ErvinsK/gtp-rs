@@ -40,7 +40,7 @@ impl From<Fqdn> for InformationElement {
 impl IEs for Fqdn {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(FQDN);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         let n: Vec<_> = self.name.split('.').collect();
@@ -58,9 +58,9 @@ impl IEs for Fqdn {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = Fqdn {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..Fqdn::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 let mut donor: Vec<u8> = buffer[4..(4 + data.length as usize)].to_vec();
                 let mut k: Vec<Vec<char>> = vec![];

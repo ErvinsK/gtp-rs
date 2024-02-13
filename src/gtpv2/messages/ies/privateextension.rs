@@ -42,7 +42,7 @@ impl From<PrivateExtension> for InformationElement {
 impl IEs for PrivateExtension {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(PRIVATE_EXT);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&self.enterprise_id.to_be_bytes());
@@ -55,9 +55,9 @@ impl IEs for PrivateExtension {
         if buffer.len() >= MIN_IE_SIZE + 3 {
             let mut data = PrivateExtension {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..PrivateExtension::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.enterprise_id = u16::from_be_bytes([buffer[4], buffer[5]]);
                 data.value
@@ -72,7 +72,7 @@ impl IEs for PrivateExtension {
     }
 
     fn len(&self) -> usize {
-        (self.length + 4) as usize
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

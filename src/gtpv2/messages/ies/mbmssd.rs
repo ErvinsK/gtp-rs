@@ -43,7 +43,7 @@ impl From<MbmsSd> for InformationElement {
 impl IEs for MbmsSd {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MBMSSD);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         let i = (self.seconds << 7) | (self.days as u32);
@@ -54,13 +54,13 @@ impl IEs for MbmsSd {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MBMSSD_LENGTH + MIN_IE_SIZE {
-            let mut data = MbmsSd {
+            let data = MbmsSd {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                seconds: (u32::from_be_bytes([0x00, buffer[4], buffer[5], buffer[6]])) >> 7,
+                days: buffer[6] & 0x7f,
+                ..MbmsSd::default()
             };
-            data.ins = buffer[3];
-            data.seconds = (u32::from_be_bytes([0x00, buffer[4], buffer[5], buffer[6]])) >> 7;
-            data.days = buffer[6] & 0x7f;
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(MBMSSD))
@@ -68,7 +68,7 @@ impl IEs for MbmsSd {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        MBMSSD_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

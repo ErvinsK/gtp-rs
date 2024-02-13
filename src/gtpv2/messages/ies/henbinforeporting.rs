@@ -45,7 +45,7 @@ impl From<HenbInfoReporting> for InformationElement {
 impl IEs for HenbInfoReporting {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(HENB_INFO);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.fti {
@@ -58,16 +58,16 @@ impl IEs for HenbInfoReporting {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= HENB_INFO_LENGTH + MIN_IE_SIZE {
-            let mut data = HenbInfoReporting {
+            let data = HenbInfoReporting {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                fti: match buffer[4] {
+                    0 => false,
+                    1 => true,
+                    _ => return Err(GTPV2Error::IEIncorrect(HENB_INFO)),
+                },
+                ..HenbInfoReporting::default()
             };
-            data.ins = buffer[3];
-            match buffer[4] {
-                0 => data.fti = false,
-                1 => data.fti = true,
-                _ => return Err(GTPV2Error::IEIncorrect(HENB_INFO)),
-            }
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(HENB_INFO))
@@ -75,7 +75,7 @@ impl IEs for HenbInfoReporting {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        HENB_INFO_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

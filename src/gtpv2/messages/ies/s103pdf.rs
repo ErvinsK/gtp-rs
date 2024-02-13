@@ -27,7 +27,7 @@ impl Default for S103pdf {
     fn default() -> S103pdf {
         S103pdf {
             t: S103_PDF,
-            length: 11,
+            length: 0,
             ins: 0,
             hsgw_ip: IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)),
             gre_key: 0,
@@ -45,7 +45,7 @@ impl From<S103pdf> for InformationElement {
 impl IEs for S103pdf {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(S103_PDF);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.hsgw_ip {
@@ -69,9 +69,9 @@ impl IEs for S103pdf {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = S103pdf {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..S103pdf::default()
             };
-            data.ins = buffer[3] & 0x0f;
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4] {
                     0x04 => {

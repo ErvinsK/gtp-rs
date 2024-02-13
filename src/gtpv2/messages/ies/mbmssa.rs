@@ -24,7 +24,7 @@ impl Default for MbmsSa {
     fn default() -> MbmsSa {
         MbmsSa {
             t: MBMSSA,
-            length: 10,
+            length: 0,
             ins: 0,
             mbms_sa: vec![0],
         }
@@ -40,7 +40,7 @@ impl From<MbmsSa> for InformationElement {
 impl IEs for MbmsSa {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MBMSSA);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.mbms_sa.len() {
@@ -62,9 +62,9 @@ impl IEs for MbmsSa {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = MbmsSa {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..MbmsSa::default()
             };
-            data.ins = buffer[3] & 0x0f;
             if check_tliv_ie_buffer(data.length, buffer) {
                 if buffer.len() >= 5 + (buffer[4] as usize + 1) * 2 {
                     data.mbms_sa = buffer[5..(5 + (buffer[4] as usize + 1) * 2)]

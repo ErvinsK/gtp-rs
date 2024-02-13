@@ -29,7 +29,7 @@ impl Default for BearerContext {
     fn default() -> Self {
         BearerContext {
             t: BEARER_CTX,
-            length: 5,
+            length: 0,
             ins: 0,
             ebi: Ebi::default(),
             cause: None,

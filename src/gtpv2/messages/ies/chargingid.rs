@@ -25,7 +25,7 @@ impl Default for ChargingId {
     fn default() -> Self {
         ChargingId {
             t: CHARGINGID,
-            length: 4,
+            length: CHARGINGID_LENGTH as u16,
             ins: 0,
             charging_id: 0,
         }
@@ -41,7 +41,7 @@ impl From<ChargingId> for InformationElement {
 impl IEs for ChargingId {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(CHARGINGID);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&self.charging_id.to_be_bytes());
@@ -51,12 +51,12 @@ impl IEs for ChargingId {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + CHARGINGID_LENGTH {
-            let mut data = ChargingId {
+            let data = ChargingId {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                charging_id: u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]),
+                ..ChargingId::default()
             };
-            data.ins = buffer[3];
-            data.charging_id = u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(CHARGINGID))

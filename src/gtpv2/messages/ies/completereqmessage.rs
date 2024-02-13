@@ -48,7 +48,7 @@ impl From<CompleteRequestMessage> for InformationElement {
 impl IEs for CompleteRequestMessage {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(COMPLETE_REQ_MSG);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.message.clone() {
@@ -70,9 +70,9 @@ impl IEs for CompleteRequestMessage {
         if buffer.len() > MIN_IE_SIZE {
             let mut data = CompleteRequestMessage {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..CompleteRequestMessage::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4] {
                     0 => data.message = RequestMessage::AttachRequest(buffer[5..].to_vec()),

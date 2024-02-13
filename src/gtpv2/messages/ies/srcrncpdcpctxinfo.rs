@@ -40,7 +40,7 @@ impl From<SrcRncPdcpCtxInfo> for InformationElement {
 impl IEs for SrcRncPdcpCtxInfo {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(SRC_RNC_PDCP);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.append(&mut self.rrc_container.clone());
@@ -52,9 +52,9 @@ impl IEs for SrcRncPdcpCtxInfo {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = SrcRncPdcpCtxInfo {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..SrcRncPdcpCtxInfo::default()
             };
-            data.ins = buffer[3];
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.rrc_container
                     .extend_from_slice(&buffer[4..(data.length + 4) as usize]);

@@ -47,7 +47,7 @@ impl From<BearerFlags> for InformationElement {
 impl IEs for BearerFlags {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(BEARERFLAGS);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         let mut flags: u8 = 0x0;
@@ -72,9 +72,9 @@ impl IEs for BearerFlags {
         if buffer.len() >= MIN_IE_SIZE + BEARERFLAGS_LENGTH {
             let mut data = BearerFlags {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..BearerFlags::default()
             };
-            data.ins = buffer[3];
             let flags = buffer[4];
             if flags & 0x08 == 0x08 {
                 data.asi = true;

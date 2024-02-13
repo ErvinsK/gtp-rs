@@ -151,7 +151,7 @@ impl From<Indication> for InformationElement {
 impl IEs for Indication {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(INDICATION);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         let flags = self
@@ -171,15 +171,13 @@ impl IEs for Indication {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error>
-    where
-        Self: Sized,
     {
-        if buffer.len() >= INDICATION_LENGTH {
+        if buffer.len() >= INDICATION_LENGTH + MIN_IE_SIZE {
             let mut data = Indication {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..Indication::default()
             };
-            data.ins = buffer[3];
             let f = u64::from_be_bytes([
                 0x00, buffer[4], buffer[5], buffer[6], buffer[7], buffer[8], buffer[9], buffer[10],
             ]);
@@ -196,7 +194,7 @@ impl IEs for Indication {
     }
 
     fn len(&self) -> usize {
-        (self.length + 4) as usize
+        INDICATION_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

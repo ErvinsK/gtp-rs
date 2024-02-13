@@ -41,7 +41,7 @@ impl From<TwanIdTimeStamp> for InformationElement {
 impl IEs for TwanIdTimeStamp {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(TWAN_ID_TIMESTAMP);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&u32::to_be_bytes(self.timestamp));
@@ -51,12 +51,12 @@ impl IEs for TwanIdTimeStamp {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= TWAN_ID_TIMESTAMP_LENGTH + MIN_IE_SIZE {
-            let mut data = TwanIdTimeStamp {
+            let data = TwanIdTimeStamp {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                timestamp: u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]),
+                ..TwanIdTimeStamp::default()
             };
-            data.ins = buffer[3];
-            data.timestamp = u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(TWAN_ID_TIMESTAMP))
@@ -64,7 +64,7 @@ impl IEs for TwanIdTimeStamp {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        TWAN_ID_TIMESTAMP_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

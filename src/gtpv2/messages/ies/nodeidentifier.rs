@@ -25,7 +25,7 @@ impl Default for NodeIdentifier {
     fn default() -> Self {
         NodeIdentifier {
             t: NODE_ID,
-            length: 2,
+            length: 0,
             ins: 0,
             node_name: "".to_string(),
             node_realm: "".to_string(),
@@ -42,7 +42,7 @@ impl From<NodeIdentifier> for InformationElement {
 impl IEs for NodeIdentifier {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(NODE_ID);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         let node = self.node_name.as_bytes();
@@ -59,9 +59,9 @@ impl IEs for NodeIdentifier {
         if buffer.len() > MIN_IE_SIZE {
             let mut data = NodeIdentifier {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..NodeIdentifier::default()
             };
-            data.ins = buffer[3];
             let mut cursor = MIN_IE_SIZE + 1;
             if check_tliv_ie_buffer(data.length, buffer) {
                 if (cursor + buffer[4] as usize + 1) <= buffer.len() {
@@ -88,7 +88,7 @@ impl IEs for NodeIdentifier {
     }
 
     fn len(&self) -> usize {
-        (self.length + 4) as usize
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

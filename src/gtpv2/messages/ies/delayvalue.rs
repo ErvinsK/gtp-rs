@@ -41,7 +41,7 @@ impl From<DelayValue> for InformationElement {
 impl IEs for DelayValue {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(DELAY_VALUE);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.value);
@@ -51,12 +51,12 @@ impl IEs for DelayValue {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + DELAY_VALUE_LENGTH {
-            let mut data = DelayValue {
+            let data = DelayValue {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                value: buffer[4],
+                ..DelayValue::default()
             };
-            data.ins = buffer[3];
-            data.value = buffer[4];
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(DELAY_VALUE))

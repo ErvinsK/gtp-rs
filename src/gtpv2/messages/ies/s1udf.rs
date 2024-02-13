@@ -27,7 +27,7 @@ impl Default for S1udf {
     fn default() -> S1udf {
         S1udf {
             t: S1UDF,
-            length: 10,
+            length: 0,
             ins: 0,
             ebi: 0,
             sgw_ip: IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)),
@@ -45,7 +45,7 @@ impl From<S1udf> for InformationElement {
 impl IEs for S1udf {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(S1UDF);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.ebi & 0x0f);
@@ -68,9 +68,9 @@ impl IEs for S1udf {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = S1udf {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..S1udf::default()
             };
-            data.ins = buffer[3] & 0x0f;
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.ebi = buffer[4] & 0x0f;
                 match buffer[5] {

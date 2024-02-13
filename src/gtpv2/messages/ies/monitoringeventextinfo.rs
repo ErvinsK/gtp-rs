@@ -44,7 +44,7 @@ impl From<MonitoringEventExtensionInfo> for InformationElement {
 impl IEs for MonitoringEventExtensionInfo {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MONITEVENTEXTINFO);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.rmplrt {
@@ -65,9 +65,9 @@ impl IEs for MonitoringEventExtensionInfo {
         if buffer.len() >= MIN_IE_SIZE {
             let mut data = MonitoringEventExtensionInfo {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
+                ins: buffer[3] & 0x0f,
                 ..Default::default()
             };
-            data.ins = buffer[3] & 0x0f;
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.scef_ref_id = u32::from_be_bytes([buffer[5], buffer[6], buffer[7], buffer[8]]);
                 if buffer.len() >= 9 + (buffer[9] as usize) {

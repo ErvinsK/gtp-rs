@@ -41,7 +41,7 @@ impl From<AbsoluteTimeMbmsDataTransfer> for InformationElement {
 impl IEs for AbsoluteTimeMbmsDataTransfer {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(ABSTIME_MBMSDATATRNSFR);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&self.seconds.to_be_bytes());
@@ -51,15 +51,15 @@ impl IEs for AbsoluteTimeMbmsDataTransfer {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= ABSTIME_MBMSDATATRNSFR_LENGTH + MIN_IE_SIZE {
-            let mut data = AbsoluteTimeMbmsDataTransfer {
+            let data = AbsoluteTimeMbmsDataTransfer {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                seconds: u64::from_be_bytes([
+                    buffer[4], buffer[5], buffer[6], buffer[7], buffer[8], buffer[9], buffer[10],
+                    buffer[11],
+                ]),
+                ..AbsoluteTimeMbmsDataTransfer::default()
             };
-            data.ins = buffer[3];
-            data.seconds = u64::from_be_bytes([
-                buffer[4], buffer[5], buffer[6], buffer[7], buffer[8], buffer[9], buffer[10],
-                buffer[11],
-            ]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(ABSTIME_MBMSDATATRNSFR))

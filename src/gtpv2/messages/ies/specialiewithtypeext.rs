@@ -42,7 +42,7 @@ impl From<SpecialIEWithTypeExt> for InformationElement {
 impl IEs for SpecialIEWithTypeExt {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(IETYPE_EXT);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&self.ie_type_ext.to_be_bytes());
@@ -55,12 +55,12 @@ impl IEs for SpecialIEWithTypeExt {
         if buffer.len() > MIN_IE_SIZE {
             let mut data = SpecialIEWithTypeExt {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..SpecialIEWithTypeExt::default()
             };
-            data.ins = buffer[3];
             data.ie_type_ext = u16::from_be_bytes([buffer[4], buffer[5]]);
             if check_tliv_ie_buffer(data.length, buffer) {
-                data.ie_data.extend_from_slice(&buffer[6..]);
+                data.ie_data.extend_from_slice(&buffer[6..MIN_IE_SIZE+(data.length as usize)]);
                 Ok(data)
             } else {
                 Err(GTPV2Error::IEInvalidLength(IETYPE_EXT))
@@ -71,7 +71,7 @@ impl IEs for SpecialIEWithTypeExt {
     }
 
     fn len(&self) -> usize {
-        (self.length + 4) as usize
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

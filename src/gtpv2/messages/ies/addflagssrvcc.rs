@@ -43,7 +43,7 @@ impl From<AdditionalFlagsSrvcc> for InformationElement {
 impl IEs for AdditionalFlagsSrvcc {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(ADDFLAGS_SRVCC);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         let flags = match (self.vf, self.ics) {
@@ -61,9 +61,9 @@ impl IEs for AdditionalFlagsSrvcc {
         if buffer.len() >= ADDFLAGS_SRVCC_LENGTH + MIN_IE_SIZE {
             let mut data = AdditionalFlagsSrvcc {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..AdditionalFlagsSrvcc::default()
             };
-            data.ins = buffer[3];
             match buffer[4] & 0b11 {
                 0b00 => {
                     data.vf = false;

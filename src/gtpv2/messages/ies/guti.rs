@@ -49,7 +49,7 @@ impl From<Guti> for InformationElement {
 impl IEs for Guti {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(GUTI);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
@@ -62,15 +62,16 @@ impl IEs for Guti {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + GUTI_LENGTH {
-            let mut data = Guti {
+            let data = Guti {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                mcc: mcc_mnc_decode(&buffer[4..7]).0,
+                mnc: mcc_mnc_decode(&buffer[4..7]).1,
+                mmegi: u16::from_be_bytes([buffer[7], buffer[8]]),
+                mmec: buffer[9],
+                mtmsi: u32::from_be_bytes([buffer[10], buffer[11], buffer[12], buffer[13]]),
+                ..Guti::default()
             };
-            data.ins = buffer[3];
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..7]);
-            data.mmegi = u16::from_be_bytes([buffer[7], buffer[8]]);
-            data.mmec = buffer[9];
-            data.mtmsi = u32::from_be_bytes([buffer[10], buffer[11], buffer[12], buffer[13]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(GUTI))

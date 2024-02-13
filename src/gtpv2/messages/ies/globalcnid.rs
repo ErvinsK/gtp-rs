@@ -45,7 +45,7 @@ impl From<GlobalCnId> for InformationElement {
 impl IEs for GlobalCnId {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(GLOBAL_CN_ID);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
@@ -56,13 +56,14 @@ impl IEs for GlobalCnId {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + GLOBAL_CN_ID_LENGTH {
-            let mut data = GlobalCnId {
+            let data = GlobalCnId {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                mcc: mcc_mnc_decode(&buffer[4..7]).0,
+                mnc: mcc_mnc_decode(&buffer[4..7]).1,
+                cnid: u16::from_be_bytes([buffer[7], buffer[8]]),
+                ..GlobalCnId::default()
             };
-            data.ins = buffer[3];
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..7]);
-            data.cnid = u16::from_be_bytes([buffer[7], buffer[8]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(GLOBAL_CN_ID))

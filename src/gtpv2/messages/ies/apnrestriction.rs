@@ -74,7 +74,7 @@ impl From<ApnRestriction> for InformationElement {
 impl IEs for ApnRestriction {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(APNRESTRICTION);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(Restriction::enum_to_value(&self.restriction_type));
@@ -84,15 +84,15 @@ impl IEs for ApnRestriction {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= APNRESTRICTION_LENGTH + MIN_IE_SIZE {
-            let mut data = ApnRestriction {
+            let data = ApnRestriction {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                restriction_type: match Restriction::value_to_enum(buffer[4]) {
+                    Ok(i) => i,
+                    Err(j) => return Err(j),
+                },
+                ..ApnRestriction::default()
             };
-            data.ins = buffer[3];
-            match Restriction::value_to_enum(buffer[4]) {
-                Ok(i) => data.restriction_type = i,
-                Err(j) => return Err(j),
-            }
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(APNRESTRICTION))

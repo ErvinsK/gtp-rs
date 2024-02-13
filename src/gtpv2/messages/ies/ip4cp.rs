@@ -44,7 +44,7 @@ impl From<Ip4Cp> for InformationElement {
 impl IEs for Ip4Cp {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(IP4CP);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.subnet_prefix);
@@ -55,13 +55,13 @@ impl IEs for Ip4Cp {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + IP4CP_LENGTH {
-            let mut data = Ip4Cp {
+            let data = Ip4Cp {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                subnet_prefix: buffer[4],
+                ip: Ipv4Addr::from([buffer[5], buffer[6], buffer[7], buffer[8]]),
+                ..Ip4Cp::default()
             };
-            data.ins = buffer[3];
-            data.subnet_prefix = buffer[4];
-            data.ip = Ipv4Addr::from([buffer[5], buffer[6], buffer[7], buffer[8]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(IP4CP))
@@ -69,7 +69,7 @@ impl IEs for Ip4Cp {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        IP4CP_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

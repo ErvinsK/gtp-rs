@@ -41,7 +41,7 @@ impl From<ChannelNeeded> for InformationElement {
 impl IEs for ChannelNeeded {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(CHNL_NEEDED);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.chnl_needed);
@@ -51,12 +51,12 @@ impl IEs for ChannelNeeded {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + CHNL_NEEDED_LENGTH {
-            let mut data = ChannelNeeded {
+            let data = ChannelNeeded {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                chnl_needed: buffer[4],
+                ..ChannelNeeded::default()
             };
-            data.ins = buffer[3];
-            data.chnl_needed = buffer[4];
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(CHNL_NEEDED))
@@ -64,7 +64,7 @@ impl IEs for ChannelNeeded {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        CHNL_NEEDED_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

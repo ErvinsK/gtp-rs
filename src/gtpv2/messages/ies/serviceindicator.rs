@@ -47,7 +47,7 @@ impl From<ServiceIndicator> for InformationElement {
 impl IEs for ServiceIndicator {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(SRVCIND);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.ind);
@@ -57,12 +57,12 @@ impl IEs for ServiceIndicator {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + SRVCIND_LENGTH {
-            let mut data = ServiceIndicator {
+            let data = ServiceIndicator {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ind: buffer[4],
+                ..ServiceIndicator::default()
             };
-            data.ins = buffer[3];
-            data.ind = buffer[4];
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(SRVCIND))

@@ -66,7 +66,7 @@ impl From<MmContextGsmKeyCipherQuintuplets> for InformationElement {
 impl IEs for MmContextGsmKeyCipherQuintuplets {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(MMCTXGSMKCQ);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         {
@@ -146,10 +146,10 @@ impl IEs for MmContextGsmKeyCipherQuintuplets {
             let mut data = MmContextGsmKeyCipherQuintuplets {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                ..Default::default()
+                sec_mode: SecurityMode::from(buffer[4] >> 5),
+                cksn: buffer[4] & 0x07,
+                ..MmContextGsmKeyCipherQuintuplets::default()
             };
-            data.sec_mode = SecurityMode::from(buffer[4] >> 5);
-            data.cksn = buffer[4] & 0x07;
             let drxi = matches!(buffer[4] & 0x08, 0x08);
             let authi = buffer[5] >> 5;
             let uambri = matches!(buffer[5] & 0x02, 0x02);
@@ -271,7 +271,7 @@ impl IEs for MmContextGsmKeyCipherQuintuplets {
     }
 
     fn len(&self) -> usize {
-        self.length as usize + 4
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

@@ -26,7 +26,7 @@ impl Default for RemoteUserId {
     fn default() -> Self {
         RemoteUserId {
             t: REMOTE_USR_ID,
-            length: 1,
+            length: 0,
             ins: 0,
             imsi: "".to_string(),
             msisdn: None,
@@ -44,7 +44,7 @@ impl From<RemoteUserId> for InformationElement {
 impl IEs for RemoteUserId {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(REMOTE_USR_ID);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match (self.imei.is_some(), self.msisdn.is_some()) {
@@ -113,9 +113,9 @@ impl IEs for RemoteUserId {
         if buffer.len() >= MIN_IE_SIZE + 2 {
             let mut data = RemoteUserId {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..RemoteUserId::default()
             };
-            data.ins = buffer[3];
             let mut cursor = 6;
             let mut l;
             match buffer[4] & 0x03 {

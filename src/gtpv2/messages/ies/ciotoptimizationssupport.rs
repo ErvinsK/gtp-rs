@@ -47,7 +47,7 @@ impl From<CIoTOptimizationSupportIndication> for InformationElement {
 impl IEs for CIoTOptimizationSupportIndication {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(CIOT_SUPPORT);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         let flags = self
@@ -69,9 +69,9 @@ impl IEs for CIoTOptimizationSupportIndication {
         if buffer.len() >= CIOT_SUPPORT_LENGTH + MIN_IE_SIZE {
             let mut data = CIoTOptimizationSupportIndication {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ..CIoTOptimizationSupportIndication::default()
             };
-            data.ins = buffer[3];
             let flags = [buffer[4]; 5]
                 .iter()
                 .enumerate()
@@ -85,7 +85,7 @@ impl IEs for CIoTOptimizationSupportIndication {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        CIOT_SUPPORT_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

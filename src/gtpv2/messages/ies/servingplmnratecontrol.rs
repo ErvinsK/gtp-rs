@@ -43,7 +43,7 @@ impl From<ServingPlmnRateControl> for InformationElement {
 impl IEs for ServingPlmnRateControl {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(SERV_PLMN_RATE_CTRL);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&self.rate_ctrl_ul.to_be_bytes());
@@ -54,13 +54,13 @@ impl IEs for ServingPlmnRateControl {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= SERV_PLMN_RATE_CTRL_LENGTH + MIN_IE_SIZE {
-            let mut data = ServingPlmnRateControl {
+            let data = ServingPlmnRateControl {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                rate_ctrl_ul: u16::from_be_bytes([buffer[4], buffer[5]]),
+                rate_ctrl_dl: u16::from_be_bytes([buffer[6], buffer[7]]),
+                ..ServingPlmnRateControl::default()
             };
-            data.ins = buffer[3] & 0x0f;
-            data.rate_ctrl_ul = u16::from_be_bytes([buffer[4], buffer[5]]);
-            data.rate_ctrl_dl = u16::from_be_bytes([buffer[6], buffer[7]]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(SERV_PLMN_RATE_CTRL))
@@ -68,7 +68,7 @@ impl IEs for ServingPlmnRateControl {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + 4
+        SERV_PLMN_RATE_CTRL_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

@@ -43,7 +43,7 @@ impl From<PagingServiceInfo> for InformationElement {
 impl IEs for PagingServiceInfo {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(PAGING_SRVC_INFO);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.push(self.ebi);
@@ -60,17 +60,17 @@ impl IEs for PagingServiceInfo {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= PAGING_SRVC_INFO_LENGTH + MIN_IE_SIZE {
-            let mut data = PagingServiceInfo {
+            let data = PagingServiceInfo {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ebi: buffer[4],
+                paging_policy: match buffer[5] {
+                                0 => None,
+                                1 => Some(buffer[6]),
+                                _ => return Err(GTPV2Error::IEIncorrect(PAGING_SRVC_INFO)),
+                            }, 
+                ..PagingServiceInfo::default()
             };
-            data.ins = buffer[3];
-            data.ebi = buffer[4] & 0x0f;
-            match buffer[5] {
-                0 => (),
-                1 => data.paging_policy = Some(buffer[6]),
-                _ => return Err(GTPV2Error::IEIncorrect(PAGING_SRVC_INFO)),
-            }
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(PAGING_SRVC_INFO))
@@ -78,7 +78,7 @@ impl IEs for PagingServiceInfo {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        PAGING_SRVC_INFO_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

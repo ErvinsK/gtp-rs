@@ -40,7 +40,7 @@ impl From<NodeNumber> for InformationElement {
 impl IEs for NodeNumber {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(NODE_NMBR);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         let mut number: Vec<u8> = vec![0x91];
@@ -55,9 +55,9 @@ impl IEs for NodeNumber {
         if buffer.len() > MIN_IE_SIZE {
             let mut data = NodeNumber {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
+                ins: buffer[3] & 0x0f,
                 ..Default::default()
             };
-            data.ins = buffer[3] & 0x0f;
             if check_tliv_ie_buffer(data.length, buffer) {
                 let cursor = buffer[4] as usize;
                 match buffer[5..(cursor + 5)].try_into() {
@@ -77,7 +77,7 @@ impl IEs for NodeNumber {
     }
 
     fn len(&self) -> usize {
-        (self.length + 4) as usize
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

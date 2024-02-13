@@ -43,7 +43,7 @@ impl From<ApnRateControlStatus> for InformationElement {
 impl IEs for ApnRateControlStatus {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(APN_RATE_CNTRL);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         buffer_ie.extend_from_slice(&self.ul_packets_allowed.to_be_bytes());
@@ -56,15 +56,15 @@ impl IEs for ApnRateControlStatus {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= APN_RATE_CNTR_LENGTH + MIN_IE_SIZE {
-            let mut data = ApnRateControlStatus {
+            let data = ApnRateControlStatus {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                ul_packets_allowed: u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]),
+                nmbr_add_exception_reports: u32::from_be_bytes([buffer[8], buffer[9], buffer[10], buffer[11]]),
+                dl_packets_allowed: u32::from_be_bytes([buffer[12], buffer[13], buffer[14], buffer[15]]),
+                validity_time: u64::from_slice(&buffer[16..24]),
+                ..ApnRateControlStatus::default()
             };
-            data.ins = buffer[3];
-            data.ul_packets_allowed = u32::from_slice(&buffer[4..8]);
-            data.nmbr_add_exception_reports = u32::from_slice(&buffer[8..12]);
-            data.dl_packets_allowed = u32::from_slice(&buffer[12..16]);
-            data.validity_time = u64::from_slice(&buffer[16..24]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(APN_RATE_CNTRL))

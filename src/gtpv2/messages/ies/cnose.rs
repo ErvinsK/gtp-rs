@@ -48,7 +48,7 @@ impl From<CnOperatorSelectionEntity> for InformationElement {
 impl IEs for CnOperatorSelectionEntity {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
-        buffer_ie.push(self.t);
+        buffer_ie.push(CNOSE);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         match self.selection_entity {
@@ -61,17 +61,17 @@ impl IEs for CnOperatorSelectionEntity {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= CNOSE_LENGTH + MIN_IE_SIZE {
-            let mut data = CnOperatorSelectionEntity {
+            let data = CnOperatorSelectionEntity {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
-                ..Default::default()
+                ins: buffer[3] & 0x0f,
+                selection_entity: match buffer[4] {
+                    0 => SelectMode::ServingNetworkSelectedbyUE,
+                    1 => SelectMode::ServingNetworkSelectedbyNetwork,
+                    2 | 3 => SelectMode::ServingNetworkSelectedbyNetwork,
+                    _ => return Err(GTPV2Error::IEIncorrect(CNOSE)),
+                },
+                ..CnOperatorSelectionEntity::default()
             };
-            data.ins = buffer[3];
-            match buffer[4] {
-                0 => data.selection_entity = SelectMode::ServingNetworkSelectedbyUE,
-                1 => data.selection_entity = SelectMode::ServingNetworkSelectedbyNetwork,
-                2 | 3 => data.selection_entity = SelectMode::ServingNetworkSelectedbyNetwork,
-                _ => return Err(GTPV2Error::IEIncorrect(CNOSE)),
-            }
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(CNOSE))
@@ -79,7 +79,7 @@ impl IEs for CnOperatorSelectionEntity {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        CNOSE_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {
