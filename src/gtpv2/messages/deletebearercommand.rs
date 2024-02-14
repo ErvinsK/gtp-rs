@@ -64,9 +64,10 @@ impl Messages for DeleteBearerCommand {
         if message.header.msgtype != DELETE_BEARER_CMD {
             return Err(GTPV2Error::MessageIncorrectMessageType);
         }
+        let offset = message.header.length as usize + MANDATORY_HDR_LENGTH;
 
-        if (message.header.length as usize) + 4 <= buffer.len() {
-            match InformationElement::decoder(&buffer[12..]) {
+        if buffer.len() >= offset{
+            match InformationElement::decoder(&buffer[MAX_HEADER_LENGTH..offset]) {
                 Ok(i) => match message.fromvec(i) {
                     Ok(_) => Ok(message),
                     Err(j) => Err(j),

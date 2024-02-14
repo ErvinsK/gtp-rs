@@ -4,6 +4,7 @@ use crate::gtpv2::errors::*;
 
 // Definition of GTPv2 Header
 
+pub const MANDATORY_HDR_LENGTH: usize = 4;
 pub const MIN_HEADER_LENGTH: usize = 8;
 pub const MAX_HEADER_LENGTH: usize = 12;
 
@@ -64,7 +65,7 @@ impl Gtpv2Header {
                         0 => return Err(GTPV2Error::HeaderInvalidLength),
                         _ => u16::from_be_bytes([buffer[2], buffer[3]]),
                     };
-                    if data.length < (MIN_HEADER_LENGTH - 4) as u16 {
+                    if data.length < (MIN_HEADER_LENGTH - MANDATORY_HDR_LENGTH) as u16 {
                         return Err(GTPV2Error::MessageInvalidLength(0));
                     }
                     data.sqn = u32::from_be_bytes([0x00, buffer[4], buffer[5], buffer[6]]);

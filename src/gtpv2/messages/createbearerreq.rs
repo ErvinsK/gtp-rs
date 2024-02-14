@@ -33,13 +33,12 @@ pub struct CreateBearerRequest {
 
 impl Default for CreateBearerRequest {
     fn default() -> CreateBearerRequest {
-        let hdr = Gtpv2Header {
-            msgtype: CREATE_BEARER_REQ,
-            teid: Some(0),
-            ..Default::default()
-        };
         CreateBearerRequest {
-            header: hdr,
+            header: Gtpv2Header {
+                msgtype: CREATE_BEARER_REQ,
+                teid: Some(0),
+                ..Default::default()
+            },
             pti: None,
             linked_ebi: Ebi::default(),
             pco: None,
@@ -78,8 +77,10 @@ impl Messages for CreateBearerRequest {
             return Err(GTPV2Error::MessageIncorrectMessageType);
         }
 
-        if (message.header.length as usize) + 4 <= buffer.len() {
-            match InformationElement::decoder(&buffer[12..]) {
+        let offset = message.header.length as usize + MANDATORY_HDR_LENGTH;
+
+        if buffer.len() >= offset{
+            match InformationElement::decoder(&buffer[MAX_HEADER_LENGTH..offset]) {
                 Ok(i) => match message.fromvec(i) {
                     Ok(_) => Ok(message),
                     Err(j) => Err(j),
