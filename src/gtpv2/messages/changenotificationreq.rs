@@ -75,7 +75,7 @@ impl Messages for ChangeNotificationRequest {
         let offset = message.header.length as usize + MANDATORY_HDR_LENGTH;
 
         if buffer.len() >= offset{
-            match InformationElement::decoder(&buffer[MAX_HEADER_LENGTH..]) {
+            match InformationElement::decoder(&buffer[MAX_HEADER_LENGTH..offset]) {
                 Ok(i) => match message.fromvec(i) {
                     Ok(_) => Ok(message),
                     Err(j) => Err(j),

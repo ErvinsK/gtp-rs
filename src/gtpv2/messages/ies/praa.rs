@@ -9,7 +9,6 @@ use crate::gtpv2::{
 // Presence Reporting Area Action IE Type
 
 pub const PRAA: u8 = 177;
-pub const PRAA_LENGTH: usize = 11;
 
 // Presence Reporting Area Action IE implementation
 //                      Action                                    Value (Decimal)
@@ -40,7 +39,7 @@ impl Default for PresenceReportingAreaAction {
     fn default() -> Self {
         PresenceReportingAreaAction {
             t: PRAA,
-            length: PRAA_LENGTH as u16,
+            length: 0,
             ins: 0,
             inapra: false,
             action: 0,
@@ -170,7 +169,7 @@ impl IEs for PresenceReportingAreaAction {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len() >= MIN_IE_SIZE + PRAA_LENGTH {
+        if buffer.len() >= MIN_IE_SIZE {
             let mut data = PresenceReportingAreaAction {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
@@ -345,7 +344,7 @@ impl IEs for PresenceReportingAreaAction {
     }
 
     fn len(&self) -> usize {
-        PRAA_LENGTH + MIN_IE_SIZE
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

@@ -71,7 +71,7 @@ impl IEs for Mei {
     }
 
     fn len(&self) -> usize {
-        MEI_LENGTH + MEI_LENGTH
+        MEI_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {

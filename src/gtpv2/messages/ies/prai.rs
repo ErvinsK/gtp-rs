@@ -9,7 +9,7 @@ use crate::gtpv2::{
 // Presence Reporting Area Info IE Type
 
 pub const PRAI: u8 = 178;
-pub const PRAI_LENGTH: usize = 4;
+pub const PRAI_LENGTH: usize = 8;
 
 // Presence Reporting Area enum
 
