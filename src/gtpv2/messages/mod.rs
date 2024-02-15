@@ -7,7 +7,7 @@ pub use {
     modifybearercommand::*, modifybearerfailureind::*, modifybearerreq::*, modifybearerresp::*,
     resumeacknowledge::*, resumenotification::*, suspendacknowledge::*, suspendnotification::*,
     ueactivityacknowledge::*, ueactivitynotification::*, updatebearerreq::*, updatebearerresp::*,
-    versionnotsupported::*,
+    versionnotsupported::*, createindirectdatafwtunnelreq::*,
 };
 
 mod alertmmeacknowledge;
@@ -43,3 +43,4 @@ mod ueactivitynotification;
 mod updatebearerreq;
 mod updatebearerresp;
 mod versionnotsupported;
+mod createindirectdatafwtunnelreq;
