@@ -40,7 +40,7 @@ impl IEs for GroupedIe {
                 t: buffer[0],
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3],
-                ..Default::default()
+                elements: vec![],
             };
             if check_tliv_ie_buffer(data.length, buffer) {
                 match InformationElement::decoder(&buffer[4..(data.length + 4) as usize]) {

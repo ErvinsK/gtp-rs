@@ -35,7 +35,7 @@ impl Default for CreateIndirectDataForwardingTunnelRequest {
             mei: None,
             indication: None,
             fteid_control: None,
-            bearer_ctxs: vec![BearerContext::default(),],
+            bearer_ctxs: vec![],
             recovery: None,
             private_ext: vec![],
         }
@@ -160,179 +160,221 @@ impl Messages for CreateIndirectDataForwardingTunnelRequest {
 #[test]
 fn test_create_indirect_data_fw_tunnel_req_unmarshal() {
     use std::net::Ipv4Addr;
-    let encoded: [u8; 97] = [
-        0x48, 0x5f, 0x00, 0x5d, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x49, 0x00, 0x01,
-        0x00, 0x05, 0x4e, 0x00, 0x14, 0x00, 0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81,
-        0x06, 0x08, 0x08, 0x08, 0x08, 0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61, 0x5d, 0x00, 0x34, 0x00,
-        0x49, 0x00, 0x01, 0x00, 0x00, 0x57, 0x00, 0x09, 0x02, 0x85, 0x3b, 0x95, 0x98, 0x5a, 0x3e,
-        0x99, 0x89, 0x55, 0x50, 0x00, 0x16, 0x00, 0x2c, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5e,
-        0x00, 0x04, 0x00, 0x01, 0x62, 0x9c, 0xc4,
+    let encoded: [u8; 136] = [
+        0x48,        0xa6,        0x00,        0x84,        0x09,        0x09,        0xa4,        0x56,
+        0x00,        0x00,        0x2f,        0x00,        0x01,        0x00,        0x08,        0x00,
+        0x09,        0x41,        0x50,        0x01,        0x91,        0x16,        0x78,        0xf3,
+        0x4b,        0x00,        0x08,        0x00,        0x68,        0x67,        0x84,        0x40,
+        0x10,        0x23,        0x03,        0x30,        0x4d,        0x00,        0x07,        0x00,
+        0x40,        0x00,        0x00,        0x00,        0x00,        0x00,        0x00,        0x57,
+        0x00,        0x09,        0x00,        0x85,        0x3b,        0x95,        0x98,        0x5a,
+        0x3e,        0x99,        0x89,        0x55,        0x5d,        0x00,        0x39,        0x00,
+        0x49,        0x00,        0x01,        0x00,        0x05,        0x57,        0x00,        0x09,
+        0x00,        0x80,        0x3b,        0x95,        0x98,        0x5a,        0x3e,        0x99,
+        0x89,        0x55,        0x57,        0x00,        0x09,        0x01,        0x84,        0x3b,
+        0x95,        0x98,        0x5a,        0x3e,        0x99,        0x89,        0x56,        0x57,
+        0x00,        0x09,        0x02,        0x8f,        0x3b,        0x95,        0x98,        0x5a,
+        0x3e,        0x99,        0x89,        0x57,        0x57,        0x00,        0x09,        0x06,
+        0xa6,        0x3b,        0x95,        0x98,        0x5a,        0x3e,        0x99,        0x89,
+        0x59,        0x03,        0x00,        0x01,        0x00,        0x64,        0xff,        0x00,
+        0x06,        0x00,        0x00,        0x00,        0x01,        0x62,        0x9c,        0xc4,
     ];
-    let decoded = CreateBearerRequest {
+    let decoded = CreateIndirectDataForwardingTunnelRequest {
         header: Gtpv2Header {
-            msgtype: CREATE_BEARER_REQ,
+            msgtype: CREATE_IND_DATA_FW_TUN_REQ,
             piggyback: false,
             message_prio: None,
-            length: 93,
+            length: 132,
             teid: Some(0x0909a456),
             sqn: 0x2f,
         },
-        linked_ebi: Ebi {
-            t: EBI,
-            length: EBI_LENGTH as u16,
+        imsi: Some(Imsi {
+            length: 8,
+            imsi: "901405101961873".to_string(),
+            ..Default::default()
+        }),
+        mei: Some(Mei {
+            mei: "8676480401323003".to_string(),
+            ..Default::default()
+        }),
+        indication: Some(Indication {
+            dtf: true,
+            ..Default::default()
+        }),
+        fteid_control: Some(Fteid {
+            length: 9,
             ins: 0,
-            value: 5,
-        },
-        pco: Some(Pco {
-            t: PCO,
-            length: 20,
-            ins: 0,
-            pco: vec![
-                0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08,
-                0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
-            ],
+            interface: 5,
+            teid: 0x3b95985a,
+            ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
+            ..Default::default()
         }),
 
-        bearer_ctxs: vec![BearerContext {
-            t: 93,
-            length: 52,
-            ins: 0,
-            cause: None,
-            tft: None,
-            charging_id: Some(ChargingId {
-                t: CHARGINGID,
-                length: 4,
-                ins: 0,
-                charging_id: 23239876,
-            }),
-            bearer_flags: None,
-            pco: None,
-            apco: None,
-            epco: None,
-            max_packet_loss: None,
-            ran_nas_cause: None,
+           bearer_ctxs: vec![BearerContext {
+            length: 57,
             ebi: Ebi {
-                t: EBI,
-                length: 1,
-                ins: 0,
-                value: 0,
+                value: 5,
+                ..Default::default()
             },
             fteids: vec![Fteid {
-                t: 87,
                 length: 9,
-                ins: 2,
-                interface: 5,
+                ins: 0,
+                interface: 0,
                 teid: 0x3b95985a,
                 ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
                 ipv6: None,
-            }],
-            bearer_qos: Some(BearerQos {
-                t: 80,
-                length: 22,
-                ins: 0,
-                pre_emption_vulnerability: 0,
-                priority_level: 11,
-                pre_emption_capability: 0,
-                qci: 9,
-                maxbr_ul: 0,
-                maxbr_dl: 0,
-                gbr_ul: 0,
-                gbr_dl: 0,
-            }),
+                ..Default::default()
+            },
+                Fteid {
+                    length: 9,
+                    ins: 1,
+                    interface: 4,
+                    teid: 0x3b95985a,
+                    ipv4: Some(Ipv4Addr::new(62, 153, 137, 86)),
+                    ipv6: None,
+                    ..Default::default()
+                },
+                Fteid {
+                    length: 9,
+                    ins: 2,
+                    interface: 15,
+                    teid: 0x3b95985a,
+                    ipv4: Some(Ipv4Addr::new(62, 153, 137, 87)),
+                    ipv6: None,
+                    ..Default::default()
+                },
+                Fteid {
+                    length: 9,
+                    ins: 6,
+                    interface: 38,
+                    teid: 0x3b95985a,
+                    ipv4: Some(Ipv4Addr::new(62, 153, 137, 89)),
+                    ipv6: None,
+                    ..Default::default()
+                },],
+            ..BearerContext::default()
+        },],
+        recovery: Some(Recovery {
+            recovery: 100,
+            ..Default::default()
+        }),
+        private_ext: vec![PrivateExtension {
+            length: 6,
+            value: vec![0x01, 0x62, 0x9c, 0xc4],
+            ..Default::default()
         }],
-        ..CreateBearerRequest::default()
     };
 
-    let message = CreateBearerRequest::unmarshal(&encoded).unwrap();
+    let message = CreateIndirectDataForwardingTunnelRequest::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
 
 #[test]
 fn test_create_indirect_data_fw_tunnel_req_marshal() {
     use std::net::Ipv4Addr;
-    let encoded: [u8; 97] = [
-        0x48, 0x5f, 0x00, 0x5d, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x49, 0x00, 0x01,
-        0x00, 0x05, 0x4e, 0x00, 0x14, 0x00, 0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81,
-        0x06, 0x08, 0x08, 0x08, 0x08, 0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61, 0x5d, 0x00, 0x34, 0x00,
-        0x49, 0x00, 0x01, 0x00, 0x00, 0x57, 0x00, 0x09, 0x02, 0x85, 0x3b, 0x95, 0x98, 0x5a, 0x3e,
-        0x99, 0x89, 0x55, 0x50, 0x00, 0x16, 0x00, 0x2c, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5e,
-        0x00, 0x04, 0x00, 0x01, 0x62, 0x9c, 0xc4,
+    let encoded: [u8; 136] = [
+        0x48,        0xa6,        0x00,        0x84,        0x09,        0x09,        0xa4,        0x56,
+        0x00,        0x00,        0x2f,        0x00,        0x01,        0x00,        0x08,        0x00,
+        0x09,        0x41,        0x50,        0x01,        0x91,        0x16,        0x78,        0xf3,
+        0x4b,        0x00,        0x08,        0x00,        0x68,        0x67,        0x84,        0x40,
+        0x10,        0x23,        0x03,        0x30,        0x4d,        0x00,        0x07,        0x00,
+        0x40,        0x00,        0x00,        0x00,        0x00,        0x00,        0x00,        0x57,
+        0x00,        0x09,        0x00,        0x85,        0x3b,        0x95,        0x98,        0x5a,
+        0x3e,        0x99,        0x89,        0x55,        0x5d,        0x00,        0x39,        0x00,
+        0x49,        0x00,        0x01,        0x00,        0x05,        0x57,        0x00,        0x09,
+        0x00,        0x80,        0x3b,        0x95,        0x98,        0x5a,        0x3e,        0x99,
+        0x89,        0x55,        0x57,        0x00,        0x09,        0x01,        0x84,        0x3b,
+        0x95,        0x98,        0x5a,        0x3e,        0x99,        0x89,        0x56,        0x57,
+        0x00,        0x09,        0x02,        0x8f,        0x3b,        0x95,        0x98,        0x5a,
+        0x3e,        0x99,        0x89,        0x57,        0x57,        0x00,        0x09,        0x06,
+        0xa6,        0x3b,        0x95,        0x98,        0x5a,        0x3e,        0x99,        0x89,
+        0x59,        0x03,        0x00,        0x01,        0x00,        0x64,        0xff,        0x00,
+        0x06,        0x00,        0x00,        0x00,        0x01,        0x62,        0x9c,        0xc4,
     ];
-    let decoded = CreateBearerRequest {
+    let decoded = CreateIndirectDataForwardingTunnelRequest {
         header: Gtpv2Header {
-            msgtype: CREATE_BEARER_REQ,
+            msgtype: CREATE_IND_DATA_FW_TUN_REQ,
             piggyback: false,
             message_prio: None,
-            length: 93,
+            length: 132,
             teid: Some(0x0909a456),
             sqn: 0x2f,
         },
-        linked_ebi: Ebi {
-            t: EBI,
-            length: EBI_LENGTH as u16,
+        imsi: Some(Imsi {
+            length: 8,
+            imsi: "901405101961873".to_string(),
+            ..Default::default()
+        }),
+        mei: Some(Mei {
+            mei: "8676480401323003".to_string(),
+            ..Default::default()
+        }),
+        indication: Some(Indication {
+            dtf: true,
+            ..Default::default()
+        }),
+        fteid_control: Some(Fteid {
+            length: 9,
             ins: 0,
-            value: 5,
-        },
-        pco: Some(Pco {
-            t: PCO,
-            length: 20,
-            ins: 0,
-            pco: vec![
-                0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08,
-                0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
-            ],
+            interface: 5,
+            teid: 0x3b95985a,
+            ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
+            ..Default::default()
         }),
 
-        bearer_ctxs: vec![BearerContext {
-            t: 93,
-            length: 52,
-            ins: 0,
-            cause: None,
-            tft: None,
-            charging_id: Some(ChargingId {
-                t: CHARGINGID,
-                length: 4,
-                ins: 0,
-                charging_id: 23239876,
-            }),
-            bearer_flags: None,
-            pco: None,
-            apco: None,
-            epco: None,
-            max_packet_loss: None,
-            ran_nas_cause: None,
+           bearer_ctxs: vec![BearerContext {
+            length: 57,
             ebi: Ebi {
-                t: EBI,
-                length: 1,
-                ins: 0,
-                value: 0,
+                value: 5,
+                ..Default::default()
             },
             fteids: vec![Fteid {
-                t: 87,
                 length: 9,
-                ins: 2,
-                interface: 5,
+                ins: 0,
+                interface: 0,
                 teid: 0x3b95985a,
                 ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
                 ipv6: None,
-            }],
-            bearer_qos: Some(BearerQos {
-                t: 80,
-                length: 22,
-                ins: 0,
-                pre_emption_vulnerability: 0,
-                priority_level: 11,
-                pre_emption_capability: 0,
-                qci: 9,
-                maxbr_ul: 0,
-                maxbr_dl: 0,
-                gbr_ul: 0,
-                gbr_dl: 0,
-            }),
+                ..Default::default()
+            },
+                Fteid {
+                    length: 9,
+                    ins: 1,
+                    interface: 4,
+                    teid: 0x3b95985a,
+                    ipv4: Some(Ipv4Addr::new(62, 153, 137, 86)),
+                    ipv6: None,
+                    ..Default::default()
+                },
+                Fteid {
+                    length: 9,
+                    ins: 2,
+                    interface: 15,
+                    teid: 0x3b95985a,
+                    ipv4: Some(Ipv4Addr::new(62, 153, 137, 87)),
+                    ipv6: None,
+                    ..Default::default()
+                },
+                Fteid {
+                    length: 9,
+                    ins: 6,
+                    interface: 38,
+                    teid: 0x3b95985a,
+                    ipv4: Some(Ipv4Addr::new(62, 153, 137, 89)),
+                    ipv6: None,
+                    ..Default::default()
+                },],
+            ..BearerContext::default()
+        },],
+        recovery: Some(Recovery {
+            recovery: 100,
+            ..Default::default()
+        }),
+        private_ext: vec![PrivateExtension {
+            length: 6,
+            value: vec![0x01, 0x62, 0x9c, 0xc4],
+            ..Default::default()
         }],
-        ..CreateBearerRequest::default()
     };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
