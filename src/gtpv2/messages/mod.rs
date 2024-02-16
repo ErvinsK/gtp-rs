@@ -1,128 +1,128 @@
 /*
-Message Type value (Decimal)                                Message
+Message Type value (Decimal)                                Message                                             Status
 
 0                                                           Reserved
-1                                                           Echo Request
-2                                                           Echo Response
-3                                                           Version Not Supported Indication
+1                                                           Echo Request                                        Implemented
+2                                                           Echo Response                                       Implemented
+3                                                           Version Not Supported Indication                    Implemented
 4 to 16                                                     Reserved for S101 interface
 17 to 24                                                    Reserved for S121 interface
 25 to 31                                                    Reserved for Sv interface
 
 -------------SGSN/MME/ TWAN/ePDG to PGW (S4/S11, S5/S8, S2a, S2b)----------------------------
 
-32                                                          Create Session Request
-33                                                          Create Session Response
-36                                                          Delete Session Request
-37                                                          Delete Session Response
+32                                                          Create Session Request                              Implemented      
+33                                                          Create Session Response                             Implemented
+36                                                          Delete Session Request                              Implemented
+37                                                          Delete Session Response                             Implemented
 
 -------------SGSN/MME/ePDG to PGW (S4/S11, S5/S8, S2b)---------------------------------------
 
-34                                                          Modify Bearer Request
-35                                                          Modify Bearer Response
+34                                                          Modify Bearer Request                               Implemented
+35                                                          Modify Bearer Response                              Implemented
 
 -------------MME to PGW (S11, S5/S8)---------------------------------------------------------
 
-40                                                          Remote UE Report Notification
-41                                                          Remote UE Report Acknowledge
+40                                                          Remote UE Report Notification                       Not implemented
+41                                                          Remote UE Report Acknowledge                        Not implemented
 
 -------------SGSN/MME to PGW (S4/S11, S5/S8)-------------------------------------------------
 
-38                                                          Change Notification Request
-39                                                          Change Notification Response
+38                                                          Change Notification Request                         Implemented
+39                                                          Change Notification Response                        Implemented
 42 to 63                                                    For future use
-164                                                         Resume Notification
-165                                                         Resume Acknowledge
+164                                                         Resume Notification                                 Implemented
+165                                                         Resume Acknowledge                                  Implemented
 
 -------------Messages without explicit response----------------------------------------------
 
-64                                                          Modify Bearer Command
-65                                                          Modify Bearer Failure Indication
-66                                                          Delete Bearer Command
-67                                                          Delete Bearer Failure Indication
-68                                                          Bearer Resource Command
-69                                                          Bearer Resource Failure Indication
-70                                                          Downlink Data Notification Failure Indication
-71                                                          Trace Session Activation
-72                                                          Trace Session Deactivation
-73                                                          Stop Paging Indication
+64                                                          Modify Bearer Command                               Implemented
+65                                                          Modify Bearer Failure Indication                    Implemented
+66                                                          Delete Bearer Command                               Implemented
+67                                                          Delete Bearer Failure Indication                    Implemented
+68                                                          Bearer Resource Command                             Implemented
+69                                                          Bearer Resource Failure Indication                  Implemented
+70                                                          Downlink Data Notification Failure Indication       Not implemented
+71                                                          Trace Session Activation                            Not implemented
+72                                                          Trace Session Deactivation                          Not implemented
+73                                                          Stop Paging Indication                              Not implemented
 74 to 94                                                    For future use
 
 -------------PGW to SGSN/MME/ TWAN/ePDG (S5/S8, S4/S11, S2a, S2b)-----------------------------
 
-95                                                          Create Bearer Request
-96                                                          Create Bearer Response
-97                                                          Update Bearer Request
-98                                                          Update Bearer Response
-99                                                          Delete Bearer Request
-100                                                         Delete Bearer Response
+95                                                          Create Bearer Request                               Implemented
+96                                                          Create Bearer Response                              Implemented
+97                                                          Update Bearer Request                               Implemented
+98                                                          Update Bearer Response                              Implemented
+99                                                          Delete Bearer Request                               Implemented
+100                                                         Delete Bearer Response                              Implemented
 
 -------------PGW to MME, MME to PGW, SGW to PGW, SGW to MME, PGW to TWAN/ePDG, TWAN/ePDG to PGW (S5/S8, S11, S2a, S2b)
 
-101                                                         Delete PDN Connection Set Request
-102                                                         Delete PDN Connection Set Response
+101                                                         Delete PDN Connection Set Request                   Not implemented
+102                                                         Delete PDN Connection Set Response                  Not implemented
 
 -------------PGW to SGSN/MME (S5, S4/S11)------------------------------------------------------
 
-103                                                         PGW Downlink Triggering Notification
-104                                                         PGW Downlink Triggering Acknowledge
+103                                                         PGW Downlink Triggering Notification                Not implemented
+104                                                         PGW Downlink Triggering Acknowledge                 Not implemented
 105 to 127                                                  For future use
 
 -------------MME to MME, SGSN to MME, MME to SGSN, SGSN to SGSN, MME to AMF, AMF to MME (S3/S10/S16/N26)
 
-128                                                         Identification Request
-129                                                         Identification Response
-130                                                         Context Request
-131                                                         Context Response
-132                                                         Context Acknowledge
-133                                                         Forward Relocation Request
-134                                                         Forward Relocation Response
-135                                                         Forward Relocation Complete Notification
-136                                                         Forward Relocation Complete Acknowledge
-137                                                         Forward Access Context Notification
-138                                                         Forward Access Context Acknowledge
-139                                                         Relocation Cancel Request
-140                                                         Relocation Cancel Response
-141                                                         Configuration Transfer Tunnel
+128                                                         Identification Request                              Not implemented
+129                                                         Identification Response                             Not implemented
+130                                                         Context Request                                     Not implemented
+131                                                         Context Response                                    Not implemented
+132                                                         Context Acknowledge                                 Not implemented      
+133                                                         Forward Relocation Request                          Not implemented
+134                                                         Forward Relocation Response                         Not implemented
+135                                                         Forward Relocation Complete Notification            Not implemented
+136                                                         Forward Relocation Complete Acknowledge             Not implemented
+137                                                         Forward Access Context Notification                 Not implemented
+138                                                         Forward Access Context Acknowledge                  Not implemented
+139                                                         Relocation Cancel Request                           Not implemented
+140                                                         Relocation Cancel Response                          Not implemented
+141                                                         Configuration Transfer Tunnel                       Not implemented   
 142 to 148                                                  For future use
-152                                                         RAN Information Relay
+152                                                         RAN Information Relay                               Not implemented
 
 ------------SGSN to MME, MME to SGSN (S3)---------------------------------------------------------
 
-149                                                         Detach Notification
-150                                                         Detach Acknowledge
-151                                                         CS Paging Indication
-153                                                         Alert MME Notification
-154                                                         Alert MME Acknowledge
-155                                                         UE Activity Notification
-156                                                         UE Activity Acknowledge
-157                                                         ISR Status Indication
-158                                                         UE Registration Query Request
-159                                                         UE Registration Query Response
+149                                                         Detach Notification                                 Not implemented
+150                                                         Detach Acknowledge                                  Not implemented
+151                                                         CS Paging Indication                                Not implemented
+153                                                         Alert MME Notification                              Implemented       
+154                                                         Alert MME Acknowledge                               Implemented
+155                                                         UE Activity Notification                            Implemented
+156                                                         UE Activity Acknowledge                             Implemented
+157                                                         ISR Status Indication                               Not implemented
+158                                                         UE Registration Query Request                       Not implemented    
+159                                                         UE Registration Query Response                      Not implemented
 
 -----------SGSN/MME to SGW, SGSN to MME (S4/S11/S3), SGSN to SGSN (S16), SGW to PGW (S5/S8)-------
 
-162                                                         Suspend Notification
-163                                                         Suspend Acknowledge
+162                                                         Suspend Notification                                Implemented
+163                                                         Suspend Acknowledge                                 Implemented
 
 -----------SGSN/MME to SGW (S4/S11)---------------------------------------------------------------
 
-160                                                         Create Forwarding Tunnel Request
-161                                                         Create Forwarding Tunnel Response
-166                                                         Create Indirect Data Forwarding Tunnel Request
-167                                                         Create Indirect Data Forwarding Tunnel Response
-168                                                         Delete Indirect Data Forwarding Tunnel Request
-169                                                         Delete Indirect Data Forwarding Tunnel Response
-170                                                         Release Access Bearers Request
-171                                                         Release Access Bearers Response
+160                                                         Create Forwarding Tunnel Request                    Not implemented
+161                                                         Create Forwarding Tunnel Response                   Not implemented
+166                                                         Create Indirect Data Forwarding Tunnel Request      Implemented
+167                                                         Create Indirect Data Forwarding Tunnel Response     Implemented
+168                                                         Delete Indirect Data Forwarding Tunnel Request      Implemented
+169                                                         Delete Indirect Data Forwarding Tunnel Response     Implemented
+170                                                         Release Access Bearers Request                      Not implemented
+171                                                         Release Access Bearers Response                     Not implemented
 172 to 175                                                  For future use
 
 ----------SGW to SGSN/MME (S4/S11)----------------------------------------------------------------
 
-176                                                         Downlink Data Notification
-177                                                         Downlink Data Notification Acknowledge
-179                                                         PGW Restart Notification
-180                                                         PGW Restart Notification Acknowledge
+176                                                         Downlink Data Notification                          Not implemented
+177                                                         Downlink Data Notification Acknowledge              Not implemented
+179                                                         PGW Restart Notification                            Not implemented
+180                                                         PGW Restart Notification Acknowledge                Not implemented
 
 ----------SGW to SGSN (S4)------------------------------------------------------------------------
 
@@ -131,24 +131,24 @@ Message Type value (Decimal)                                Message
 
 ----------SGW to PGW, PGW to SGW (S5/S8)----------------------------------------------------------
 
-200                                                         Update PDN Connection Set Request
-201                                                         Update PDN Connection Set Response
+200                                                         Update PDN Connection Set Request                   Not implemented
+201                                                         Update PDN Connection Set Response                  Not implemented
 202 to 210                                                  For future use
 
 ----------MME to SGW (S11)------------------------------------------------------------------------
 
-211                                                         Modify Access Bearers Request
-212                                                         Modify Access Bearers Response
+211                                                         Modify Access Bearers Request                       Not implemented
+212                                                         Modify Access Bearers Response                      Not implemented
 213 to 230                                                  For future use
 
 ----------MBMS GW to MME/SGSN (Sm/Sn)-------------------------------------------------------------
 
-231                                                         MBMS Session Start Request
-232                                                         MBMS Session Start Response
-233                                                         MBMS Session Update Request
-234                                                         MBMS Session Update Response
-235                                                         MBMS Session Stop Request
-236                                                         MBMS Session Stop Response
+231                                                         MBMS Session Start Request                          Not implemented
+232                                                         MBMS Session Start Response                         Not implemented
+233                                                         MBMS Session Update Request                         Not implemented
+234                                                         MBMS Session Update Response                        Not implemented
+235                                                         MBMS Session Stop Request                           Not implemented
+236                                                         MBMS Session Stop Response                          Not implemented   
 237 to 239                                                  For future use
 
 ----------Other-----------------------------------------------------------------------------------
@@ -168,7 +168,8 @@ pub use {
     modifybearercommand::*, modifybearerfailureind::*, modifybearerreq::*, modifybearerresp::*,
     resumeacknowledge::*, resumenotification::*, suspendacknowledge::*, suspendnotification::*,
     ueactivityacknowledge::*, ueactivitynotification::*, updatebearerreq::*, updatebearerresp::*,
-    versionnotsupported::*, createindirectdatafwtunnelreq::*,
+    versionnotsupported::*, createindirectdatafwtunnelreq::*, createindirectdatafwtunnelresp::*,
+    deleteindirectdatafwtunnelreq::*, deleteindirectdatafwtunnelresp::*,
 };
 
 mod alertmmeacknowledge;
@@ -205,3 +206,6 @@ mod updatebearerreq;
 mod updatebearerresp;
 mod versionnotsupported;
 mod createindirectdatafwtunnelreq;
+mod createindirectdatafwtunnelresp;
+mod deleteindirectdatafwtunnelreq;
+mod deleteindirectdatafwtunnelresp;
