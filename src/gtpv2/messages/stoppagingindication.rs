@@ -7,33 +7,33 @@ use crate::gtpv2::{
 
 // According to 3GPP TS 29.274 V15.9.0 (2019-09)
 
-pub const RESUME_ACK: u8 = 165;
+pub const STOP_PAGING_IND: u8 = 164;
 
-// Definition of GTPv2-C Resume Acknowledge Message
+// Definition of GTPv2-C Stop Paging Indication Message
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ResumeAcknowledge {
+pub struct StopPagingIndication {
     pub header: Gtpv2Header,
-    pub cause: Cause,
+    pub imsi: Option<Imsi>,
     pub private_ext: Vec<PrivateExtension>,
 }
 
-impl Default for ResumeAcknowledge {
+impl Default for StopPagingIndication {
     fn default() -> Self {
         let hdr = Gtpv2Header {
-            msgtype: RESUME_ACK,
+            msgtype: STOP_PAGING_IND,
             teid: Some(0),
             ..Default::default()
         };
-        ResumeAcknowledge {
+        StopPagingIndication {
             header: hdr,
-            cause: Cause::default(),
+            imsi: None,
             private_ext: vec![],
         }
     }
 }
 
-impl Messages for ResumeAcknowledge {
+impl Messages for StopPagingIndication {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         self.header.marshal(buffer);
         let elements = self.tovec();
@@ -42,16 +42,15 @@ impl Messages for ResumeAcknowledge {
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
-        let mut message = ResumeAcknowledge::default();
+        let mut message = StopPagingIndication::default();
         match Gtpv2Header::unmarshal(buffer) {
             Ok(i) => message.header = i,
             Err(j) => return Err(j),
         }
 
-        if message.header.msgtype != RESUME_ACK {
+        if message.header.msgtype != STOP_PAGING_IND {
             return Err(GTPV2Error::MessageIncorrectMessageType);
         }
-
         let offset = message.header.length as usize + MANDATORY_HDR_LENGTH;
 
         if buffer.len() >= offset{
@@ -70,7 +69,9 @@ impl Messages for ResumeAcknowledge {
     fn tovec(&self) -> Vec<InformationElement> {
         let mut elements: Vec<InformationElement> = vec![];
 
-        elements.push(self.cause.clone().into());
+        if let Some(i) = self.imsi.clone() {
+            elements.push(i.into());
+        }
 
         self.private_ext
             .iter()
@@ -80,51 +81,45 @@ impl Messages for ResumeAcknowledge {
     }
 
     fn fromvec(&mut self, elements: Vec<InformationElement>) -> Result<bool, GTPV2Error> {
-        let mut mandatory = false;
         for e in elements.into_iter() {
             match e {
-                InformationElement::Cause(j) => {
-                    if let (0, false) = (j.ins, mandatory) {
-                        (self.cause, mandatory) = (j, true);
+                InformationElement::Imsi(j) => {
+                    if j.ins == 0 {
+                        self.imsi = Some(j);
                     }
                 }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j),
                 _ => (),
             }
         }
-        if mandatory {
-            Ok(true)
-        } else {
-            Err(GTPV2Error::MessageMandatoryIEMissing(CAUSE))
-        }
+        Ok(true)
     }
 }
 
 #[test]
-fn test_resume_ack_unmarshal() {
-    let encoded: [u8; 28] = [
-        0x48, 0xa5, 0x00, 0x18, 0xa4, 0x78, 0x95, 0x80, 0x4b, 0x29, 0x1e, 0x00, 0x02, 0x00, 0x02,
-        0x00, 0x10, 0x00, 0xff, 0x00, 0x06, 0x00, 0x07, 0xdb, 0x07, 0x00, 0x01, 0x00,
+fn test_stop_paging_indication_unmarshal() {
+    let encoded: [u8; 34] = [
+        0x48, 0xa4, 0x00, 0x1e, 0xa4, 0x78, 0x95, 0x80, 
+        0x4b, 0x29, 0x1e, 0x00, 0x01, 0x00, 0x08, 0x00, 
+        0x09, 0x41, 0x50, 0x01, 0x91, 0x16, 0x78, 0xf3, 
+        0xff, 0x00, 0x06, 0x00, 0x07, 0xdb, 0x07, 0x00, 
+        0x01, 0x00,
     ];
-    let decoded = ResumeAcknowledge {
+    let decoded = StopPagingIndication {
         header: Gtpv2Header {
-            msgtype: RESUME_ACK,
+            msgtype: STOP_PAGING_IND,
             piggyback: false,
             message_prio: None,
-            length: 24,
+            length: 30,
             teid: Some(0xa4789580),
             sqn: 0x4b291e,
         },
-        cause: Cause {
-            t: CAUSE,
-            length: 2,
-            ins: 0,
-            value: 16,
-            pce: false,
-            bce: false,
-            cs: false,
-            offend_ie_type: None,
-        },
+        imsi: Some(Imsi {
+            t: 0x01,
+            length: 0x08,
+            ins: 0x00,
+            imsi: "901405101961873".to_string(),
+        }),
         private_ext: vec![PrivateExtension {
             t: PRIVATE_EXT,
             length: 6,
@@ -133,35 +128,34 @@ fn test_resume_ack_unmarshal() {
             value: vec![0x07, 0x00, 0x01, 0x00],
         }],
     };
-    let message = ResumeAcknowledge::unmarshal(&encoded).unwrap();
+    let message = StopPagingIndication::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
 
 #[test]
-fn test_resume_ack_marshal() {
-    let encoded: [u8; 28] = [
-        0x48, 0xa5, 0x00, 0x18, 0xa4, 0x78, 0x95, 0x80, 0x4b, 0x29, 0x1e, 0x00, 0x02, 0x00, 0x02,
-        0x00, 0x10, 0x00, 0xff, 0x00, 0x06, 0x00, 0x07, 0xdb, 0x07, 0x00, 0x01, 0x00,
+fn test_stop_paging_indication_marshal() {
+    let encoded: [u8; 34] = [
+        0x48, 0xa4, 0x00, 0x1e, 0xa4, 0x78, 0x95, 0x80, 
+        0x4b, 0x29, 0x1e, 0x00, 0x01, 0x00, 0x08, 0x00, 
+        0x09, 0x41, 0x50, 0x01, 0x91, 0x16, 0x78, 0xf3, 
+        0xff, 0x00, 0x06, 0x00, 0x07, 0xdb, 0x07, 0x00, 
+        0x01, 0x00,
     ];
-    let decoded = ResumeAcknowledge {
+    let decoded = StopPagingIndication {
         header: Gtpv2Header {
-            msgtype: RESUME_ACK,
+            msgtype: STOP_PAGING_IND,
             piggyback: false,
             message_prio: None,
-            length: 24,
+            length: 30,
             teid: Some(0xa4789580),
             sqn: 0x4b291e,
         },
-        cause: Cause {
-            t: CAUSE,
-            length: 2,
-            ins: 0,
-            value: 16,
-            pce: false,
-            bce: false,
-            cs: false,
-            offend_ie_type: None,
-        },
+        imsi: Some(Imsi {
+            t: 0x01,
+            length: 0x08,
+            ins: 0x00,
+            imsi: "901405101961873".to_string(),
+        }),
         private_ext: vec![PrivateExtension {
             t: PRIVATE_EXT,
             length: 6,

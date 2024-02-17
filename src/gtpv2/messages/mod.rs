@@ -45,7 +45,7 @@ Message Type value (Decimal)                                Message             
 70                                                          Downlink Data Notification Failure Indication       Not implemented
 71                                                          Trace Session Activation                            Not implemented
 72                                                          Trace Session Deactivation                          Not implemented
-73                                                          Stop Paging Indication                              Not implemented
+73                                                          Stop Paging Indication                              Implemented
 74 to 94                                                    For future use
 
 -------------PGW to SGSN/MME/ TWAN/ePDG (S5/S8, S4/S11, S2a, S2b)-----------------------------
@@ -113,8 +113,8 @@ Message Type value (Decimal)                                Message             
 167                                                         Create Indirect Data Forwarding Tunnel Response     Implemented
 168                                                         Delete Indirect Data Forwarding Tunnel Request      Implemented
 169                                                         Delete Indirect Data Forwarding Tunnel Response     Implemented
-170                                                         Release Access Bearers Request                      Not implemented
-171                                                         Release Access Bearers Response                     Not implemented
+170                                                         Release Access Bearers Request                      Implemented
+171                                                         Release Access Bearers Response                     Implemented
 172 to 175                                                  For future use
 
 ----------SGW to SGSN/MME (S4/S11)----------------------------------------------------------------
@@ -169,7 +169,8 @@ pub use {
     resumeacknowledge::*, resumenotification::*, suspendacknowledge::*, suspendnotification::*,
     ueactivityacknowledge::*, ueactivitynotification::*, updatebearerreq::*, updatebearerresp::*,
     versionnotsupported::*, createindirectdatafwtunnelreq::*, createindirectdatafwtunnelresp::*,
-    deleteindirectdatafwtunnelreq::*, deleteindirectdatafwtunnelresp::*,
+    deleteindirectdatafwtunnelreq::*, deleteindirectdatafwtunnelresp::*, releaseaccessbearersreq::*,
+    releaseaccessbearersresp::*, stoppagingindication::*,
 };
 
 mod alertmmeacknowledge;
@@ -209,3 +210,6 @@ mod createindirectdatafwtunnelreq;
 mod createindirectdatafwtunnelresp;
 mod deleteindirectdatafwtunnelreq;
 mod deleteindirectdatafwtunnelresp;
+mod releaseaccessbearersreq;
+mod releaseaccessbearersresp;
+mod stoppagingindication;
