@@ -56,7 +56,7 @@ pub enum InformationElement {
     TargetIdentification(TargetIdentification),
     PacketFlowId(PacketFlowId),
     RabContext(RabContext),
-    SrcRncPdcpCtxInfo(SrcRncPdcpCtxInfo),
+    SrcRncPdcpCtxInfo(SourceRncPdcpContextInfo),
     PortNumber(PortNumber),
     ApnRestriction(ApnRestriction),
     SelectionMode(SelectionMode),
@@ -680,7 +680,7 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                125 => match SrcRncPdcpCtxInfo::unmarshal(&buffer[cursor..]) {
+                125 => match SourceRncPdcpContextInfo::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
                         ies.push(i.into());

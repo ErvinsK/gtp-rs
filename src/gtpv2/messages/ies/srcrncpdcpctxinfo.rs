@@ -13,16 +13,16 @@ pub const SRC_RNC_PDCP: u8 = 125;
 // Source RNC PDCP Context Info IE implementation
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct SrcRncPdcpCtxInfo {
+pub struct SourceRncPdcpContextInfo {
     pub t: u8,
     pub length: u16,
     pub ins: u8,
     pub rrc_container: Vec<u8>,
 }
 
-impl Default for SrcRncPdcpCtxInfo {
+impl Default for SourceRncPdcpContextInfo {
     fn default() -> Self {
-        SrcRncPdcpCtxInfo {
+        SourceRncPdcpContextInfo {
             t: SRC_RNC_PDCP,
             length: 0,
             ins: 0,
@@ -31,13 +31,13 @@ impl Default for SrcRncPdcpCtxInfo {
     }
 }
 
-impl From<SrcRncPdcpCtxInfo> for InformationElement {
-    fn from(i: SrcRncPdcpCtxInfo) -> Self {
+impl From<SourceRncPdcpContextInfo> for InformationElement {
+    fn from(i: SourceRncPdcpContextInfo) -> Self {
         InformationElement::SrcRncPdcpCtxInfo(i)
     }
 }
 
-impl IEs for SrcRncPdcpCtxInfo {
+impl IEs for SourceRncPdcpContextInfo {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(SRC_RNC_PDCP);
@@ -50,10 +50,10 @@ impl IEs for SrcRncPdcpCtxInfo {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE {
-            let mut data = SrcRncPdcpCtxInfo {
+            let mut data = SourceRncPdcpContextInfo {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                ..SrcRncPdcpCtxInfo::default()
+                ..SourceRncPdcpContextInfo::default()
             };
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.rrc_container
@@ -82,7 +82,7 @@ fn src_rnc_pdcp_ctx_ie_marshal_test() {
         0x7d, 0x00, 0x14, 0x00, 0x80, 0x80, 0x21, 0x10, 0x01, 0x01, 0x00, 0x10, 0x81, 0x06, 0x00,
         0x00, 0x00, 0x00, 0x83, 0x06, 0x00, 0x00, 0x00, 0x00,
     ];
-    let decoded = SrcRncPdcpCtxInfo {
+    let decoded = SourceRncPdcpContextInfo {
         t: SRC_RNC_PDCP,
         length: 20,
         ins: 0,
@@ -102,7 +102,7 @@ fn src_rnc_pdcp_ie_unmarshal_test() {
         0x7d, 0x00, 0x14, 0x00, 0x80, 0x80, 0x21, 0x10, 0x01, 0x01, 0x00, 0x10, 0x81, 0x06, 0x00,
         0x00, 0x00, 0x00, 0x83, 0x06, 0x00, 0x00, 0x00, 0x00,
     ];
-    let decoded = SrcRncPdcpCtxInfo {
+    let decoded = SourceRncPdcpContextInfo {
         t: SRC_RNC_PDCP,
         length: 20,
         ins: 0,
@@ -111,5 +111,5 @@ fn src_rnc_pdcp_ie_unmarshal_test() {
             0x83, 0x06, 0x00, 0x00, 0x00, 0x00,
         ],
     };
-    assert_eq!(SrcRncPdcpCtxInfo::unmarshal(&encoded).unwrap(), decoded);
+    assert_eq!(SourceRncPdcpContextInfo::unmarshal(&encoded).unwrap(), decoded);
 }

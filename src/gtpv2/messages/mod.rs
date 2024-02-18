@@ -89,8 +89,8 @@ Message Type value (Decimal)                                Message             
 
 ------------SGSN to MME, MME to SGSN (S3)---------------------------------------------------------
 
-149                                                         Detach Notification                                 Not implemented
-150                                                         Detach Acknowledge                                  Not implemented
+149                                                         Detach Notification                                 Implemented
+150                                                         Detach Acknowledge                                  Implemented
 151                                                         CS Paging Indication                                Not implemented
 153                                                         Alert MME Notification                              Implemented       
 154                                                         Alert MME Acknowledge                               Implemented
@@ -171,7 +171,7 @@ pub use {
     versionnotsupported::*, createindirectdatafwtunnelreq::*, createindirectdatafwtunnelresp::*,
     deleteindirectdatafwtunnelreq::*, deleteindirectdatafwtunnelresp::*, releaseaccessbearersreq::*,
     releaseaccessbearersresp::*, stoppagingindication::*, remoteuereportnotification::*, remoteuereportacknowledge::*,
-    downlinkdatanotificationfailureindication::*,
+    downlinkdatanotificationfailureindication::*, detachacknowledge::*, detachnotification::*,
 };
 
 mod alertmmeacknowledge;
@@ -217,3 +217,5 @@ mod stoppagingindication;
 mod remoteuereportnotification;
 mod remoteuereportacknowledge;
 mod downlinkdatanotificationfailureindication;
+mod detachacknowledge;
+mod detachnotification;
