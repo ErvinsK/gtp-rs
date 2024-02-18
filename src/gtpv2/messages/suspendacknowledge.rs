@@ -52,8 +52,10 @@ impl Messages for SuspendAcknowledge {
             return Err(GTPV2Error::MessageIncorrectMessageType);
         }
 
-        if (message.header.length as usize) + 4 <= buffer.len() {
-            match InformationElement::decoder(&buffer[12..]) {
+        let offset = message.header.length as usize + MANDATORY_HDR_LENGTH;
+
+        if buffer.len() >= offset{
+            match InformationElement::decoder(&buffer[MAX_HEADER_LENGTH..offset]) {
                 Ok(i) => match message.fromvec(i) {
                     Ok(_) => Ok(message),
                     Err(j) => Err(j),

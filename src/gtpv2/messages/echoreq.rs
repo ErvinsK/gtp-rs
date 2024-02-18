@@ -53,8 +53,10 @@ impl Messages for EchoRequest {
             return Err(GTPV2Error::MessageIncorrectMessageType);
         }
 
-        if (message.header.length as usize) + 4 <= buffer.len() {
-            match InformationElement::decoder(&buffer[MIN_HEADER_LENGTH..]) {
+        let offset = message.header.length as usize + MANDATORY_HDR_LENGTH;
+
+        if buffer.len() >= offset{
+            match InformationElement::decoder(&buffer[MIN_HEADER_LENGTH..offset]) {
                 Ok(i) => match message.fromvec(i) {
                     Ok(_) => Ok(message),
                     Err(j) => Err(j),

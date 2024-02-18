@@ -23,8 +23,8 @@ Message Type value (Decimal)                                Message             
 
 -------------MME to PGW (S11, S5/S8)---------------------------------------------------------
 
-40                                                          Remote UE Report Notification                       Not implemented
-41                                                          Remote UE Report Acknowledge                        Not implemented
+40                                                          Remote UE Report Notification                       Implemented
+41                                                          Remote UE Report Acknowledge                        Implemented
 
 -------------SGSN/MME to PGW (S4/S11, S5/S8)-------------------------------------------------
 
@@ -42,7 +42,7 @@ Message Type value (Decimal)                                Message             
 67                                                          Delete Bearer Failure Indication                    Implemented
 68                                                          Bearer Resource Command                             Implemented
 69                                                          Bearer Resource Failure Indication                  Implemented
-70                                                          Downlink Data Notification Failure Indication       Not implemented
+70                                                          Downlink Data Notification Failure Indication       Implemented
 71                                                          Trace Session Activation                            Not implemented
 72                                                          Trace Session Deactivation                          Not implemented
 73                                                          Stop Paging Indication                              Implemented
@@ -170,7 +170,8 @@ pub use {
     ueactivityacknowledge::*, ueactivitynotification::*, updatebearerreq::*, updatebearerresp::*,
     versionnotsupported::*, createindirectdatafwtunnelreq::*, createindirectdatafwtunnelresp::*,
     deleteindirectdatafwtunnelreq::*, deleteindirectdatafwtunnelresp::*, releaseaccessbearersreq::*,
-    releaseaccessbearersresp::*, stoppagingindication::*,
+    releaseaccessbearersresp::*, stoppagingindication::*, remoteuereportnotification::*, remoteuereportacknowledge::*,
+    downlinkdatanotificationfailureindication::*,
 };
 
 mod alertmmeacknowledge;
@@ -213,3 +214,6 @@ mod deleteindirectdatafwtunnelresp;
 mod releaseaccessbearersreq;
 mod releaseaccessbearersresp;
 mod stoppagingindication;
+mod remoteuereportnotification;
+mod remoteuereportacknowledge;
+mod downlinkdatanotificationfailureindication;
