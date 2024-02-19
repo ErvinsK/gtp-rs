@@ -43,8 +43,8 @@ Message Type value (Decimal)                                Message             
 68                                                          Bearer Resource Command                             Implemented
 69                                                          Bearer Resource Failure Indication                  Implemented
 70                                                          Downlink Data Notification Failure Indication       Implemented
-71                                                          Trace Session Activation                            Not implemented
-72                                                          Trace Session Deactivation                          Not implemented
+71                                                          Trace Session Activation                            Implemented
+72                                                          Trace Session Deactivation                          Implemented
 73                                                          Stop Paging Indication                              Implemented
 74 to 94                                                    For future use
 
@@ -171,7 +171,8 @@ pub use {
     versionnotsupported::*, createindirectdatafwtunnelreq::*, createindirectdatafwtunnelresp::*,
     deleteindirectdatafwtunnelreq::*, deleteindirectdatafwtunnelresp::*, releaseaccessbearersreq::*,
     releaseaccessbearersresp::*, stoppagingindication::*, remoteuereportnotification::*, remoteuereportacknowledge::*,
-    downlinkdatanotificationfailureindication::*, detachacknowledge::*, detachnotification::*,
+    downlinkdatanotificationfailureindication::*, detachacknowledge::*, detachnotification::*, tracesessionactivation::*,
+    tracesessiondeactivation::*,
 };
 
 mod alertmmeacknowledge;
@@ -219,3 +220,5 @@ mod remoteuereportacknowledge;
 mod downlinkdatanotificationfailureindication;
 mod detachacknowledge;
 mod detachnotification;
+mod tracesessionactivation;
+mod tracesessiondeactivation;
