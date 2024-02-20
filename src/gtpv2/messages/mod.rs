@@ -59,8 +59,8 @@ Message Type value (Decimal)                                Message             
 
 -------------PGW to MME, MME to PGW, SGW to PGW, SGW to MME, PGW to TWAN/ePDG, TWAN/ePDG to PGW (S5/S8, S11, S2a, S2b)
 
-101                                                         Delete PDN Connection Set Request                   Not implemented
-102                                                         Delete PDN Connection Set Response                  Not implemented
+101                                                         Delete PDN Connection Set Request                   Implemented
+102                                                         Delete PDN Connection Set Response                  Implemented
 
 -------------PGW to SGSN/MME (S5, S4/S11)------------------------------------------------------
 
@@ -172,7 +172,7 @@ pub use {
     deleteindirectdatafwtunnelreq::*, deleteindirectdatafwtunnelresp::*, releaseaccessbearersreq::*,
     releaseaccessbearersresp::*, stoppagingindication::*, remoteuereportnotification::*, remoteuereportacknowledge::*,
     downlinkdatanotificationfailureindication::*, detachacknowledge::*, detachnotification::*, tracesessionactivation::*,
-    tracesessiondeactivation::*,
+    tracesessiondeactivation::*, deletepdnconnectionsetreq::*, deletepdnconnectionsetresp::*,
 };
 
 mod alertmmeacknowledge;
@@ -222,3 +222,5 @@ mod detachacknowledge;
 mod detachnotification;
 mod tracesessionactivation;
 mod tracesessiondeactivation;
+mod deletepdnconnectionsetreq;
+mod deletepdnconnectionsetresp;
