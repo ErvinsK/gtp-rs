@@ -131,8 +131,8 @@ Message Type value (Decimal)                                Message             
 
 ----------SGW to PGW, PGW to SGW (S5/S8)----------------------------------------------------------
 
-200                                                         Update PDN Connection Set Request                   Not implemented
-201                                                         Update PDN Connection Set Response                  Not implemented
+200                                                         Update PDN Connection Set Request                   Implemented
+201                                                         Update PDN Connection Set Response                  Implemented
 202 to 210                                                  For future use
 
 ----------MME to SGW (S11)------------------------------------------------------------------------
@@ -172,7 +172,8 @@ pub use {
     deleteindirectdatafwtunnelreq::*, deleteindirectdatafwtunnelresp::*, releaseaccessbearersreq::*,
     releaseaccessbearersresp::*, stoppagingindication::*, remoteuereportnotification::*, remoteuereportacknowledge::*,
     downlinkdatanotificationfailureindication::*, detachacknowledge::*, detachnotification::*, tracesessionactivation::*,
-    tracesessiondeactivation::*, deletepdnconnectionsetreq::*, deletepdnconnectionsetresp::*,
+    tracesessiondeactivation::*, deletepdnconnectionsetreq::*, deletepdnconnectionsetresp::*, updatepdnconnectionsetreq::*,
+    updatepdnconnectionsetresp::*,
 };
 
 mod alertmmeacknowledge;
@@ -224,3 +225,5 @@ mod tracesessionactivation;
 mod tracesessiondeactivation;
 mod deletepdnconnectionsetreq;
 mod deletepdnconnectionsetresp;
+mod updatepdnconnectionsetreq;
+mod updatepdnconnectionsetresp;
