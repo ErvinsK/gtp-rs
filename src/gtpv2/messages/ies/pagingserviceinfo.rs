@@ -78,7 +78,11 @@ impl IEs for PagingServiceInfo {
     }
 
     fn len(&self) -> usize {
+        if self.paging_policy.is_some() {
+            PAGING_SRVC_INFO_LENGTH + MIN_IE_SIZE + 1
+        } else {
         PAGING_SRVC_INFO_LENGTH + MIN_IE_SIZE
+        }
     }
 
     fn is_empty(&self) -> bool {

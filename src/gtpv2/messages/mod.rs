@@ -96,9 +96,9 @@ Message Type value (Decimal)                                Message             
 154                                                         Alert MME Acknowledge                               Implemented
 155                                                         UE Activity Notification                            Implemented
 156                                                         UE Activity Acknowledge                             Implemented
-157                                                         ISR Status Indication                               Not implemented
-158                                                         UE Registration Query Request                       Not implemented    
-159                                                         UE Registration Query Response                      Not implemented
+157                                                         ISR Status Indication                               Implemented
+158                                                         UE Registration Query Request                       Implemented    
+159                                                         UE Registration Query Response                      Implemented
 
 -----------SGSN/MME to SGW, SGSN to MME (S4/S11/S3), SGSN to SGSN (S16), SGW to PGW (S5/S8)-------
 
@@ -119,10 +119,10 @@ Message Type value (Decimal)                                Message             
 
 ----------SGW to SGSN/MME (S4/S11)----------------------------------------------------------------
 
-176                                                         Downlink Data Notification                          Not implemented
-177                                                         Downlink Data Notification Acknowledge              Not implemented
-179                                                         PGW Restart Notification                            Not implemented
-180                                                         PGW Restart Notification Acknowledge                Not implemented
+176                                                         Downlink Data Notification                          Implemented
+177                                                         Downlink Data Notification Acknowledge              Implemented
+179                                                         PGW Restart Notification                            Implemented
+180                                                         PGW Restart Notification Acknowledge                Implemented
 
 ----------SGW to SGSN (S4)------------------------------------------------------------------------
 
@@ -173,7 +173,9 @@ pub use {
     releaseaccessbearersresp::*, stoppagingindication::*, remoteuereportnotification::*, remoteuereportacknowledge::*,
     downlinkdatanotificationfailureindication::*, detachacknowledge::*, detachnotification::*, tracesessionactivation::*,
     tracesessiondeactivation::*, deletepdnconnectionsetreq::*, deletepdnconnectionsetresp::*, updatepdnconnectionsetreq::*,
-    updatepdnconnectionsetresp::*,
+    updatepdnconnectionsetresp::*, downlinkdatanotification::*, downlinkdatanotificationacknowledge::*,
+    pgwrestartnotificationacknowledge::*, pgwrestartnotification::*, isrstatusindication::*, ueregistrationqueryreq::*,
+    ueregistrationqueryresp::*,
 };
 
 mod alertmmeacknowledge;
@@ -227,3 +229,10 @@ mod deletepdnconnectionsetreq;
 mod deletepdnconnectionsetresp;
 mod updatepdnconnectionsetreq;
 mod updatepdnconnectionsetresp;
+mod downlinkdatanotification;
+mod downlinkdatanotificationacknowledge;
+mod pgwrestartnotificationacknowledge;
+mod pgwrestartnotification;
+mod isrstatusindication;
+mod ueregistrationqueryreq;
+mod ueregistrationqueryresp;

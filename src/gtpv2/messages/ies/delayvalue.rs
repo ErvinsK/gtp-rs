@@ -64,7 +64,7 @@ impl IEs for DelayValue {
     }
 
     fn len(&self) -> usize {
-        (self.length as usize) + MIN_IE_SIZE
+        DELAY_VALUE_LENGTH + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {
