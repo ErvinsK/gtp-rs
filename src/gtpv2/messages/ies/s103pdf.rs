@@ -86,19 +86,19 @@ impl IEs for S103pdf {
                         }
                     }
                     0x10 => {
-                        if buffer.len() >= 0x1a {
+                        if buffer.len() >= 25 {
                             let mut dst = [0; 16];
                             dst.copy_from_slice(&buffer[5..21]);
                             data.hsgw_ip = IpAddr::from(dst);
                             data.gre_key = u32::from_be_bytes([
-                                buffer[22], buffer[23], buffer[24], buffer[25],
+                                buffer[21], buffer[22], buffer[23], buffer[24],
                             ]);
                         } else {
                             return Err(GTPV2Error::IEInvalidLength(S103_PDF));
                         }
-                        if buffer.len() >= (0x1a + buffer[26] as usize) {
+                        if buffer.len() >= (25 + buffer[25] as usize) {
                             data.eps_bearer_ids
-                                .extend_from_slice(&buffer[27..(27 + buffer[26] as usize)]);
+                                .extend_from_slice(&buffer[26..(26 + buffer[25] as usize)]);
                         } else {
                             return Err(GTPV2Error::IEInvalidLength(S103_PDF));
                         }
@@ -145,17 +145,39 @@ fn s103pdf_ie_ipv4_unmarshal_test() {
 #[test]
 fn s103pdf_ie_ipv6_unmarshal_test() {
     use std::net::{IpAddr, Ipv6Addr};
-    let encoded_ie: [u8; 29] = [
-        0x5a, 0x00, 0x19, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x01, 0x02,
+    let encoded_ie: [u8; 28] = [
+        0x5a, 0x00, 0x18, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x01, 0x02,
     ];
     let test_struct = S103pdf {
         t: S103_PDF,
-        length: 25,
+        length: 24,
         ins: 0,
         hsgw_ip: IpAddr::V6(Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 0)),
         gre_key: 0,
         eps_bearer_ids: vec![1, 2],
+    };
+    let i = S103pdf::unmarshal(&encoded_ie);
+    assert_eq!(i.unwrap(), test_struct);
+}
+
+#[test]
+fn s103pdf_ie_ipv6_sic_unmarshal_test() {
+    use std::net::{IpAddr, Ipv6Addr};
+    let encoded_ie: [u8; 27] = [
+        0x5a,
+        0x00,0x17,0x00,0x10,0x00,0x00,0x00,0x00,
+        0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+        0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+        0x01,0x06,
+    ];
+    let test_struct = S103pdf {
+        t: S103_PDF,
+        length: 23,
+        ins: 0,
+        hsgw_ip: IpAddr::V6(Ipv6Addr::new(0, 0, 0, 0, 0, 0, 0, 0)),
+        gre_key: 0,
+        eps_bearer_ids: vec![6],
     };
     let i = S103pdf::unmarshal(&encoded_ie);
     assert_eq!(i.unwrap(), test_struct);

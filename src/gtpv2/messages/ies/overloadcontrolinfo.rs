@@ -155,7 +155,7 @@ fn overload_control_ie_marshal_test() {
         0x74, 0x03, 0x6e, 0x65, 0x74, 0x03, 0x63, 0x6f, 0x6d,
     ];
     let decoded = OverloadControlInfo {
-        t: LOAD_CNTRL,
+        t: OVERLOAD_CNTRL,
         length: 35,
         ins: 1,
         sqn: Sqn {

@@ -64,8 +64,8 @@ Message Type value (Decimal)                                Message             
 
 -------------PGW to SGSN/MME (S5, S4/S11)------------------------------------------------------
 
-103                                                         PGW Downlink Triggering Notification                Not implemented
-104                                                         PGW Downlink Triggering Acknowledge                 Not implemented
+103                                                         PGW Downlink Triggering Notification                Implemented
+104                                                         PGW Downlink Triggering Acknowledge                 Implemented
 105 to 127                                                  For future use
 
 -------------MME to MME, SGSN to MME, MME to SGSN, SGSN to SGSN, MME to AMF, AMF to MME (S3/S10/S16/N26)
@@ -107,8 +107,8 @@ Message Type value (Decimal)                                Message             
 
 -----------SGSN/MME to SGW (S4/S11)---------------------------------------------------------------
 
-160                                                         Create Forwarding Tunnel Request                    Not implemented
-161                                                         Create Forwarding Tunnel Response                   Not implemented
+160                                                         Create Forwarding Tunnel Request                    Implemented
+161                                                         Create Forwarding Tunnel Response                   Implemented
 166                                                         Create Indirect Data Forwarding Tunnel Request      Implemented
 167                                                         Create Indirect Data Forwarding Tunnel Response     Implemented
 168                                                         Delete Indirect Data Forwarding Tunnel Request      Implemented
@@ -137,8 +137,8 @@ Message Type value (Decimal)                                Message             
 
 ----------MME to SGW (S11)------------------------------------------------------------------------
 
-211                                                         Modify Access Bearers Request                       Not implemented
-212                                                         Modify Access Bearers Response                      Not implemented
+211                                                         Modify Access Bearers Request                       Implemented
+212                                                         Modify Access Bearers Response                      Implemented
 213 to 230                                                  For future use
 
 ----------MBMS GW to MME/SGSN (Sm/Sn)-------------------------------------------------------------
@@ -175,7 +175,8 @@ pub use {
     tracesessiondeactivation::*, deletepdnconnectionsetreq::*, deletepdnconnectionsetresp::*, updatepdnconnectionsetreq::*,
     updatepdnconnectionsetresp::*, downlinkdatanotification::*, downlinkdatanotificationacknowledge::*,
     pgwrestartnotificationacknowledge::*, pgwrestartnotification::*, isrstatusindication::*, ueregistrationqueryreq::*,
-    ueregistrationqueryresp::*,
+    ueregistrationqueryresp::*, modifyaccessbearersreq::*, modifyaccessbearersresp::*, pgwdownlinktriggeringnotification::*,
+    pgwdownlinktriggeringacknowledge::*, createforwardingtunnelreq::*, createforwardingtunnelresp::*,
 };
 
 mod alertmmeacknowledge;
@@ -236,3 +237,9 @@ mod pgwrestartnotification;
 mod isrstatusindication;
 mod ueregistrationqueryreq;
 mod ueregistrationqueryresp;
+mod modifyaccessbearersreq;
+mod modifyaccessbearersresp;
+mod pgwdownlinktriggeringnotification;
+mod pgwdownlinktriggeringacknowledge;
+mod createforwardingtunnelreq;
+mod createforwardingtunnelresp;
