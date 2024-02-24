@@ -170,8 +170,7 @@ impl IEs for Indication {
         buffer.append(&mut buffer_ie);
     }
 
-    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error>
-    {
+    fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= INDICATION_LENGTH + MIN_IE_SIZE {
             let mut data = Indication {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),

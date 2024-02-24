@@ -89,7 +89,7 @@ impl IEs for PdnType {
                     Err(j) => return Err(j),
                 },
                 ..PdnType::default()
-            };           
+            };
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(PDNTYPE))

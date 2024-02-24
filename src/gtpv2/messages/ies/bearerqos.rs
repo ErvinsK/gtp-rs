@@ -81,10 +81,18 @@ impl IEs for BearerQos {
                 priority_level: buffer[4] >> 2 & 0x0f,
                 pre_emption_vulnerability: buffer[4] & 0x01,
                 qci: buffer[5],
-                maxbr_ul: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[6], buffer[7], buffer[8], buffer[9], buffer[10],]),
-                maxbr_dl: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[11], buffer[12], buffer[13], buffer[14], buffer[15],]),
-                gbr_ul: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[16], buffer[17], buffer[18], buffer[19], buffer[20],]),
-                gbr_dl: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[21], buffer[22], buffer[23], buffer[24], buffer[25],]),
+                maxbr_ul: u64::from_be_bytes([
+                    0x00, 0x00, 0x00, buffer[6], buffer[7], buffer[8], buffer[9], buffer[10],
+                ]),
+                maxbr_dl: u64::from_be_bytes([
+                    0x00, 0x00, 0x00, buffer[11], buffer[12], buffer[13], buffer[14], buffer[15],
+                ]),
+                gbr_ul: u64::from_be_bytes([
+                    0x00, 0x00, 0x00, buffer[16], buffer[17], buffer[18], buffer[19], buffer[20],
+                ]),
+                gbr_dl: u64::from_be_bytes([
+                    0x00, 0x00, 0x00, buffer[21], buffer[22], buffer[23], buffer[24], buffer[25],
+                ]),
                 ..BearerQos::default()
             };
             Ok(data)

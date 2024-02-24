@@ -111,5 +111,8 @@ fn src_rnc_pdcp_ie_unmarshal_test() {
             0x83, 0x06, 0x00, 0x00, 0x00, 0x00,
         ],
     };
-    assert_eq!(SourceRncPdcpContextInfo::unmarshal(&encoded).unwrap(), decoded);
+    assert_eq!(
+        SourceRncPdcpContextInfo::unmarshal(&encoded).unwrap(),
+        decoded
+    );
 }

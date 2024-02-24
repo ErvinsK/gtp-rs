@@ -54,7 +54,9 @@ impl IEs for MilliSecondTimeStamp {
             let data = MilliSecondTimeStamp {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                timestamp: u64::from_be_bytes([0x00, 0x00, buffer[4], buffer[5], buffer[6], buffer[7], buffer[8], buffer[9],]),
+                timestamp: u64::from_be_bytes([
+                    0x00, 0x00, buffer[4], buffer[5], buffer[6], buffer[7], buffer[8], buffer[9],
+                ]),
                 ..MilliSecondTimeStamp::default()
             };
             Ok(data)

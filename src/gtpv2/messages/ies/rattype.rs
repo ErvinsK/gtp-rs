@@ -106,7 +106,7 @@ impl IEs for RatType {
                     Err(j) => return Err(j),
                 },
                 ..RatType::default()
-            };            
+            };
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(RATTYPE))

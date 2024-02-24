@@ -56,7 +56,8 @@ impl IEs for IntegerNumber {
                 ..IntegerNumber::default()
             };
             if check_tliv_ie_buffer(data.length, buffer) {
-                data.number.extend_from_slice(&buffer[MIN_IE_SIZE..MIN_IE_SIZE+(data.length as usize)]);
+                data.number
+                    .extend_from_slice(&buffer[MIN_IE_SIZE..MIN_IE_SIZE + (data.length as usize)]);
                 Ok(data)
             } else {
                 Err(GTPV2Error::IEInvalidLength(INT_NMBR))

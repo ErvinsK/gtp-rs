@@ -90,7 +90,7 @@ impl Messages for CreateBearerResponse {
 
         let offset = message.header.length as usize + MANDATORY_HDR_LENGTH;
 
-        if buffer.len() >= offset{
+        if buffer.len() >= offset {
             match InformationElement::decoder(&buffer[MAX_HEADER_LENGTH..offset]) {
                 Ok(i) => match message.fromvec(i) {
                     Ok(_) => Ok(message),

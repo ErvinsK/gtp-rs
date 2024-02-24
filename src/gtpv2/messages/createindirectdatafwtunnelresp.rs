@@ -59,7 +59,7 @@ impl Messages for CreateIndirectDataForwardingTunnelResponse {
 
         let offset = message.header.length as usize + MANDATORY_HDR_LENGTH;
 
-        if buffer.len() >= offset{
+        if buffer.len() >= offset {
             match InformationElement::decoder(&buffer[MAX_HEADER_LENGTH..offset]) {
                 Ok(i) => match message.fromvec(i) {
                     Ok(_) => Ok(message),
@@ -97,7 +97,7 @@ impl Messages for CreateIndirectDataForwardingTunnelResponse {
     }
 
     fn fromvec(&mut self, elements: Vec<InformationElement>) -> Result<bool, GTPV2Error> {
-        let mut mandatory: [bool;2] = [false, false];
+        let mut mandatory: [bool; 2] = [false, false];
         for e in elements.iter() {
             match e {
                 InformationElement::Cause(j) => {
@@ -139,20 +139,14 @@ impl Messages for CreateIndirectDataForwardingTunnelResponse {
 fn test_create_indirect_data_fw_tunnel_resp_unmarshal() {
     use std::net::Ipv4Addr;
     let encoded: [u8; 107] = [
-        0x48,        0xa7,        0x00,        0x67,        0x09,        0x09,        0xa4,        0x56,
-        0x00,        0x00,        0x2f,        0x00,        0x02,        0x00,        0x02,        0x00,
-        0x10,        0x00,        0x57,        0x00,        0x09,        0x00,        0x85,        0x3b,
-        0x95,        0x98,        0x5a,        0x3e,        0x99,        0x89,        0x55,        0x5d,
-        0x00,        0x39,        0x00,        0x49,        0x00,        0x01,        0x00,        0x05,
-        0x57,        0x00,        0x09,        0x00,        0x80,        0x3b,        0x95,        0x98,
-        0x5a,        0x3e,        0x99,        0x89,        0x55,        0x57,        0x00,        0x09,
-        0x01,        0x84,        0x3b,        0x95,        0x98,        0x5a,        0x3e,        0x99,
-        0x89,        0x56,        0x57,        0x00,        0x09,        0x02,        0x8f,        0x3b,
-        0x95,        0x98,        0x5a,        0x3e,        0x99,        0x89,        0x57,        0x57,
-        0x00,        0x09,        0x06,        0xa6,        0x3b,        0x95,        0x98,        0x5a,
-        0x3e,        0x99,        0x89,        0x59,        0x03,        0x00,        0x01,        0x00,
-        0x64,        0xff,        0x00,        0x06,        0x00,        0x00,        0x00,        0x01,
-        0x62,        0x9c,        0xc4
+        0x48, 0xa7, 0x00, 0x67, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x02, 0x00, 0x02,
+        0x00, 0x10, 0x00, 0x57, 0x00, 0x09, 0x00, 0x85, 0x3b, 0x95, 0x98, 0x5a, 0x3e, 0x99, 0x89,
+        0x55, 0x5d, 0x00, 0x39, 0x00, 0x49, 0x00, 0x01, 0x00, 0x05, 0x57, 0x00, 0x09, 0x00, 0x80,
+        0x3b, 0x95, 0x98, 0x5a, 0x3e, 0x99, 0x89, 0x55, 0x57, 0x00, 0x09, 0x01, 0x84, 0x3b, 0x95,
+        0x98, 0x5a, 0x3e, 0x99, 0x89, 0x56, 0x57, 0x00, 0x09, 0x02, 0x8f, 0x3b, 0x95, 0x98, 0x5a,
+        0x3e, 0x99, 0x89, 0x57, 0x57, 0x00, 0x09, 0x06, 0xa6, 0x3b, 0x95, 0x98, 0x5a, 0x3e, 0x99,
+        0x89, 0x59, 0x03, 0x00, 0x01, 0x00, 0x64, 0xff, 0x00, 0x06, 0x00, 0x00, 0x00, 0x01, 0x62,
+        0x9c, 0xc4,
     ];
     let decoded = CreateIndirectDataForwardingTunnelResponse {
         header: Gtpv2Header {
@@ -176,21 +170,22 @@ fn test_create_indirect_data_fw_tunnel_resp_unmarshal() {
             ..Default::default()
         }),
 
-           bearer_ctxs: vec![BearerContext {
+        bearer_ctxs: vec![BearerContext {
             length: 57,
             ebi: Ebi {
                 value: 5,
                 ..Default::default()
             },
-            fteids: vec![Fteid {
-                length: 9,
-                ins: 0,
-                interface: 0,
-                teid: 0x3b95985a,
-                ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
-                ipv6: None,
-                ..Default::default()
-            },
+            fteids: vec![
+                Fteid {
+                    length: 9,
+                    ins: 0,
+                    interface: 0,
+                    teid: 0x3b95985a,
+                    ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
+                    ipv6: None,
+                    ..Default::default()
+                },
                 Fteid {
                     length: 9,
                     ins: 1,
@@ -217,9 +212,10 @@ fn test_create_indirect_data_fw_tunnel_resp_unmarshal() {
                     ipv4: Some(Ipv4Addr::new(62, 153, 137, 89)),
                     ipv6: None,
                     ..Default::default()
-                },],
+                },
+            ],
             ..BearerContext::default()
-        },],
+        }],
         recovery: Some(Recovery {
             recovery: 100,
             ..Default::default()
@@ -238,20 +234,14 @@ fn test_create_indirect_data_fw_tunnel_resp_unmarshal() {
 fn test_create_indirect_data_fw_tunnel_resp_marshal() {
     use std::net::Ipv4Addr;
     let encoded: [u8; 107] = [
-        0x48,        0xa7,        0x00,        0x67,        0x09,        0x09,        0xa4,        0x56,
-        0x00,        0x00,        0x2f,        0x00,        0x02,        0x00,        0x02,        0x00,
-        0x10,        0x00,        0x57,        0x00,        0x09,        0x00,        0x85,        0x3b,
-        0x95,        0x98,        0x5a,        0x3e,        0x99,        0x89,        0x55,        0x5d,
-        0x00,        0x39,        0x00,        0x49,        0x00,        0x01,        0x00,        0x05,
-        0x57,        0x00,        0x09,        0x00,        0x80,        0x3b,        0x95,        0x98,
-        0x5a,        0x3e,        0x99,        0x89,        0x55,        0x57,        0x00,        0x09,
-        0x01,        0x84,        0x3b,        0x95,        0x98,        0x5a,        0x3e,        0x99,
-        0x89,        0x56,        0x57,        0x00,        0x09,        0x02,        0x8f,        0x3b,
-        0x95,        0x98,        0x5a,        0x3e,        0x99,        0x89,        0x57,        0x57,
-        0x00,        0x09,        0x06,        0xa6,        0x3b,        0x95,        0x98,        0x5a,
-        0x3e,        0x99,        0x89,        0x59,        0x03,        0x00,        0x01,        0x00,
-        0x64,        0xff,        0x00,        0x06,        0x00,        0x00,        0x00,        0x01,
-        0x62,        0x9c,        0xc4
+        0x48, 0xa7, 0x00, 0x67, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x02, 0x00, 0x02,
+        0x00, 0x10, 0x00, 0x57, 0x00, 0x09, 0x00, 0x85, 0x3b, 0x95, 0x98, 0x5a, 0x3e, 0x99, 0x89,
+        0x55, 0x5d, 0x00, 0x39, 0x00, 0x49, 0x00, 0x01, 0x00, 0x05, 0x57, 0x00, 0x09, 0x00, 0x80,
+        0x3b, 0x95, 0x98, 0x5a, 0x3e, 0x99, 0x89, 0x55, 0x57, 0x00, 0x09, 0x01, 0x84, 0x3b, 0x95,
+        0x98, 0x5a, 0x3e, 0x99, 0x89, 0x56, 0x57, 0x00, 0x09, 0x02, 0x8f, 0x3b, 0x95, 0x98, 0x5a,
+        0x3e, 0x99, 0x89, 0x57, 0x57, 0x00, 0x09, 0x06, 0xa6, 0x3b, 0x95, 0x98, 0x5a, 0x3e, 0x99,
+        0x89, 0x59, 0x03, 0x00, 0x01, 0x00, 0x64, 0xff, 0x00, 0x06, 0x00, 0x00, 0x00, 0x01, 0x62,
+        0x9c, 0xc4,
     ];
     let decoded = CreateIndirectDataForwardingTunnelResponse {
         header: Gtpv2Header {
@@ -275,21 +265,22 @@ fn test_create_indirect_data_fw_tunnel_resp_marshal() {
             ..Default::default()
         }),
 
-           bearer_ctxs: vec![BearerContext {
+        bearer_ctxs: vec![BearerContext {
             length: 57,
             ebi: Ebi {
                 value: 5,
                 ..Default::default()
             },
-            fteids: vec![Fteid {
-                length: 9,
-                ins: 0,
-                interface: 0,
-                teid: 0x3b95985a,
-                ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
-                ipv6: None,
-                ..Default::default()
-            },
+            fteids: vec![
+                Fteid {
+                    length: 9,
+                    ins: 0,
+                    interface: 0,
+                    teid: 0x3b95985a,
+                    ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
+                    ipv6: None,
+                    ..Default::default()
+                },
                 Fteid {
                     length: 9,
                     ins: 1,
@@ -316,9 +307,10 @@ fn test_create_indirect_data_fw_tunnel_resp_marshal() {
                     ipv4: Some(Ipv4Addr::new(62, 153, 137, 89)),
                     ipv6: None,
                     ..Default::default()
-                },],
+                },
+            ],
             ..BearerContext::default()
-        },],
+        }],
         recovery: Some(Recovery {
             recovery: 100,
             ..Default::default()

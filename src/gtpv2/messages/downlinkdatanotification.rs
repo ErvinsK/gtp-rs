@@ -36,7 +36,7 @@ impl Default for DownlinkDataNotification {
         DownlinkDataNotification {
             header: hdr,
             cause: None,
-            ebi: None, 
+            ebi: None,
             arp: None,
             imsi: None,
             fteid_control: None,
@@ -70,7 +70,7 @@ impl Messages for DownlinkDataNotification {
 
         let offset = message.header.length as usize + MANDATORY_HDR_LENGTH;
 
-        if buffer.len() >= offset{
+        if buffer.len() >= offset {
             match InformationElement::decoder(&buffer[MAX_HEADER_LENGTH..offset]) {
                 Ok(i) => match message.fromvec(i) {
                     Ok(_) => Ok(message),
@@ -104,7 +104,7 @@ impl Messages for DownlinkDataNotification {
         if let Some(i) = self.indication.clone() {
             elements.push(i.into());
         }
-        
+
         self.load_control
             .iter()
             .for_each(|x| elements.push(InformationElement::LoadControlInfo(x.clone())));
@@ -184,21 +184,14 @@ impl Messages for DownlinkDataNotification {
 fn test_dl_data_notification_unmarshal() {
     use std::net::Ipv4Addr;
     let encoded: [u8; 126] = [
-        0x48, 0xb0, 0x00, 0x7a, 0x09, 0x09, 0xa4, 0x56, 
-        0x00, 0x00, 0x2f, 0x00, 0x02, 0x00, 0x02, 0x00, 
-        0x06, 0x00, 0x49, 0x00, 0x01, 0x00, 0x05, 0x9b, 
-        0x00, 0x01, 0x00, 0x00, 0x01, 0x00, 0x06, 0x00, 
-        0x09, 0x41, 0x50, 0x01, 0x01, 0x37, 0x57, 0x00, 
-        0x09, 0x00, 0x85, 0x3b, 0x95, 0x98, 0x5a, 0x3e, 
-        0x99, 0x89, 0x55, 0x4d, 0x00, 0x07, 0x00, 0x00, 
-        0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0xb5, 0x00, 
-        0x1f, 0x00, 0xb7, 0x00, 0x04, 0x00, 0xff, 0xaa, 
-        0xee, 0x11, 0xb6, 0x00, 0x01, 0x00, 0x60, 0xb8, 
-        0x00, 0x0e, 0x00, 0x64, 0x04, 0x74, 0x65, 0x73, 
-        0x74, 0x03, 0x6e, 0x65, 0x74, 0x03, 0x63, 0x6f, 
-        0x6d, 0xb4, 0x00, 0x12, 0x00, 0xb7, 0x00, 0x04, 
-        0x00, 0xff, 0xaa, 0xee, 0x11, 0xb6, 0x00, 0x01, 
-        0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7f, 0xba, 
+        0x48, 0xb0, 0x00, 0x7a, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x02, 0x00, 0x02,
+        0x00, 0x06, 0x00, 0x49, 0x00, 0x01, 0x00, 0x05, 0x9b, 0x00, 0x01, 0x00, 0x00, 0x01, 0x00,
+        0x06, 0x00, 0x09, 0x41, 0x50, 0x01, 0x01, 0x37, 0x57, 0x00, 0x09, 0x00, 0x85, 0x3b, 0x95,
+        0x98, 0x5a, 0x3e, 0x99, 0x89, 0x55, 0x4d, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02,
+        0x00, 0x00, 0xb5, 0x00, 0x1f, 0x00, 0xb7, 0x00, 0x04, 0x00, 0xff, 0xaa, 0xee, 0x11, 0xb6,
+        0x00, 0x01, 0x00, 0x60, 0xb8, 0x00, 0x0e, 0x00, 0x64, 0x04, 0x74, 0x65, 0x73, 0x74, 0x03,
+        0x6e, 0x65, 0x74, 0x03, 0x63, 0x6f, 0x6d, 0xb4, 0x00, 0x12, 0x00, 0xb7, 0x00, 0x04, 0x00,
+        0xff, 0xaa, 0xee, 0x11, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7f, 0xba,
         0x00, 0x03, 0x00, 0x05, 0x01, 0x03,
     ];
     let decoded = DownlinkDataNotification {
@@ -240,71 +233,65 @@ fn test_dl_data_notification_unmarshal() {
             ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
             ipv6: None,
         }),
-        indication: Some(Indication{
+        indication: Some(Indication {
             aosi: true,
             ..Indication::default()
         }),
-        load_control: vec![
-            LoadControl {
-                t: LOAD_CNTRL,
-                length: 31,
+        load_control: vec![LoadControl {
+            t: LOAD_CNTRL,
+            length: 31,
+            ins: 0,
+            sqn: Sqn {
+                t: SQN,
+                length: SQN_LENGTH as u16,
                 ins: 0,
-                sqn: Sqn {
-                    t: SQN,
-                    length: SQN_LENGTH as u16,
-                    ins: 0,
-                    sqn: 0xffaaee11,
-                },
-                load_metric: Metric {
-                    t: METRIC,
-                    length: METRIC_LENGTH as u16,
-                    ins: 0,
-                    metric: 0x60,
-                },
-                list: Some(vec![ApnRelativeCapacity {
-                    t: APN_REL_CAP,
-                    length: 14,
-                    ins: 0,
-                    relative_cap: 100,
-                    name: "test.net.com".to_string(),
-                }]),
+                sqn: 0xffaaee11,
             },
-        ],
-        overload_info: vec![
-            OverloadControlInfo {
-                t: OVERLOAD_CNTRL,
-                length: 18,
+            load_metric: Metric {
+                t: METRIC,
+                length: METRIC_LENGTH as u16,
                 ins: 0,
-                sqn: Sqn {
-                    t: SQN,
-                    length: SQN_LENGTH as u16,
-                    ins: 0,
-                    sqn: 0xffaaee11,
-                },
-                metric: Metric {
-                    t: METRIC,
-                    length: METRIC_LENGTH as u16,
-                    ins: 0,
-                    metric: 0x60,
-                },
-                validity: EpcTimer {
-                    t: EPC_TIMER,
-                    length: EPC_TIMER_LENGTH as u16,
-                    ins: 0,
-                    timer_unit: 3,
-                    timer_value: 31,
-                },
-                list: None,
+                metric: 0x60,
             },
-        ],
-        psi: Some(
-            PagingServiceInfo {
-                length: 3,
-                ebi: 5,
-                paging_policy: Some(0x03),
-                ..PagingServiceInfo::default()
-            }
-        ),
+            list: Some(vec![ApnRelativeCapacity {
+                t: APN_REL_CAP,
+                length: 14,
+                ins: 0,
+                relative_cap: 100,
+                name: "test.net.com".to_string(),
+            }]),
+        }],
+        overload_info: vec![OverloadControlInfo {
+            t: OVERLOAD_CNTRL,
+            length: 18,
+            ins: 0,
+            sqn: Sqn {
+                t: SQN,
+                length: SQN_LENGTH as u16,
+                ins: 0,
+                sqn: 0xffaaee11,
+            },
+            metric: Metric {
+                t: METRIC,
+                length: METRIC_LENGTH as u16,
+                ins: 0,
+                metric: 0x60,
+            },
+            validity: EpcTimer {
+                t: EPC_TIMER,
+                length: EPC_TIMER_LENGTH as u16,
+                ins: 0,
+                timer_unit: 3,
+                timer_value: 31,
+            },
+            list: None,
+        }],
+        psi: Some(PagingServiceInfo {
+            length: 3,
+            ebi: 5,
+            paging_policy: Some(0x03),
+            ..PagingServiceInfo::default()
+        }),
         ..DownlinkDataNotification::default()
     };
     let message = DownlinkDataNotification::unmarshal(&encoded).unwrap();
@@ -315,21 +302,14 @@ fn test_dl_data_notification_unmarshal() {
 fn test_dl_data_notification_marshal() {
     use std::net::Ipv4Addr;
     let encoded: [u8; 126] = [
-        0x48, 0xb0, 0x00, 0x7a, 0x09, 0x09, 0xa4, 0x56, 
-        0x00, 0x00, 0x2f, 0x00, 0x02, 0x00, 0x02, 0x00, 
-        0x06, 0x00, 0x49, 0x00, 0x01, 0x00, 0x05, 0x9b, 
-        0x00, 0x01, 0x00, 0x00, 0x01, 0x00, 0x06, 0x00, 
-        0x09, 0x41, 0x50, 0x01, 0x01, 0x37, 0x57, 0x00, 
-        0x09, 0x00, 0x85, 0x3b, 0x95, 0x98, 0x5a, 0x3e, 
-        0x99, 0x89, 0x55, 0x4d, 0x00, 0x07, 0x00, 0x00, 
-        0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0xb5, 0x00, 
-        0x1f, 0x00, 0xb7, 0x00, 0x04, 0x00, 0xff, 0xaa, 
-        0xee, 0x11, 0xb6, 0x00, 0x01, 0x00, 0x60, 0xb8, 
-        0x00, 0x0e, 0x00, 0x64, 0x04, 0x74, 0x65, 0x73, 
-        0x74, 0x03, 0x6e, 0x65, 0x74, 0x03, 0x63, 0x6f, 
-        0x6d, 0xb4, 0x00, 0x12, 0x00, 0xb7, 0x00, 0x04, 
-        0x00, 0xff, 0xaa, 0xee, 0x11, 0xb6, 0x00, 0x01, 
-        0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7f, 0xba, 
+        0x48, 0xb0, 0x00, 0x7a, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x02, 0x00, 0x02,
+        0x00, 0x06, 0x00, 0x49, 0x00, 0x01, 0x00, 0x05, 0x9b, 0x00, 0x01, 0x00, 0x00, 0x01, 0x00,
+        0x06, 0x00, 0x09, 0x41, 0x50, 0x01, 0x01, 0x37, 0x57, 0x00, 0x09, 0x00, 0x85, 0x3b, 0x95,
+        0x98, 0x5a, 0x3e, 0x99, 0x89, 0x55, 0x4d, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02,
+        0x00, 0x00, 0xb5, 0x00, 0x1f, 0x00, 0xb7, 0x00, 0x04, 0x00, 0xff, 0xaa, 0xee, 0x11, 0xb6,
+        0x00, 0x01, 0x00, 0x60, 0xb8, 0x00, 0x0e, 0x00, 0x64, 0x04, 0x74, 0x65, 0x73, 0x74, 0x03,
+        0x6e, 0x65, 0x74, 0x03, 0x63, 0x6f, 0x6d, 0xb4, 0x00, 0x12, 0x00, 0xb7, 0x00, 0x04, 0x00,
+        0xff, 0xaa, 0xee, 0x11, 0xb6, 0x00, 0x01, 0x00, 0x60, 0x9c, 0x00, 0x01, 0x00, 0x7f, 0xba,
         0x00, 0x03, 0x00, 0x05, 0x01, 0x03,
     ];
     let decoded = DownlinkDataNotification {
@@ -371,70 +351,64 @@ fn test_dl_data_notification_marshal() {
             ipv4: Some(Ipv4Addr::new(62, 153, 137, 85)),
             ipv6: None,
         }),
-        indication: Some(Indication{
+        indication: Some(Indication {
             aosi: true,
             ..Indication::default()
         }),
-        load_control: vec![
-            LoadControl {
-                t: LOAD_CNTRL,
-                length: 31,
+        load_control: vec![LoadControl {
+            t: LOAD_CNTRL,
+            length: 31,
+            ins: 0,
+            sqn: Sqn {
+                t: SQN,
+                length: SQN_LENGTH as u16,
                 ins: 0,
-                sqn: Sqn {
-                    t: SQN,
-                    length: SQN_LENGTH as u16,
-                    ins: 0,
-                    sqn: 0xffaaee11,
-                },
-                load_metric: Metric {
-                    t: METRIC,
-                    length: METRIC_LENGTH as u16,
-                    ins: 0,
-                    metric: 0x60,
-                },
-                list: Some(vec![ApnRelativeCapacity {
-                    t: APN_REL_CAP,
-                    length: 14,
-                    ins: 0,
-                    relative_cap: 100,
-                    name: "test.net.com".to_string(),
-                }]),
+                sqn: 0xffaaee11,
             },
-        ],
-        overload_info: vec![
-            OverloadControlInfo {
-                t: OVERLOAD_CNTRL,
-                length: 18,
+            load_metric: Metric {
+                t: METRIC,
+                length: METRIC_LENGTH as u16,
                 ins: 0,
-                sqn: Sqn {
-                    t: SQN,
-                    length: SQN_LENGTH as u16,
-                    ins: 0,
-                    sqn: 0xffaaee11,
-                },
-                metric: Metric {
-                    t: METRIC,
-                    length: METRIC_LENGTH as u16,
-                    ins: 0,
-                    metric: 0x60,
-                },
-                validity: EpcTimer {
-                    t: EPC_TIMER,
-                    length: EPC_TIMER_LENGTH as u16,
-                    ins: 0,
-                    timer_unit: 3,
-                    timer_value: 31,
-                },
-                list: None,
+                metric: 0x60,
             },
-        ],
-        psi: Some(
-            PagingServiceInfo {
-                ebi: 5,
-                paging_policy: Some(0x03),
-                ..PagingServiceInfo::default()
-            }
-        ),
+            list: Some(vec![ApnRelativeCapacity {
+                t: APN_REL_CAP,
+                length: 14,
+                ins: 0,
+                relative_cap: 100,
+                name: "test.net.com".to_string(),
+            }]),
+        }],
+        overload_info: vec![OverloadControlInfo {
+            t: OVERLOAD_CNTRL,
+            length: 18,
+            ins: 0,
+            sqn: Sqn {
+                t: SQN,
+                length: SQN_LENGTH as u16,
+                ins: 0,
+                sqn: 0xffaaee11,
+            },
+            metric: Metric {
+                t: METRIC,
+                length: METRIC_LENGTH as u16,
+                ins: 0,
+                metric: 0x60,
+            },
+            validity: EpcTimer {
+                t: EPC_TIMER,
+                length: EPC_TIMER_LENGTH as u16,
+                ins: 0,
+                timer_unit: 3,
+                timer_value: 31,
+            },
+            list: None,
+        }],
+        psi: Some(PagingServiceInfo {
+            ebi: 5,
+            paging_policy: Some(0x03),
+            ..PagingServiceInfo::default()
+        }),
         ..DownlinkDataNotification::default()
     };
     let mut buffer: Vec<u8> = vec![];

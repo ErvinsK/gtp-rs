@@ -56,7 +56,7 @@ impl IEs for Tmgi {
                 ins: buffer[3],
                 ..Default::default()
             };
-            if let Ok(tmgi) = buffer[4..MIN_IE_SIZE+TMGI_LENGTH].try_into() {
+            if let Ok(tmgi) = buffer[4..MIN_IE_SIZE + TMGI_LENGTH].try_into() {
                 data.tmgi = tmgi;
                 Ok(data)
             } else {

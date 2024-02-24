@@ -67,12 +67,20 @@ impl IEs for FlowQos {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
                 qci: buffer[4],
-                maxbr_ul: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[5], buffer[6], buffer[7], buffer[8], buffer[9],]),
-                maxbr_dl: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[10], buffer[11], buffer[12], buffer[13], buffer[14],]),
-                gbr_ul: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[15], buffer[16], buffer[17], buffer[18], buffer[19],]),
-                gbr_dl: u64::from_be_bytes([0x00, 0x00, 0x00, buffer[20], buffer[21], buffer[22], buffer[23], buffer[24],]),
+                maxbr_ul: u64::from_be_bytes([
+                    0x00, 0x00, 0x00, buffer[5], buffer[6], buffer[7], buffer[8], buffer[9],
+                ]),
+                maxbr_dl: u64::from_be_bytes([
+                    0x00, 0x00, 0x00, buffer[10], buffer[11], buffer[12], buffer[13], buffer[14],
+                ]),
+                gbr_ul: u64::from_be_bytes([
+                    0x00, 0x00, 0x00, buffer[15], buffer[16], buffer[17], buffer[18], buffer[19],
+                ]),
+                gbr_dl: u64::from_be_bytes([
+                    0x00, 0x00, 0x00, buffer[20], buffer[21], buffer[22], buffer[23], buffer[24],
+                ]),
                 ..FlowQos::default()
-            };          
+            };
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(FLOWQOS))

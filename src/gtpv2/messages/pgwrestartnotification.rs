@@ -22,14 +22,14 @@ pub struct PgwRestartNotification {
 
 impl Default for PgwRestartNotification {
     fn default() -> PgwRestartNotification {
-        PgwRestartNotification { 
+        PgwRestartNotification {
             header: Gtpv2Header {
                 msgtype: PGW_RESTART_NOTIF,
                 teid: Some(0),
                 ..Gtpv2Header::default()
             },
             pgw_addr_control: IpAddress::default(),
-            sgw_addr_control: IpAddress::default(),   
+            sgw_addr_control: IpAddress::default(),
             cause: None,
             private_ext: vec![],
         }
@@ -57,7 +57,7 @@ impl Messages for PgwRestartNotification {
 
         let offset = message.header.length as usize + MANDATORY_HDR_LENGTH;
 
-        if buffer.len() >= offset{
+        if buffer.len() >= offset {
             match InformationElement::decoder(&buffer[MAX_HEADER_LENGTH..offset]) {
                 Ok(i) => match message.fromvec(i) {
                     Ok(_) => Ok(message),
@@ -88,27 +88,25 @@ impl Messages for PgwRestartNotification {
     }
 
     fn fromvec(&mut self, elements: Vec<InformationElement>) -> Result<bool, GTPV2Error> {
-        let mut mandatory: [bool;2] = [false, false];
+        let mut mandatory: [bool; 2] = [false, false];
         for e in elements.iter() {
             match e {
-                InformationElement::IpAddress(j) => {
-                    match (j.ins, mandatory[0], mandatory[1]) {
-                        (0, false, _) => {
-                            mandatory[0] = true;
-                            self.pgw_addr_control = j.clone();
-                        },
-                        (1, _, false) => {
-                            mandatory[1] = true;
-                            self.sgw_addr_control = j.clone();
-                        },
-                        _ => (),
+                InformationElement::IpAddress(j) => match (j.ins, mandatory[0], mandatory[1]) {
+                    (0, false, _) => {
+                        mandatory[0] = true;
+                        self.pgw_addr_control = j.clone();
                     }
+                    (1, _, false) => {
+                        mandatory[1] = true;
+                        self.sgw_addr_control = j.clone();
+                    }
+                    _ => (),
                 },
                 InformationElement::Cause(j) => {
                     if j.ins == 0 {
                         self.cause = Some(j.clone());
                     };
-                },
+                }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),
                 _ => (),
             }
@@ -123,15 +121,12 @@ impl Messages for PgwRestartNotification {
 
 #[test]
 fn test_pgw_restart_notif_unmarshal() {
-    use std::net::{IpAddr, Ipv6Addr, Ipv4Addr};
+    use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
     let encoded: [u8; 56] = [
-        0x48,0xb4,0x00,0x34,0x09,0x09,0xa4,0x56,
-        0x00,0x00,0x2f,0x00,0x4a,0x00,0x04,0x00,
-        0x64,0x14,0x14,0x0a,0x4a,0x00,0x10,0x01,
-        0x00,0xfd,0x00,0x00,0x00,0x00,0x00,0x00,
-        0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-        0x02,0x00,0x02,0x00,0x10,0x00,0xff,0x00,
-        0x06,0x00,0x00,0x00,0x01,0x62,0x9c,0xc4,
+        0x48, 0xb4, 0x00, 0x34, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x4a, 0x00, 0x04,
+        0x00, 0x64, 0x14, 0x14, 0x0a, 0x4a, 0x00, 0x10, 0x01, 0x00, 0xfd, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x02, 0x00, 0x10,
+        0x00, 0xff, 0x00, 0x06, 0x00, 0x00, 0x00, 0x01, 0x62, 0x9c, 0xc4,
     ];
     let decoded = PgwRestartNotification {
         header: Gtpv2Header {
@@ -170,15 +165,12 @@ fn test_pgw_restart_notif_unmarshal() {
 
 #[test]
 fn test_pgw_restart_notif_marshal() {
-    use std::net::{IpAddr, Ipv6Addr, Ipv4Addr};
+    use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
     let encoded: [u8; 56] = [
-        0x48,0xb4,0x00,0x34,0x09,0x09,0xa4,0x56,
-        0x00,0x00,0x2f,0x00,0x4a,0x00,0x04,0x00,
-        0x64,0x14,0x14,0x0a,0x4a,0x00,0x10,0x01,
-        0x00,0xfd,0x00,0x00,0x00,0x00,0x00,0x00,
-        0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
-        0x02,0x00,0x02,0x00,0x10,0x00,0xff,0x00,
-        0x06,0x00,0x00,0x00,0x01,0x62,0x9c,0xc4,
+        0x48, 0xb4, 0x00, 0x34, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x4a, 0x00, 0x04,
+        0x00, 0x64, 0x14, 0x14, 0x0a, 0x4a, 0x00, 0x10, 0x01, 0x00, 0xfd, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x02, 0x00, 0x10,
+        0x00, 0xff, 0x00, 0x06, 0x00, 0x00, 0x00, 0x01, 0x62, 0x9c, 0xc4,
     ];
     let decoded = PgwRestartNotification {
         header: Gtpv2Header {

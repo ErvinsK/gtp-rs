@@ -51,7 +51,7 @@ impl Messages for DeleteIndirectDataForwardingTunnelRequest {
 
         let offset = message.header.length as usize + MANDATORY_HDR_LENGTH;
 
-        if buffer.len() >= offset{
+        if buffer.len() >= offset {
             match InformationElement::decoder(&buffer[MAX_HEADER_LENGTH..offset]) {
                 Ok(i) => match message.fromvec(i) {
                     Ok(_) => Ok(message),
@@ -78,7 +78,6 @@ impl Messages for DeleteIndirectDataForwardingTunnelRequest {
         for e in elements.iter() {
             if let InformationElement::PrivateExtension(j) = e {
                 self.private_ext.push(j.clone());
-            
             }
         }
         Ok(true)
@@ -88,24 +87,24 @@ impl Messages for DeleteIndirectDataForwardingTunnelRequest {
 #[test]
 fn test_delete_indirect_data_fw_tunnel_req_unmarshal() {
     let encoded: [u8; 22] = [
-        0x48,    0xa8,    0x00,    0x12,    0x09,    0x09,    0xa4,    0x56,
-        0x00,    0x00,    0x2f,    0x00,    0xff,    0x00,    0x06,    0x00,
-        0x00,    0x00,    0x01,    0x62,    0x9c,    0xc4,    ];
-        let decoded = DeleteIndirectDataForwardingTunnelRequest {
-            header: Gtpv2Header {
-                msgtype: DELETE_IND_DATA_FW_TUN_REQ,
-                piggyback: false,
-                message_prio: None,
-                length: 18,
-                teid: Some(0x0909a456),
-                sqn: 0x2f,
-            },
-            private_ext: vec![PrivateExtension {
-                length: 6,
-                value: vec![0x01, 0x62, 0x9c, 0xc4],
-                ..Default::default()
-            }],
-        };
+        0x48, 0xa8, 0x00, 0x12, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0xff, 0x00, 0x06,
+        0x00, 0x00, 0x00, 0x01, 0x62, 0x9c, 0xc4,
+    ];
+    let decoded = DeleteIndirectDataForwardingTunnelRequest {
+        header: Gtpv2Header {
+            msgtype: DELETE_IND_DATA_FW_TUN_REQ,
+            piggyback: false,
+            message_prio: None,
+            length: 18,
+            teid: Some(0x0909a456),
+            sqn: 0x2f,
+        },
+        private_ext: vec![PrivateExtension {
+            length: 6,
+            value: vec![0x01, 0x62, 0x9c, 0xc4],
+            ..Default::default()
+        }],
+    };
     let message = DeleteIndirectDataForwardingTunnelRequest::unmarshal(&encoded).unwrap();
     assert_eq!(message, decoded);
 }
@@ -113,9 +112,9 @@ fn test_delete_indirect_data_fw_tunnel_req_unmarshal() {
 #[test]
 fn test_delete_indirect_data_fw_tunnel_req_marshal() {
     let encoded: [u8; 22] = [
-    0x48,    0xa8,    0x00,    0x12,    0x09,    0x09,    0xa4,    0x56,
-    0x00,    0x00,    0x2f,    0x00,    0xff,    0x00,    0x06,    0x00,
-    0x00,    0x00,    0x01,    0x62,    0x9c,    0xc4,    ];
+        0x48, 0xa8, 0x00, 0x12, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0xff, 0x00, 0x06,
+        0x00, 0x00, 0x00, 0x01, 0x62, 0x9c, 0xc4,
+    ];
     let decoded = DeleteIndirectDataForwardingTunnelRequest {
         header: Gtpv2Header {
             msgtype: DELETE_IND_DATA_FW_TUN_REQ,

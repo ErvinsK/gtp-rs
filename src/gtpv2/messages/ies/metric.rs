@@ -54,13 +54,9 @@ impl IEs for Metric {
             let data = Metric {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                metric: if buffer[4] > 100 {
-                    0
-                } else {
-                    buffer[4]
-                },
+                metric: if buffer[4] > 100 { 0 } else { buffer[4] },
                 ..Metric::default()
-            };           
+            };
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(METRIC))

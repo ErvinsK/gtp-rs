@@ -56,7 +56,7 @@ impl Messages for UpdatePdnConnectionSetRequest {
 
         let offset = message.header.length as usize + MANDATORY_HDR_LENGTH;
 
-        if buffer.len() >= offset{
+        if buffer.len() >= offset {
             match InformationElement::decoder(&buffer[MAX_HEADER_LENGTH..offset]) {
                 Ok(i) => match message.fromvec(i) {
                     Ok(_) => Ok(message),
@@ -71,7 +71,7 @@ impl Messages for UpdatePdnConnectionSetRequest {
 
     fn tovec(&self) -> Vec<InformationElement> {
         let mut elements: Vec<InformationElement> = vec![];
-        
+
         if let Some(i) = self.mme_fqcsid.clone() {
             elements.push(i.into());
         }
@@ -90,17 +90,19 @@ impl Messages for UpdatePdnConnectionSetRequest {
     fn fromvec(&mut self, elements: Vec<InformationElement>) -> Result<bool, GTPV2Error> {
         for e in elements.iter() {
             match e {
-                InformationElement::Fqcsid(j) => {
-                    match j.ins {
-                        0 => if self.mme_fqcsid.is_none() {
+                InformationElement::Fqcsid(j) => match j.ins {
+                    0 => {
+                        if self.mme_fqcsid.is_none() {
                             self.mme_fqcsid = Some(j.clone());
-                            },
-                        1 => if self.sgw_fqcsid.is_none() {
-                            self.sgw_fqcsid = Some(j.clone());
-                            },
-                        _ => (),
+                        }
                     }
-                }
+                    1 => {
+                        if self.sgw_fqcsid.is_none() {
+                            self.sgw_fqcsid = Some(j.clone());
+                        }
+                    }
+                    _ => (),
+                },
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),
                 _ => (),
             }
@@ -113,11 +115,9 @@ impl Messages for UpdatePdnConnectionSetRequest {
 fn test_update_pdn_connection_set_req_unmarshal() {
     use std::net::Ipv4Addr;
     let encoded: [u8; 33] = [
-        0x48, 0xc8, 0x00, 0x1d, 0x00, 0x00, 0x00, 0x00, 
-        0x26, 0x00, 0x2e, 0x00, 0x84, 0x00, 0x07, 0x01, 
-        0x01, 0x8b, 0x07, 0x85, 0xb8, 0xff, 0xff, 0xff, 
-        0x00, 0x06, 0x00, 0x07, 0xdb, 0x07, 0x00, 0x01, 
-        0x00,
+        0x48, 0xc8, 0x00, 0x1d, 0x00, 0x00, 0x00, 0x00, 0x26, 0x00, 0x2e, 0x00, 0x84, 0x00, 0x07,
+        0x01, 0x01, 0x8b, 0x07, 0x85, 0xb8, 0xff, 0xff, 0xff, 0x00, 0x06, 0x00, 0x07, 0xdb, 0x07,
+        0x00, 0x01, 0x00,
     ];
     let decoded = UpdatePdnConnectionSetRequest {
         header: Gtpv2Header {
@@ -152,11 +152,9 @@ fn test_update_pdn_connection_set_req_unmarshal() {
 fn test_update_pdn_connection_set_req_marshal() {
     use std::net::Ipv4Addr;
     let encoded: [u8; 33] = [
-        0x48, 0xc8, 0x00, 0x1d, 0x00, 0x00, 0x00, 0x00, 
-        0x26, 0x00, 0x2e, 0x00, 0x84, 0x00, 0x07, 0x01, 
-        0x01, 0x8b, 0x07, 0x85, 0xb8, 0xff, 0xff, 0xff, 
-        0x00, 0x06, 0x00, 0x07, 0xdb, 0x07, 0x00, 0x01, 
-        0x00,
+        0x48, 0xc8, 0x00, 0x1d, 0x00, 0x00, 0x00, 0x00, 0x26, 0x00, 0x2e, 0x00, 0x84, 0x00, 0x07,
+        0x01, 0x01, 0x8b, 0x07, 0x85, 0xb8, 0xff, 0xff, 0xff, 0x00, 0x06, 0x00, 0x07, 0xdb, 0x07,
+        0x00, 0x01, 0x00,
     ];
     let decoded = UpdatePdnConnectionSetRequest {
         header: Gtpv2Header {

@@ -65,10 +65,10 @@ impl IEs for PagingServiceInfo {
                 ins: buffer[3] & 0x0f,
                 ebi: buffer[4],
                 paging_policy: match buffer[5] {
-                                0 => None,
-                                1 => Some(buffer[6]),
-                                _ => return Err(GTPV2Error::IEIncorrect(PAGING_SRVC_INFO)),
-                            }, 
+                    0 => None,
+                    1 => Some(buffer[6]),
+                    _ => return Err(GTPV2Error::IEIncorrect(PAGING_SRVC_INFO)),
+                },
                 ..PagingServiceInfo::default()
             };
             Ok(data)
@@ -81,7 +81,7 @@ impl IEs for PagingServiceInfo {
         if self.paging_policy.is_some() {
             PAGING_SRVC_INFO_LENGTH + MIN_IE_SIZE + 1
         } else {
-        PAGING_SRVC_INFO_LENGTH + MIN_IE_SIZE
+            PAGING_SRVC_INFO_LENGTH + MIN_IE_SIZE
         }
     }
 

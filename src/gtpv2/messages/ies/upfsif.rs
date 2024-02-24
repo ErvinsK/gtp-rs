@@ -57,13 +57,13 @@ impl IEs for UpFunctionSelectionIndicationFlags {
             let data = UpFunctionSelectionIndicationFlags {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                dcnr:  match buffer[4] {
+                dcnr: match buffer[4] {
                     0 => false,
                     1 => true,
                     _ => return Err(GTPV2Error::IEIncorrect(UPFSIF)),
                 },
                 ..UpFunctionSelectionIndicationFlags::default()
-            };          
+            };
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(UPFSIF))

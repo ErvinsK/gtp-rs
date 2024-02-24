@@ -59,9 +59,15 @@ impl IEs for ApnRateControlStatus {
             let data = ApnRateControlStatus {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                ul_packets_allowed: u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]),
-                nmbr_add_exception_reports: u32::from_be_bytes([buffer[8], buffer[9], buffer[10], buffer[11]]),
-                dl_packets_allowed: u32::from_be_bytes([buffer[12], buffer[13], buffer[14], buffer[15]]),
+                ul_packets_allowed: u32::from_be_bytes([
+                    buffer[4], buffer[5], buffer[6], buffer[7],
+                ]),
+                nmbr_add_exception_reports: u32::from_be_bytes([
+                    buffer[8], buffer[9], buffer[10], buffer[11],
+                ]),
+                dl_packets_allowed: u32::from_be_bytes([
+                    buffer[12], buffer[13], buffer[14], buffer[15],
+                ]),
                 validity_time: u64::from_slice(&buffer[16..24]),
                 ..ApnRateControlStatus::default()
             };

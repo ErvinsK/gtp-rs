@@ -63,7 +63,7 @@ impl IEs for Spi {
                     _ => return Err(GTPV2Error::IEIncorrect(SPI)),
                 },
                 ..Spi::default()
-            };            
+            };
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(SPI))

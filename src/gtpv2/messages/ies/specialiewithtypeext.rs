@@ -60,7 +60,8 @@ impl IEs for SpecialIEWithTypeExt {
             };
             data.ie_type_ext = u16::from_be_bytes([buffer[4], buffer[5]]);
             if check_tliv_ie_buffer(data.length, buffer) {
-                data.ie_data.extend_from_slice(&buffer[6..MIN_IE_SIZE+(data.length as usize)]);
+                data.ie_data
+                    .extend_from_slice(&buffer[6..MIN_IE_SIZE + (data.length as usize)]);
                 Ok(data)
             } else {
                 Err(GTPV2Error::IEInvalidLength(IETYPE_EXT))
