@@ -115,7 +115,7 @@ impl Messages for EchoRequest {
 #[test]
 fn test_echo_req_unmarshal() {
     let encoded: [u8; 20] = [
-        0x40, 0x01, 0x00, 0x0f, 0x2d, 0xcc, 0x38, 0x00, 0x03, 0x00, 0x01, 0x00, 0x0c, 0xff, 0x00,
+        0x40, 0x01, 0x00, 0x10, 0x2d, 0xcc, 0x38, 0x00, 0x03, 0x00, 0x01, 0x00, 0x0c, 0xff, 0x00,
         0x03, 0x00, 0x00, 0x0a, 0xff,
     ];
     let decoded: EchoRequest = EchoRequest {
@@ -123,7 +123,7 @@ fn test_echo_req_unmarshal() {
             msgtype: ECHO_REQUEST,
             piggyback: false,
             message_prio: None,
-            length: 15,
+            length: 16,
             teid: None,
             sqn: 0x2dcc38,
         },
@@ -158,15 +158,16 @@ fn test_echo_req_no_mandatory_ie_unmarshal() {
 
 #[test]
 fn test_echo_req_marshal() {
-    let encoded: [u8; 13] = [
-        0x40, 0x01, 0x00, 0x09, 0x2d, 0xcc, 0x38, 0x00, 0x03, 0x00, 0x01, 0x00, 0x0c,
+    let encoded: [u8; 20] = [
+        0x40, 0x01, 0x00, 0x10, 0x2d, 0xcc, 0x38, 0x00, 0x03, 0x00, 0x01, 0x00, 0x0c, 0xff, 0x00,
+        0x03, 0x00, 0x00, 0x0a, 0xff,
     ];
     let decoded: EchoRequest = EchoRequest {
         header: Gtpv2Header {
             msgtype: ECHO_REQUEST,
             piggyback: false,
             message_prio: None,
-            length: 9,
+            length: 16,
             teid: None,
             sqn: 0x2dcc38,
         },
@@ -177,9 +178,16 @@ fn test_echo_req_marshal() {
             recovery: 12,
         },
         sending_node_features: None,
-        private_ext: vec![],
+        private_ext: vec![PrivateExtension {
+            t: PRIVATE_EXT,
+            length: 3,
+            ins: 0,
+            enterprise_id: 0x0a,
+            value: vec![0xff],
+        }],
     };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
+    //buffer.iter().for_each( |x| print!(" {:#04x},", x));
     assert_eq!(buffer, encoded);
 }

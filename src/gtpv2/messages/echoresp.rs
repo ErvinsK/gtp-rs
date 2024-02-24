@@ -114,7 +114,7 @@ impl Messages for EchoResponse {
 #[test]
 fn test_echo_resp_unmarshal() {
     let encoded: [u8; 20] = [
-        0x40, 0x02, 0x00, 0x0f, 0x2d, 0xcc, 0x38, 0x00, 0x03, 0x00, 0x01, 0x00, 0x21, 0xff, 0x00,
+        0x40, 0x02, 0x00, 0x10, 0x2d, 0xcc, 0x38, 0x00, 0x03, 0x00, 0x01, 0x00, 0x21, 0xff, 0x00,
         0x03, 0x00, 0x00, 0x0a, 0xff,
     ];
     let decoded = EchoResponse {
@@ -122,7 +122,7 @@ fn test_echo_resp_unmarshal() {
             msgtype: ECHO_RESPONSE,
             piggyback: false,
             message_prio: None,
-            length: 15,
+            length: 16,
             teid: None,
             sqn: 0x2dcc38,
         },
@@ -157,15 +157,16 @@ fn test_echo_resp_no_mandatory_ie_unmarshal() {
 
 #[test]
 fn test_echo_resp_marshal() {
-    let encoded: [u8; 13] = [
-        0x40, 0x02, 0x00, 0x09, 0x2d, 0xcc, 0x38, 0x00, 0x03, 0x00, 0x01, 0x00, 0x21,
+    let encoded: [u8; 20] = [
+        0x40, 0x02, 0x00, 0x10, 0x2d, 0xcc, 0x38, 0x00, 0x03, 0x00, 0x01, 0x00, 0x21, 0xff, 0x00,
+        0x03, 0x00, 0x00, 0x0a, 0xff,
     ];
     let decoded = EchoResponse {
         header: Gtpv2Header {
             msgtype: ECHO_RESPONSE,
             piggyback: false,
             message_prio: None,
-            length: 9,
+            length: 16,
             teid: None,
             sqn: 0x2dcc38,
         },
@@ -176,9 +177,16 @@ fn test_echo_resp_marshal() {
             recovery: 33,
         },
         sending_node_features: None,
-        private_ext: vec![],
+        private_ext: vec![PrivateExtension {
+            t: PRIVATE_EXT,
+            length: 3,
+            ins: 0,
+            enterprise_id: 0x0a,
+            value: vec![0xff],
+        }],
     };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
+    buffer.iter().for_each(|x| print!(" {:#04x},", x));
     assert_eq!(buffer, encoded);
 }
