@@ -550,6 +550,7 @@ fn test_modify_bearer_req_unmarshal() {
                 ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x28)),
             }],
             bearer_qos: None,
+            ..BearerContext::default()
         }],
         private_ext: vec![PrivateExtension {
             t: PRIVATE_EXT,
@@ -688,6 +689,7 @@ fn test_modify_bearer_req_marshal() {
                 ipv6: None,
             }],
             bearer_qos: None,
+            ..BearerContext::default()
         }],
         private_ext: vec![PrivateExtension {
             t: PRIVATE_EXT,

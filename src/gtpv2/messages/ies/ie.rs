@@ -41,7 +41,7 @@ pub enum InformationElement {
     MmContextUmtsKeyQuintuplets(MmContextUmtsKeyQuintuplets),
     MmContextEpsSecurityContextQuadruplets(MmContextEpsSecurityContextQuadruplets),
     MmContextUmtsKeyQuadrupletsQuintuplets(MmContextUmtsKeyQuadrupletsQuintuplets),
-    PdnConnection(GroupedIe),
+    PdnConnections(PdnConnections),
     PduNumbers(PduNumbers),
     Ptmsi(Ptmsi),
     PtmsiSignature(PtmsiSignature),
@@ -124,7 +124,7 @@ pub enum InformationElement {
     RemoteUserId(RemoteUserId),
     RemoteUeIpInformation(RemoteUeIpInformation),
     CIoTOptimizationSupportIndication(CIoTOptimizationSupportIndication),
-    ScefPdnConnection(GroupedIe),
+    ScefPdnConnections(ScefPdnConnections),
     HeaderCompressionConfiguration(HeaderCompressionConfiguration),
     Epco(Epco),
     ServingPlmnRateControl(ServingPlmnRateControl),
@@ -183,7 +183,7 @@ impl InformationElement {
             InformationElement::MmContextUmtsKeyQuintuplets(i) => i.marshal(buffer),
             InformationElement::MmContextEpsSecurityContextQuadruplets(i) => i.marshal(buffer),
             InformationElement::MmContextUmtsKeyQuadrupletsQuintuplets(i) => i.marshal(buffer),
-            InformationElement::PdnConnection(i) => i.marshal(buffer),
+            InformationElement::PdnConnections(i) => i.marshal(buffer),
             InformationElement::PduNumbers(i) => i.marshal(buffer),
             InformationElement::Ptmsi(i) => i.marshal(buffer),
             InformationElement::PtmsiSignature(i) => i.marshal(buffer),
@@ -266,7 +266,7 @@ impl InformationElement {
             InformationElement::RemoteUserId(i) => i.marshal(buffer),
             InformationElement::RemoteUeIpInformation(i) => i.marshal(buffer),
             InformationElement::CIoTOptimizationSupportIndication(i) => i.marshal(buffer),
-            InformationElement::ScefPdnConnection(i) => i.marshal(buffer),
+            InformationElement::ScefPdnConnections(i) => i.marshal(buffer),
             InformationElement::HeaderCompressionConfiguration(i) => i.marshal(buffer),
             InformationElement::Epco(i) => i.marshal(buffer),
             InformationElement::ServingPlmnRateControl(i) => i.marshal(buffer),
@@ -575,10 +575,10 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                109 => match GroupedIe::unmarshal(&buffer[cursor..]) {
+                109 => match PdnConnections::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
-                        ies.push(InformationElement::PdnConnection(i));
+                        ies.push(InformationElement::PdnConnections(i));
                     }
                     Err(j) => return Err(j),
                 },
@@ -1165,16 +1165,13 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                195 => {
-                    // SCEF PDN Connection
-                    match GroupedIe::unmarshal(&buffer[cursor..]) {
-                        Ok(i) => {
-                            cursor += i.len();
-                            ies.push(InformationElement::ScefPdnConnection(i));
-                        }
-                        Err(j) => return Err(j),
+                195 => match ScefPdnConnections::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::ScefPdnConnections(i));
                     }
-                }
+                    Err(j) => return Err(j),
+                },
                 196 => match HeaderCompressionConfiguration::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();

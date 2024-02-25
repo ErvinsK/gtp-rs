@@ -393,6 +393,7 @@ fn test_create_bearer_resp_unmarshal() {
                 gbr_ul: 0,
                 gbr_dl: 0,
             }),
+            ..BearerContext::default()
         }],
         ..CreateBearerResponse::default()
     };
@@ -504,6 +505,7 @@ fn test_create_bearer_resp_marshal() {
                 gbr_ul: 0,
                 gbr_dl: 0,
             }),
+            ..BearerContext::default()
         }],
         ..CreateBearerResponse::default()
     };

@@ -91,7 +91,7 @@ Message Type value (Decimal)                                Message             
 
 149                                                         Detach Notification                                 Implemented
 150                                                         Detach Acknowledge                                  Implemented
-151                                                         CS Paging Indication                                Not implemented
+151                                                         CS Paging Indication                                Implemented
 153                                                         Alert MME Notification                              Implemented
 154                                                         Alert MME Acknowledge                               Implemented
 155                                                         UE Activity Notification                            Implemented
@@ -163,8 +163,8 @@ pub use {
     createbearerreq::*, createbearerresp::*, createforwardingtunnelreq::*,
     createforwardingtunnelresp::*, createindirectdatafwtunnelreq::*,
     createindirectdatafwtunnelresp::*, createsessionreq::*, createsessionresp::*,
-    deletebearercommand::*, deletebearerfailureind::*, deletebearerreq::*, deletebearerresp::*,
-    deleteindirectdatafwtunnelreq::*, deleteindirectdatafwtunnelresp::*,
+    cspagingindication::*, deletebearercommand::*, deletebearerfailureind::*, deletebearerreq::*,
+    deletebearerresp::*, deleteindirectdatafwtunnelreq::*, deleteindirectdatafwtunnelresp::*,
     deletepdnconnectionsetreq::*, deletepdnconnectionsetresp::*, deletesessionreq::*,
     deletesessionresp::*, detachacknowledge::*, detachnotification::*, downlinkdatanotification::*,
     downlinkdatanotificationacknowledge::*, downlinkdatanotificationfailureindication::*,
@@ -196,6 +196,7 @@ mod createindirectdatafwtunnelreq;
 mod createindirectdatafwtunnelresp;
 mod createsessionreq;
 mod createsessionresp;
+mod cspagingindication;
 mod deletebearercommand;
 mod deletebearerfailureind;
 mod deletebearerreq;

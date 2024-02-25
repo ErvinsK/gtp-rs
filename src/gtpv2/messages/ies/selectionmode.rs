@@ -11,7 +11,7 @@ use crate::gtpv2::{
 pub const SELECTION_MODE: u8 = 128;
 pub const SELECTION_MODE_LENGTH: usize = 1;
 
-// Charging Characteristics IE implementation
+// Selection Mode IE implementation
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct SelectionMode {

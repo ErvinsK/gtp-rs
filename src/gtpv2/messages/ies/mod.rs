@@ -16,15 +16,15 @@ pub use {
     mmctxumtskeyquadrupletsquintuplets::*, mmctxumtskeyquintuplets::*, monitoringeventextinfo::*,
     monitoringeventinfo::*, msisdn::*, mueut::*, nodefeatures::*, nodeidentifier::*, nodenumber::*,
     nodetype::*, overloadcontrolinfo::*, paa::*, packetflowid::*, pagingserviceinfo::*, pco::*,
-    pdntype::*, pdunumbers::*, plmnid::*, portnumber::*, praa::*, prai::*, privateextension::*,
-    pti::*, ptmsi::*, ptmsisignature::*, rabcontext::*, rannascause::*, rattype::*, recovery::*,
-    remoteuecontext::*, remoteueip::*, remoteuserid::*, rfspindex::*, s103pdf::*, s1udf::*,
-    secondaryratudr::*, selectionmode::*, serviceindicator::*, servingnetwork::*,
-    servingplmnratecontrol::*, sourceid::*, specialiewithtypeext::*, spi::*, sqn::*,
-    srcrncpdcpctxinfo::*, stnsr::*, tad::*, targetid::*, throttling::*, tmgi::*, tmsi::*,
-    traceinfo::*, tracereference::*, transactionid::*, twanid::*, twanidtimestamp::*, twmi::*,
-    uci::*, uetimezone::*, uli::*, ulitimestamp::*, unknown::*, upfsif::*,
-    wlanoffloadindication::*,
+    pdnconnections::*, pdntype::*, pdunumbers::*, plmnid::*, portnumber::*, praa::*, prai::*,
+    privateextension::*, pti::*, ptmsi::*, ptmsisignature::*, rabcontext::*, rannascause::*,
+    rattype::*, recovery::*, remoteuecontext::*, remoteueip::*, remoteuserid::*, rfspindex::*,
+    s103pdf::*, s1udf::*, scefpdnconnections::*, secondaryratudr::*, selectionmode::*,
+    serviceindicator::*, servingnetwork::*, servingplmnratecontrol::*, sourceid::*,
+    specialiewithtypeext::*, spi::*, sqn::*, srcrncpdcpctxinfo::*, stnsr::*, tad::*, targetid::*,
+    throttling::*, tmgi::*, tmsi::*, traceinfo::*, tracereference::*, transactionid::*, twanid::*,
+    twanidtimestamp::*, twmi::*, uci::*, uetimezone::*, uli::*, ulitimestamp::*, unknown::*,
+    upfsif::*, wlanoffloadindication::*,
 };
 
 mod abstimembmsdatatransfer;
@@ -116,6 +116,7 @@ mod paa;
 mod packetflowid;
 mod pagingserviceinfo;
 mod pco;
+mod pdnconnections;
 mod pdntype;
 mod pdunumbers;
 mod plmnid;
@@ -136,6 +137,7 @@ mod remoteuserid;
 mod rfspindex;
 mod s103pdf;
 mod s1udf;
+mod scefpdnconnections;
 mod secondaryratudr;
 mod selectionmode;
 mod serviceindicator;

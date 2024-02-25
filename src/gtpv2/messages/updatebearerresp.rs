@@ -389,6 +389,7 @@ fn test_update_bearer_resp_unmarshal() {
                 gbr_ul: 0,
                 gbr_dl: 0,
             }),
+            ..BearerContext::default()
         }],
         ..UpdateBearerResponse::default()
     };
@@ -500,6 +501,7 @@ fn test_update_bearer_resp_marshal() {
                 gbr_ul: 0,
                 gbr_dl: 0,
             }),
+            ..BearerContext::default()
         }],
         ..UpdateBearerResponse::default()
     };

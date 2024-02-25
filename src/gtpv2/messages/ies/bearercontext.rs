@@ -2,7 +2,7 @@
 
 use crate::gtpv2::{errors::GTPV2Error, messages::ies::*};
 
-// Bearer Context IE T
+// Bearer Context IE Type
 
 pub const BEARER_CTX: u8 = 93;
 
@@ -23,6 +23,8 @@ pub struct BearerContext {
     pub epco: Option<Epco>,
     pub max_packet_loss: Option<MaxPacketLossRate>,
     pub ran_nas_cause: Option<RanNasCause>,
+    pub bss_container: Option<Fcontainer>, // Specific to S3/S10/S16/N26
+    pub transaction_id: Option<TransactionIdentifier>, // Specific to S3/S10/S16/N26
 }
 
 impl Default for BearerContext {
@@ -43,6 +45,8 @@ impl Default for BearerContext {
             epco: None,
             max_packet_loss: None,
             ran_nas_cause: None,
+            bss_container: None,
+            transaction_id: None,
         }
     }
 }
@@ -119,6 +123,16 @@ impl From<GroupedIe> for BearerContext {
                 InformationElement::RanNasCause(k) => {
                     if let (0, true) = (k.ins, bearer.ran_nas_cause.is_none()) {
                         bearer.ran_nas_cause = Some(k)
+                    };
+                }
+                InformationElement::Fcontainer(k) => {
+                    if let (0, true) = (k.ins, bearer.bss_container.is_none()) {
+                        bearer.bss_container = Some(k)
+                    };
+                }
+                InformationElement::TransactionIdentifier(k) => {
+                    if let (0, true) = (k.ins, bearer.transaction_id.is_none()) {
+                        bearer.transaction_id = Some(k)
                     };
                 }
                 _ => (),
@@ -266,12 +280,7 @@ fn bearer_context_ie_unmarshal_test() {
             ins: 0,
             charging_id: 0x54367df,
         }),
-        bearer_flags: None,
-        pco: None,
-        apco: None,
-        epco: None,
-        max_packet_loss: None,
-        ran_nas_cause: None,
+        ..BearerContext::default()
     };
     let i = BearerContext::unmarshal(&encoded);
     assert_eq!(i.unwrap(), decoded);
@@ -338,12 +347,7 @@ fn bearer_context_ie_marshal_test() {
             ins: 0,
             charging_id: 0x54367df,
         }),
-        bearer_flags: None,
-        pco: None,
-        apco: None,
-        epco: None,
-        max_packet_loss: None,
-        ran_nas_cause: None,
+        ..BearerContext::default()
     };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);

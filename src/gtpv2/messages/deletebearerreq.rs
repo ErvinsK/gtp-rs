@@ -300,6 +300,7 @@ fn test_delete_bearer_req_unmarshal() {
             },
             fteids: vec![],
             bearer_qos: None,
+            ..BearerContext::default()
         }],
         ..DeleteBearerRequest::default()
     };
@@ -375,6 +376,7 @@ fn test_delete_bearer_req_marshal() {
             },
             fteids: vec![],
             bearer_qos: None,
+            ..BearerContext::default()
         }],
         ..DeleteBearerRequest::default()
     };

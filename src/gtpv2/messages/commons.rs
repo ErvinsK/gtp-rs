@@ -11,3 +11,15 @@ pub trait Messages {
     fn fromvec(&mut self, elements: Vec<InformationElement>) -> Result<bool, GTPV2Error>;
     //fn len (&self) -> usize;
 }
+
+impl Iterator for dyn Messages {
+    type Item = InformationElement;
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut elements = self.tovec();
+        if elements.is_empty() {
+            None
+        } else {
+            elements.pop()
+        }
+    }
+}

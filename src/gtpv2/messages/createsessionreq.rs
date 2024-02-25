@@ -914,6 +914,7 @@ fn test_create_session_req_unmarshal() {
                 gbr_ul: 0,
                 gbr_dl: 0,
             }),
+            ..BearerContext::default()
         }],
         recovery: Some(Recovery {
             t: RECOVERY,
@@ -1134,6 +1135,7 @@ fn test_create_session_req_marshal() {
                 gbr_ul: 0,
                 gbr_dl: 0,
             }),
+            ..BearerContext::default()
         }],
         recovery: Some(Recovery {
             t: RECOVERY,

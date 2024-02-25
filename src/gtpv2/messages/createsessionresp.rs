@@ -524,6 +524,7 @@ fn test_create_session_resp_unmarshal() {
                 gbr_ul: 0,
                 gbr_dl: 0,
             }),
+            ..BearerContext::default()
         }],
         apn_restriction: Some(ApnRestriction {
             t: APNRESTRICTION,
@@ -665,6 +666,7 @@ fn test_create_session_resp_marshal() {
                 gbr_ul: 0,
                 gbr_dl: 0,
             }),
+            ..BearerContext::default()
         }],
         apn_restriction: Some(ApnRestriction {
             t: APNRESTRICTION,

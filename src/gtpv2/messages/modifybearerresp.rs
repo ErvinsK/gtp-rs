@@ -409,6 +409,7 @@ fn test_modify_bearer_resp_unmarshal() {
             },
             fteids: vec![],
             bearer_qos: None,
+            ..BearerContext::default()
         }],
         apn_restriction: Some(ApnRestriction {
             t: APNRESTRICTION,
@@ -504,6 +505,7 @@ fn test_modify_bearer_resp_marshal() {
             },
             fteids: vec![],
             bearer_qos: None,
+            ..BearerContext::default()
         }],
         apn_restriction: Some(ApnRestriction {
             t: APNRESTRICTION,

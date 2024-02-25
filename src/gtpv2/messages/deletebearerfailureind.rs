@@ -203,6 +203,7 @@ fn test_delete_bearer_failure_ind_unmarshal() {
             },
             fteids: vec![],
             bearer_qos: None,
+            ..BearerContext::default()
         }],
         overload_info: vec![
             OverloadControlInfo {
@@ -321,6 +322,7 @@ fn test_delete_bearer_failure_ind_marshal() {
             },
             fteids: vec![],
             bearer_qos: None,
+            ..BearerContext::default()
         }],
         overload_info: vec![
             OverloadControlInfo {

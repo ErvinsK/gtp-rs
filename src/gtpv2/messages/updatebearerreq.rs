@@ -307,6 +307,7 @@ fn test_update_bearer_req_unmarshal() {
                 gbr_ul: 0,
                 gbr_dl: 0,
             }),
+            ..BearerContext::default()
         }],
         pti: Some(Pti {
             t: PTI,
@@ -466,6 +467,7 @@ fn test_update_bearer_req_marshal() {
                 gbr_ul: 0,
                 gbr_dl: 0,
             }),
+            ..BearerContext::default()
         }],
         pti: Some(Pti {
             t: PTI,

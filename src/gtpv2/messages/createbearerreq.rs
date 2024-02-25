@@ -325,6 +325,7 @@ fn test_create_bearer_req_unmarshal() {
                 gbr_ul: 0,
                 gbr_dl: 0,
             }),
+            ..BearerContext::default()
         }],
         ..CreateBearerRequest::default()
     };
@@ -416,6 +417,7 @@ fn test_create_bearer_req_marshal() {
                 gbr_ul: 0,
                 gbr_dl: 0,
             }),
+            ..BearerContext::default()
         }],
         ..CreateBearerRequest::default()
     };
