@@ -14,7 +14,7 @@ pub const MODIFY_BEARER_CMD: u8 = 64;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ModifyBearerCommand {
     pub header: Gtpv2Header,
-    pub apnambr: ApnAmbr,
+    pub apnambr: Ambr,
     pub bearer_ctxs: Vec<BearerContext>,
     pub overload_info: Vec<OverloadControlInfo>,
     pub fteid_control: Option<Fteid>,
@@ -30,7 +30,7 @@ impl Default for ModifyBearerCommand {
         };
         ModifyBearerCommand {
             header: hdr,
-            apnambr: ApnAmbr::default(),
+            apnambr: Ambr::default(),
             bearer_ctxs: vec![],
             overload_info: vec![],
             fteid_control: None,
@@ -127,8 +127,8 @@ impl Messages for ModifyBearerCommand {
             }
         }
         match (mandatory[0], mandatory[1]) {
-            (false, false) => Err(GTPV2Error::MessageMandatoryIEMissing(APNAMBR)),
-            (false, true) => Err(GTPV2Error::MessageMandatoryIEMissing(APNAMBR)),
+            (false, false) => Err(GTPV2Error::MessageMandatoryIEMissing(AMBR)),
+            (false, true) => Err(GTPV2Error::MessageMandatoryIEMissing(AMBR)),
             (true, false) => Err(GTPV2Error::MessageMandatoryIEMissing(BEARER_CTX)),
             (true, true) => Ok(true),
         }
@@ -157,9 +157,9 @@ fn test_modify_bearer_command_unmarshal() {
             teid: Some(0),
             sqn: 0x68,
         },
-        apnambr: ApnAmbr {
-            t: APNAMBR,
-            length: APNAMBR_LENGTH,
+        apnambr: Ambr {
+            t: AMBR,
+            length: AMBR_LENGTH,
             ins: 0,
             ambr_ul: 50000,
             ambr_dl: 150000,
@@ -276,9 +276,9 @@ fn test_modify_bearer_command_marshal() {
             teid: Some(0),
             sqn: 0x68,
         },
-        apnambr: ApnAmbr {
-            t: APNAMBR,
-            length: APNAMBR_LENGTH,
+        apnambr: Ambr {
+            t: AMBR,
+            length: AMBR_LENGTH,
             ins: 0,
             ambr_ul: 50000,
             ambr_dl: 150000,

@@ -17,7 +17,7 @@ pub struct UpdateBearerRequest {
     pub bearer_ctxs: Vec<BearerContext>,
     pub pti: Option<Pti>,
     pub pco: Option<Pco>,
-    pub apnambr: ApnAmbr,
+    pub apnambr: Ambr,
     pub cra: Option<ChangeReportingAction>,
     pub csg_ira: Option<CSGInformationReportingAction>,
     pub henb_info_report: Option<HenbInfoReporting>,
@@ -43,7 +43,7 @@ impl Default for UpdateBearerRequest {
             bearer_ctxs: vec![],
             pti: None,
             pco: None,
-            apnambr: ApnAmbr::default(),
+            apnambr: Ambr::default(),
             cra: None,
             csg_ira: None,
             henb_info_report: None,
@@ -229,7 +229,7 @@ impl Messages for UpdateBearerRequest {
         }
         match (mandatory, self.bearer_ctxs.is_empty()) {
             (false, true) => Err(GTPV2Error::MessageMandatoryIEMissing(BEARER_CTX)),
-            (false, false) => Err(GTPV2Error::MessageMandatoryIEMissing(APNAMBR)),
+            (false, false) => Err(GTPV2Error::MessageMandatoryIEMissing(AMBR)),
             (true, true) => Err(GTPV2Error::MessageMandatoryIEMissing(BEARER_CTX)),
             (true, false) => Ok(true),
         }
@@ -324,9 +324,9 @@ fn test_update_bearer_req_unmarshal() {
                 0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
             ],
         }),
-        apnambr: ApnAmbr {
-            t: APNAMBR,
-            length: APNAMBR_LENGTH,
+        apnambr: Ambr {
+            t: AMBR,
+            length: AMBR_LENGTH,
             ins: 0,
             ambr_ul: 50000,
             ambr_dl: 150000,
@@ -481,12 +481,12 @@ fn test_update_bearer_req_marshal() {
             ins: 0,
             pco: vec![
                 0x80, 0x80, 0x21, 0x10, 0x02, 0x00, 0x00, 0x10, 0x81, 0x06, 0x08, 0x08, 0x08, 0x08,
-                0x83, 0x06, 0x0a, 0x40, 0xd0, 0x61,
+                0x06, 0x0a, 0x40, 0xd0, 0x61,
             ],
         }),
-        apnambr: ApnAmbr {
-            t: APNAMBR,
-            length: APNAMBR_LENGTH,
+        apnambr: Ambr {
+            t: AMBR,
+            length: AMBR_LENGTH,
             ins: 0,
             ambr_ul: 50000,
             ambr_dl: 150000,

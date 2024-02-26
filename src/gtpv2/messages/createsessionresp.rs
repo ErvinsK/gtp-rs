@@ -22,7 +22,7 @@ pub struct CreateSessionResponse {
     pub fteid_pgw: Option<Fteid>,
     pub paa: Option<PdnAddressAllocation>,
     pub apn_restriction: Option<ApnRestriction>,
-    pub apn_ambr: Option<ApnAmbr>,
+    pub apn_ambr: Option<Ambr>,
     pub linked_ebi: Option<Ebi>,
     pub pco: Option<Pco>,
     pub bearer_ctxs: Vec<BearerContext>,
@@ -437,8 +437,8 @@ fn test_create_session_resp_unmarshal() {
             ins: 0,
             recovery: 17,
         }),
-        apn_ambr: Some(ApnAmbr {
-            t: APNAMBR,
+        apn_ambr: Some(Ambr {
+            t: AMBR,
             length: 8,
             ins: 0,
             ambr_ul: 1000,
@@ -579,8 +579,8 @@ fn test_create_session_resp_marshal() {
             ins: 0,
             recovery: 17,
         }),
-        apn_ambr: Some(ApnAmbr {
-            t: APNAMBR,
+        apn_ambr: Some(Ambr {
+            t: AMBR,
             length: 8,
             ins: 0,
             ambr_ul: 1000,

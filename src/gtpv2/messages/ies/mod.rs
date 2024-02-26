@@ -1,6 +1,6 @@
 pub use {
     abstimembmsdatatransfer::*, actionindication::*, addflagssrvcc::*, additionalmmctxsrvcc::*,
-    apco::*, apn::*, apnambr::*, apnratecontrolstatus::*, apnrelativecapacity::*,
+    apco::*, apn::*, ambr::*, apnratecontrolstatus::*, apnrelativecapacity::*,
     apnrestriction::*, arp::*, bearercontext::*, bearerflags::*, bearerqos::*, bearertft::*,
     cause::*, changereportingaction::*, changetoreportflags::*, channelneeded::*, chargingchar::*,
     chargingid::*, ciotoptimizationssupport::*, cmi::*, cnose::*, commons::*,
@@ -33,7 +33,7 @@ mod addflagssrvcc;
 mod additionalmmctxsrvcc;
 mod apco;
 mod apn;
-mod apnambr;
+mod ambr;
 mod apnratecontrolstatus;
 mod apnrelativecapacity;
 mod apnrestriction;

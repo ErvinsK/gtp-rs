@@ -20,7 +20,7 @@ pub struct ModifyBearerRequest {
     pub rattype: Option<RatType>,
     pub indication: Option<Indication>,
     pub fteid_control: Option<Fteid>,
-    pub apnambr: Option<ApnAmbr>,
+    pub apnambr: Option<Ambr>,
     pub delay_dl_pnr: Option<DelayValue>,
     pub bearer_ctxs: Vec<BearerContext>,
     pub recovery: Option<Recovery>,
@@ -501,8 +501,8 @@ fn test_modify_bearer_req_unmarshal() {
             ipv4: Some(Ipv4Addr::new(217, 171, 141, 242)),
             ipv6: Some(Ipv6Addr::new(0x2a04, 0x4a45, 0x4, 0x0, 0x0, 0x0, 0x0, 0x27)),
         }),
-        apnambr: Some(ApnAmbr {
-            t: APNAMBR,
+        apnambr: Some(Ambr {
+            t: AMBR,
             length: 8,
             ins: 0,
             ambr_ul: 1000,
@@ -640,8 +640,8 @@ fn test_modify_bearer_req_marshal() {
             ipv4: Some(Ipv4Addr::new(213, 181, 60, 112)),
             ipv6: None,
         }),
-        apnambr: Some(ApnAmbr {
-            t: APNAMBR,
+        apnambr: Some(Ambr {
+            t: AMBR,
             length: 8,
             ins: 0,
             ambr_ul: 1000,

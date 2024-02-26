@@ -20,7 +20,7 @@ pub struct PdnConnections {
     pub pgw_addr_control: Fteid,
     pub pgw_node_name: Option<Fqdn>,
     pub bearer_ctxs: Vec<BearerContext>,
-    pub apn_ambr: ApnAmbr,
+    pub apn_ambr: Ambr,
     pub charging_char: Option<ChargingCharacteristics>,
     pub change_reporting_action: Option<ChangeReportingAction>,
     pub csg_info_reporting_action: Option<CSGInformationReportingAction>,
@@ -51,7 +51,7 @@ impl Default for PdnConnections {
             pgw_addr_control: Fteid::default(),
             pgw_node_name: None,
             bearer_ctxs: vec![],
-            apn_ambr: ApnAmbr::default(),
+            apn_ambr: Ambr::default(),
             charging_char: None,
             change_reporting_action: None,
             csg_info_reporting_action: None,
@@ -450,10 +450,10 @@ fn pdn_connection_ie_unmarshal_test() {
             }),
             ..BearerContext::default()
         }],
-        apn_ambr: ApnAmbr {
+        apn_ambr: Ambr {
             ambr_ul: 2000,
             ambr_dl: 8000,
-            ..ApnAmbr::default()
+            ..Ambr::default()
         },
         charging_char: Some(ChargingCharacteristics {
             charging_char: 0xffff,
@@ -710,10 +710,10 @@ fn pdn_connection_ie_marshal_test() {
             }),
             ..BearerContext::default()
         }],
-        apn_ambr: ApnAmbr {
+        apn_ambr: Ambr {
             ambr_ul: 2000,
             ambr_dl: 8000,
-            ..ApnAmbr::default()
+            ..Ambr::default()
         },
         charging_char: Some(ChargingCharacteristics {
             charging_char: 0xffff,

@@ -28,7 +28,7 @@ pub struct CreateSessionRequest {
     pub pdntype: Option<PdnType>,
     pub paa: Option<PdnAddressAllocation>,
     pub max_apnrestriction: Option<ApnRestriction>,
-    pub apnambr: Option<ApnAmbr>,
+    pub apnambr: Option<Ambr>,
     pub linked_ebi: Option<Ebi>,
     pub twmi: Option<Twmi>,
     pub pco: Option<Pco>,
@@ -856,8 +856,8 @@ fn test_create_session_req_unmarshal() {
             ins: 0,
             restriction_type: Restriction::NoApnRestriction,
         }),
-        apnambr: Some(ApnAmbr {
-            t: APNAMBR,
+        apnambr: Some(Ambr {
+            t: AMBR,
             length: 8,
             ins: 0,
             ambr_ul: 1000,
@@ -1077,8 +1077,8 @@ fn test_create_session_req_marshal() {
             ins: 0,
             restriction_type: Restriction::NoApnRestriction,
         }),
-        apnambr: Some(ApnAmbr {
-            t: APNAMBR,
+        apnambr: Some(Ambr {
+            t: AMBR,
             length: 8,
             ins: 0,
             ambr_ul: 1000,
