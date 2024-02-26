@@ -1,5 +1,4 @@
-// F-TEID IE - according to 3GPP TS 29.247 V15.9.0 (2019-09)
-
+// F-TEID IE - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 use crate::gtpv2::{
     errors::GTPV2Error,
     messages::ies::{commons::*, ie::*},
@@ -55,6 +54,7 @@ pub const FTEID: u8 = 87;
 // 38: S11 MME GTP-U interface
 // 39: S11 SGW GTP-U interface
 // 40:	N26 AMF GTP-C interface
+// 41: N19mb UPF GTP-U interface
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Fteid {

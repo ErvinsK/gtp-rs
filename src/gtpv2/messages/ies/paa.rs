@@ -1,4 +1,4 @@
-// PDN Address Allocation IE - according to 3GPP TS 29.247 V15.9.0 (2019-09)
+// PDN Address Allocation IE - according to 3GPP TS 29.247 V17.10.0 (2023-12)
 
 use crate::gtpv2::{
     errors::GTPV2Error,
@@ -19,6 +19,7 @@ pub enum PdnAddress {
     V6(Ipv6Addr, u8),
     DualStack(Ipv4Addr, Ipv6Addr, u8),
     NonIp,
+    Ethernet,
 }
 
 // PAA IE implementation
@@ -71,6 +72,7 @@ impl IEs for PdnAddressAllocation {
                 buffer_ie.extend_from_slice(&i.octets());
             }
             PdnAddress::NonIp => buffer_ie.push(0x04),
+            PdnAddress::Ethernet => buffer_ie.push(0x05),
         }
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -118,6 +120,7 @@ impl IEs for PdnAddressAllocation {
                         }
                     }
                     0x04 => data.ip = PdnAddress::NonIp,
+                    0x05 => data.ip = PdnAddress::Ethernet,
                     _ => return Err(GTPV2Error::IEIncorrect(PAA)),
                 }
                 Ok(data)

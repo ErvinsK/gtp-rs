@@ -1,4 +1,4 @@
-// Aggregate Maximum Bit Rate (AMBR) IE - according to 3GPP TS 29.274 V18.0.0 (2022-09)
+// Aggregate Maximum Bit Rate (AMBR) IE - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 use crate::gtpv2::{
     errors::GTPV2Error,

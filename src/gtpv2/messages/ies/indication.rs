@@ -1,5 +1,4 @@
-// Indication IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
-
+// Indication IE - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 use crate::gtpv2::{
     errors::GTPV2Error,
     messages::ies::{commons::*, ie::*},
@@ -9,7 +8,7 @@ use crate::gtpv2::{
 // Indication IE TL
 
 pub const INDICATION: u8 = 77;
-pub const INDICATION_LENGTH: usize = 7;
+pub const INDICATION_LENGTH: usize = 10;
 
 // Indication IE implementation
 
@@ -74,6 +73,25 @@ pub struct Indication {
     pub ltempi: bool,  // LTE-M RAT Type reporting to PGW Indication
     pub enbcrsi: bool, // eNB Change Reporting Support Indication
     pub tspcmi: bool,  // Triggering SGSN initiated PDP Context Creation/Modification Indication
+    pub csrmfi: bool,  // Create Session Request Message Forwarded Indication
+    pub mtedtn: bool,  // MT-EDT Not Applicable Indication
+    pub mtedta: bool,  // MT-EDT Applicable Indication
+    pub n5gnmi: bool,  // No 5GS N26 Mobility Indication
+    pub g5cnrs: bool,  // 5GC Not Restricted Support Indication
+    pub g5cnri: bool,  // 5GC Not Restricted Indication
+    pub s5rho: bool,   // 5G-SRVCC Handover Indication
+    pub ethpdn: bool,  // Ethernet PDN Support Indication
+    pub nspusi: bool,  // Notify Start Pause of charging via User plane Support Indication
+    pub pgwrnsi: bool, // PGW Redirection due to mismatch with Network Slice subscribed by UE Support Indication
+    pub rppcsi: bool,  // Restoration of PDN connections after an PGW-C/SMF Change Support Indication
+    pub pgwchi: bool,  // PGW CHange Indication
+    pub sissme: bool,  // Same IWK-SCEF Selected for Monitoring Event Indication
+    pub nsenbi: bool,  // Notify Source eNodeB Indication
+    pub idfupf: bool,  // Indirect Data Forwarding with UPF Indication
+    pub emci: bool,    // Emergency PDU Session Indication
+    pub ltemsai: bool, // LTE-M Satellite Access Indication
+    pub srtpi: bool,   // Satellite RAT Type reporting to PGW Indication
+    pub upipsi: bool,  // User Plane Integrity Protection Support Indication
 }
 
 impl Default for Indication {
@@ -138,6 +156,25 @@ impl Default for Indication {
             ltempi: false,  // LTE-M RAT Type reporting to PGW Indication
             enbcrsi: false, // eNB Change Reporting Support Indication
             tspcmi: false, // Triggering SGSN initiated PDP Context Creation/Modification Indication
+            csrmfi: false,  // Create Session Request Message Forwarded Indication
+            mtedtn: false,  // MT-EDT Not Applicable Indication
+            mtedta: false,  // MT-EDT Applicable Indication
+            n5gnmi: false,  // No 5GS N26 Mobility Indication
+            g5cnrs: false,  // 5GC Not Restricted Support Indication
+            g5cnri: false,  // 5GC Not Restricted Indication
+            s5rho: false,   // 5G-SRVCC Handover Indication
+            ethpdn: false,  // Ethernet PDN Support Indication
+            nspusi: false,  // Notify Start Pause of charging via User plane Support Indication
+            pgwrnsi: false, // PGW Redirection due to mismatch with Network Slice subscribed by UE Support Indication
+            rppcsi: false,  // Restoration of PDN connections after an PGW-C/SMF Change Support Indication
+            pgwchi: false,  // PGW CHange Indication
+            sissme: false,  // Same IWK-SCEF Selected for Monitoring Event Indication
+            nsenbi: false,  // Notify Source eNodeB Indication
+            idfupf: false,  // Indirect Data Forwarding with UPF Indication
+            emci: false,    // Emergency PDU Session Indication
+            ltemsai: false, // LTE-M Satellite Access Indication
+            srtpi: false,   // Satellite RAT Type reporting to PGW Indication
+            upipsi: false,  // User Plane Integrity Protection Support Indication
         }
     }
 }
@@ -148,44 +185,150 @@ impl From<Indication> for InformationElement {
     }
 }
 
+impl From<&Indication> for Vec<u8> {
+    fn from(i: &Indication) -> Vec<u8> {
+        let buffer = vec![
+            (i.daf as u8) << 7 | (i.dtf as u8) << 6 | (i.hi as u8) << 5 | (i.dfi as u8) << 4 | (i.oi as u8) << 3 | (i.isrsi as u8) << 2 | (i.israi as u8) << 1 | (i.sgwci as u8),
+            (i.sqci as u8) << 7 | (i.uimsi as u8) << 6 | (i.cfsi as u8) << 5 | (i.crsi as u8) << 4 | (i.ps as u8) << 3 | (i.pt as u8) << 2 | (i.si as u8) << 1 | (i.msv as u8),
+            (i.retloc as u8) << 7 | (i.pbic as u8) << 6 | (i.srni as u8) << 5 | (i.s6af as u8) << 4 | (i.s4af as u8) << 3 | (i.mbmdt as u8) << 2 | (i.israu as u8) << 1 | (i.ccrsi as u8),
+            (i.cprai as u8) << 7 | (i.arrl as u8) << 6 | (i.ppoff as u8) << 5 | (i.ppon as u8) << 4 | (i.ppsi as u8) << 3 | (i.csfbi as u8) << 2 | (i.clii as u8) << 1 | (i.cpsr as u8),
+            (i.nsi as u8) << 7 | (i.uasi as u8) << 6 | (i.dtci as u8) << 5 | (i.bdwi as u8) << 4 | (i.psci as u8) << 3 | (i.pcri as u8) << 2 | (i.aosi as u8) << 1 | (i.aopi as u8),
+            (i.roaai as u8) << 7 | (i.epcosi as u8) << 6 | (i.cpopci as u8) << 5 | (i.pmtsmi as u8) << 4 | (i.s11tf as u8) << 3 | (i.pnsi as u8) << 2 | (i.unaccsi as u8) << 1 | (i.wpmsi as u8),
+            (i.g5snn26 as u8) << 7 | (i.reprefi as u8) << 6 | (i.g5siwki as u8) << 5 | (i.eevrsi as u8) << 4 | (i.ltemui as u8) << 3 | (i.ltempi as u8) << 2 | (i.enbcrsi as u8) << 1 | (i.tspcmi as u8),
+            (i.csrmfi as u8) << 7 | (i.mtedtn as u8) << 6 | (i.mtedta as u8) << 5 | (i.n5gnmi as u8) << 4 | (i.g5cnrs as u8) << 3 | (i.g5cnri as u8) << 2 | (i.s5rho as u8) << 1 | (i.ethpdn as u8),
+            (i.nspusi as u8) << 7 | (i.pgwrnsi as u8) << 6 | (i.rppcsi as u8) << 5 | (i.pgwchi as u8) << 4 | (i.sissme as u8) << 3 | (i.nsenbi as u8) << 2 | (i.idfupf as u8) << 1 | (i.emci as u8),
+            (i.ltemsai as u8) << 2 | (i.srtpi as u8) << 1 | (i.upipsi as u8),
+        ];
+        buffer
+    }
+}
+
+impl Indication {
+    pub fn convert(&mut self, buffer: Vec<u8>) {
+        for i in buffer.iter().enumerate() {
+            match i {
+                (0,_) => {
+                        self.daf = (i.1 & 0x80) >> 7 == 1;
+                        self.dtf = (i.1 & 0x40) >> 6 == 1;
+                        self.hi = (i.1 & 0x20) >> 5 == 1;
+                        self.dfi = (i.1 & 0x10) >> 4 == 1;
+                        self.oi = (i.1 & 0x08) >> 3 == 1;
+                        self.isrsi = (i.1 & 0x04) >> 2 == 1;
+                        self.israi = (i.1 & 0x02) >> 1 == 1;
+                        self.sgwci = (i.1 & 0x01) == 1;
+                    },
+                (1,_) => {
+                        self.sqci = (i.1 & 0x80) >> 7 == 1;
+                        self.uimsi = (i.1 & 0x40) >> 6 == 1;
+                        self.cfsi = (i.1 & 0x20) >> 5 == 1;
+                        self.crsi = (i.1 & 0x10) >> 4 == 1;
+                        self.ps = (i.1 & 0x08) >> 3 == 1;
+                        self.pt = (i.1 & 0x04) >> 2 == 1;
+                        self.si = (i.1 & 0x02) >> 1 == 1;
+                        self.msv = (i.1 & 0x01) == 1;
+                    },
+                (2,_) => {
+                        self.retloc = (i.1 & 0x80) >> 7 == 1;
+                        self.pbic = (i.1 & 0x40) >> 6 == 1;
+                        self.srni = (i.1 & 0x20) >> 5 == 1;
+                        self.s6af = (i.1 & 0x10) >> 4 == 1;
+                        self.s4af = (i.1 & 0x08) >> 3 == 1;
+                        self.mbmdt = (i.1 & 0x04) >> 2 == 1;
+                        self.israu = (i.1 & 0x02) >> 1 == 1;
+                        self.ccrsi = (i.1 & 0x01) == 1;
+                    },
+                (3,_) => {
+                        self.cprai = (i.1 & 0x80) >> 7 == 1;
+                        self.arrl = (i.1 & 0x40) >> 6 == 1;
+                        self.ppoff = (i.1 & 0x20) >> 5 == 1;
+                        self.ppon = (i.1 & 0x10) >> 4 == 1;
+                        self.ppsi = (i.1 & 0x08) >> 3 == 1;
+                        self.csfbi = (i.1 & 0x04) >> 2 == 1;
+                        self.clii = (i.1 & 0x02) >> 1 == 1;
+                        self.cpsr = (i.1 & 0x01) == 1;
+                    },
+                (4,_) => {
+                        self.nsi = (i.1 & 0x80) >> 7 == 1;
+                        self.uasi = (i.1 & 0x40) >> 6 == 1;
+                        self.dtci = (i.1 & 0x20) >> 5 == 1;
+                        self.bdwi = (i.1 & 0x10) >> 4 == 1;
+                        self.psci = (i.1 & 0x08) >> 3 == 1;
+                        self.pcri = (i.1 & 0x04) >> 2 == 1;
+                        self.aosi = (i.1 & 0x02) >> 1 == 1;
+                        self.aopi = (i.1 & 0x01) == 1;
+                    },
+                (5,_) => {
+                        self.roaai = (i.1 & 0x80) >> 7 == 1;
+                        self.epcosi = (i.1 & 0x40) >> 6 == 1;
+                        self.cpopci = (i.1 & 0x20) >> 5 == 1;
+                        self.pmtsmi = (i.1 & 0x10) >> 4 == 1;
+                        self.s11tf = (i.1 & 0x08) >> 3 == 1;
+                        self.pnsi = (i.1 & 0x04) >> 2 == 1;
+                        self.unaccsi = (i.1 & 0x02) >> 1 == 1;
+                        self.wpmsi = (i.1 & 0x01) == 1;
+                    },
+                (6,_) => {
+                        self.g5snn26 = (i.1 & 0x80) >> 7 == 1;
+                        self.reprefi = (i.1 & 0x40) >> 6 == 1;
+                        self.g5siwki = (i.1 & 0x20) >> 5 == 1;
+                        self.eevrsi = (i.1 & 0x10) >> 4 == 1;
+                        self.ltemui = (i.1 & 0x08) >> 3 == 1;
+                        self.ltempi = (i.1 & 0x04) >> 2 == 1;
+                        self.enbcrsi = (i.1 & 0x02) >> 1 == 1;
+                        self.tspcmi = (i.1 & 0x01) == 1;
+                    },
+                (7,_) => {
+                        self.csrmfi = (i.1 & 0x80) >> 7 == 1;
+                        self.mtedtn = (i.1 & 0x40) >> 6 == 1;
+                        self.mtedta = (i.1 & 0x20) >> 5 == 1;
+                        self.n5gnmi = (i.1 & 0x10) >> 4 == 1;
+                        self.g5cnrs = (i.1 & 0x08) >> 3 == 1;
+                        self.g5cnri = (i.1 & 0x04) >> 2 == 1;
+                        self.s5rho = (i.1 & 0x02) >> 1 == 1;
+                        self.ethpdn = (i.1 & 0x01) == 1;
+                    },
+                (8,_) => {
+                        self.nspusi = (i.1 & 0x80) >> 7 == 1;
+                        self.pgwrnsi = (i.1 & 0x40) >> 6 == 1;
+                        self.rppcsi = (i.1 & 0x20) >> 5 == 1;
+                        self.pgwchi = (i.1 & 0x10) >> 4 == 1;
+                        self.sissme = (i.1 & 0x08) >> 3 == 1;
+                        self.nsenbi = (i.1 & 0x04) >> 2 == 1;
+                        self.idfupf = (i.1 & 0x02) >> 1 == 1;
+                        self.emci = (i.1 & 0x01) == 1;
+                    },
+                (9,_) => {
+                        self.ltemsai = (i.1 & 0x04) >> 2 == 1;
+                        self.srtpi = (i.1 & 0x02) >> 1 == 1;
+                        self.upipsi = (i.1 & 0x01) == 1;
+                    },
+                _ => (),
+            }
+        }
+    }
+}
+
+
 impl IEs for Indication {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(INDICATION);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        let flags = self
-            .clone()
-            .intoarray()
-            .iter()
-            .map(|x| if *x { 1 } else { 0 })
-            .enumerate()
-            .map(|(i, x)| x << (55 - i))
-            .collect::<Vec<_>>()
-            .iter()
-            .sum::<u64>();
-        let i = flags.to_be_bytes();
-        buffer_ie.extend_from_slice(&i[1..]);
+        let mut flags : Vec<u8> = self.into();
+        buffer_ie.append(&mut flags);
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
-        if buffer.len() >= INDICATION_LENGTH + MIN_IE_SIZE {
+        if buffer.len() >= MIN_IE_SIZE {
             let mut data = Indication {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
                 ..Indication::default()
             };
-            let f = u64::from_be_bytes([
-                0x00, buffer[4], buffer[5], buffer[6], buffer[7], buffer[8], buffer[9], buffer[10],
-            ]);
-            let flags = [f; 56]
-                .iter()
-                .enumerate()
-                .map(|(i, x)| ((*x & (0x80000000000000 >> i)) >> (55 - i)) as u8 == 1)
-                .collect::<Vec<bool>>();
-            data.fromarray(&flags[..]);
+            data.convert(buffer[MIN_IE_SIZE..].to_vec());
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(INDICATION))
@@ -193,141 +336,25 @@ impl IEs for Indication {
     }
 
     fn len(&self) -> usize {
-        INDICATION_LENGTH + MIN_IE_SIZE
+        self.length as usize + MIN_IE_SIZE
     }
 
     fn is_empty(&self) -> bool {
         self.length == 0
     }
 }
-
-impl Indication {
-    fn intoarray(self) -> [bool; 56] {
-        [
-            self.daf,     // Dual Address Bearer Flag
-            self.dtf,     // Direct Tunnel Flag
-            self.hi,      // Handover Indication
-            self.dfi,     // Direct Forwarding Indication
-            self.oi,      // Operation Indication
-            self.isrsi,   // Idle mode Signalling Reduction Supported Indication
-            self.israi,   // Idle mode Signalling Reduction Activation Indication
-            self.sgwci,   // SGW Change Indication
-            self.sqci,    // Subscribed QoS Change Indication
-            self.uimsi,   // Unauthenticated IMSI
-            self.cfsi,    // Change F-TEID support Indication
-            self.crsi,    // Change Reporting Support Indication
-            self.ps,      // Piggybacking Supported
-            self.pt,      // S5/S8 Protocol Type
-            self.si,      // Scope Indication
-            self.msv,     // MS Validated
-            self.retloc,  // Retrieve Location Indication Flag
-            self.pbic,    // Propagate BBAI Information Change
-            self.srni,    // SGW Restoration Needed Indication
-            self.s6af,    // Static IPv6 Address Flag
-            self.s4af,    // Static IPv4 Address Flag
-            self.mbmdt,   // Management Based MDT allowed flag
-            self.israu,   // ISR is activated for the UE
-            self.ccrsi,   // CSG Change Reporting Support Indication
-            self.cprai,   // Change of Presence Reporting Area information Indication
-            self.arrl,    // Abnormal Release of Radio Link
-            self.ppoff,   // PDN Pause Off Indication
-            self.ppon,    // PDN Pause On Indication
-            self.ppsi,    // PDN Pause Support Indication
-            self.csfbi,   // CSFB Indication
-            self.clii,    // Change of Location Information Indication
-            self.cpsr,    // CS to PS SRVCC indication
-            self.nsi,     // NBIFOM Support Indication
-            self.uasi,    // UE Available for Signalling Indication
-            self.dtci,    // Delay Tolerant Connection Indication
-            self.bdwi,    // Buffered DL Data Waiting Indication
-            self.psci,    // Pending Subscription Change Indication
-            self.pcri,    // P-CSCF Restoration Indication
-            self.aosi,    // Associate OCI with SGW node's Identity
-            self.aopi,    // Associate OCI with PGW node's Identity
-            self.roaai,   // Release Over Any Access Indication
-            self.epcosi,  // Extended PCO Support Indication
-            self.cpopci,  // Control Plane Only PDN Connection Indication
-            self.pmtsmi,  // Pending MT Short Message Indication
-            self.s11tf,   // S11-U Tunnel Flag
-            self.pnsi,    // Pending Network Initiated PDN Connection Signalling Indication
-            self.unaccsi, // UE Not Authorised Cause Code Support Indication
-            self.wpmsi,   // WLCP PDN Connection Modification Support Indication
-            self.g5snn26, // 5GS Interworking without N26 indication
-            self.reprefi, // Return Preferred Indication
-            self.g5siwki, // 5GS Interworking Indication
-            self.eevrsi,  // Extended EBI Value Range Support Indication
-            self.ltemui,  // LTE-M UE Indication
-            self.ltempi,  // LTE-M RAT Type reporting to PGW Indication
-            self.enbcrsi, // eNB Change Reporting Support Indication
-            self.tspcmi,  // Triggering SGSN initiated PDP Context Creation/Modification Indication
-        ]
-    }
-    fn fromarray(&mut self, i: &[bool]) {
-        self.daf = i[0]; // Dual Address Bearer Flag
-        self.dtf = i[1]; // Direct Tunnel Flag
-        self.hi = i[2]; // Handover Indication
-        self.dfi = i[3]; // Direct Forwarding Indication
-        self.oi = i[4]; // Operation Indication
-        self.isrsi = i[5]; // Idle mode Signalling Reduction Supported Indication
-        self.israi = i[6]; // Idle mode Signalling Reduction Activation Indication
-        self.sgwci = i[7]; // SGW Change Indication
-        self.sqci = i[8]; // Subscribed QoS Change Indication
-        self.uimsi = i[9]; // Unauthenticated IMSI
-        self.cfsi = i[10]; // Change F-TEID support Indication
-        self.crsi = i[11]; // Change Reporting Support Indication
-        self.ps = i[12]; // Piggybacking Supported
-        self.pt = i[13]; // S5/S8 Protocol Type
-        self.si = i[14]; // Scope Indication
-        self.msv = i[15]; // MS Validated
-        self.retloc = i[16]; // Retrieve Location Indication Flag
-        self.pbic = i[17]; // Propagate BBAI Information Change
-        self.srni = i[18]; // SGW Restoration Needed Indication
-        self.s6af = i[19]; // Static IPv6 Address Flag
-        self.s4af = i[20]; // Static IPv4 Address Flag
-        self.mbmdt = i[21]; // Management Based MDT allowed flag
-        self.israu = i[22]; // ISR is activated for the UE
-        self.ccrsi = i[23]; // CSG Change Reporting Support Indication
-        self.cprai = i[24]; // Change of Presence Reporting Area information Indication
-        self.arrl = i[25]; // Abnormal Release of Radio Link
-        self.ppoff = i[26]; // PDN Pause Off Indication
-        self.ppon = i[27]; // PDN Pause On Indication
-        self.ppsi = i[28]; // PDN Pause Support Indication
-        self.csfbi = i[29]; // CSFB Indication
-        self.clii = i[30]; // Change of Location Information Indication
-        self.cpsr = i[31]; // CS to PS SRVCC indication
-        self.nsi = i[32]; // NBIFOM Support Indication
-        self.uasi = i[33]; // UE Available for Signalling Indication
-        self.dtci = i[34]; // Delay Tolerant Connection Indication
-        self.bdwi = i[35]; // Buffered DL Data Waiting Indication
-        self.psci = i[36]; // Pending Subscription Change Indication
-        self.pcri = i[37]; // P-CSCF Restoration Indication
-        self.aosi = i[38]; // Associate OCI with SGW node's Identity
-        self.aopi = i[39]; // Associate OCI with PGW node's Identity
-        self.roaai = i[40]; // Release Over Any Access Indication
-        self.epcosi = i[41]; // Extended PCO Support Indication
-        self.cpopci = i[42]; // Control Plane Only PDN Connection Indication
-        self.pmtsmi = i[43]; // Pending MT Short Message Indication
-        self.s11tf = i[44]; // S11-U Tunnel Flag
-        self.pnsi = i[45]; // Pending Network Initiated PDN Connection Signalling Indication
-        self.unaccsi = i[46]; // UE Not Authorised Cause Code Support Indication
-        self.wpmsi = i[47]; // WLCP PDN Connection Modification Support Indication
-        self.g5snn26 = i[48]; // 5GS Interworking without N26 indication
-        self.reprefi = i[49]; // Return Preferred Indication
-        self.g5siwki = i[50]; // 5GS Interworking Indication
-        self.eevrsi = i[51]; // Extended EBI Value Range Support Indication
-        self.ltemui = i[52]; // LTE-M UE Indication
-        self.ltempi = i[53]; // LTE-M RAT Type reporting to PGW Indication
-        self.enbcrsi = i[54]; // eNB Change Reporting Support Indication
-        self.tspcmi = i[55]; // Triggering SGSN initiated PDP Context Creation/Modification Indication
-    }
-}
-
+   
 #[test]
 fn indication_ie_marshal_test() {
-    let encoded: [u8; 11] = [
-        0x4d, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    let encoded: [u8; 14] = [
+        0x4d,0x00,0x0a,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x00,0x04,
     ];
-    let decoded = Indication::default();
+    let decoded = Indication {
+        tspcmi: true,
+        sgwci: true,
+        ltemsai: true,
+        ..Default::default()
+    };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);
@@ -335,13 +362,28 @@ fn indication_ie_marshal_test() {
 
 #[test]
 fn indication_ie_unmarshal_test() {
-    let encoded: [u8; 11] = [
-        0x4d, 0x00, 0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
+    let encoded: [u8; 14] = [
+        0x4d,0x00,0x0a,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x00,0x04,
     ];
     let decoded = Indication {
         tspcmi: true,
         sgwci: true,
+        ltemsai: true,
         ..Default::default()
+    };
+    assert_eq!(Indication::unmarshal(&encoded).unwrap(), decoded);
+}
+
+#[test]
+fn indication_ie_unmarshal_legacy_test() {
+    let encoded: [u8; 11] = [
+        0x4d,0x00,0x07,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x01,
+    ];
+    let decoded = Indication {
+        length: 7,
+        tspcmi: true,
+        sgwci: true,
+        ..Indication::default()
     };
     assert_eq!(Indication::unmarshal(&encoded).unwrap(), decoded);
 }

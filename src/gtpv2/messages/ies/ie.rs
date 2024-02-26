@@ -1,6 +1,6 @@
 /*
 
-List of GTPv2-C IEs according to 3GPP TS 29.274 V18.0.0 (2022-09)
+List of GTPv2-C IEs according to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 IE Type         Name                                                            Status
 0               Reserved                                                        NA
@@ -14,30 +14,30 @@ IE Type         Name                                                            
 52 to 70        Reserved for Sv interface
 71              Access Point Name (APN)                                         Implemented
 72              Aggregate Maximum Bit Rate (AMBR)                               Implemented
-73              EPS Bearer ID (EBI)
-74              IP Address
-75              Mobile Equipment Identity (MEI)
-76              MSISDN
-77              Indication
-78              Protocol Configuration Options (PCO)
-79              PDN Address Allocation (PAA)
-80              Bearer Level Quality of Service (Bearer QoS)
-81              Flow Quality of Service (Flow QoS)
-82              RAT Type
-83              Serving Network
-84              EPS Bearer Level Traffic Flow Template (Bearer TFT)
-85              Traffic Aggregation Description (TAD)
-86              User Location Information (ULI)
-87              Fully Qualified Tunnel Endpoint Identifier (F-TEID)
-88              TMSI
-89              Global CN-Id
-90              S103 PDN Data Forwarding Info (S103PDF)
-91              S1-U Data Forwarding Info (S1UDF)
-92              Delay Value
-93              Bearer Context
-94              Charging ID
-95              Charging Characteristics
-96              Trace Information
+73              EPS Bearer ID (EBI)                                             Implemented
+74              IP Address                                                      Implemented
+75              Mobile Equipment Identity (MEI)                                 Implemented
+76              MSISDN                                                          Implemented
+77              Indication                                                      Implemented
+78              Protocol Configuration Options (PCO)                            Implemented
+79              PDN Address Allocation (PAA)                                    Implemented
+80              Bearer Level Quality of Service (Bearer QoS)                    Implemented
+81              Flow Quality of Service (Flow QoS)                              Implemented
+82              RAT Type                                                        Implemented
+83              Serving Network                                                 Implemented
+84              EPS Bearer Level Traffic Flow Template (Bearer TFT)             Implemented
+85              Traffic Aggregation Description (TAD)                           Implemented
+86              User Location Information (ULI)                                 Implemented
+87              Fully Qualified Tunnel Endpoint Identifier (F-TEID)             Implemented
+88              TMSI                                                            Implemented
+89              Global CN-Id                                                    Implemented
+90              S103 PDN Data Forwarding Info (S103PDF)                         Implemented
+91              S1-U Data Forwarding Info (S1UDF)                               Implemented
+92              Delay Value                                                     Implemented
+93              Bearer Context                                                  To be checked
+94              Charging ID                                                     Implemented
+95              Charging Characteristics                                        Implemented
+96              Trace Information                                               Implemented        
 97              Bearer Flags
 98              Reserved
 99              PDN Type
