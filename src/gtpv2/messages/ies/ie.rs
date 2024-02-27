@@ -59,8 +59,8 @@ IE Type         Name                                                            
 115             Trace Reference                                                 Implemented
 116             Complete Request Message                                        Implemented
 117             GUTI                                                            Implemented
-118             F-Container
-119             F-Cause
+118             F-Container                                                     Implemented
+119             F-Cause                                                         Implemented
 120             PLMN ID
 121             Target Identification
 122             Reserved
