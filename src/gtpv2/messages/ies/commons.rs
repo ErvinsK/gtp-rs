@@ -999,6 +999,9 @@ fn test_access_restriction_mm() {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
 pub struct ExtendedAccessRestrictionMM {
+    pub nruna: bool,    // NR-U in 5GS Not Allowed
+    pub nrusrna: bool, // New Radio Unlicensed as Secondary RAT Not Allowed
+    pub nrna: bool,   // NR in 5GS Not Allowed
     pub ussrna: bool, // Unlicensed Spectrum in the form of LAA or LWA/LWIP as Secondary RAT Not Allowed
     pub nrsrna: bool, // NR as Secondary RAT Not Allowed
 }
@@ -1008,6 +1011,9 @@ impl From<ExtendedAccessRestrictionMM> for u8 {
         let mut value: u8 = 0;
         value += if mode.nrsrna { 0x01 } else { 0 };
         value += if mode.ussrna { 0x02 } else { 0 };
+        value += if mode.nrna { 0x04 } else { 0 };
+        value += if mode.nrusrna { 0x08 } else { 0 };
+        value += if mode.nruna { 0x10 } else { 0 };
         value
     }
 }
@@ -1017,6 +1023,9 @@ impl From<u8> for ExtendedAccessRestrictionMM {
         ExtendedAccessRestrictionMM {
             nrsrna: (value & 0x01) != 0,
             ussrna: (value & 0x02) != 0,
+            nrna: (value & 0x04) != 0,
+            nrusrna: (value & 0x08) != 0,
+            nruna: (value & 0x10) != 0,
         }
     }
 }

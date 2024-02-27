@@ -1,4 +1,4 @@
-// Fully Qualified Cause (F-Cause) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) and 3GPP TS 24.008 V16.0.0 (2019-03)
+// Fully Qualified Cause (F-Cause) IE - according to 3GPP TS 29.274 V17.10.0 (2023-12) and 3GPP TS 24.008 V16.0.0 (2019-03)
 
 use crate::gtpv2::{
     errors::GTPV2Error,
@@ -10,6 +10,44 @@ use crate::gtpv2::{
 
 pub const FCAUSE: u8 = 119;
 
+// Cause Type Enum
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CauseType {
+    Spare,
+    RadioNetworkLayer,
+    TransportLayer,
+    Nas,
+    Protocol,
+    Misc,
+}
+
+impl From<CauseType> for u8 {
+    fn from(value: CauseType) -> Self {
+        match value {
+            CauseType::Spare => 5,
+            CauseType::RadioNetworkLayer => 0,
+            CauseType::TransportLayer => 1,
+            CauseType::Nas => 2,
+            CauseType::Protocol => 3,
+            CauseType::Misc => 4,
+        }
+    }
+}
+
+impl From<u8> for CauseType {
+    fn from(value: u8) -> Self {
+        match value {
+            5 => CauseType::Spare,
+            0 => CauseType::RadioNetworkLayer,
+            1 => CauseType::TransportLayer,
+            2 => CauseType::Nas,
+            3 => CauseType::Protocol,
+            4 => CauseType::Misc,
+            _ => CauseType::Spare,
+        }
+    }
+}
+
 // F-Cause IE implementation
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -17,7 +55,7 @@ pub struct Fcause {
     pub t: u8,
     pub length: u16,
     pub ins: u8,
-    pub cause_type: u8,
+    pub cause_type: CauseType,
     pub cause_field: Vec<u8>,
 }
 
@@ -27,7 +65,7 @@ impl Default for Fcause {
             t: FCAUSE,
             length: 0,
             ins: 0,
-            cause_type: 0,
+            cause_type: CauseType::RadioNetworkLayer,
             cause_field: vec![],
         }
     }
@@ -45,7 +83,7 @@ impl IEs for Fcause {
         buffer_ie.push(FCAUSE);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.push(self.cause_type);
+        buffer_ie.push(self.cause_type.clone().into());
         buffer_ie.extend_from_slice(&self.cause_field[..]);
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -56,7 +94,7 @@ impl IEs for Fcause {
             let mut data = Fcause {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                cause_type: buffer[4] & 0x0f,
+                cause_type: (buffer[4] & 0x0f).into(),
                 ..Fcause::default()
             };
             if check_tliv_ie_buffer(data.length, buffer) {
@@ -86,7 +124,7 @@ fn fcause_ie_marshal_test() {
         t: FCAUSE,
         length: 3,
         ins: 0,
-        cause_type: 0,
+        cause_type: CauseType::RadioNetworkLayer,
         cause_field: vec![0xff, 0xaa],
     };
     let mut buffer: Vec<u8> = vec![];
@@ -101,7 +139,7 @@ fn fcause_ie_unmarshal_test() {
         t: FCAUSE,
         length: 3,
         ins: 0,
-        cause_type: 0,
+        cause_type: CauseType::RadioNetworkLayer,
         cause_field: vec![0xff, 0xaa],
     };
     assert_eq!(Fcause::unmarshal(&encoded).unwrap(), decoded);

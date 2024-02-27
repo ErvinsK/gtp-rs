@@ -1,5 +1,4 @@
-// PDN Type IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
-
+// PDN Type IE - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 use crate::gtpv2::{
     errors::GTPV2Error,
     messages::ies::{commons::*, ie::*},
@@ -19,24 +18,33 @@ pub enum Pdn {
     Ipv6,
     Ipv46,
     NonIp,
+    Ethernet,
+    Reserved,
 }
 
-impl Pdn {
-    fn enum_to_value(i: &Pdn) -> u8 {
-        match i {
+impl From<Pdn> for u8 {
+    fn from(value: Pdn) -> Self {
+        match value {
             Pdn::Ipv4 => 1,
             Pdn::Ipv6 => 2,
             Pdn::Ipv46 => 3,
             Pdn::NonIp => 4,
+            Pdn::Ethernet => 5,
+            Pdn::Reserved => 6,
         }
     }
-    fn value_to_enum(i: u8) -> Result<Pdn, GTPV2Error> {
-        match i {
-            1 => Ok(Pdn::Ipv4),
-            2 => Ok(Pdn::Ipv6),
-            3 => Ok(Pdn::Ipv46),
-            4 => Ok(Pdn::NonIp),
-            _ => Err(GTPV2Error::IEIncorrect(PDNTYPE)),
+}
+
+impl From<u8> for Pdn {
+    fn from(value: u8) -> Self {
+        match value {
+            1 => Pdn::Ipv4,
+            2 => Pdn::Ipv6,
+            3 => Pdn::Ipv46,
+            4 => Pdn::NonIp,
+            5 => Pdn::Ethernet,
+            6 => Pdn::Reserved,
+            _ => Pdn::Reserved,
         }
     }
 }
@@ -74,7 +82,7 @@ impl IEs for PdnType {
         buffer_ie.push(PDNTYPE);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.push(Pdn::enum_to_value(&self.pdn_type));
+        buffer_ie.push(self.pdn_type.clone().into());
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
     }
@@ -84,10 +92,7 @@ impl IEs for PdnType {
             let data = PdnType {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                pdn_type: match Pdn::value_to_enum(buffer[4]) {
-                    Ok(i) => i,
-                    Err(j) => return Err(j),
-                },
+                pdn_type: buffer[4].into(),
                 ..PdnType::default()
             };
             Ok(data)
@@ -133,9 +138,12 @@ fn pdntype_ie_unmarshal_test() {
 
 #[test]
 fn pdntype_ie_unknown_rattype_unmarshal_test() {
-    let encoded: [u8; 5] = [0x63, 0x00, 0x01, 0x00, 0x05];
-    assert_eq!(
-        PdnType::unmarshal(&encoded),
-        Err(GTPV2Error::IEIncorrect(PDNTYPE))
-    );
+    let encoded: [u8; 5] = [0x63, 0x00, 0x01, 0x00, 0x07];
+    let decoded = PdnType {
+        t: PDNTYPE,
+        length: PDNTYPE_LENGTH as u16,
+        ins: 0,
+        pdn_type: Pdn::Reserved,
+    };
+    assert_eq!(PdnType::unmarshal(&encoded).unwrap(), decoded);
 }

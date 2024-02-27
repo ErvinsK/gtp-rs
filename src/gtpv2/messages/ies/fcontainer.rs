@@ -1,4 +1,4 @@
-// Fully Qualified Container (F-Container) - according to 3GPP TS 29.274 V15.9.0 (2019-09) and 3GPP TS 24.008 V16.0.0 (2019-03)
+// Fully Qualified Container (F-Container) - according to 3GPP TS 29.274 V17.10.0 (2023-12) and 3GPP TS 24.008 V16.0.0 (2019-03)
 
 use crate::gtpv2::{
     errors::GTPV2Error,
@@ -19,6 +19,7 @@ pub enum Container {
     Eutran(Vec<u8>),
     Nbifom(Vec<u8>),
     EnDc(Vec<u8>),
+    InterSystemSON(Vec<u8>),
     Unknown(Vec<u8>), // Container Type is put into the first element of the containing vector
 }
 
@@ -77,6 +78,10 @@ impl IEs for Fcontainer {
                 buffer_ie.push(0x05);
                 buffer_ie.extend_from_slice(&i[..]);
             }
+            Container::InterSystemSON(i) => {
+                buffer_ie.push(0x06);
+                buffer_ie.extend_from_slice(&i[..]);
+            }
             Container::Unknown(i) => {
                 buffer_ie.push(i[0]);
                 buffer_ie.extend_from_slice(&i[1..]);
@@ -101,6 +106,7 @@ impl IEs for Fcontainer {
                     3 => data.container = Container::Eutran(buffer[5..].to_vec()),
                     4 => data.container = Container::Nbifom(buffer[5..].to_vec()),
                     5 => data.container = Container::EnDc(buffer[5..].to_vec()),
+                    6 => data.container = Container::InterSystemSON(buffer[5..].to_vec()),
                     _ => data.container = Container::Unknown(buffer[4..].to_vec()),
                 }
                 Ok(data)

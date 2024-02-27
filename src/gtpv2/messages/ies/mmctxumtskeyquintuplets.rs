@@ -1,4 +1,4 @@
-// MM Context UMTS Key and Quintuplets IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+// MM Context UMTS Key and Quintuplets IE - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 use crate::gtpv2::{
     errors::GTPV2Error,
@@ -409,6 +409,7 @@ fn mmctxumtskq_ie_marshal_test() {
         ext_access_res: Some(ExtendedAccessRestrictionMM {
             ussrna: false,
             nrsrna: true,
+            ..Default::default()
         }),
     };
     let mut buffer: Vec<u8> = vec![];
@@ -476,6 +477,7 @@ fn mmctxumtskq_ie_unmarshal_test() {
         ext_access_res: Some(ExtendedAccessRestrictionMM {
             ussrna: false,
             nrsrna: true,
+            ..Default::default()
         }),
     };
     assert_eq!(

@@ -38,27 +38,27 @@ IE Type         Name                                                            
 94              Charging ID                                                     Implemented
 95              Charging Characteristics                                        Implemented
 96              Trace Information                                               Implemented        
-97              Bearer Flags
+97              Bearer Flags                                                    Implemented
 98              Reserved
-99              PDN Type
-100             Procedure Transaction ID
+99              PDN Type                                                        Implemented
+100             Procedure Transaction ID                                        Implemented
 101             Reserved
 102             Reserved
-103             MM Context (GSM Key and Triplets)
-104             MM Context (UMTS Key, Used Cipher and Quintuplets)
-105             MM Context (GSM Key, Used Cipher and Quintuplets)
-106             MM Context (UMTS Key and Quintuplets)
-107             MM Context (EPS Security Context, Quadruplets and Quintuplets)
-108             MM Context (UMTS Key, Quadruplets and Quintuplets)
-109             PDN Connection
-110             PDU Numbers
-111             P-TMSI
-112             P-TMSI Signature
-113             Hop Counter
-114             UE Time Zone
-115             Trace Reference
-116             Complete Request Message
-117             GUTI
+103             MM Context (GSM Key and Triplets)                               Implemented
+104             MM Context (UMTS Key, Used Cipher and Quintuplets)              Implemented
+105             MM Context (GSM Key, Used Cipher and Quintuplets)               Implemented
+106             MM Context (UMTS Key and Quintuplets)                           Implemented
+107             MM Context (EPS Security Context, Quadruplets and Quintuplets)  Implemented
+108             MM Context (UMTS Key, Quadruplets and Quintuplets)              Implemented
+109             PDN Connection                                                  To be checked
+110             PDU Numbers                                                     Implemented
+111             P-TMSI                                                          Implemented
+112             P-TMSI Signature                                                Implemented
+113             Hop Counter                                                     Implemented
+114             UE Time Zone                                                    Implemented
+115             Trace Reference                                                 Implemented
+116             Complete Request Message                                        Implemented
+117             GUTI                                                            Implemented
 118             F-Container
 119             F-Cause
 120             PLMN ID
