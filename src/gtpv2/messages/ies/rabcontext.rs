@@ -1,4 +1,4 @@
-// RAB Context IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+// RAB Context IE - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 use crate::gtpv2::{
     errors::GTPV2Error,
@@ -52,7 +52,8 @@ impl IEs for RabContext {
         buffer_ie.push(RABCTX);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.push(self.nsapi);
+        let flag = ((self.ul_pdcp_sqn == 0) as u8) << 7 | ((self.dl_pdcp_sqn == 0) as u8) << 6 | ((self.ul_gtpu_sqn == 0) as u8) << 5 | ((self.dl_gtpu_sqn == 0) as u8) << 4 | self.nsapi;
+        buffer_ie.push(flag);
         buffer_ie.extend_from_slice(&self.dl_gtpu_sqn.to_be_bytes());
         buffer_ie.extend_from_slice(&self.ul_gtpu_sqn.to_be_bytes());
         buffer_ie.extend_from_slice(&self.dl_pdcp_sqn.to_be_bytes());

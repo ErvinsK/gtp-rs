@@ -132,7 +132,7 @@ fn test_detach_notification_unmarshal() {
             ..Default::default()
         },
         detach_type: Some(DetachType {
-            detach_type: 0x02,
+            detach_type: DetachTypeValue::CombinedPsCsDetach,
             ..DetachType::default()
         }),
         private_ext: vec![PrivateExtension {
@@ -166,7 +166,7 @@ fn test_detach_notificiation_marshal() {
             ..Default::default()
         },
         detach_type: Some(DetachType {
-            detach_type: 0x02,
+            detach_type: DetachTypeValue::CombinedPsCsDetach,
             ..DetachType::default()
         }),
         private_ext: vec![PrivateExtension {

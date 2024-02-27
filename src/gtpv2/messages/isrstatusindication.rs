@@ -116,7 +116,7 @@ fn test_isr_status_ind_unmarshal() {
             sqn: 0x2f,
         },
         action_ind: ActionIndication {
-            indication: 0x03,
+            indication: IndicationValues::PagingStopIndication,
             ..ActionIndication::default()
         },
         private_ext: vec![PrivateExtension {
@@ -145,7 +145,7 @@ fn test_isr_status_ind_marshal() {
             sqn: 0x2f,
         },
         action_ind: ActionIndication {
-            indication: 0x03,
+            indication: IndicationValues::PagingStopIndication,
             ..ActionIndication::default()
         },
         private_ext: vec![PrivateExtension {

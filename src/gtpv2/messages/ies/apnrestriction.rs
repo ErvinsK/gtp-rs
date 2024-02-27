@@ -1,4 +1,4 @@
-// APN Restriction IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+// APN Restriction IE - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 use crate::gtpv2::{
     errors::GTPV2Error,
@@ -13,8 +13,9 @@ pub const APNRESTRICTION_LENGTH: usize = 1;
 
 // APN Restriction Enum and Values as per 3GPP 23.060 V16.0.0 (2019-03)
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub enum Restriction {
+    #[default]
     NoApnRestriction,
     Public1,
     Public2,
@@ -22,8 +23,8 @@ pub enum Restriction {
     Private2,
 }
 
-impl Restriction {
-    fn enum_to_value(i: &Restriction) -> u8 {
+impl From<&Restriction> for u8 {
+    fn from(i: &Restriction) -> u8 {
         match i {
             Restriction::NoApnRestriction => 0,
             Restriction::Public1 => 1,
@@ -32,16 +33,20 @@ impl Restriction {
             Restriction::Private2 => 4,
         }
     }
-    fn value_to_enum(i: u8) -> Result<Restriction, GTPV2Error> {
+}
+
+impl From<u8> for Restriction {
+    fn from(i: u8) -> Restriction {
         match i {
-            0 => Ok(Restriction::NoApnRestriction),
-            1 => Ok(Restriction::Public1),
-            2 => Ok(Restriction::Public2),
-            3 => Ok(Restriction::Private1),
-            4 => Ok(Restriction::Private2),
-            _ => Err(GTPV2Error::IEIncorrect(APNRESTRICTION)),
+            0 => Restriction::NoApnRestriction,
+            1 => Restriction::Public1,
+            2 => Restriction::Public2,
+            3 => Restriction::Private1,
+            4 => Restriction::Private2,
+            _ => Restriction::NoApnRestriction,
         }
     }
+
 }
 
 // APN Restriction IE implementation
@@ -77,7 +82,7 @@ impl IEs for ApnRestriction {
         buffer_ie.push(APNRESTRICTION);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.push(Restriction::enum_to_value(&self.restriction_type));
+        buffer_ie.push((&self.restriction_type).into());
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
     }
@@ -87,10 +92,7 @@ impl IEs for ApnRestriction {
             let data = ApnRestriction {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                restriction_type: match Restriction::value_to_enum(buffer[4]) {
-                    Ok(i) => i,
-                    Err(j) => return Err(j),
-                },
+                restriction_type: (buffer[4]).into(),
                 ..ApnRestriction::default()
             };
             Ok(data)

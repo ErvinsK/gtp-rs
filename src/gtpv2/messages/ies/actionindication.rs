@@ -20,12 +20,47 @@ pub const ACTION_IND_LENGTH: usize = 1;
 // Paging Stop Indication            3
 //       <spare>                   4 to 7
 
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub enum IndicationValues {
+    #[default]
+    NoAction,
+    DeactivationIndication,
+    PagingIndication,
+    PagingStopIndication,
+    Spare,
+}
+
+impl From<&IndicationValues> for u8 {
+    fn from(i: &IndicationValues) -> u8 {
+        match i {
+            IndicationValues::NoAction => 0,
+            IndicationValues::DeactivationIndication => 1,
+            IndicationValues::PagingIndication => 2,
+            IndicationValues::PagingStopIndication => 3,
+            IndicationValues::Spare => 4,
+        }
+    }
+}
+
+impl From<u8> for IndicationValues {
+    fn from(i: u8) -> IndicationValues {
+        match i {
+            0 => IndicationValues::NoAction,
+            1 => IndicationValues::DeactivationIndication,
+            2 => IndicationValues::PagingIndication,
+            3 => IndicationValues::PagingStopIndication,
+            4..=7 => IndicationValues::Spare,
+            _ => IndicationValues::NoAction,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ActionIndication {
     pub t: u8,
     pub length: u16,
     pub ins: u8,
-    pub indication: u8,
+    pub indication: IndicationValues,
 }
 
 impl Default for ActionIndication {
@@ -34,7 +69,7 @@ impl Default for ActionIndication {
             t: ACTION_IND,
             length: ACTION_IND_LENGTH as u16,
             ins: 0,
-            indication: 0,
+            indication: IndicationValues::NoAction,
         }
     }
 }
@@ -51,7 +86,7 @@ impl IEs for ActionIndication {
         buffer_ie.push(ACTION_IND);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.push(self.indication);
+        buffer_ie.push(u8::from(&self.indication));
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
     }
@@ -61,7 +96,7 @@ impl IEs for ActionIndication {
             let data = ActionIndication {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                indication: buffer[4] & 0x07,
+                indication: (buffer[4] & 0x07).into(),
                 ..ActionIndication::default()
             };
             Ok(data)
@@ -86,7 +121,7 @@ fn action_indication_ie_unmarshal_test() {
         t: ACTION_IND,
         length: ACTION_IND_LENGTH as u16,
         ins: 0,
-        indication: 0x02,
+        indication: IndicationValues::PagingIndication,
     };
     let i = ActionIndication::unmarshal(&encoded);
     assert_eq!(i.unwrap(), decoded);
@@ -99,7 +134,7 @@ fn action_indication_ie_marshal_test() {
         t: ACTION_IND,
         length: ACTION_IND_LENGTH as u16,
         ins: 0,
-        indication: 0x02,
+        indication: IndicationValues::PagingIndication,
     };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);

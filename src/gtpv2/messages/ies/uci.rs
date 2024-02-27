@@ -20,20 +20,23 @@ pub enum AccessMode {
     Reserved,
 }
 
-impl AccessMode {
-    pub fn enum_to_value(i: &AccessMode) -> u8 {
+impl From<&AccessMode> for u8 {
+    fn from(i: &AccessMode) -> u8 {
         match i {
             AccessMode::ClosedMode => 0,
             AccessMode::HybridMode => 1,
             AccessMode::Reserved => 2,
         }
     }
-    pub fn value_to_enum(i: u8) -> Result<AccessMode, GTPV2Error> {
+}
+
+impl From<u8> for AccessMode {
+    fn from(i: u8) -> AccessMode {
         match i {
-            0 => Ok(AccessMode::ClosedMode),
-            1 => Ok(AccessMode::HybridMode),
-            2 | 3 => Ok(AccessMode::Reserved),
-            _ => Err(GTPV2Error::IEIncorrect(UCI)),
+            0 => AccessMode::ClosedMode,
+            1 => AccessMode::HybridMode,
+            2 | 3 => AccessMode::Reserved,
+            _ => AccessMode::Reserved,
         }
     }
 }
@@ -46,18 +49,21 @@ pub enum Cmi {
     NonCsgMembership,
 }
 
-impl Cmi {
-    fn enum_to_value(i: &Cmi) -> u8 {
+impl From<&Cmi> for u8 {
+    fn from(i: &Cmi) -> u8 {
         match i {
             Cmi::NonCsgMembership => 0,
             Cmi::CsgMembership => 1,
         }
     }
-    fn value_to_enum(i: u8) -> Result<Cmi, GTPV2Error> {
+}
+
+impl From<u8> for Cmi {
+    fn from(i: u8) -> Cmi {
         match i {
-            0 => Ok(Cmi::NonCsgMembership),
-            1 => Ok(Cmi::CsgMembership),
-            _ => Err(GTPV2Error::IEIncorrect(UCI)),
+            0 => Cmi::NonCsgMembership,
+            1 => Cmi::CsgMembership,
+            _ => Cmi::NonCsgMembership,
         }
     }
 }
@@ -110,14 +116,14 @@ impl IEs for Uci {
 
         match self.lcsg {
             true => {
-                let i = (AccessMode::enum_to_value(&self.access_mode) << 6)
+                let i = (u8::from(&self.access_mode) << 6)
                     | 0x02
-                    | Cmi::enum_to_value(&self.cmi);
+                    | u8::from(&self.cmi);
                 buffer_ie.push(i);
             }
             false => {
-                let i = (AccessMode::enum_to_value(&self.access_mode) << 6)
-                    | Cmi::enum_to_value(&self.cmi);
+                let i = (u8::from(&self.access_mode) << 6)
+                    | u8::from(&self.cmi);
                 buffer_ie.push(i);
             }
         }
@@ -134,18 +140,12 @@ impl IEs for Uci {
                 ..Uci::default()
             };
             (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..=6]);
-            match AccessMode::value_to_enum((buffer[11] & 0xc0) >> 6) {
-                Ok(i) => data.access_mode = i,
-                Err(j) => return Err(j),
-            }
+            data.access_mode = ((buffer[11] & 0xc0) >> 6).into();
             match (buffer[11] & 0x02) >> 1 {
                 0 => data.lcsg = false,
                 _ => data.lcsg = true,
             }
-            match Cmi::value_to_enum(buffer[11] & 0x01) {
-                Ok(i) => data.cmi = i,
-                Err(j) => return Err(j),
-            }
+            data.cmi = (buffer[11] & 0x01).into();
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(UCI))

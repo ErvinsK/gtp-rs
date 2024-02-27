@@ -19,12 +19,41 @@ pub const SRVCIND_LENGTH: usize = 1;
 //   SMS indicator              2
 //      <spare>               3-255
 
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub enum ServiceIndication {
+    Spare,
+    #[default]
+    CsCallIndicator,
+    SmsIndicator,
+}
+
+impl From<&ServiceIndication> for u8 {
+    fn from(i: &ServiceIndication) -> u8 {
+        match i {
+            ServiceIndication::Spare => 0,
+            ServiceIndication::CsCallIndicator => 1,
+            ServiceIndication::SmsIndicator => 2,
+        }
+    }
+}
+
+impl From<u8> for ServiceIndication {
+    fn from(i: u8) -> ServiceIndication {
+        match i {
+            1 => ServiceIndication::CsCallIndicator,
+            2 => ServiceIndication::SmsIndicator,
+            _ => ServiceIndication::Spare,
+        }
+    }
+}
+
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ServiceIndicator {
     pub t: u8,
     pub length: u16,
     pub ins: u8,
-    pub ind: u8,
+    pub indicator: ServiceIndication,
 }
 
 impl Default for ServiceIndicator {
@@ -33,7 +62,7 @@ impl Default for ServiceIndicator {
             t: SRVCIND,
             length: SRVCIND_LENGTH as u16,
             ins: 0,
-            ind: 0,
+            indicator: ServiceIndication::default(),
         }
     }
 }
@@ -50,7 +79,7 @@ impl IEs for ServiceIndicator {
         buffer_ie.push(SRVCIND);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.push(self.ind);
+        buffer_ie.push(u8::from(&self.indicator));
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
     }
@@ -60,7 +89,7 @@ impl IEs for ServiceIndicator {
             let data = ServiceIndicator {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                ind: buffer[4],
+                indicator: buffer[4].into(),
                 ..ServiceIndicator::default()
             };
             Ok(data)
@@ -85,7 +114,7 @@ fn service_indicator_ie_marshal_test() {
         t: SRVCIND,
         length: SRVCIND_LENGTH as u16,
         ins: 0,
-        ind: 0x02,
+        indicator: ServiceIndication::SmsIndicator,
     };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
@@ -99,7 +128,7 @@ fn service_indicator_ie_unmarshal_test() {
         t: SRVCIND,
         length: SRVCIND_LENGTH as u16,
         ins: 0,
-        ind: 0x02,
+        indicator: ServiceIndication::SmsIndicator,
     };
     assert_eq!(ServiceIndicator::unmarshal(&encoded).unwrap(), decoded);
 }

@@ -1,4 +1,4 @@
-// Local Distinguished Name (LDN) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+// Local Distinguished Name (LDN) IE - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 use crate::gtpv2::{
     errors::GTPV2Error,
@@ -56,7 +56,7 @@ impl IEs for Ldn {
                 ..Ldn::default()
             };
             if check_tliv_ie_buffer(data.length, buffer) {
-                let donor: Vec<u8> = buffer[4..(4 + data.length as usize)].to_vec();
+                let donor: Vec<u8> = buffer[MIN_IE_SIZE..(MIN_IE_SIZE + data.length as usize)].to_vec();
                 data.name = donor.iter().map(|x| *x as char).collect();
                 Ok(data)
             } else {

@@ -241,7 +241,7 @@ fn test_cs_paging_indication_unmarshal() {
             ..EmlppPriority::default()
         }),
         service_indicator: Some(ServiceIndicator {
-            ind: 2,
+            indicator: ServiceIndication::SmsIndicator,
             ..ServiceIndicator::default()
         }),
         ..CsPagingIndication::default()
@@ -318,7 +318,7 @@ fn test_cs_paging_indication_marshal() {
             ..EmlppPriority::default()
         }),
         service_indicator: Some(ServiceIndicator {
-            ind: 2,
+            indicator: ServiceIndication::SmsIndicator,
             ..ServiceIndicator::default()
         }),
         ..CsPagingIndication::default()

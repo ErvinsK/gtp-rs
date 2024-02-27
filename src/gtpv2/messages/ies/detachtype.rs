@@ -19,12 +19,43 @@ pub const DETACHTYPE_LENGTH: usize = 1;
 //  Combined PS/CS Detach         2
 //      <spare>                 3-255
 
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub enum DetachTypeValue {
+    Reserved,
+    #[default]
+    PsDetach,
+    CombinedPsCsDetach,
+    Spare,
+}
+
+impl From<&DetachTypeValue> for u8 {
+    fn from(i: &DetachTypeValue) -> u8 {
+        match i {
+            DetachTypeValue::Reserved => 0,
+            DetachTypeValue::PsDetach => 1,
+            DetachTypeValue::CombinedPsCsDetach => 2,
+            DetachTypeValue::Spare => 3,
+        }
+    }
+}
+
+impl From<u8> for DetachTypeValue {
+    fn from(i: u8) -> DetachTypeValue {
+        match i {
+            0 => DetachTypeValue::Reserved,
+            1 => DetachTypeValue::PsDetach,
+            2 => DetachTypeValue::CombinedPsCsDetach,
+            _ => DetachTypeValue::Spare,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct DetachType {
     pub t: u8,
     pub length: u16,
     pub ins: u8,
-    pub detach_type: u8,
+    pub detach_type: DetachTypeValue,
 }
 
 impl Default for DetachType {
@@ -33,7 +64,7 @@ impl Default for DetachType {
             t: DETACHTYPE,
             length: DETACHTYPE_LENGTH as u16,
             ins: 0,
-            detach_type: 0,
+            detach_type: DetachTypeValue::default(),
         }
     }
 }
@@ -50,7 +81,7 @@ impl IEs for DetachType {
         buffer_ie.push(DETACHTYPE);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.push(self.detach_type);
+        buffer_ie.push(u8::from(&self.detach_type));
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
     }
@@ -60,7 +91,7 @@ impl IEs for DetachType {
             let data = DetachType {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                detach_type: buffer[4],
+                detach_type: buffer[4].into(),
                 ..DetachType::default()
             };
             Ok(data)
@@ -85,7 +116,7 @@ fn detach_type_ie_marshal_test() {
         t: DETACHTYPE,
         length: DETACHTYPE_LENGTH as u16,
         ins: 0,
-        detach_type: 0x02,
+        detach_type: DetachTypeValue::CombinedPsCsDetach,
     };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
@@ -99,7 +130,7 @@ fn detach_type_ie_unmarshal_test() {
         t: DETACHTYPE,
         length: DETACHTYPE_LENGTH as u16,
         ins: 0,
-        detach_type: 0x02,
+        detach_type: DetachTypeValue::CombinedPsCsDetach,
     };
     assert_eq!(DetachType::unmarshal(&encoded).unwrap(), decoded);
 }

@@ -1,4 +1,4 @@
-// TWAN Identifier IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+// TWAN Identifier IE - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 use std::str::from_utf8;
 

@@ -1,4 +1,4 @@
-// Overload Control IE (Grouped IE) - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+// Overload Control IE (Grouped IE) - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 use crate::gtpv2::{errors::GTPV2Error, messages::ies::*};
 
