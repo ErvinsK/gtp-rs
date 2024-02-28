@@ -160,7 +160,7 @@ IE Type         Name                                                            
 216             Group Id
 217             PSCell ID
 218             UP Security Policy
-219             Alternative IMSI
+219             Alternative IMSI                                                Implemented
 220 to 253      Spare. For future use.
 254             Special IE type for IE Type Extension
 255             Private Extension
@@ -314,6 +314,7 @@ pub enum InformationElement {
     // V2XContext(V2XContext),
     // PC5QoSParameters(PC5QoSParameters),
     ServicesAuthorized(ServicesAuthorized),
+    AlternativeImsi(AlternativeImsi),
     SpecialIEWithTypeExt(SpecialIEWithTypeExt),
     PrivateExtension(PrivateExtension),
     Unknown(Unknown),
@@ -458,6 +459,7 @@ impl InformationElement {
             InformationElement::MonitoringEventExtensionInfo(i) => i.marshal(buffer),
             InformationElement::AdditionalRrmPolicyIndex(i) => i.marshal(buffer),
             InformationElement::ServicesAuthorized(i) => i.marshal(buffer),
+            InformationElement::AlternativeImsi(i) => i.marshal(buffer),
             InformationElement::SpecialIEWithTypeExt(i) => i.marshal(buffer),
             InformationElement::PrivateExtension(i) => i.marshal(buffer),
             InformationElement::Unknown(i) => i.marshal(buffer),
@@ -1440,6 +1442,13 @@ impl InformationElement {
                     Ok(i) => {
                         cursor += i.len();
                         ies.push(InformationElement::ServicesAuthorized(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                219 => match AlternativeImsi::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::AlternativeImsi(i));
                     }
                     Err(j) => return Err(j),
                 },
