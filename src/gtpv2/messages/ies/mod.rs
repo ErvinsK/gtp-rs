@@ -24,7 +24,7 @@ pub use {
     specialiewithtypeext::*, spi::*, sqn::*, srcrncpdcpctxinfo::*, stnsr::*, tad::*, targetid::*,
     throttling::*, tmgi::*, tmsi::*, traceinfo::*, tracereference::*, transactionid::*, twanid::*,
     twanidtimestamp::*, twmi::*, uci::*, uetimezone::*, uli::*, ulitimestamp::*, unknown::*,
-    upfsif::*, wlanoffloadindication::*,
+    upfsif::*, wlanoffloadindication::*, arpi::*, servicesauthorized::*,
 };
 
 mod abstimembmsdatatransfer;
@@ -167,3 +167,5 @@ mod ulitimestamp;
 mod unknown;
 mod upfsif;
 mod wlanoffloadindication;
+mod arpi;
+mod servicesauthorized;

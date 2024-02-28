@@ -1,4 +1,4 @@
-// Mapped UE Usage Type (MUEUT) IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+// Mapped UE Usage Type (MUEUT) IE - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 // Mapped UE Usage Type is defined in clause 5.8.1 of 3GPP TS 29.003
 
 use crate::gtpv2::{

@@ -1,4 +1,4 @@
-// Header Compression Configuration IE - according to 3GPP TS 29.274 V15.9.0 (2019-09) and 3GPP TS 36.323 V15.0.0 (2018-08)
+// Header Compression Configuration IE - according to 3GPP TS 29.274 V17.10.0 (2023-12) and 3GPP TS 36.323 V15.0.0 (2018-08)
 
 use crate::gtpv2::{
     errors::GTPV2Error,

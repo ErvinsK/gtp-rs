@@ -131,27 +131,27 @@ IE Type         Name                                                            
 187             Integer Number                                                  Implemented
 188             Millisecond Time Stamp                                          Implemented
 189             Monitoring Event Information                                    Implemented
-190             ECGI List
-191             Remote UE Context
-192             Remote User ID
-193             Remote UE IP information
-194             CIoT Optimizations Support Indication
-195             SCEF PDN Connection
-196             Header Compression Configuration
-197             Extended Protocol Configuration Options (ePCO)
-198             Serving PLMN Rate Control
-199             Counter
-200             Mapped UE Usage Type
-201             Secondary RAT Usage Data Report
-202             UP Function Selection Indication Flags
-203             Maximum Packet Loss Rate
-204             APN Rate Control Status
-205             Extended Trace Information
-206             Monitoring Event Extension Information
-207             Additional RRM Policy Index
-208             V2X Context
-209             PC5 QoS Parameters
-210             Services Authorized
+190             ECGI List                                                       Implemented
+191             Remote UE Context                                               To be checked
+192             Remote User ID                                                  Implemented
+193             Remote UE IP information                                        Implemented
+194             CIoT Optimizations Support Indication                           Implemented
+195             SCEF PDN Connection                                             To be checked
+196             Header Compression Configuration                                Implemented
+197             Extended Protocol Configuration Options (ePCO)                  Implemented
+198             Serving PLMN Rate Control                                       Implemented                                     
+199             Counter                                                         Implemented
+200             Mapped UE Usage Type                                            Implemented
+201             Secondary RAT Usage Data Report                                 Implemented
+202             UP Function Selection Indication Flags                          Implemented
+203             Maximum Packet Loss Rate                                        Implemented
+204             APN Rate Control Status                                         Implemented
+205             Extended Trace Information                                      Implemented
+206             Monitoring Event Extension Information                          Implemented
+207             Additional RRM Policy Index                                     Implemented
+208             V2X Context                                                     Not implemented
+209             PC5 QoS Parameters                                              Not implemented
+210             Services Authorized                                             Implemented
 211             Bit Rate
 212             PC5 QoS Flow
 213             SGi PtP Tunnel Address
@@ -310,6 +310,10 @@ pub enum InformationElement {
     ApnRateControlStatus(ApnRateControlStatus),
     ExtendedTraceInformation(ExtendedTraceInformation),
     MonitoringEventExtensionInfo(MonitoringEventExtensionInfo),
+    AdditionalRrmPolicyIndex(AdditionalRrmPolicyIndex),
+    // V2XContext(V2XContext),
+    // PC5QoSParameters(PC5QoSParameters),
+    ServicesAuthorized(ServicesAuthorized),
     SpecialIEWithTypeExt(SpecialIEWithTypeExt),
     PrivateExtension(PrivateExtension),
     Unknown(Unknown),
@@ -452,6 +456,8 @@ impl InformationElement {
             InformationElement::ApnRateControlStatus(i) => i.marshal(buffer),
             InformationElement::ExtendedTraceInformation(i) => i.marshal(buffer),
             InformationElement::MonitoringEventExtensionInfo(i) => i.marshal(buffer),
+            InformationElement::AdditionalRrmPolicyIndex(i) => i.marshal(buffer),
+            InformationElement::ServicesAuthorized(i) => i.marshal(buffer),
             InformationElement::SpecialIEWithTypeExt(i) => i.marshal(buffer),
             InformationElement::PrivateExtension(i) => i.marshal(buffer),
             InformationElement::Unknown(i) => i.marshal(buffer),
@@ -1420,6 +1426,20 @@ impl InformationElement {
                     Ok(i) => {
                         cursor += i.len();
                         ies.push(InformationElement::MonitoringEventExtensionInfo(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                207 => match AdditionalRrmPolicyIndex::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::AdditionalRrmPolicyIndex(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                210 => match ServicesAuthorized::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::ServicesAuthorized(i));
                     }
                     Err(j) => return Err(j),
                 },

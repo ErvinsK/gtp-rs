@@ -291,6 +291,7 @@ fn test_change_notification_req_unmarshal() {
             end_timestamp: 0xffff,
             usg_data_dl: 0xffffff00,
             usg_data_ul: 0xffff,
+            ..SecondaryRatUsageDataReport::default()
         }],
         private_ext: vec![PrivateExtension {
             t: PRIVATE_EXT,
@@ -394,6 +395,7 @@ fn test_change_notification_req_marshal() {
             end_timestamp: 0xffff,
             usg_data_dl: 0xffffff00,
             usg_data_ul: 0xffff,
+            ..SecondaryRatUsageDataReport::default()
         }],
         private_ext: vec![PrivateExtension {
             t: PRIVATE_EXT,

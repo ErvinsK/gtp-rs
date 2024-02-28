@@ -43,7 +43,7 @@ impl IEs for Pco {
         buffer_ie.push(PCO);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.append(&mut self.pco.clone());
+        buffer_ie.extend_from_slice(&self.pco[..]);
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
     }

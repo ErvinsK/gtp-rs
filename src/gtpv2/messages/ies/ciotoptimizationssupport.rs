@@ -1,4 +1,4 @@
-// CIoT Optimization Support Indication IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+// CIoT Optimization Support Indication IE - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 use crate::gtpv2::{
     errors::GTPV2Error,
@@ -50,16 +50,10 @@ impl IEs for CIoTOptimizationSupportIndication {
         buffer_ie.push(CIOT_SUPPORT);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        let flags = self
-            .clone()
-            .intoarray()
-            .iter()
-            .map(|x| if *x { 1 } else { 0 })
-            .enumerate()
-            .map(|(i, x)| x << i)
-            .collect::<Vec<_>>()
-            .iter()
-            .sum::<u8>();
+        let flags = (self.sgnipdn as u8)
+            | ((self.scnipdn as u8) << 1)
+            | ((self.awopdn as u8) << 2)
+            | ((self.ihcsi as u8) << 3);
         buffer_ie.push(flags);
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -67,17 +61,15 @@ impl IEs for CIoTOptimizationSupportIndication {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= CIOT_SUPPORT_LENGTH + MIN_IE_SIZE {
-            let mut data = CIoTOptimizationSupportIndication {
+            let data = CIoTOptimizationSupportIndication {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
+                sgnipdn: (buffer[4] & 0x01) == 1,
+                scnipdn: ((buffer[4] >> 1) & 0x01) == 1,
+                awopdn: ((buffer[4] >> 2) & 0x01) == 1,
+                ihcsi: ((buffer[4] >> 3) & 0x01) == 1,
                 ..CIoTOptimizationSupportIndication::default()
             };
-            let flags = [buffer[4]; 5]
-                .iter()
-                .enumerate()
-                .map(|(i, x)| ((*x >> i) & 0x01) == 1)
-                .collect::<Vec<bool>>();
-            data.fromarray(&flags[..]);
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(CIOT_SUPPORT))
@@ -90,18 +82,6 @@ impl IEs for CIoTOptimizationSupportIndication {
 
     fn is_empty(&self) -> bool {
         self.length == 0
-    }
-}
-
-impl CIoTOptimizationSupportIndication {
-    fn intoarray(self) -> [bool; 4] {
-        [self.sgnipdn, self.scnipdn, self.awopdn, self.ihcsi]
-    }
-    fn fromarray(&mut self, i: &[bool]) {
-        self.sgnipdn = i[0];
-        self.scnipdn = i[1];
-        self.awopdn = i[2];
-        self.ihcsi = i[3];
     }
 }
 

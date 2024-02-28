@@ -1,4 +1,4 @@
-// Extended PCO IE - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+// Extended PCO IE - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 // Extended Protocol Configuration Options information element is specified as per clause 9.9.4.26 of 3GPP TS 24.301
 
 use crate::gtpv2::{
