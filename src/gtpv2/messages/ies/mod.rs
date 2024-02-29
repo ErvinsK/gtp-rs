@@ -25,6 +25,8 @@ pub use {
     throttling::*, tmgi::*, tmsi::*, traceinfo::*, tracereference::*, transactionid::*, twanid::*,
     twanidtimestamp::*, twmi::*, uci::*, uetimezone::*, uli::*, ulitimestamp::*, unknown::*,
     upfsif::*, wlanoffloadindication::*, arpi::*, servicesauthorized::*, alternativeimsi::*,
+    upsp::*, bitrate::*, sgiptptunneladdress::*, pgwfqdn::*, groupid::*, pscellid::*, srvcccause::*,
+    pc5qosflow::*, pgwchangeinfo::*,
 };
 
 mod abstimembmsdatatransfer;
@@ -170,3 +172,12 @@ mod wlanoffloadindication;
 mod arpi;
 mod servicesauthorized;
 mod alternativeimsi;
+mod upsp;
+mod bitrate;
+mod sgiptptunneladdress;
+mod pgwfqdn;
+mod groupid;
+mod pscellid;
+mod srvcccause;
+mod pc5qosflow;
+mod pgwchangeinfo;

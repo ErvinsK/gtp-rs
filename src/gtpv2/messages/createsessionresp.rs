@@ -5,7 +5,7 @@ use crate::gtpv2::{
     utils::*,
 };
 
-// According to 3GPP TS 29.274 V15.9.0 (2019-09)
+// According to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 pub const CREATE_SESSION_RESP: u8 = 33;
 
@@ -43,6 +43,12 @@ pub struct CreateSessionResponse {
     pub nbifom: Option<Fcontainer>,
     pub charging_id: Option<ChargingId>,
     pub epco: Option<Epco>,
+    pub pgw_node_name: Option<Fqdn>,
+    pub sgi_ptp_tunnel_addr: Option<SgiPtpTunnelAddress>,
+    pub pgw_chng_info: Option<PgwChangeInfo>,
+    pub alt_pgw_smf_fqdn: Vec<Fqdn>,
+    pub alt_pgw_smf_ip: Vec<IpAddress>,
+    pub upsp: Option<UpSecurityPolicy>,
     pub private_ext: Vec<PrivateExtension>,
 }
 
@@ -84,6 +90,12 @@ impl Default for CreateSessionResponse {
             nbifom: None,
             charging_id: None,
             epco: None,
+            pgw_node_name: None,
+            sgi_ptp_tunnel_addr: None,
+            pgw_chng_info: None,
+            alt_pgw_smf_fqdn: vec![],
+            alt_pgw_smf_ip: vec![],
+            upsp: None,
             private_ext: vec![],
         }
     }
@@ -239,6 +251,30 @@ impl Messages for CreateSessionResponse {
             elements.push(i.into())
         };
 
+        if let Some(i) = self.pgw_node_name.clone() {
+            elements.push(i.into())
+        };
+
+        if let Some(i) = self.sgi_ptp_tunnel_addr.clone() {
+            elements.push(i.into())
+        };
+
+        if let Some(i) = self.pgw_chng_info.clone() {
+            elements.push(InformationElement::PgwChangeInfo(i))
+        };
+
+        self.alt_pgw_smf_fqdn
+            .iter()
+            .for_each(|x| elements.push(x.clone().into()));
+
+        self.alt_pgw_smf_ip
+            .iter()
+            .for_each(|x| elements.push(x.clone().into()));
+
+        if let Some(i) = self.upsp.clone() {
+            elements.push(i.into())
+        };
+
         self.private_ext
             .iter()
             .for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));
@@ -382,6 +418,38 @@ impl Messages for CreateSessionResponse {
                 InformationElement::Epco(j) => {
                     if let (0, true) = (j.ins, self.epco.is_none()) {
                         self.epco = Some(j.clone())
+                    };
+                }
+                InformationElement::Fqdn(j) => {
+                    // 3 instances
+                    match (j.ins, self.charging_gw_name.is_none(), self.pgw_node_name.is_none()) {
+                        (0, true, _) => self.charging_gw_name = Some(j.clone()),
+                        (1, _, true) => self.pgw_node_name = Some(j.clone()),
+                        (3, _, _) => self.alt_pgw_smf_fqdn.push(j.clone()),
+                        _ => (),
+                    }
+                }
+                InformationElement::SgiPtpTunnelAddress(j) => {
+                    if let (0, true) = (j.ins, self.sgi_ptp_tunnel_addr.is_none()) {
+                        self.sgi_ptp_tunnel_addr = Some(j.clone())
+                    };
+                }
+                InformationElement::PgwChangeInfo(j) => {
+                    if let (0, true) = (j.ins, self.pgw_chng_info.is_none()) {
+                        self.pgw_chng_info = Some(j.clone())
+                    };
+                }
+                InformationElement::IpAddress(j) => {
+                    // 2 instances
+                    match (j.ins, self.charging_gw_ip.is_none()) {
+                        (0, true) => self.charging_gw_ip = Some(j.clone()),
+                        (1, _) => self.alt_pgw_smf_ip.push(j.clone()),
+                        _ => (),
+                    }
+                }
+                InformationElement::UpSecurityPolicy(j) => {
+                    if let (0, true) = (j.ins, self.upsp.is_none()) {
+                        self.upsp = Some(j.clone())
                     };
                 }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),

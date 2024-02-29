@@ -2,17 +2,17 @@
 Message Type value (Decimal)                                Message                                             Status
 
 0                                                           Reserved
-1                                                           Echo Request                                        Implemented
-2                                                           Echo Response                                       Implemented
-3                                                           Version Not Supported Indication                    Implemented
+1                                                           Echo Request                                        Implemented*
+2                                                           Echo Response                                       Implemented*
+3                                                           Version Not Supported Indication                    Implemented*
 4 to 16                                                     Reserved for S101 interface
 17 to 24                                                    Reserved for S121 interface
 25 to 31                                                    Reserved for Sv interface
 
 -------------SGSN/MME/ TWAN/ePDG to PGW (S4/S11, S5/S8, S2a, S2b)----------------------------
 
-32                                                          Create Session Request                              Implemented
-33                                                          Create Session Response                             Implemented
+32                                                          Create Session Request                              Implemented*
+33                                                          Create Session Response                             Implemented*
 36                                                          Delete Session Request                              Implemented
 37                                                          Delete Session Response                             Implemented
 

@@ -1,4 +1,4 @@
-// Special Information Element with IE Type Extension field - according to 3GPP TS 29.274 V15.9.0 (2019-09)
+// Special Information Element with IE Type Extension field - according to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 use crate::gtpv2::{
     errors::GTPV2Error,

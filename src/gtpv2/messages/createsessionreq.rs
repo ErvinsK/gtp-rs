@@ -5,7 +5,7 @@ use crate::gtpv2::{
     utils::*,
 };
 
-// According to 3GPP TS 29.274 V15.9.0 (2019-09)
+// According to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 pub const CREATE_SESSION_REQ: u8 = 32;
 
@@ -72,6 +72,7 @@ pub struct CreateSessionRequest {
     pub secondary_rat_usage_report: Vec<SecondaryRatUsageDataReport>,
     pub up_function_selection_flags: Option<UpFunctionSelectionIndicationFlags>,
     pub apn_rate_control_status: Option<ApnRateControlStatus>,
+    pub pscellid: Option<PSCellId>,
     pub private_ext: Vec<PrivateExtension>,
 }
 
@@ -142,6 +143,7 @@ impl Default for CreateSessionRequest {
             secondary_rat_usage_report: vec![],
             up_function_selection_flags: None,
             apn_rate_control_status: None,
+            pscellid: None,
             private_ext: vec![],
         }
     }
@@ -407,6 +409,10 @@ impl Messages for CreateSessionRequest {
         };
 
         if let Some(i) = self.apn_rate_control_status.clone() {
+            elements.push(i.into())
+        };
+        
+        if let Some(i) = self.pscellid.clone() {
             elements.push(i.into())
         };
 
@@ -700,6 +706,11 @@ impl Messages for CreateSessionRequest {
                 InformationElement::ApnRateControlStatus(j) => {
                     if let (0, true) = (j.ins, self.apn_rate_control_status.is_none()) {
                         self.apn_rate_control_status = Some(j.clone())
+                    };
+                }
+                InformationElement::PSCellId(j) => {
+                    if let (0, true) = (j.ins, self.pscellid.is_none()) {
+                        self.pscellid = Some(j.clone())
                     };
                 }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),

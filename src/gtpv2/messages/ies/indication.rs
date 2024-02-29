@@ -308,7 +308,6 @@ impl Indication {
     }
 }
 
-
 impl IEs for Indication {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
@@ -328,7 +327,7 @@ impl IEs for Indication {
                 ins: buffer[3] & 0x0f,
                 ..Indication::default()
             };
-            data.convert(buffer[MIN_IE_SIZE..].to_vec());
+            data.convert(buffer[MIN_IE_SIZE..(data.length as usize) + MIN_IE_SIZE].to_vec());
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(INDICATION))
@@ -369,7 +368,7 @@ fn indication_ie_unmarshal_test() {
         tspcmi: true,
         sgwci: true,
         ltemsai: true,
-        ..Default::default()
+        ..Indication::default()
     };
     assert_eq!(Indication::unmarshal(&encoded).unwrap(), decoded);
 }

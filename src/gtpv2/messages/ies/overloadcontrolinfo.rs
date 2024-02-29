@@ -2,7 +2,7 @@
 
 use crate::gtpv2::{errors::GTPV2Error, messages::ies::*};
 
-// Overload Control IE T
+// Overload Control IE Type
 
 pub const OVERLOAD_CNTRL: u8 = 180;
 

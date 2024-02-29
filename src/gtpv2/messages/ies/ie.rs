@@ -7,11 +7,11 @@ IE Type         Name                                                            
 1               International Mobile Subscriber Identity (IMSI)                 Implemented
 2               Cause                                                           Implemented    
 3               Recovery (Restart Counter)                                      Implemented
-4 to 34         Reserved for S101 interface
-35 to 50        Reserved for S121 interface
-51              STN-SR
-56              SRVCC Cause
-52 to 70        Reserved for Sv interface
+4 to 34         Reserved for S101 interface                                     NA
+35 to 50        Reserved for S121 interface                                     NA
+51              STN-SR                                                          Implemented
+56              SRVCC Cause                                                     Implemented
+52 to 70        Reserved for Sv interface                                       NA
 71              Access Point Name (APN)                                         Implemented
 72              Aggregate Maximum Bit Rate (AMBR)                               Implemented
 73              EPS Bearer ID (EBI)                                             Implemented
@@ -39,11 +39,11 @@ IE Type         Name                                                            
 95              Charging Characteristics                                        Implemented
 96              Trace Information                                               Implemented        
 97              Bearer Flags                                                    Implemented
-98              Reserved
+98              Reserved                                                        NA
 99              PDN Type                                                        Implemented
 100             Procedure Transaction ID                                        Implemented
-101             Reserved
-102             Reserved
+101             Reserved                                                        NA
+102             Reserved                                                        NA
 103             MM Context (GSM Key and Triplets)                               Implemented
 104             MM Context (UMTS Key, Used Cipher and Quintuplets)              Implemented
 105             MM Context (GSM Key, Used Cipher and Quintuplets)               Implemented
@@ -63,7 +63,7 @@ IE Type         Name                                                            
 119             F-Cause                                                         Implemented
 120             PLMN ID                                                         Implemented
 121             Target Identification                                           Implemented
-122             Reserved
+122             Reserved                                                        NA
 123             Packet Flow ID                                                  Implemented
 124             RAB Context                                                     Implemented
 125             Source RNC PDCP Context Info                                    Implemented
@@ -71,7 +71,7 @@ IE Type         Name                                                            
 127             APN Restriction                                                 Implemented
 128             Selection Mode                                                  Implemented
 129             Source Identification                                           Implemented
-130             Reserved
+130             Reserved                                                        NA
 131             Change Reporting Action                                         Implemented
 132             Fully Qualified PDN Connection Set Identifier (FQ-CSID)         Implemented
 133             Channel needed                                                  Implemented
@@ -102,7 +102,7 @@ IE Type         Name                                                            
 158             Temporary Mobile Group Identity (TMGI)                          Implemented
 159             Additional MM context for SRVCC                                 Implemented
 160             Additional flags for SRVCC                                      Implemented
-161             Reserved
+161             Reserved                                                        NA
 162             MDT Configuration                                               Implemented
 163             Additional Protocol Configuration Options (APCO)                Implemented
 164             Absolute Time of MBMS Data Transfer                             Implemented
@@ -152,19 +152,19 @@ IE Type         Name                                                            
 208             V2X Context                                                     Not implemented
 209             PC5 QoS Parameters                                              Not implemented
 210             Services Authorized                                             Implemented
-211             Bit Rate
-212             PC5 QoS Flow
-213             SGi PtP Tunnel Address
-214             PGW Change Info
-215             PGW FQDN
-216             Group Id
-217             PSCell ID
-218             UP Security Policy
+211             Bit Rate                                                        Implemented
+212             PC5 QoS Flow                                                    Implemented
+213             SGi PtP Tunnel Address                                          Implemented
+214             PGW Change Info                                                 Implemented
+215             PGW FQDN                                                        Implemented
+216             Group Id                                                        Implemented
+217             PSCell ID                                                       Implemented
+218             UP Security Policy                                              Implemented
 219             Alternative IMSI                                                Implemented
-220 to 253      Spare. For future use.
-254             Special IE type for IE Type Extension
-255             Private Extension
-256 to 65535    Spare. For future use.
+220 to 253      Spare. For future use.                                          NA
+254             Special IE type for IE Type Extension                           Implemented
+255             Private Extension                                               Implemented
+256 to 65535    Spare. For future use.                                          NA
 
 
 
@@ -180,6 +180,7 @@ pub enum InformationElement {
     Cause(Cause),
     Recovery(Recovery),
     StnSr(StnSr),
+    SrvccCause(SrvccCause),
     Apn(Apn),
     ApnAmbr(Ambr),
     Ebi(Ebi),
@@ -314,6 +315,14 @@ pub enum InformationElement {
     // V2XContext(V2XContext),
     // PC5QoSParameters(PC5QoSParameters),
     ServicesAuthorized(ServicesAuthorized),
+    BitRate(BitRate),
+    PC5QosFlow(PC5QosFlow),
+    SgiPtpTunnelAddress(SgiPtpTunnelAddress),
+    PgwChangeInfo(PgwChangeInfo),
+    PgwFqdn(PgwFqdn),
+    GroupId(GroupId),
+    PSCellId(PSCellId),
+    UpSecurityPolicy(UpSecurityPolicy),
     AlternativeImsi(AlternativeImsi),
     SpecialIEWithTypeExt(SpecialIEWithTypeExt),
     PrivateExtension(PrivateExtension),
@@ -327,6 +336,7 @@ impl InformationElement {
             InformationElement::Cause(i) => i.marshal(buffer),
             InformationElement::Recovery(i) => i.marshal(buffer),
             InformationElement::StnSr(i) => i.marshal(buffer),
+            InformationElement::SrvccCause(i) => i.marshal(buffer),
             InformationElement::Apn(i) => i.marshal(buffer),
             InformationElement::ApnAmbr(i) => i.marshal(buffer),
             InformationElement::Ebi(i) => i.marshal(buffer),
@@ -459,6 +469,14 @@ impl InformationElement {
             InformationElement::MonitoringEventExtensionInfo(i) => i.marshal(buffer),
             InformationElement::AdditionalRrmPolicyIndex(i) => i.marshal(buffer),
             InformationElement::ServicesAuthorized(i) => i.marshal(buffer),
+            InformationElement::BitRate(i) => i.marshal(buffer),
+            InformationElement::PC5QosFlow(i) => i.marshal(buffer),
+            InformationElement::SgiPtpTunnelAddress(i) => i.marshal(buffer),
+            InformationElement::PgwChangeInfo(i) => i.marshal(buffer),
+            InformationElement::PgwFqdn(i) => i.marshal(buffer),
+            InformationElement::GroupId(i) => i.marshal(buffer),
+            InformationElement::PSCellId(i) => i.marshal(buffer),
+            InformationElement::UpSecurityPolicy(i) => i.marshal(buffer),
             InformationElement::AlternativeImsi(i) => i.marshal(buffer),
             InformationElement::SpecialIEWithTypeExt(i) => i.marshal(buffer),
             InformationElement::PrivateExtension(i) => i.marshal(buffer),
@@ -505,6 +523,13 @@ impl InformationElement {
                     Ok(i) => {
                         cursor += i.len();
                         ies.push(InformationElement::StnSr(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                56 => match SrvccCause::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::SrvccCause(i));
                     }
                     Err(j) => return Err(j),
                 },
@@ -1442,6 +1467,62 @@ impl InformationElement {
                     Ok(i) => {
                         cursor += i.len();
                         ies.push(InformationElement::ServicesAuthorized(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                211 => match BitRate::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::BitRate(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                212 => match PC5QosFlow::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::PC5QosFlow(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                213 => match SgiPtpTunnelAddress::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::SgiPtpTunnelAddress(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                214 => match PgwChangeInfo::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::PgwChangeInfo(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                215 => match PgwFqdn::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::PgwFqdn(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                216 => match GroupId::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::GroupId(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                217 => match PSCellId::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::PSCellId(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                218 => match UpSecurityPolicy::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::UpSecurityPolicy(i));
                     }
                     Err(j) => return Err(j),
                 },
