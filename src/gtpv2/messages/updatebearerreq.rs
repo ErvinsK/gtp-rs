@@ -5,7 +5,7 @@ use crate::gtpv2::{
     utils::*,
 };
 
-// According to 3GPP TS 29.274 V15.9.0 (2019-09)
+// According to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 pub const UPD_BEARER_REQ: u8 = 97;
 
@@ -28,6 +28,8 @@ pub struct UpdateBearerRequest {
     pub load_control: Vec<LoadControl>,
     pub overload_info: Vec<OverloadControlInfo>,
     pub nbifom: Option<Fcontainer>,
+    pub pgw_change_info: Vec<PgwChangeInfo>,
+    pub fteid_control: Option<Fteid>,
     pub private_ext: Vec<PrivateExtension>,
 }
 
@@ -54,6 +56,8 @@ impl Default for UpdateBearerRequest {
             load_control: vec![],
             overload_info: vec![],
             nbifom: None,
+            pgw_change_info: vec![],
+            fteid_control: None,
             private_ext: vec![],
         }
     }
@@ -142,6 +146,14 @@ impl Messages for UpdateBearerRequest {
         if let Some(i) = self.nbifom.clone() {
             elements.push(i.into());
         }
+        
+        self.pgw_change_info
+            .iter()
+            .for_each(|x| elements.push(InformationElement::PgwChangeInfo(x.clone())));
+
+        if let Some(i) = self.fteid_control.clone() {
+            elements.push(i.into());
+        }
 
         self.private_ext
             .iter()
@@ -221,6 +233,16 @@ impl Messages for UpdateBearerRequest {
                 InformationElement::Fcontainer(j) => {
                     if let (0, true) = (j.ins, self.nbifom.is_none()) {
                         self.nbifom = Some(j.clone());
+                    }
+                }
+                InformationElement::PgwChangeInfo(j) => {
+                    if j.ins == 0 {
+                        self.pgw_change_info.push(j.clone());
+                    }
+                }
+                InformationElement::Fteid(j) => {
+                    if let (0, true) = (j.ins, self.fteid_control.is_none()) {
+                        self.fteid_control = Some(j.clone());
                     }
                 }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),

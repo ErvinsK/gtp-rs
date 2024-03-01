@@ -5,7 +5,7 @@ use crate::gtpv2::{
     utils::*,
 };
 
-// According to 3GPP TS 29.274 V15.9.0 (2019-09)
+// According to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 pub const BEARER_RSRC_CMD: u8 = 68;
 
@@ -31,6 +31,7 @@ pub struct BearerResourceCommand {
     pub nbifom: Option<Fcontainer>,
     pub epco: Option<Epco>,
     pub fteid_control: Option<Fteid>,
+    pub pscellid: Option<PSCellId>,
     pub private_ext: Vec<PrivateExtension>,
 }
 
@@ -60,6 +61,7 @@ impl Default for BearerResourceCommand {
             nbifom: None,
             epco: None,
             fteid_control: None,
+            pscellid: None,
             private_ext: vec![],
         }
     }
@@ -160,11 +162,12 @@ impl Messages for BearerResourceCommand {
         if let Some(i) = self.epco.clone() {
             elements.push(i.into())
         };
-
         if let Some(i) = self.fteid_control.clone() {
             elements.push(i.into())
         };
-
+        if let Some(i) = self.pscellid.clone() {
+            elements.push(i.into())
+        };
         self.private_ext
             .iter()
             .for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));
@@ -255,14 +258,18 @@ impl Messages for BearerResourceCommand {
                         self.epco = Some(j.clone())
                     };
                 }
+                InformationElement::PSCellId(j) => {
+                    if let (0, true) = (j.ins, self.pscellid.is_none()) {
+                        self.pscellid = Some(j.clone())
+                    };
+                }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),
                 _ => (),
             }
         }
         match (mandatory[0], mandatory[1]) {
-            (false, false) => Err(GTPV2Error::MessageMandatoryIEMissing(EBI)),
-            (false, true) => Err(GTPV2Error::MessageMandatoryIEMissing(EBI)),
-            (true, false) => Err(GTPV2Error::MessageMandatoryIEMissing(PTI)),
+            (false, _) => Err(GTPV2Error::MessageMandatoryIEMissing(EBI)),
+            (_, false) => Err(GTPV2Error::MessageMandatoryIEMissing(PTI)),
             (true, true) => Ok(true),
         }
     }

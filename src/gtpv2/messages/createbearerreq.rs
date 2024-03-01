@@ -5,7 +5,7 @@ use crate::gtpv2::{
     utils::*,
 };
 
-// According to 3GPP TS 29.274 V15.9.0 (2019-09)
+// According to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 pub const CREATE_BEARER_REQ: u8 = 95;
 
@@ -28,6 +28,8 @@ pub struct CreateBearerRequest {
     pub load_control: Vec<LoadControl>,
     pub overload_info: Vec<OverloadControlInfo>,
     pub nbifom: Option<Fcontainer>,
+    pub pgw_change_info: Vec<PgwChangeInfo>,
+    pub sender_fteid_cntrl_plane: Option<Fteid>,
     pub private_ext: Vec<PrivateExtension>,
 }
 
@@ -53,6 +55,8 @@ impl Default for CreateBearerRequest {
             load_control: vec![],
             overload_info: vec![],
             nbifom: None,
+            pgw_change_info: vec![],
+            sender_fteid_cntrl_plane: None,
             private_ext: vec![],
         }
     }
@@ -149,6 +153,14 @@ impl Messages for CreateBearerRequest {
             elements.push(i.into())
         };
 
+        self.pgw_change_info
+            .iter()
+            .for_each(|x| elements.push(InformationElement::PgwChangeInfo(x.clone())));
+
+        if let Some(i) = self.sender_fteid_cntrl_plane.clone() {
+            elements.push(i.into())
+        };
+
         self.private_ext
             .iter()
             .for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));
@@ -227,6 +239,16 @@ impl Messages for CreateBearerRequest {
                 InformationElement::Fcontainer(j) => {
                     if let (0, true) = (j.ins, self.nbifom.is_none()) {
                         self.nbifom = Some(j.clone())
+                    };
+                }
+                InformationElement::PgwChangeInfo(j) => {
+                    if j.ins == 0 {
+                        self.pgw_change_info.push(j.clone())
+                    };
+                }
+                InformationElement::Fteid(j) => {
+                    if let (0, true) = (j.ins, self.sender_fteid_cntrl_plane.is_none()) {
+                        self.sender_fteid_cntrl_plane = Some(j.clone())
                     };
                 }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),

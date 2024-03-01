@@ -5,7 +5,7 @@ use crate::gtpv2::{
     utils::*,
 };
 
-// According to 3GPP TS 29.274 V15.9.0 (2019-09)
+// According to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 pub const CREATE_BEARER_RESP: u8 = 96;
 
@@ -33,6 +33,7 @@ pub struct CreateBearerResponse {
     pub ue_udpport: Option<PortNumber>,
     pub nbifom: Option<Fcontainer>,
     pub ue_tcpport: Option<PortNumber>,
+    pub pscellid: Option<PSCellId>,
     pub private_ext: Vec<PrivateExtension>,
 }
 
@@ -64,6 +65,7 @@ impl Default for CreateBearerResponse {
             ue_udpport: None,
             nbifom: None,
             ue_tcpport: None,
+            pscellid: None,
             private_ext: vec![],
         }
     }
@@ -180,6 +182,10 @@ impl Messages for CreateBearerResponse {
             elements.push(i.into())
         };
 
+        if let Some(i) = self.pscellid.clone() {
+            elements.push(i.into())
+        };
+
         self.private_ext
             .iter()
             .for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));
@@ -277,14 +283,18 @@ impl Messages for CreateBearerResponse {
                         self.nbifom = Some(j.clone())
                     };
                 }
+                InformationElement::PSCellId(j) => {
+                    if let (0, true) = (j.ins, self.pscellid.is_none()) {
+                        self.pscellid = Some(j.clone())
+                    };
+                }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),
                 _ => (),
             }
         }
         match (mandatory[0], mandatory[1]) {
-            (false, false) => Err(GTPV2Error::MessageMandatoryIEMissing(CAUSE)),
-            (false, true) => Err(GTPV2Error::MessageMandatoryIEMissing(CAUSE)),
-            (true, false) => Err(GTPV2Error::MessageMandatoryIEMissing(BEARER_CTX)),
+            (false, _) => Err(GTPV2Error::MessageMandatoryIEMissing(CAUSE)),
+            (_, false) => Err(GTPV2Error::MessageMandatoryIEMissing(BEARER_CTX)),
             (true, true) => Ok(true),
         }
     }

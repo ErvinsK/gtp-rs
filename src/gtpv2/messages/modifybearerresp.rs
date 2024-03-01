@@ -5,7 +5,7 @@ use crate::gtpv2::{
     utils::*,
 };
 
-// According to 3GPP TS 29.274 V15.9.0 (2019-09)
+// According to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 pub const MODIFY_BEARER_RESP: u8 = 35;
 
@@ -35,6 +35,7 @@ pub struct ModifyBearerResponse {
     pub load_control: Vec<LoadControl>,
     pub overload_info: Vec<OverloadControlInfo>,
     pub charging_id: Option<ChargingId>,
+    pub pgw_change_info: Option<PgwChangeInfo>,
     pub private_ext: Vec<PrivateExtension>,
 }
 
@@ -68,6 +69,7 @@ impl Default for ModifyBearerResponse {
             load_control: vec![],
             overload_info: vec![],
             charging_id: None,
+            pgw_change_info: None,
             private_ext: vec![],
         }
     }
@@ -192,6 +194,10 @@ impl Messages for ModifyBearerResponse {
             elements.push(i.into())
         };
 
+        if let Some(i) = self.pgw_change_info.clone() {
+            elements.push(InformationElement::PgwChangeInfo(i))
+        };
+
         self.private_ext
             .iter()
             .for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));
@@ -302,6 +308,11 @@ impl Messages for ModifyBearerResponse {
                 InformationElement::ChargingId(j) => {
                     if let (0, true) = (j.ins, self.charging_id.is_none()) {
                         self.charging_id = Some(j.clone())
+                    };
+                }
+                InformationElement::PgwChangeInfo(j) => {
+                    if let (0, true) = (j.ins, self.pgw_change_info.is_none()) {
+                        self.pgw_change_info = Some(j.clone())
                     };
                 }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),

@@ -5,7 +5,7 @@ use crate::gtpv2::{
     utils::*,
 };
 
-// According to 3GPP TS 29.274 V15.9.0 (2019-09)
+// According to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 pub const DL_DATA_NOTIF: u8 = 179;
 
@@ -23,6 +23,7 @@ pub struct DownlinkDataNotification {
     pub load_control: Vec<LoadControl>,
     pub overload_info: Vec<OverloadControlInfo>,
     pub psi: Option<PagingServiceInfo>,
+    pub dl_data_pckts_size: Option<IntegerNumber>,
     pub private_ext: Vec<PrivateExtension>,
 }
 
@@ -44,6 +45,7 @@ impl Default for DownlinkDataNotification {
             load_control: vec![],
             overload_info: vec![],
             psi: None,
+            dl_data_pckts_size: None,
             private_ext: vec![],
         }
     }
@@ -117,6 +119,10 @@ impl Messages for DownlinkDataNotification {
             elements.push(i.into());
         }
 
+        if let Some(i) = self.dl_data_pckts_size.clone() {
+            elements.push(i.into());
+        }
+
         self.private_ext
             .iter()
             .for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));
@@ -170,6 +176,11 @@ impl Messages for DownlinkDataNotification {
                 InformationElement::PagingServiceInfo(j) => {
                     if let (0, true) = (j.ins, self.psi.is_none()) {
                         self.psi = Some(j.clone());
+                    }
+                }
+                InformationElement::IntegerNumber(j) => {
+                    if let (0, true) = (j.ins, self.dl_data_pckts_size.is_none()) {
+                        self.dl_data_pckts_size = Some(j.clone());
                     }
                 }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),

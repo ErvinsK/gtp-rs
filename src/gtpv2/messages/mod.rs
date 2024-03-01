@@ -13,59 +13,59 @@ Message Type value (Decimal)                                Message             
 
 32                                                          Create Session Request                              Implemented*
 33                                                          Create Session Response                             Implemented*
-36                                                          Delete Session Request                              Implemented
-37                                                          Delete Session Response                             Implemented
+36                                                          Delete Session Request                              Implemented*
+37                                                          Delete Session Response                             Implemented*
 
 -------------SGSN/MME/ePDG to PGW (S4/S11, S5/S8, S2b)---------------------------------------
 
-34                                                          Modify Bearer Request                               Implemented
-35                                                          Modify Bearer Response                              Implemented
+34                                                          Modify Bearer Request                               Implemented*
+35                                                          Modify Bearer Response                              Implemented*
 
 -------------MME to PGW (S11, S5/S8)---------------------------------------------------------
 
-40                                                          Remote UE Report Notification                       Implemented
-41                                                          Remote UE Report Acknowledge                        Implemented
+40                                                          Remote UE Report Notification                       Implemented*
+41                                                          Remote UE Report Acknowledge                        Implemented*
 
 -------------SGSN/MME to PGW (S4/S11, S5/S8)-------------------------------------------------
 
-38                                                          Change Notification Request                         Implemented
-39                                                          Change Notification Response                        Implemented
+38                                                          Change Notification Request                         Implemented*
+39                                                          Change Notification Response                        Implemented*
 42 to 63                                                    For future use
-164                                                         Resume Notification                                 Implemented
-165                                                         Resume Acknowledge                                  Implemented
+164                                                         Resume Notification                                 Implemented*
+165                                                         Resume Acknowledge                                  Implemented*
 
 -------------Messages without explicit response----------------------------------------------
 
-64                                                          Modify Bearer Command                               Implemented
-65                                                          Modify Bearer Failure Indication                    Implemented
-66                                                          Delete Bearer Command                               Implemented
-67                                                          Delete Bearer Failure Indication                    Implemented
-68                                                          Bearer Resource Command                             Implemented
-69                                                          Bearer Resource Failure Indication                  Implemented
-70                                                          Downlink Data Notification Failure Indication       Implemented
-71                                                          Trace Session Activation                            Implemented
-72                                                          Trace Session Deactivation                          Implemented
-73                                                          Stop Paging Indication                              Implemented
+64                                                          Modify Bearer Command                               Implemented*
+65                                                          Modify Bearer Failure Indication                    Implemented*
+66                                                          Delete Bearer Command                               Implemented*
+67                                                          Delete Bearer Failure Indication                    Implemented*
+68                                                          Bearer Resource Command                             Implemented*
+69                                                          Bearer Resource Failure Indication                  Implemented*
+70                                                          Downlink Data Notification Failure Indication       Implemented*
+71                                                          Trace Session Activation                            Implemented*
+72                                                          Trace Session Deactivation                          Implemented*
+73                                                          Stop Paging Indication                              Implemented*
 74 to 94                                                    For future use
 
 -------------PGW to SGSN/MME/ TWAN/ePDG (S5/S8, S4/S11, S2a, S2b)-----------------------------
 
-95                                                          Create Bearer Request                               Implemented
-96                                                          Create Bearer Response                              Implemented
-97                                                          Update Bearer Request                               Implemented
-98                                                          Update Bearer Response                              Implemented
-99                                                          Delete Bearer Request                               Implemented
-100                                                         Delete Bearer Response                              Implemented
+95                                                          Create Bearer Request                               Implemented*
+96                                                          Create Bearer Response                              Implemented*
+97                                                          Update Bearer Request                               Implemented*
+98                                                          Update Bearer Response                              Implemented*
+99                                                          Delete Bearer Request                               Implemented*
+100                                                         Delete Bearer Response                              Implemented*
 
 -------------PGW to MME, MME to PGW, SGW to PGW, SGW to MME, PGW to TWAN/ePDG, TWAN/ePDG to PGW (S5/S8, S11, S2a, S2b)
 
-101                                                         Delete PDN Connection Set Request                   Implemented
-102                                                         Delete PDN Connection Set Response                  Implemented
+101                                                         Delete PDN Connection Set Request                   Implemented*
+102                                                         Delete PDN Connection Set Response                  Implemented*
 
 -------------PGW to SGSN/MME (S5, S4/S11)------------------------------------------------------
 
-103                                                         PGW Downlink Triggering Notification                Implemented
-104                                                         PGW Downlink Triggering Acknowledge                 Implemented
+103                                                         PGW Downlink Triggering Notification                Implemented*
+104                                                         PGW Downlink Triggering Acknowledge                 Implemented*
 105 to 127                                                  For future use
 
 -------------MME to MME, SGSN to MME, MME to SGSN, SGSN to SGSN, MME to AMF, AMF to MME (S3/S10/S16/N26)
@@ -89,40 +89,40 @@ Message Type value (Decimal)                                Message             
 
 ------------SGSN to MME, MME to SGSN (S3)---------------------------------------------------------
 
-149                                                         Detach Notification                                 Implemented
-150                                                         Detach Acknowledge                                  Implemented
-151                                                         CS Paging Indication                                Implemented
-153                                                         Alert MME Notification                              Implemented
-154                                                         Alert MME Acknowledge                               Implemented
-155                                                         UE Activity Notification                            Implemented
-156                                                         UE Activity Acknowledge                             Implemented
-157                                                         ISR Status Indication                               Implemented
-158                                                         UE Registration Query Request                       Implemented
-159                                                         UE Registration Query Response                      Implemented
+149                                                         Detach Notification                                 Implemented*
+150                                                         Detach Acknowledge                                  Implemented*
+151                                                         CS Paging Indication                                Implemented*
+153                                                         Alert MME Notification                              Implemented*
+154                                                         Alert MME Acknowledge                               Implemented*
+155                                                         UE Activity Notification                            Implemented*
+156                                                         UE Activity Acknowledge                             Implemented*
+157                                                         ISR Status Indication                               Implemented*
+158                                                         UE Registration Query Request                       Implemented*
+159                                                         UE Registration Query Response                      Implemented*
 
 -----------SGSN/MME to SGW, SGSN to MME (S4/S11/S3), SGSN to SGSN (S16), SGW to PGW (S5/S8)-------
 
-162                                                         Suspend Notification                                Implemented
-163                                                         Suspend Acknowledge                                 Implemented
+162                                                         Suspend Notification                                Implemented*
+163                                                         Suspend Acknowledge                                 Implemented*
 
 -----------SGSN/MME to SGW (S4/S11)---------------------------------------------------------------
 
-160                                                         Create Forwarding Tunnel Request                    Implemented
-161                                                         Create Forwarding Tunnel Response                   Implemented
-166                                                         Create Indirect Data Forwarding Tunnel Request      Implemented
-167                                                         Create Indirect Data Forwarding Tunnel Response     Implemented
-168                                                         Delete Indirect Data Forwarding Tunnel Request      Implemented
-169                                                         Delete Indirect Data Forwarding Tunnel Response     Implemented
-170                                                         Release Access Bearers Request                      Implemented
-171                                                         Release Access Bearers Response                     Implemented
+160                                                         Create Forwarding Tunnel Request                    Implemented*
+161                                                         Create Forwarding Tunnel Response                   Implemented*
+166                                                         Create Indirect Data Forwarding Tunnel Request      Implemented*
+167                                                         Create Indirect Data Forwarding Tunnel Response     Implemented*
+168                                                         Delete Indirect Data Forwarding Tunnel Request      Implemented*
+169                                                         Delete Indirect Data Forwarding Tunnel Response     Implemented*
+170                                                         Release Access Bearers Request                      Implemented*
+171                                                         Release Access Bearers Response                     Implemented*
 172 to 175                                                  For future use
 
 ----------SGW to SGSN/MME (S4/S11)----------------------------------------------------------------
 
-176                                                         Downlink Data Notification                          Implemented
-177                                                         Downlink Data Notification Acknowledge              Implemented
-179                                                         PGW Restart Notification                            Implemented
-180                                                         PGW Restart Notification Acknowledge                Implemented
+176                                                         Downlink Data Notification                          Implemented*
+177                                                         Downlink Data Notification Acknowledge              Implemented*
+179                                                         PGW Restart Notification                            Implemented*
+180                                                         PGW Restart Notification Acknowledge                Implemented*
 
 ----------SGW to SGSN (S4)------------------------------------------------------------------------
 
@@ -131,14 +131,14 @@ Message Type value (Decimal)                                Message             
 
 ----------SGW to PGW, PGW to SGW (S5/S8)----------------------------------------------------------
 
-200                                                         Update PDN Connection Set Request                   Implemented
-201                                                         Update PDN Connection Set Response                  Implemented
+200                                                         Update PDN Connection Set Request                   Implemented*
+201                                                         Update PDN Connection Set Response                  Implemented*
 202 to 210                                                  For future use
 
 ----------MME to SGW (S11)------------------------------------------------------------------------
 
-211                                                         Modify Access Bearers Request                       Implemented
-212                                                         Modify Access Bearers Response                      Implemented
+211                                                         Modify Access Bearers Request                       Implemented*
+212                                                         Modify Access Bearers Response                      Implemented*
 213 to 230                                                  For future use
 
 ----------MBMS GW to MME/SGSN (Sm/Sn)-------------------------------------------------------------

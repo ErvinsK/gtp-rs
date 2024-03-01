@@ -5,7 +5,7 @@ use crate::gtpv2::{
     utils::*,
 };
 
-// According to 3GPP TS 29.274 V15.9.0 (2019-09)
+// According to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 pub const MODIFY_ACCESS_BRS_REQ: u8 = 211;
 
@@ -20,6 +20,7 @@ pub struct ModifyAccessBearersRequest {
     pub bearer_ctxs: Vec<BearerContext>,
     pub recovery: Option<Recovery>,
     pub secondary_rat_usage_report: Vec<SecondaryRatUsageDataReport>,
+    pub pscellid: Option<PSCellId>,
     pub private_ext: Vec<PrivateExtension>,
 }
 
@@ -38,6 +39,7 @@ impl Default for ModifyAccessBearersRequest {
             bearer_ctxs: vec![],
             recovery: None,
             secondary_rat_usage_report: vec![],
+            pscellid: None,
             private_ext: vec![],
         }
     }
@@ -104,6 +106,10 @@ impl Messages for ModifyAccessBearersRequest {
             elements.push(InformationElement::SecondaryRatUsageDataReport(x.clone()))
         });
 
+        if let Some(i) = self.pscellid.clone() {
+            elements.push(i.into());
+        }
+
         self.private_ext
             .iter()
             .for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));
@@ -141,6 +147,11 @@ impl Messages for ModifyAccessBearersRequest {
                 InformationElement::SecondaryRatUsageDataReport(j) => {
                     if j.ins == 0 {
                         self.secondary_rat_usage_report.push(j.clone());
+                    }
+                }
+                InformationElement::PSCellId(j) => {
+                    if let (0, true) = (j.ins, self.pscellid.is_none()) {
+                        self.pscellid = Some(j.clone());
                     }
                 }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),

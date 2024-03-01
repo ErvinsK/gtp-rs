@@ -5,7 +5,7 @@ use crate::gtpv2::{
     utils::*,
 };
 
-// According to 3GPP TS 29.274 V15.9.0 (2019-09)
+// According to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 pub const UPD_BEARER_RESP: u8 = 98;
 
@@ -34,6 +34,7 @@ pub struct UpdateBearerResponse {
     pub ue_udpport: Option<PortNumber>,
     pub nbifom: Option<Fcontainer>,
     pub ue_tcpport: Option<PortNumber>,
+    pub pscellid: Option<PSCellId>,
     pub private_ext: Vec<PrivateExtension>,
 }
 
@@ -66,6 +67,7 @@ impl Default for UpdateBearerResponse {
             ue_udpport: None,
             nbifom: None,
             ue_tcpport: None,
+            pscellid: None,
             private_ext: vec![],
         }
     }
@@ -170,7 +172,9 @@ impl Messages for UpdateBearerResponse {
         if let Some(i) = self.ue_tcpport.clone() {
             elements.push(i.into());
         }
-
+        if let Some(i) = self.pscellid.clone() {
+            elements.push(i.into());
+        }
         self.private_ext
             .iter()
             .for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));
@@ -271,6 +275,11 @@ impl Messages for UpdateBearerResponse {
                 InformationElement::Fcontainer(j) => {
                     if let (0, true) = (j.ins, self.nbifom.is_none()) {
                         self.nbifom = Some(j.clone());
+                    }
+                }
+                InformationElement::PSCellId(j) => {
+                    if let (0, true) = (j.ins, self.pscellid.is_none()) {
+                        self.pscellid = Some(j.clone());
                     }
                 }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),

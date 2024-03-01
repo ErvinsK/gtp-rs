@@ -5,7 +5,7 @@ use crate::gtpv2::{
     utils::*,
 };
 
-// According to 3GPP TS 29.274 V15.9.0 (2019-09)
+// According to 3GPP TS 29.274 V17.10.0 (2023-12)
 
 pub const DELETE_BEARER_REQ: u8 = 99;
 
@@ -28,6 +28,8 @@ pub struct DeleteBearerRequest {
     pub nbifom: Option<Fcontainer>,
     pub apn_rate_control_status: Option<ApnRateControlStatus>,
     pub epco: Option<Epco>,
+    pub pgw_change_info: Vec<PgwChangeInfo>,
+    pub fteid_control: Option<Fteid>,
     pub private_ext: Vec<PrivateExtension>,
 }
 
@@ -54,6 +56,8 @@ impl Default for DeleteBearerRequest {
             nbifom: None,
             apn_rate_control_status: None,
             epco: None,
+            pgw_change_info: vec![],
+            fteid_control: None,
             private_ext: vec![],
         }
     }
@@ -148,6 +152,14 @@ impl Messages for DeleteBearerRequest {
             elements.push(i.into())
         };
 
+        self.pgw_change_info
+            .iter()
+            .for_each(|x| elements.push(InformationElement::PgwChangeInfo(x.clone())));
+
+        if let Some(i) = self.fteid_control.clone() {
+            elements.push(i.into())
+        };
+
         self.private_ext
             .iter()
             .for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));
@@ -222,6 +234,16 @@ impl Messages for DeleteBearerRequest {
                 InformationElement::Epco(j) => {
                     if let (0, true) = (j.ins, self.epco.is_none()) {
                         self.epco = Some(j)
+                    };
+                }
+                InformationElement::PgwChangeInfo(j) => {
+                    if j.ins == 2 {
+                        self.pgw_change_info.push(j)
+                    };
+                }
+                InformationElement::Fteid(j) => {
+                    if let (0, true) = (j.ins, self.fteid_control.is_none()) {
+                        self.fteid_control = Some(j)
                     };
                 }
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j),
