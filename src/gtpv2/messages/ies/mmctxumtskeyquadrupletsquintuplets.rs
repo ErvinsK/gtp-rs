@@ -34,6 +34,8 @@ pub struct MmContextUmtsKeyQuadrupletsQuintuplets {
     pub apn_rate_controls: Option<Vec<ApnRateControlStatusMM>>,
 }
 
+impl MMContext for MmContextUmtsKeyQuadrupletsQuintuplets {}
+
 impl Default for MmContextUmtsKeyQuadrupletsQuintuplets {
     fn default() -> Self {
         MmContextUmtsKeyQuadrupletsQuintuplets {

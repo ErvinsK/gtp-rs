@@ -38,6 +38,8 @@ pub struct MmContextUmtsKeyQuintuplets {
     pub ext_access_res: Option<ExtendedAccessRestrictionMM>,
 }
 
+impl MMContext for MmContextUmtsKeyQuintuplets {}
+
 impl Default for MmContextUmtsKeyQuintuplets {
     fn default() -> Self {
         MmContextUmtsKeyQuintuplets {

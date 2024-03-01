@@ -47,6 +47,8 @@ pub struct MmContextEpsSecurityContextQuadruplets {
     pub ensct: Option<u8>, // EPS NAS Security Context Type
 }
 
+impl MMContext for MmContextEpsSecurityContextQuadruplets {}
+
 impl Default for MmContextEpsSecurityContextQuadruplets {
     fn default() -> Self {
         MmContextEpsSecurityContextQuadruplets {

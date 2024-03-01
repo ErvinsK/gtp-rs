@@ -37,6 +37,8 @@ pub struct MmContextUmtsKeyCipherQuintuplets {
     pub iov_updates_counter: Option<u8>,
 }
 
+impl MMContext for MmContextUmtsKeyCipherQuintuplets {}
+
 impl Default for MmContextUmtsKeyCipherQuintuplets {
     fn default() -> Self {
         MmContextUmtsKeyCipherQuintuplets {

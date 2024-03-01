@@ -32,6 +32,8 @@ pub struct MmContextGsmKeyTriplets {
     pub vdn_pref_ue_usage: Option<Vec<u8>>, // Voice domain preference and UE's usage setting
 }
 
+impl MMContext for MmContextGsmKeyTriplets {}
+
 impl Default for MmContextGsmKeyTriplets {
     fn default() -> Self {
         MmContextGsmKeyTriplets {
