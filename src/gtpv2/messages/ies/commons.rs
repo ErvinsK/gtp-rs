@@ -13,9 +13,6 @@ pub trait IEs {
     fn is_empty(&self) -> bool; // is_empty() method
 }
 
-// Common trait to implement generic covering all types of MM Contexts
-pub trait MMContext {}
-
 // Location Field definitions
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]

@@ -71,7 +71,7 @@ Message Type value (Decimal)                                Message             
 -------------MME to MME, SGSN to MME, MME to SGSN, SGSN to SGSN, MME to AMF, AMF to MME (S3/S10/S16/N26)
 
 128                                                         Identification Request                              Implemented*
-129                                                         Identification Response                             Not implemented
+129                                                         Identification Response                             Implemented*
 130                                                         Context Request                                     Not implemented
 131                                                         Context Response                                    Not implemented
 132                                                         Context Acknowledge                                 Not implemented
@@ -178,7 +178,7 @@ pub use {
     tracesessionactivation::*, tracesessiondeactivation::*, ueactivityacknowledge::*,
     ueactivitynotification::*, ueregistrationqueryreq::*, ueregistrationqueryresp::*,
     updatebearerreq::*, updatebearerresp::*, updatepdnconnectionsetreq::*,
-    updatepdnconnectionsetresp::*, versionnotsupported::*, identificationreq::*,
+    updatepdnconnectionsetresp::*, versionnotsupported::*, identificationreq::*, identificationresp::*,
 };
 
 mod alertmmeacknowledge;
@@ -247,3 +247,4 @@ mod updatepdnconnectionsetreq;
 mod updatepdnconnectionsetresp;
 mod versionnotsupported;
 mod identificationreq;
+mod identificationresp;

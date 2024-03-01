@@ -47,7 +47,6 @@ pub struct MmContextEpsSecurityContextQuadruplets {
     pub ensct: Option<u8>, // EPS NAS Security Context Type
 }
 
-impl MMContext for MmContextEpsSecurityContextQuadruplets {}
 
 impl Default for MmContextEpsSecurityContextQuadruplets {
     fn default() -> Self {
@@ -89,7 +88,7 @@ impl Default for MmContextEpsSecurityContextQuadruplets {
 
 impl From<MmContextEpsSecurityContextQuadruplets> for InformationElement {
     fn from(i: MmContextEpsSecurityContextQuadruplets) -> Self {
-        InformationElement::MmContextEpsSecurityContextQuadruplets(i)
+        InformationElement::MmContext(i.into())
     }
 }
 

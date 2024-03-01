@@ -32,8 +32,6 @@ pub struct MmContextGsmKeyCipherQuintuplets {
     pub higher_than_16_mbps: bool,
 }
 
-impl MMContext for MmContextGsmKeyCipherQuintuplets {}
-
 impl Default for MmContextGsmKeyCipherQuintuplets {
     fn default() -> Self {
         MmContextGsmKeyCipherQuintuplets {
@@ -60,7 +58,7 @@ impl Default for MmContextGsmKeyCipherQuintuplets {
 
 impl From<MmContextGsmKeyCipherQuintuplets> for InformationElement {
     fn from(i: MmContextGsmKeyCipherQuintuplets) -> Self {
-        InformationElement::MmContextGsmKeyCipherQuintuplets(i)
+        InformationElement::MmContext(i.into())
     }
 }
 

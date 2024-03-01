@@ -26,7 +26,7 @@ pub use {
     twanidtimestamp::*, twmi::*, uci::*, uetimezone::*, uli::*, ulitimestamp::*, unknown::*,
     upfsif::*, wlanoffloadindication::*, arpi::*, servicesauthorized::*, alternativeimsi::*,
     upsp::*, bitrate::*, sgiptptunneladdress::*, pgwfqdn::*, groupid::*, pscellid::*, srvcccause::*,
-    pc5qosflow::*, pgwchangeinfo::*,
+    pc5qosflow::*, pgwchangeinfo::*, mmctx::*,
 };
 
 mod abstimembmsdatatransfer;
@@ -181,3 +181,4 @@ mod pscellid;
 mod srvcccause;
 mod pc5qosflow;
 mod pgwchangeinfo;
+mod mmctx;

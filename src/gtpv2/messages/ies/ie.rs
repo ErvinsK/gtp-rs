@@ -210,13 +210,8 @@ pub enum InformationElement {
     BearerFlags(BearerFlags),
     PdnType(PdnType),
     Pti(Pti),
-    MmContextGsmKeyTriplets(MmContextGsmKeyTriplets),
-    MmContextUmtsKeyCipherQuintuplets(MmContextUmtsKeyCipherQuintuplets),
-    MmContextGsmKeyCipherQuintuplets(MmContextGsmKeyCipherQuintuplets),
-    MmContextUmtsKeyQuintuplets(MmContextUmtsKeyQuintuplets),
-    MmContextEpsSecurityContextQuadruplets(MmContextEpsSecurityContextQuadruplets),
-    MmContextUmtsKeyQuadrupletsQuintuplets(MmContextUmtsKeyQuadrupletsQuintuplets),
-    PdnConnections(PdnConnections),
+    MmContext(MmContext),
+    PdnConnections(Box<PdnConnections>),
     PduNumbers(PduNumbers),
     Ptmsi(Ptmsi),
     PtmsiSignature(PtmsiSignature),
@@ -366,12 +361,7 @@ impl InformationElement {
             InformationElement::BearerFlags(i) => i.marshal(buffer),
             InformationElement::PdnType(i) => i.marshal(buffer),
             InformationElement::Pti(i) => i.marshal(buffer),
-            InformationElement::MmContextGsmKeyTriplets(i) => i.marshal(buffer),
-            InformationElement::MmContextUmtsKeyCipherQuintuplets(i) => i.marshal(buffer),
-            InformationElement::MmContextGsmKeyCipherQuintuplets(i) => i.marshal(buffer),
-            InformationElement::MmContextUmtsKeyQuintuplets(i) => i.marshal(buffer),
-            InformationElement::MmContextEpsSecurityContextQuadruplets(i) => i.marshal(buffer),
-            InformationElement::MmContextUmtsKeyQuadrupletsQuintuplets(i) => i.marshal(buffer),
+            InformationElement::MmContext(i) => i.marshal(buffer),
             InformationElement::PdnConnections(i) => i.marshal(buffer),
             InformationElement::PduNumbers(i) => i.marshal(buffer),
             InformationElement::Ptmsi(i) => i.marshal(buffer),
@@ -736,56 +726,17 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                103 => match MmContextGsmKeyTriplets::unmarshal(&buffer[cursor..]) {
+                103..=108 => match MmContext::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
-                        ies.push(InformationElement::MmContextGsmKeyTriplets(i));
-                    }
-                    Err(j) => return Err(j),
-                },
-                104 => match MmContextUmtsKeyCipherQuintuplets::unmarshal(&buffer[cursor..]) {
-                    Ok(i) => {
-                        cursor += i.len();
-                        ies.push(InformationElement::MmContextUmtsKeyCipherQuintuplets(i));
-                    }
-                    Err(j) => return Err(j),
-                },
-                105 => match MmContextGsmKeyCipherQuintuplets::unmarshal(&buffer[cursor..]) {
-                    Ok(i) => {
-                        cursor += i.len();
-                        ies.push(InformationElement::MmContextGsmKeyCipherQuintuplets(i));
-                    }
-                    Err(j) => return Err(j),
-                },
-                106 => match MmContextUmtsKeyQuintuplets::unmarshal(&buffer[cursor..]) {
-                    Ok(i) => {
-                        cursor += i.len();
-                        ies.push(InformationElement::MmContextUmtsKeyQuintuplets(i));
-                    }
-                    Err(j) => return Err(j),
-                },
-                107 => match MmContextEpsSecurityContextQuadruplets::unmarshal(&buffer[cursor..]) {
-                    Ok(i) => {
-                        cursor += i.len();
-                        ies.push(InformationElement::MmContextEpsSecurityContextQuadruplets(
-                            i,
-                        ));
-                    }
-                    Err(j) => return Err(j),
-                },
-                108 => match MmContextUmtsKeyQuadrupletsQuintuplets::unmarshal(&buffer[cursor..]) {
-                    Ok(i) => {
-                        cursor += i.len();
-                        ies.push(InformationElement::MmContextUmtsKeyQuadrupletsQuintuplets(
-                            i,
-                        ));
+                        ies.push(InformationElement::MmContext(i));
                     }
                     Err(j) => return Err(j),
                 },
                 109 => match PdnConnections::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
-                        ies.push(InformationElement::PdnConnections(i));
+                        ies.push(InformationElement::PdnConnections(Box::new(i)));
                     }
                     Err(j) => return Err(j),
                 },
