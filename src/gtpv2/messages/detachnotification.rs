@@ -89,7 +89,7 @@ impl Messages for DetachNotification {
         for e in elements.iter() {
             match e {
                 InformationElement::Cause(j) => {
-                    if j.ins == 0 {
+                    if let (0, false) = (j.ins, mandatory) {
                         mandatory = true;
                         self.cause = j.clone();
                     };

@@ -69,7 +69,7 @@ impl IEs for ApnRelativeCapacity {
                     i if i <= 100 => data.relative_cap = buffer[4],
                     _ => data.relative_cap = 0,
                 }
-                let mut donor: Vec<u8> = buffer[5..(4 + data.length as usize)].to_vec();
+                let mut donor: Vec<u8> = buffer[5..MIN_IE_SIZE + data.length as usize].to_vec();
                 let mut k: Vec<Vec<char>> = vec![];
                 loop {
                     if !donor.is_empty() {

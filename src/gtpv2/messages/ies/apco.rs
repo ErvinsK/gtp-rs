@@ -58,7 +58,7 @@ impl IEs for Apco {
             };
             if check_tliv_ie_buffer(data.length, buffer) {
                 data.apco
-                    .extend_from_slice(&buffer[4..(data.length + 4) as usize]);
+                    .extend_from_slice(&buffer[MIN_IE_SIZE..MIN_IE_SIZE + data.length as usize]);
                 Ok(data)
             } else {
                 Err(GTPV2Error::IEInvalidLength(APCO))

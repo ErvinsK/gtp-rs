@@ -98,7 +98,7 @@ impl IEs for Fcause {
                 ..Fcause::default()
             };
             if check_tliv_ie_buffer(data.length, buffer) {
-                data.cause_field.extend_from_slice(&buffer[5..]);
+                data.cause_field.extend_from_slice(&buffer[5..MIN_IE_SIZE + data.length as usize]);
                 Ok(data)
             } else {
                 Err(GTPV2Error::IEInvalidLength(FCAUSE))

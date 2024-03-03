@@ -85,7 +85,7 @@ Message Type value (Decimal)                                Message             
 140                                                         Relocation Cancel Response                          Not implemented
 141                                                         Configuration Transfer Tunnel                       Not implemented
 142 to 148                                                  For future use
-152                                                         RAN Information Relay                               Not implemented
+152                                                         RAN Information Relay                               Implemented*
 
 ------------SGSN to MME, MME to SGSN (S3)---------------------------------------------------------
 
@@ -179,6 +179,7 @@ pub use {
     ueactivitynotification::*, ueregistrationqueryreq::*, ueregistrationqueryresp::*,
     updatebearerreq::*, updatebearerresp::*, updatepdnconnectionsetreq::*,
     updatepdnconnectionsetresp::*, versionnotsupported::*, identificationreq::*, identificationresp::*,
+    raninformationrelay::*,
 };
 
 mod alertmmeacknowledge;
@@ -248,3 +249,4 @@ mod updatepdnconnectionsetresp;
 mod versionnotsupported;
 mod identificationreq;
 mod identificationresp;
+mod raninformationrelay;
