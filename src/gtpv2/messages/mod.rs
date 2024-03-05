@@ -79,11 +79,11 @@ Message Type value (Decimal)                                Message             
 134                                                         Forward Relocation Response                         Not implemented
 135                                                         Forward Relocation Complete Notification            Not implemented
 136                                                         Forward Relocation Complete Acknowledge             Not implemented
-137                                                         Forward Access Context Notification                 Not implemented
-138                                                         Forward Access Context Acknowledge                  Not implemented
+137                                                         Forward Access Context Notification                 Implemented*
+138                                                         Forward Access Context Acknowledge                  Implemented*
 139                                                         Relocation Cancel Request                           Not implemented
-140                                                         Relocation Cancel Response                          Not implemented
-141                                                         Configuration Transfer Tunnel                       Not implemented
+140                                                         Relocation Cancel Response                          Implemented*
+141                                                         Configuration Transfer Tunnel                       Implemented*
 142 to 148                                                  For future use
 152                                                         RAN Information Relay                               Implemented*
 
@@ -179,7 +179,8 @@ pub use {
     ueactivitynotification::*, ueregistrationqueryreq::*, ueregistrationqueryresp::*,
     updatebearerreq::*, updatebearerresp::*, updatepdnconnectionsetreq::*,
     updatepdnconnectionsetresp::*, versionnotsupported::*, identificationreq::*, identificationresp::*,
-    raninformationrelay::*,
+    raninformationrelay::*, forwardaccesscontextnotification::*, forwardaccesscontextacknowledge::*,
+    relocationcancelresp::*,
 };
 
 mod alertmmeacknowledge;
@@ -250,3 +251,6 @@ mod versionnotsupported;
 mod identificationreq;
 mod identificationresp;
 mod raninformationrelay;
+mod forwardaccesscontextnotification;
+mod forwardaccesscontextacknowledge;
+mod relocationcancelresp;

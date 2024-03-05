@@ -101,13 +101,13 @@ impl IEs for Fcontainer {
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4] {
                     0 => data.container = Container::Reserved,
-                    1 => data.container = Container::Utran(buffer[5..].to_vec()),
-                    2 => data.container = Container::Bss(buffer[5..].to_vec()),
-                    3 => data.container = Container::Eutran(buffer[5..].to_vec()),
-                    4 => data.container = Container::Nbifom(buffer[5..].to_vec()),
-                    5 => data.container = Container::EnDc(buffer[5..].to_vec()),
-                    6 => data.container = Container::InterSystemSON(buffer[5..].to_vec()),
-                    _ => data.container = Container::Unknown(buffer[4..].to_vec()),
+                    1 => data.container = Container::Utran(buffer[5..MIN_IE_SIZE+data.length as usize].to_vec()),
+                    2 => data.container = Container::Bss(buffer[5..MIN_IE_SIZE+data.length as usize].to_vec()),
+                    3 => data.container = Container::Eutran(buffer[5..MIN_IE_SIZE+data.length as usize].to_vec()),
+                    4 => data.container = Container::Nbifom(buffer[5..MIN_IE_SIZE+data.length as usize].to_vec()),
+                    5 => data.container = Container::EnDc(buffer[5..MIN_IE_SIZE+data.length as usize].to_vec()),
+                    6 => data.container = Container::InterSystemSON(buffer[5..MIN_IE_SIZE+data.length as usize].to_vec()),
+                    _ => data.container = Container::Unknown(buffer[4..MIN_IE_SIZE+data.length as usize].to_vec()),
                 }
                 Ok(data)
             } else {
