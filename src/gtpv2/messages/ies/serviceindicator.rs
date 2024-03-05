@@ -47,7 +47,6 @@ impl From<u8> for ServiceIndication {
     }
 }
 
-
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ServiceIndicator {
     pub t: u8,

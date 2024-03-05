@@ -15,10 +15,10 @@ pub const UPSP_LENGTH: usize = 1;
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum UpIpPolicy {
     #[default]
-    NotNeeded = 0,              // User Plane IP Integrity protection with ESP is not needed
-    Preferred = 1,              // User Plane IP Integrity protection with ESP is preferred
-    Required = 2,               // User Plane IP Integrity protection with ESP is required
-    Spare = 3,                  // Spare
+    NotNeeded = 0, // User Plane IP Integrity protection with ESP is not needed
+    Preferred = 1, // User Plane IP Integrity protection with ESP is preferred
+    Required = 2,  // User Plane IP Integrity protection with ESP is required
+    Spare = 3,     // Spare
 }
 
 impl From<&UpIpPolicy> for u8 {
@@ -51,7 +51,7 @@ pub struct UpSecurityPolicy {
     pub t: u8,
     pub length: u16,
     pub ins: u8,
-    pub up_ip_policy: UpIpPolicy, 
+    pub up_ip_policy: UpIpPolicy,
 }
 
 impl Default for UpSecurityPolicy {

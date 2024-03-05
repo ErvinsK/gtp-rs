@@ -999,9 +999,9 @@ fn test_access_restriction_mm() {
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
 pub struct ExtendedAccessRestrictionMM {
-    pub nruna: bool,    // NR-U in 5GS Not Allowed
+    pub nruna: bool,   // NR-U in 5GS Not Allowed
     pub nrusrna: bool, // New Radio Unlicensed as Secondary RAT Not Allowed
-    pub nrna: bool,   // NR in 5GS Not Allowed
+    pub nrna: bool,    // NR in 5GS Not Allowed
     pub ussrna: bool, // Unlicensed Spectrum in the form of LAA or LWA/LWIP as Secondary RAT Not Allowed
     pub nrsrna: bool, // NR as Secondary RAT Not Allowed
 }

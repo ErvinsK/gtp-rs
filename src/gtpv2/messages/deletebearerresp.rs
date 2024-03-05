@@ -309,7 +309,7 @@ impl Messages for DeleteBearerResponse {
                         self.pscellid = Some(j);
                     }
                 }
-                
+
                 InformationElement::PrivateExtension(j) => self.private_ext.push(j.clone()),
                 _ => (),
             }

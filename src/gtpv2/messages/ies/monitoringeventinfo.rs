@@ -23,7 +23,7 @@ pub struct MonitoringEventInformation {
     pub scef_ref_id: u32,
     pub scef_id: String,
     pub rem_nbr_reports: u16, // Remaining Minimum Periodic Location Report Time
-    pub ext_scef_ref_id: Option<u64> // Extended SCEF Reference ID
+    pub ext_scef_ref_id: Option<u64>, // Extended SCEF Reference ID
 }
 
 impl Default for MonitoringEventInformation {
@@ -54,7 +54,11 @@ impl IEs for MonitoringEventInformation {
         let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(MONITOREVENTINFO);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
-        let flag = ((self.ext_scef_ref_id.is_some() as u8) << 7) | ((self.nscf as u8) << 6) | ((self.nsui as u8) << 5) | ((self.nsur as u8) << 4) | (self.ins & 0x0f);
+        let flag = ((self.ext_scef_ref_id.is_some() as u8) << 7)
+            | ((self.nscf as u8) << 6)
+            | ((self.nsui as u8) << 5)
+            | ((self.nsur as u8) << 4)
+            | (self.ins & 0x0f);
         buffer_ie.push(flag);
         buffer_ie.extend_from_slice(&self.scef_ref_id.to_be_bytes());
         buffer_ie.push(self.scef_id.len() as u8);
@@ -96,17 +100,17 @@ impl IEs for MonitoringEventInformation {
                 }
                 if buffer[3] & 0x80 == 0x80 {
                     if buffer.len() >= cursor + 8 {
-                            data.ext_scef_ref_id = Some(u64::from_be_bytes([
-                                buffer[cursor],
-                                buffer[cursor + 1],
-                                buffer[cursor + 2],
-                                buffer[cursor + 3],
-                                buffer[cursor + 4],
-                                buffer[cursor + 5],
-                                buffer[cursor + 6],
-                                buffer[cursor + 7],
-                            ]));
-                            Ok(data)
+                        data.ext_scef_ref_id = Some(u64::from_be_bytes([
+                            buffer[cursor],
+                            buffer[cursor + 1],
+                            buffer[cursor + 2],
+                            buffer[cursor + 3],
+                            buffer[cursor + 4],
+                            buffer[cursor + 5],
+                            buffer[cursor + 6],
+                            buffer[cursor + 7],
+                        ]));
+                        Ok(data)
                     } else {
                         Err(GTPV2Error::IEInvalidLength(MONITOREVENTINFO))
                     }
@@ -133,9 +137,9 @@ impl IEs for MonitoringEventInformation {
 #[test]
 fn monitoringeventinfo_ie_marshal_test() {
     let encoded_ie: [u8; 35] = [
-        0xbd, 0x00, 0x1f, 0xa0, 0x00, 0x00, 0xff, 0xff, 0x10, 0x73, 0x63, 0x65, 0x66, 0x2e, 0x65, 0x78,
-        0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x00, 0xff, 0x00, 0x00, 0x00, 0x00, 0xff,
-        0xff, 0xee, 0xaa,
+        0xbd, 0x00, 0x1f, 0xa0, 0x00, 0x00, 0xff, 0xff, 0x10, 0x73, 0x63, 0x65, 0x66, 0x2e, 0x65,
+        0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x00, 0xff, 0x00, 0x00, 0x00,
+        0x00, 0xff, 0xff, 0xee, 0xaa,
     ];
     let test_struct = MonitoringEventInformation {
         t: MONITOREVENTINFO,
@@ -158,9 +162,9 @@ fn monitoringeventinfo_ie_marshal_test() {
 #[test]
 fn monitoringeventinfo_ie_unmarshal_test() {
     let encoded_ie: [u8; 35] = [
-        0xbd, 0x00, 0x1f, 0xa0, 0x00, 0x00, 0xff, 0xff, 0x10, 0x73, 0x63, 0x65, 0x66, 0x2e, 0x65, 0x78,
-        0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x00, 0xff, 0x00, 0x00, 0x00, 0x00, 0xff,
-        0xff, 0xee, 0xaa,
+        0xbd, 0x00, 0x1f, 0xa0, 0x00, 0x00, 0xff, 0xff, 0x10, 0x73, 0x63, 0x65, 0x66, 0x2e, 0x65,
+        0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x00, 0xff, 0x00, 0x00, 0x00,
+        0x00, 0xff, 0xff, 0xee, 0xaa,
     ];
     let test_struct = MonitoringEventInformation {
         t: MONITOREVENTINFO,

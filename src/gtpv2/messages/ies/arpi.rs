@@ -95,5 +95,8 @@ fn arpi_ie_unmarshal_test() {
         ins: 0,
         arpi: 0xffff00ff,
     };
-    assert_eq!(AdditionalRrmPolicyIndex::unmarshal(&encoded).unwrap(), decoded);
+    assert_eq!(
+        AdditionalRrmPolicyIndex::unmarshal(&encoded).unwrap(),
+        decoded
+    );
 }

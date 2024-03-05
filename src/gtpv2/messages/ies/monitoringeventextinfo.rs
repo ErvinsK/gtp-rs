@@ -78,14 +78,15 @@ impl IEs for MonitoringEventExtensionInfo {
                     let len: usize = buffer[9] as usize;
                     if buffer.len() >= cursor + len {
                         cursor += 1;
-                        data.scef_id = match String::from_utf8(buffer[cursor..(cursor+len)].to_vec()) {
-                            Ok(i) => i,
-                            Err(_) => return Err(GTPV2Error::IEIncorrect(MONITEVENTEXTINFO)),
-                        };
+                        data.scef_id =
+                            match String::from_utf8(buffer[cursor..(cursor + len)].to_vec()) {
+                                Ok(i) => i,
+                                Err(_) => return Err(GTPV2Error::IEIncorrect(MONITEVENTEXTINFO)),
+                            };
                         cursor += len;
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(MONITEVENTEXTINFO));
-                    }   
+                    }
                 }
                 {
                     if buffer[4] & 0x01 == 0x01 {
@@ -121,13 +122,12 @@ impl IEs for MonitoringEventExtensionInfo {
                     }
                 }
                 Ok(data)
-                } else {
-                    Err(GTPV2Error::IEInvalidLength(MONITEVENTEXTINFO))
-                }   
-        } else {
+            } else {
                 Err(GTPV2Error::IEInvalidLength(MONITEVENTEXTINFO))
+            }
+        } else {
+            Err(GTPV2Error::IEInvalidLength(MONITEVENTEXTINFO))
         }
-         
     }
 
     fn len(&self) -> usize {
@@ -142,8 +142,9 @@ impl IEs for MonitoringEventExtensionInfo {
 #[test]
 fn monitoringeventextinfo_ie_unmarshal_test() {
     let encoded_ie: [u8; 32] = [
-        0xce,0x00,0x1c,0x00,0x03,0x00,0x00,0x00,0x00,0x0b,0x65,0x78,0x61,0x6d,0x70,0x6c,
-        0x65,0x2e,0x63,0x6f,0x6d,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
+        0xce, 0x00, 0x1c, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x0b, 0x65, 0x78, 0x61, 0x6d, 0x70,
+        0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff,
     ];
     let test_struct = MonitoringEventExtensionInfo {
         t: MONITEVENTEXTINFO,
@@ -161,8 +162,9 @@ fn monitoringeventextinfo_ie_unmarshal_test() {
 #[test]
 fn monitoringeventextinfo_ie_marshal_test() {
     let encoded_ie: [u8; 32] = [
-        0xce,0x00,0x1c,0x00,0x03,0x00,0x00,0x00,0x00,0x0b,0x65,0x78,0x61,0x6d,0x70,0x6c,
-        0x65,0x2e,0x63,0x6f,0x6d,0x00,0x00,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,
+        0xce, 0x00, 0x1c, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x0b, 0x65, 0x78, 0x61, 0x6d, 0x70,
+        0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        0xff, 0xff,
     ];
     let test_struct = MonitoringEventExtensionInfo {
         t: MONITEVENTEXTINFO,

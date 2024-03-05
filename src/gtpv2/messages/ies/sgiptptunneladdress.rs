@@ -76,7 +76,12 @@ impl IEs for SgiPtpTunnelAddress {
                 match buffer[4] & 0x03 {
                     0x01 => {
                         if buffer.len() >= cursor + 4 {
-                            data.ip = IpAddr::from([buffer[cursor], buffer[cursor+1], buffer[cursor+2], buffer[cursor+3]]);
+                            data.ip = IpAddr::from([
+                                buffer[cursor],
+                                buffer[cursor + 1],
+                                buffer[cursor + 2],
+                                buffer[cursor + 3],
+                            ]);
                             cursor += 4;
                         } else {
                             return Err(GTPV2Error::IEInvalidLength(SGI_PTP_TUN_ADDRESS));
@@ -85,7 +90,7 @@ impl IEs for SgiPtpTunnelAddress {
                     0x02 => {
                         if buffer.len() >= cursor + 16 {
                             let mut dst = [0; 16];
-                            dst.copy_from_slice(&buffer[cursor..cursor+16]);
+                            dst.copy_from_slice(&buffer[cursor..cursor + 16]);
                             data.ip = IpAddr::from(dst);
                             cursor += 16;
                         } else {
@@ -96,7 +101,7 @@ impl IEs for SgiPtpTunnelAddress {
                 }
                 if buffer[4] & 0x04 == 0x04 {
                     if buffer.len() >= cursor + 2 {
-                        data.port = Some(u16::from_be_bytes([buffer[cursor], buffer[cursor+1]]));
+                        data.port = Some(u16::from_be_bytes([buffer[cursor], buffer[cursor + 1]]));
                     } else {
                         return Err(GTPV2Error::IEInvalidLength(SGI_PTP_TUN_ADDRESS));
                     }
@@ -121,7 +126,9 @@ impl IEs for SgiPtpTunnelAddress {
 
 #[test]
 fn sgi_ptp_tun_address_ie_ipv4_unmarshal_test() {
-    let encoded_ie: [u8; 11] = [0xd5,0x00,0x07,0x00,0x05,0x0a,0x64,0x32,0x0a,0x13,0x88,];
+    let encoded_ie: [u8; 11] = [
+        0xd5, 0x00, 0x07, 0x00, 0x05, 0x0a, 0x64, 0x32, 0x0a, 0x13, 0x88,
+    ];
     let test_struct = SgiPtpTunnelAddress {
         length: 7,
         ip: IpAddr::V4(Ipv4Addr::new(10, 100, 50, 10)),
@@ -136,12 +143,14 @@ fn sgi_ptp_tun_address_ie_ipv4_unmarshal_test() {
 fn sgi_ptp_tun_address_ie_ipv6_unmarshal_test() {
     use std::net::{IpAddr, Ipv6Addr};
     let encoded_ie: [u8; 21] = [
-        0xd5,0x00,0x11,0x00,0x02,0x00,0xff,0x00,0xff,0x00,0xff,0x00,0xff,0x00,0xff,0x00,
-        0xff,0x00,0xff,0x00,0xff,
+        0xd5, 0x00, 0x11, 0x00, 0x02, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff,
+        0x00, 0xff, 0x00, 0xff, 0x00, 0xff,
     ];
     let test_struct = SgiPtpTunnelAddress {
         length: 17,
-        ip: IpAddr::V6(Ipv6Addr::new(0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff)),
+        ip: IpAddr::V6(Ipv6Addr::new(
+            0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        )),
         port: None,
         ..SgiPtpTunnelAddress::default()
     };
@@ -151,7 +160,9 @@ fn sgi_ptp_tun_address_ie_ipv6_unmarshal_test() {
 
 #[test]
 fn sgi_ptp_tun_address_ie_ipv4_marshal_test() {
-    let encoded_ie: [u8; 11] = [0xd5,0x00,0x07,0x00,0x05,0x0a,0x64,0x32,0x0a,0x13,0x88,];
+    let encoded_ie: [u8; 11] = [
+        0xd5, 0x00, 0x07, 0x00, 0x05, 0x0a, 0x64, 0x32, 0x0a, 0x13, 0x88,
+    ];
     let test_struct = SgiPtpTunnelAddress {
         length: 7,
         ip: IpAddr::V4(Ipv4Addr::new(10, 100, 50, 10)),
@@ -168,12 +179,14 @@ fn sgi_ptp_tun_address_ie_ipv4_marshal_test() {
 fn sgi_ptp_tun_address_ie_ipv6_marshal_test() {
     use std::net::{IpAddr, Ipv6Addr};
     let encoded_ie: [u8; 21] = [
-        0xd5,0x00,0x11,0x00,0x02,0x00,0xff,0x00,0xff,0x00,0xff,0x00,0xff,0x00,0xff,0x00,
-        0xff,0x00,0xff,0x00,0xff,
+        0xd5, 0x00, 0x11, 0x00, 0x02, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff,
+        0x00, 0xff, 0x00, 0xff, 0x00, 0xff,
     ];
     let test_struct = SgiPtpTunnelAddress {
         length: 17,
-        ip: IpAddr::V6(Ipv6Addr::new(0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff)),
+        ip: IpAddr::V6(Ipv6Addr::new(
+            0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+        )),
         port: None,
         ..SgiPtpTunnelAddress::default()
     };

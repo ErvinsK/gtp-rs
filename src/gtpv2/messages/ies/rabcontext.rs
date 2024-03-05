@@ -52,7 +52,11 @@ impl IEs for RabContext {
         buffer_ie.push(RABCTX);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        let flag = ((self.ul_pdcp_sqn == 0) as u8) << 7 | ((self.dl_pdcp_sqn == 0) as u8) << 6 | ((self.ul_gtpu_sqn == 0) as u8) << 5 | ((self.dl_gtpu_sqn == 0) as u8) << 4 | self.nsapi;
+        let flag = ((self.ul_pdcp_sqn == 0) as u8) << 7
+            | ((self.dl_pdcp_sqn == 0) as u8) << 6
+            | ((self.ul_gtpu_sqn == 0) as u8) << 5
+            | ((self.dl_gtpu_sqn == 0) as u8) << 4
+            | self.nsapi;
         buffer_ie.push(flag);
         buffer_ie.extend_from_slice(&self.dl_gtpu_sqn.to_be_bytes());
         buffer_ie.extend_from_slice(&self.ul_gtpu_sqn.to_be_bytes());

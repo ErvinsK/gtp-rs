@@ -5,7 +5,7 @@ List of GTPv2-C IEs according to 3GPP TS 29.274 V17.10.0 (2023-12)
 IE Type         Name                                                            Status
 0               Reserved                                                        NA
 1               International Mobile Subscriber Identity (IMSI)                 Implemented
-2               Cause                                                           Implemented    
+2               Cause                                                           Implemented
 3               Recovery (Restart Counter)                                      Implemented
 4 to 34         Reserved for S101 interface                                     NA
 35 to 50        Reserved for S121 interface                                     NA
@@ -37,7 +37,7 @@ IE Type         Name                                                            
 93              Bearer Context                                                  To be checked
 94              Charging ID                                                     Implemented
 95              Charging Characteristics                                        Implemented
-96              Trace Information                                               Implemented        
+96              Trace Information                                               Implemented
 97              Bearer Flags                                                    Implemented
 98              Reserved                                                        NA
 99              PDN Type                                                        Implemented
@@ -139,7 +139,7 @@ IE Type         Name                                                            
 195             SCEF PDN Connection                                             To be checked
 196             Header Compression Configuration                                Implemented
 197             Extended Protocol Configuration Options (ePCO)                  Implemented
-198             Serving PLMN Rate Control                                       Implemented                                     
+198             Serving PLMN Rate Control                                       Implemented
 199             Counter                                                         Implemented
 200             Mapped UE Usage Type                                            Implemented
 201             Secondary RAT Usage Data Report                                 Implemented
@@ -149,8 +149,8 @@ IE Type         Name                                                            
 205             Extended Trace Information                                      Implemented
 206             Monitoring Event Extension Information                          Implemented
 207             Additional RRM Policy Index                                     Implemented
-208             V2X Context                                                     Not implemented
-209             PC5 QoS Parameters                                              Not implemented
+208             V2X Context                                                     Implemented
+209             PC5 QoS Parameters                                              Implemented
 210             Services Authorized                                             Implemented
 211             Bit Rate                                                        Implemented
 212             PC5 QoS Flow                                                    Implemented
@@ -169,8 +169,6 @@ IE Type         Name                                                            
 
 
 */
-
-
 
 use crate::gtpv2::{errors::GTPV2Error, messages::ies::*};
 
@@ -307,8 +305,8 @@ pub enum InformationElement {
     ExtendedTraceInformation(ExtendedTraceInformation),
     MonitoringEventExtensionInfo(MonitoringEventExtensionInfo),
     AdditionalRrmPolicyIndex(AdditionalRrmPolicyIndex),
-    // V2XContext(V2XContext),
-    // PC5QoSParameters(PC5QoSParameters),
+    V2xInformation(V2xInformation),
+    PC5QosParameters(PC5QosParameters),
     ServicesAuthorized(ServicesAuthorized),
     BitRate(BitRate),
     PC5QosFlow(PC5QosFlow),
@@ -458,6 +456,8 @@ impl InformationElement {
             InformationElement::ExtendedTraceInformation(i) => i.marshal(buffer),
             InformationElement::MonitoringEventExtensionInfo(i) => i.marshal(buffer),
             InformationElement::AdditionalRrmPolicyIndex(i) => i.marshal(buffer),
+            InformationElement::V2xInformation(i) => i.marshal(buffer),
+            InformationElement::PC5QosParameters(i) => i.marshal(buffer),
             InformationElement::ServicesAuthorized(i) => i.marshal(buffer),
             InformationElement::BitRate(i) => i.marshal(buffer),
             InformationElement::PC5QosFlow(i) => i.marshal(buffer),
@@ -1411,6 +1411,20 @@ impl InformationElement {
                     Ok(i) => {
                         cursor += i.len();
                         ies.push(InformationElement::AdditionalRrmPolicyIndex(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                208 => match V2xInformation::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::V2xInformation(i));
+                    }
+                    Err(j) => return Err(j),
+                },
+                209 => match PC5QosParameters::unmarshal(&buffer[cursor..]) {
+                    Ok(i) => {
+                        cursor += i.len();
+                        ies.push(InformationElement::PC5QosParameters(i));
                     }
                     Err(j) => return Err(j),
                 },

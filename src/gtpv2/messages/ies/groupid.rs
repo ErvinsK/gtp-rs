@@ -56,7 +56,8 @@ impl IEs for GroupId {
                 ..GroupId::default()
             };
             if check_tliv_ie_buffer(data.length, buffer) {
-                data.groupid.extend_from_slice(&buffer[4..((data.length as usize) + MIN_IE_SIZE)]);
+                data.groupid
+                    .extend_from_slice(&buffer[4..((data.length as usize) + MIN_IE_SIZE)]);
                 Ok(data)
             } else {
                 Err(GTPV2Error::IEInvalidLength(GROUP_ID))
@@ -98,4 +99,3 @@ fn group_id_ie_unmarshal_test() {
     };
     assert_eq!(GroupId::unmarshal(&encoded).unwrap(), decoded);
 }
-

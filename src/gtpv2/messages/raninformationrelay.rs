@@ -114,9 +114,9 @@ impl Messages for RanInformationRelay {
 #[test]
 fn test_ran_info_relay_unmarshal() {
     let encoded: [u8; 44] = [
-        0x48,0x98,0x00,0x28,0x09,0x09,0xa4,0x56,0x00,0x00,0x2f,0x00,0x77,0x00,0x03,0x00,
-        0x02,0xff,0xaa,0x79,0x00,0x0b,0x00,0x00,0x62,0xf3,0x10,0xff,0xff,0xaa,0xff,0xaa,
-        0x10,0x02,0xff,0x00,0x06,0x00,0x00,0x00,0x01,0x62,0x9c,0xc4,
+        0x48, 0x98, 0x00, 0x28, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x77, 0x00, 0x03,
+        0x00, 0x02, 0xff, 0xaa, 0x79, 0x00, 0x0b, 0x00, 0x00, 0x62, 0xf3, 0x10, 0xff, 0xff, 0xaa,
+        0xff, 0xaa, 0x10, 0x02, 0xff, 0x00, 0x06, 0x00, 0x00, 0x00, 0x01, 0x62, 0x9c, 0xc4,
     ];
     let decoded = RanInformationRelay {
         header: Gtpv2Header {
@@ -133,23 +133,21 @@ fn test_ran_info_relay_unmarshal() {
             cause_field: vec![0xff, 0xaa],
             ..Fcause::default()
         },
-        rim_routing_addr: Some (
-            TargetIdentification {
-                length: 11,
-                ins: 0,
-                target_type: TargetType::RncId(RncIdentifier {
-                    rai: Rai {
-                        mcc: 263,
-                        mnc: 1,
-                        lac: 0xffff,
-                        rac: 0xaa,
-                    },
-                    rnc_id: 0xffaa,
-                    ext_rnc_id: Some(4098),
-                }),
-                ..TargetIdentification::default()
-            }
-        ),
+        rim_routing_addr: Some(TargetIdentification {
+            length: 11,
+            ins: 0,
+            target_type: TargetType::RncId(RncIdentifier {
+                rai: Rai {
+                    mcc: 263,
+                    mnc: 1,
+                    lac: 0xffff,
+                    rac: 0xaa,
+                },
+                rnc_id: 0xffaa,
+                ext_rnc_id: Some(4098),
+            }),
+            ..TargetIdentification::default()
+        }),
         private_ext: vec![PrivateExtension {
             length: 6,
             value: vec![0x01, 0x62, 0x9c, 0xc4],
@@ -163,9 +161,9 @@ fn test_ran_info_relay_unmarshal() {
 #[test]
 fn test_ran_info_relay_marshal() {
     let encoded: [u8; 44] = [
-        0x48,0x98,0x00,0x28,0x09,0x09,0xa4,0x56,0x00,0x00,0x2f,0x00,0x77,0x00,0x03,0x00,
-        0x02,0xff,0xaa,0x79,0x00,0x0b,0x00,0x00,0x62,0xf3,0x10,0xff,0xff,0xaa,0xff,0xaa,
-        0x10,0x02,0xff,0x00,0x06,0x00,0x00,0x00,0x01,0x62,0x9c,0xc4,
+        0x48, 0x98, 0x00, 0x28, 0x09, 0x09, 0xa4, 0x56, 0x00, 0x00, 0x2f, 0x00, 0x77, 0x00, 0x03,
+        0x00, 0x02, 0xff, 0xaa, 0x79, 0x00, 0x0b, 0x00, 0x00, 0x62, 0xf3, 0x10, 0xff, 0xff, 0xaa,
+        0xff, 0xaa, 0x10, 0x02, 0xff, 0x00, 0x06, 0x00, 0x00, 0x00, 0x01, 0x62, 0x9c, 0xc4,
     ];
     let decoded = RanInformationRelay {
         header: Gtpv2Header {
@@ -182,23 +180,21 @@ fn test_ran_info_relay_marshal() {
             cause_field: vec![0xff, 0xaa],
             ..Fcause::default()
         },
-        rim_routing_addr: Some (
-            TargetIdentification {
-                length: 11,
-                ins: 0,
-                target_type: TargetType::RncId(RncIdentifier {
-                    rai: Rai {
-                        mcc: 263,
-                        mnc: 1,
-                        lac: 0xffff,
-                        rac: 0xaa,
-                    },
-                    rnc_id: 0xffaa,
-                    ext_rnc_id: Some(4098),
-                }),
-                ..TargetIdentification::default()
-            }
-        ),
+        rim_routing_addr: Some(TargetIdentification {
+            length: 11,
+            ins: 0,
+            target_type: TargetType::RncId(RncIdentifier {
+                rai: Rai {
+                    mcc: 263,
+                    mnc: 1,
+                    lac: 0xffff,
+                    rac: 0xaa,
+                },
+                rnc_id: 0xffaa,
+                ext_rnc_id: Some(4098),
+            }),
+            ..TargetIdentification::default()
+        }),
         private_ext: vec![PrivateExtension {
             length: 6,
             value: vec![0x01, 0x62, 0x9c, 0xc4],

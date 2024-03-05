@@ -116,14 +116,11 @@ impl IEs for Uci {
 
         match self.lcsg {
             true => {
-                let i = (u8::from(&self.access_mode) << 6)
-                    | 0x02
-                    | u8::from(&self.cmi);
+                let i = (u8::from(&self.access_mode) << 6) | 0x02 | u8::from(&self.cmi);
                 buffer_ie.push(i);
             }
             false => {
-                let i = (u8::from(&self.access_mode) << 6)
-                    | u8::from(&self.cmi);
+                let i = (u8::from(&self.access_mode) << 6) | u8::from(&self.cmi);
                 buffer_ie.push(i);
             }
         }

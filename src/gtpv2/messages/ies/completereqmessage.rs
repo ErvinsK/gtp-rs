@@ -75,8 +75,16 @@ impl IEs for CompleteRequestMessage {
             };
             if check_tliv_ie_buffer(data.length, buffer) {
                 match buffer[4] {
-                    0 => data.message = RequestMessage::AttachRequest(buffer[5..MIN_IE_SIZE+data.length as usize].to_vec()),
-                    1 => data.message = RequestMessage::TauRequest(buffer[5..MIN_IE_SIZE+data.length as usize].to_vec()),
+                    0 => {
+                        data.message = RequestMessage::AttachRequest(
+                            buffer[5..MIN_IE_SIZE + data.length as usize].to_vec(),
+                        )
+                    }
+                    1 => {
+                        data.message = RequestMessage::TauRequest(
+                            buffer[5..MIN_IE_SIZE + data.length as usize].to_vec(),
+                        )
+                    }
                     _ => data.message = RequestMessage::Spare,
                 }
                 Ok(data)

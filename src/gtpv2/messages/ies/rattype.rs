@@ -39,8 +39,6 @@ LTE-M(OTHERSAT)	            22
 <spare>	                    23-255
 */
 
-
-
 // RAT Type enum
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Rat {

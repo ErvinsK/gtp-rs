@@ -83,15 +83,15 @@ pub struct Indication {
     pub ethpdn: bool,  // Ethernet PDN Support Indication
     pub nspusi: bool,  // Notify Start Pause of charging via User plane Support Indication
     pub pgwrnsi: bool, // PGW Redirection due to mismatch with Network Slice subscribed by UE Support Indication
-    pub rppcsi: bool,  // Restoration of PDN connections after an PGW-C/SMF Change Support Indication
-    pub pgwchi: bool,  // PGW CHange Indication
-    pub sissme: bool,  // Same IWK-SCEF Selected for Monitoring Event Indication
-    pub nsenbi: bool,  // Notify Source eNodeB Indication
-    pub idfupf: bool,  // Indirect Data Forwarding with UPF Indication
-    pub emci: bool,    // Emergency PDU Session Indication
+    pub rppcsi: bool, // Restoration of PDN connections after an PGW-C/SMF Change Support Indication
+    pub pgwchi: bool, // PGW CHange Indication
+    pub sissme: bool, // Same IWK-SCEF Selected for Monitoring Event Indication
+    pub nsenbi: bool, // Notify Source eNodeB Indication
+    pub idfupf: bool, // Indirect Data Forwarding with UPF Indication
+    pub emci: bool,   // Emergency PDU Session Indication
     pub ltemsai: bool, // LTE-M Satellite Access Indication
-    pub srtpi: bool,   // Satellite RAT Type reporting to PGW Indication
-    pub upipsi: bool,  // User Plane Integrity Protection Support Indication
+    pub srtpi: bool,  // Satellite RAT Type reporting to PGW Indication
+    pub upipsi: bool, // User Plane Integrity Protection Support Indication
 }
 
 impl Default for Indication {
@@ -156,25 +156,25 @@ impl Default for Indication {
             ltempi: false,  // LTE-M RAT Type reporting to PGW Indication
             enbcrsi: false, // eNB Change Reporting Support Indication
             tspcmi: false, // Triggering SGSN initiated PDP Context Creation/Modification Indication
-            csrmfi: false,  // Create Session Request Message Forwarded Indication
-            mtedtn: false,  // MT-EDT Not Applicable Indication
-            mtedta: false,  // MT-EDT Applicable Indication
-            n5gnmi: false,  // No 5GS N26 Mobility Indication
-            g5cnrs: false,  // 5GC Not Restricted Support Indication
-            g5cnri: false,  // 5GC Not Restricted Indication
-            s5rho: false,   // 5G-SRVCC Handover Indication
-            ethpdn: false,  // Ethernet PDN Support Indication
-            nspusi: false,  // Notify Start Pause of charging via User plane Support Indication
+            csrmfi: false, // Create Session Request Message Forwarded Indication
+            mtedtn: false, // MT-EDT Not Applicable Indication
+            mtedta: false, // MT-EDT Applicable Indication
+            n5gnmi: false, // No 5GS N26 Mobility Indication
+            g5cnrs: false, // 5GC Not Restricted Support Indication
+            g5cnri: false, // 5GC Not Restricted Indication
+            s5rho: false,  // 5G-SRVCC Handover Indication
+            ethpdn: false, // Ethernet PDN Support Indication
+            nspusi: false, // Notify Start Pause of charging via User plane Support Indication
             pgwrnsi: false, // PGW Redirection due to mismatch with Network Slice subscribed by UE Support Indication
-            rppcsi: false,  // Restoration of PDN connections after an PGW-C/SMF Change Support Indication
-            pgwchi: false,  // PGW CHange Indication
-            sissme: false,  // Same IWK-SCEF Selected for Monitoring Event Indication
-            nsenbi: false,  // Notify Source eNodeB Indication
-            idfupf: false,  // Indirect Data Forwarding with UPF Indication
-            emci: false,    // Emergency PDU Session Indication
+            rppcsi: false, // Restoration of PDN connections after an PGW-C/SMF Change Support Indication
+            pgwchi: false, // PGW CHange Indication
+            sissme: false, // Same IWK-SCEF Selected for Monitoring Event Indication
+            nsenbi: false, // Notify Source eNodeB Indication
+            idfupf: false, // Indirect Data Forwarding with UPF Indication
+            emci: false,   // Emergency PDU Session Indication
             ltemsai: false, // LTE-M Satellite Access Indication
-            srtpi: false,   // Satellite RAT Type reporting to PGW Indication
-            upipsi: false,  // User Plane Integrity Protection Support Indication
+            srtpi: false,  // Satellite RAT Type reporting to PGW Indication
+            upipsi: false, // User Plane Integrity Protection Support Indication
         }
     }
 }
@@ -188,15 +188,78 @@ impl From<Indication> for InformationElement {
 impl From<&Indication> for Vec<u8> {
     fn from(i: &Indication) -> Vec<u8> {
         let buffer = vec![
-            (i.daf as u8) << 7 | (i.dtf as u8) << 6 | (i.hi as u8) << 5 | (i.dfi as u8) << 4 | (i.oi as u8) << 3 | (i.isrsi as u8) << 2 | (i.israi as u8) << 1 | (i.sgwci as u8),
-            (i.sqci as u8) << 7 | (i.uimsi as u8) << 6 | (i.cfsi as u8) << 5 | (i.crsi as u8) << 4 | (i.ps as u8) << 3 | (i.pt as u8) << 2 | (i.si as u8) << 1 | (i.msv as u8),
-            (i.retloc as u8) << 7 | (i.pbic as u8) << 6 | (i.srni as u8) << 5 | (i.s6af as u8) << 4 | (i.s4af as u8) << 3 | (i.mbmdt as u8) << 2 | (i.israu as u8) << 1 | (i.ccrsi as u8),
-            (i.cprai as u8) << 7 | (i.arrl as u8) << 6 | (i.ppoff as u8) << 5 | (i.ppon as u8) << 4 | (i.ppsi as u8) << 3 | (i.csfbi as u8) << 2 | (i.clii as u8) << 1 | (i.cpsr as u8),
-            (i.nsi as u8) << 7 | (i.uasi as u8) << 6 | (i.dtci as u8) << 5 | (i.bdwi as u8) << 4 | (i.psci as u8) << 3 | (i.pcri as u8) << 2 | (i.aosi as u8) << 1 | (i.aopi as u8),
-            (i.roaai as u8) << 7 | (i.epcosi as u8) << 6 | (i.cpopci as u8) << 5 | (i.pmtsmi as u8) << 4 | (i.s11tf as u8) << 3 | (i.pnsi as u8) << 2 | (i.unaccsi as u8) << 1 | (i.wpmsi as u8),
-            (i.g5snn26 as u8) << 7 | (i.reprefi as u8) << 6 | (i.g5siwki as u8) << 5 | (i.eevrsi as u8) << 4 | (i.ltemui as u8) << 3 | (i.ltempi as u8) << 2 | (i.enbcrsi as u8) << 1 | (i.tspcmi as u8),
-            (i.csrmfi as u8) << 7 | (i.mtedtn as u8) << 6 | (i.mtedta as u8) << 5 | (i.n5gnmi as u8) << 4 | (i.g5cnrs as u8) << 3 | (i.g5cnri as u8) << 2 | (i.s5rho as u8) << 1 | (i.ethpdn as u8),
-            (i.nspusi as u8) << 7 | (i.pgwrnsi as u8) << 6 | (i.rppcsi as u8) << 5 | (i.pgwchi as u8) << 4 | (i.sissme as u8) << 3 | (i.nsenbi as u8) << 2 | (i.idfupf as u8) << 1 | (i.emci as u8),
+            (i.daf as u8) << 7
+                | (i.dtf as u8) << 6
+                | (i.hi as u8) << 5
+                | (i.dfi as u8) << 4
+                | (i.oi as u8) << 3
+                | (i.isrsi as u8) << 2
+                | (i.israi as u8) << 1
+                | (i.sgwci as u8),
+            (i.sqci as u8) << 7
+                | (i.uimsi as u8) << 6
+                | (i.cfsi as u8) << 5
+                | (i.crsi as u8) << 4
+                | (i.ps as u8) << 3
+                | (i.pt as u8) << 2
+                | (i.si as u8) << 1
+                | (i.msv as u8),
+            (i.retloc as u8) << 7
+                | (i.pbic as u8) << 6
+                | (i.srni as u8) << 5
+                | (i.s6af as u8) << 4
+                | (i.s4af as u8) << 3
+                | (i.mbmdt as u8) << 2
+                | (i.israu as u8) << 1
+                | (i.ccrsi as u8),
+            (i.cprai as u8) << 7
+                | (i.arrl as u8) << 6
+                | (i.ppoff as u8) << 5
+                | (i.ppon as u8) << 4
+                | (i.ppsi as u8) << 3
+                | (i.csfbi as u8) << 2
+                | (i.clii as u8) << 1
+                | (i.cpsr as u8),
+            (i.nsi as u8) << 7
+                | (i.uasi as u8) << 6
+                | (i.dtci as u8) << 5
+                | (i.bdwi as u8) << 4
+                | (i.psci as u8) << 3
+                | (i.pcri as u8) << 2
+                | (i.aosi as u8) << 1
+                | (i.aopi as u8),
+            (i.roaai as u8) << 7
+                | (i.epcosi as u8) << 6
+                | (i.cpopci as u8) << 5
+                | (i.pmtsmi as u8) << 4
+                | (i.s11tf as u8) << 3
+                | (i.pnsi as u8) << 2
+                | (i.unaccsi as u8) << 1
+                | (i.wpmsi as u8),
+            (i.g5snn26 as u8) << 7
+                | (i.reprefi as u8) << 6
+                | (i.g5siwki as u8) << 5
+                | (i.eevrsi as u8) << 4
+                | (i.ltemui as u8) << 3
+                | (i.ltempi as u8) << 2
+                | (i.enbcrsi as u8) << 1
+                | (i.tspcmi as u8),
+            (i.csrmfi as u8) << 7
+                | (i.mtedtn as u8) << 6
+                | (i.mtedta as u8) << 5
+                | (i.n5gnmi as u8) << 4
+                | (i.g5cnrs as u8) << 3
+                | (i.g5cnri as u8) << 2
+                | (i.s5rho as u8) << 1
+                | (i.ethpdn as u8),
+            (i.nspusi as u8) << 7
+                | (i.pgwrnsi as u8) << 6
+                | (i.rppcsi as u8) << 5
+                | (i.pgwchi as u8) << 4
+                | (i.sissme as u8) << 3
+                | (i.nsenbi as u8) << 2
+                | (i.idfupf as u8) << 1
+                | (i.emci as u8),
             (i.ltemsai as u8) << 2 | (i.srtpi as u8) << 1 | (i.upipsi as u8),
         ];
         buffer
@@ -207,101 +270,101 @@ impl Indication {
     pub fn convert(&mut self, buffer: Vec<u8>) {
         for i in buffer.iter().enumerate() {
             match i {
-                (0,_) => {
-                        self.daf = (i.1 & 0x80) >> 7 == 1;
-                        self.dtf = (i.1 & 0x40) >> 6 == 1;
-                        self.hi = (i.1 & 0x20) >> 5 == 1;
-                        self.dfi = (i.1 & 0x10) >> 4 == 1;
-                        self.oi = (i.1 & 0x08) >> 3 == 1;
-                        self.isrsi = (i.1 & 0x04) >> 2 == 1;
-                        self.israi = (i.1 & 0x02) >> 1 == 1;
-                        self.sgwci = (i.1 & 0x01) == 1;
-                    },
-                (1,_) => {
-                        self.sqci = (i.1 & 0x80) >> 7 == 1;
-                        self.uimsi = (i.1 & 0x40) >> 6 == 1;
-                        self.cfsi = (i.1 & 0x20) >> 5 == 1;
-                        self.crsi = (i.1 & 0x10) >> 4 == 1;
-                        self.ps = (i.1 & 0x08) >> 3 == 1;
-                        self.pt = (i.1 & 0x04) >> 2 == 1;
-                        self.si = (i.1 & 0x02) >> 1 == 1;
-                        self.msv = (i.1 & 0x01) == 1;
-                    },
-                (2,_) => {
-                        self.retloc = (i.1 & 0x80) >> 7 == 1;
-                        self.pbic = (i.1 & 0x40) >> 6 == 1;
-                        self.srni = (i.1 & 0x20) >> 5 == 1;
-                        self.s6af = (i.1 & 0x10) >> 4 == 1;
-                        self.s4af = (i.1 & 0x08) >> 3 == 1;
-                        self.mbmdt = (i.1 & 0x04) >> 2 == 1;
-                        self.israu = (i.1 & 0x02) >> 1 == 1;
-                        self.ccrsi = (i.1 & 0x01) == 1;
-                    },
-                (3,_) => {
-                        self.cprai = (i.1 & 0x80) >> 7 == 1;
-                        self.arrl = (i.1 & 0x40) >> 6 == 1;
-                        self.ppoff = (i.1 & 0x20) >> 5 == 1;
-                        self.ppon = (i.1 & 0x10) >> 4 == 1;
-                        self.ppsi = (i.1 & 0x08) >> 3 == 1;
-                        self.csfbi = (i.1 & 0x04) >> 2 == 1;
-                        self.clii = (i.1 & 0x02) >> 1 == 1;
-                        self.cpsr = (i.1 & 0x01) == 1;
-                    },
-                (4,_) => {
-                        self.nsi = (i.1 & 0x80) >> 7 == 1;
-                        self.uasi = (i.1 & 0x40) >> 6 == 1;
-                        self.dtci = (i.1 & 0x20) >> 5 == 1;
-                        self.bdwi = (i.1 & 0x10) >> 4 == 1;
-                        self.psci = (i.1 & 0x08) >> 3 == 1;
-                        self.pcri = (i.1 & 0x04) >> 2 == 1;
-                        self.aosi = (i.1 & 0x02) >> 1 == 1;
-                        self.aopi = (i.1 & 0x01) == 1;
-                    },
-                (5,_) => {
-                        self.roaai = (i.1 & 0x80) >> 7 == 1;
-                        self.epcosi = (i.1 & 0x40) >> 6 == 1;
-                        self.cpopci = (i.1 & 0x20) >> 5 == 1;
-                        self.pmtsmi = (i.1 & 0x10) >> 4 == 1;
-                        self.s11tf = (i.1 & 0x08) >> 3 == 1;
-                        self.pnsi = (i.1 & 0x04) >> 2 == 1;
-                        self.unaccsi = (i.1 & 0x02) >> 1 == 1;
-                        self.wpmsi = (i.1 & 0x01) == 1;
-                    },
-                (6,_) => {
-                        self.g5snn26 = (i.1 & 0x80) >> 7 == 1;
-                        self.reprefi = (i.1 & 0x40) >> 6 == 1;
-                        self.g5siwki = (i.1 & 0x20) >> 5 == 1;
-                        self.eevrsi = (i.1 & 0x10) >> 4 == 1;
-                        self.ltemui = (i.1 & 0x08) >> 3 == 1;
-                        self.ltempi = (i.1 & 0x04) >> 2 == 1;
-                        self.enbcrsi = (i.1 & 0x02) >> 1 == 1;
-                        self.tspcmi = (i.1 & 0x01) == 1;
-                    },
-                (7,_) => {
-                        self.csrmfi = (i.1 & 0x80) >> 7 == 1;
-                        self.mtedtn = (i.1 & 0x40) >> 6 == 1;
-                        self.mtedta = (i.1 & 0x20) >> 5 == 1;
-                        self.n5gnmi = (i.1 & 0x10) >> 4 == 1;
-                        self.g5cnrs = (i.1 & 0x08) >> 3 == 1;
-                        self.g5cnri = (i.1 & 0x04) >> 2 == 1;
-                        self.s5rho = (i.1 & 0x02) >> 1 == 1;
-                        self.ethpdn = (i.1 & 0x01) == 1;
-                    },
-                (8,_) => {
-                        self.nspusi = (i.1 & 0x80) >> 7 == 1;
-                        self.pgwrnsi = (i.1 & 0x40) >> 6 == 1;
-                        self.rppcsi = (i.1 & 0x20) >> 5 == 1;
-                        self.pgwchi = (i.1 & 0x10) >> 4 == 1;
-                        self.sissme = (i.1 & 0x08) >> 3 == 1;
-                        self.nsenbi = (i.1 & 0x04) >> 2 == 1;
-                        self.idfupf = (i.1 & 0x02) >> 1 == 1;
-                        self.emci = (i.1 & 0x01) == 1;
-                    },
-                (9,_) => {
-                        self.ltemsai = (i.1 & 0x04) >> 2 == 1;
-                        self.srtpi = (i.1 & 0x02) >> 1 == 1;
-                        self.upipsi = (i.1 & 0x01) == 1;
-                    },
+                (0, _) => {
+                    self.daf = (i.1 & 0x80) >> 7 == 1;
+                    self.dtf = (i.1 & 0x40) >> 6 == 1;
+                    self.hi = (i.1 & 0x20) >> 5 == 1;
+                    self.dfi = (i.1 & 0x10) >> 4 == 1;
+                    self.oi = (i.1 & 0x08) >> 3 == 1;
+                    self.isrsi = (i.1 & 0x04) >> 2 == 1;
+                    self.israi = (i.1 & 0x02) >> 1 == 1;
+                    self.sgwci = (i.1 & 0x01) == 1;
+                }
+                (1, _) => {
+                    self.sqci = (i.1 & 0x80) >> 7 == 1;
+                    self.uimsi = (i.1 & 0x40) >> 6 == 1;
+                    self.cfsi = (i.1 & 0x20) >> 5 == 1;
+                    self.crsi = (i.1 & 0x10) >> 4 == 1;
+                    self.ps = (i.1 & 0x08) >> 3 == 1;
+                    self.pt = (i.1 & 0x04) >> 2 == 1;
+                    self.si = (i.1 & 0x02) >> 1 == 1;
+                    self.msv = (i.1 & 0x01) == 1;
+                }
+                (2, _) => {
+                    self.retloc = (i.1 & 0x80) >> 7 == 1;
+                    self.pbic = (i.1 & 0x40) >> 6 == 1;
+                    self.srni = (i.1 & 0x20) >> 5 == 1;
+                    self.s6af = (i.1 & 0x10) >> 4 == 1;
+                    self.s4af = (i.1 & 0x08) >> 3 == 1;
+                    self.mbmdt = (i.1 & 0x04) >> 2 == 1;
+                    self.israu = (i.1 & 0x02) >> 1 == 1;
+                    self.ccrsi = (i.1 & 0x01) == 1;
+                }
+                (3, _) => {
+                    self.cprai = (i.1 & 0x80) >> 7 == 1;
+                    self.arrl = (i.1 & 0x40) >> 6 == 1;
+                    self.ppoff = (i.1 & 0x20) >> 5 == 1;
+                    self.ppon = (i.1 & 0x10) >> 4 == 1;
+                    self.ppsi = (i.1 & 0x08) >> 3 == 1;
+                    self.csfbi = (i.1 & 0x04) >> 2 == 1;
+                    self.clii = (i.1 & 0x02) >> 1 == 1;
+                    self.cpsr = (i.1 & 0x01) == 1;
+                }
+                (4, _) => {
+                    self.nsi = (i.1 & 0x80) >> 7 == 1;
+                    self.uasi = (i.1 & 0x40) >> 6 == 1;
+                    self.dtci = (i.1 & 0x20) >> 5 == 1;
+                    self.bdwi = (i.1 & 0x10) >> 4 == 1;
+                    self.psci = (i.1 & 0x08) >> 3 == 1;
+                    self.pcri = (i.1 & 0x04) >> 2 == 1;
+                    self.aosi = (i.1 & 0x02) >> 1 == 1;
+                    self.aopi = (i.1 & 0x01) == 1;
+                }
+                (5, _) => {
+                    self.roaai = (i.1 & 0x80) >> 7 == 1;
+                    self.epcosi = (i.1 & 0x40) >> 6 == 1;
+                    self.cpopci = (i.1 & 0x20) >> 5 == 1;
+                    self.pmtsmi = (i.1 & 0x10) >> 4 == 1;
+                    self.s11tf = (i.1 & 0x08) >> 3 == 1;
+                    self.pnsi = (i.1 & 0x04) >> 2 == 1;
+                    self.unaccsi = (i.1 & 0x02) >> 1 == 1;
+                    self.wpmsi = (i.1 & 0x01) == 1;
+                }
+                (6, _) => {
+                    self.g5snn26 = (i.1 & 0x80) >> 7 == 1;
+                    self.reprefi = (i.1 & 0x40) >> 6 == 1;
+                    self.g5siwki = (i.1 & 0x20) >> 5 == 1;
+                    self.eevrsi = (i.1 & 0x10) >> 4 == 1;
+                    self.ltemui = (i.1 & 0x08) >> 3 == 1;
+                    self.ltempi = (i.1 & 0x04) >> 2 == 1;
+                    self.enbcrsi = (i.1 & 0x02) >> 1 == 1;
+                    self.tspcmi = (i.1 & 0x01) == 1;
+                }
+                (7, _) => {
+                    self.csrmfi = (i.1 & 0x80) >> 7 == 1;
+                    self.mtedtn = (i.1 & 0x40) >> 6 == 1;
+                    self.mtedta = (i.1 & 0x20) >> 5 == 1;
+                    self.n5gnmi = (i.1 & 0x10) >> 4 == 1;
+                    self.g5cnrs = (i.1 & 0x08) >> 3 == 1;
+                    self.g5cnri = (i.1 & 0x04) >> 2 == 1;
+                    self.s5rho = (i.1 & 0x02) >> 1 == 1;
+                    self.ethpdn = (i.1 & 0x01) == 1;
+                }
+                (8, _) => {
+                    self.nspusi = (i.1 & 0x80) >> 7 == 1;
+                    self.pgwrnsi = (i.1 & 0x40) >> 6 == 1;
+                    self.rppcsi = (i.1 & 0x20) >> 5 == 1;
+                    self.pgwchi = (i.1 & 0x10) >> 4 == 1;
+                    self.sissme = (i.1 & 0x08) >> 3 == 1;
+                    self.nsenbi = (i.1 & 0x04) >> 2 == 1;
+                    self.idfupf = (i.1 & 0x02) >> 1 == 1;
+                    self.emci = (i.1 & 0x01) == 1;
+                }
+                (9, _) => {
+                    self.ltemsai = (i.1 & 0x04) >> 2 == 1;
+                    self.srtpi = (i.1 & 0x02) >> 1 == 1;
+                    self.upipsi = (i.1 & 0x01) == 1;
+                }
                 _ => (),
             }
         }
@@ -314,7 +377,7 @@ impl IEs for Indication {
         buffer_ie.push(INDICATION);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        let mut flags : Vec<u8> = self.into();
+        let mut flags: Vec<u8> = self.into();
         buffer_ie.append(&mut flags);
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -342,11 +405,11 @@ impl IEs for Indication {
         self.length == 0
     }
 }
-   
+
 #[test]
 fn indication_ie_marshal_test() {
     let encoded: [u8; 14] = [
-        0x4d,0x00,0x0a,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x00,0x04,
+        0x4d, 0x00, 0x0a, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x04,
     ];
     let decoded = Indication {
         tspcmi: true,
@@ -362,7 +425,7 @@ fn indication_ie_marshal_test() {
 #[test]
 fn indication_ie_unmarshal_test() {
     let encoded: [u8; 14] = [
-        0x4d,0x00,0x0a,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x01,0x00,0x00,0x04,
+        0x4d, 0x00, 0x0a, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x04,
     ];
     let decoded = Indication {
         tspcmi: true,
@@ -376,7 +439,7 @@ fn indication_ie_unmarshal_test() {
 #[test]
 fn indication_ie_unmarshal_legacy_test() {
     let encoded: [u8; 11] = [
-        0x4d,0x00,0x07,0x00,0x01,0x00,0x00,0x00,0x00,0x00,0x01,
+        0x4d, 0x00, 0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
     ];
     let decoded = Indication {
         length: 7,

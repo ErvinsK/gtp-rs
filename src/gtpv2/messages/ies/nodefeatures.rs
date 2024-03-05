@@ -18,14 +18,14 @@ pub struct NodeFeatures {
     pub t: u8,
     pub length: u16,
     pub ins: u8,
-    pub prn: bool,  // PGW Restart Notification
-    pub mabr: bool, // Modify Access Bearers Request
-    pub ntsr: bool, // Network Triggered Service Restoration
-    pub ciot: bool, // Cellular IoT
-    pub s1un: bool, // S1-U path notification feature
-    pub eth: bool,  // Ethernet PDN Type
+    pub prn: bool,   // PGW Restart Notification
+    pub mabr: bool,  // Modify Access Bearers Request
+    pub ntsr: bool,  // Network Triggered Service Restoration
+    pub ciot: bool,  // Cellular IoT
+    pub s1un: bool,  // S1-U path notification feature
+    pub eth: bool,   // Ethernet PDN Type
     pub mtedt: bool, // Support of MT-EDT
-    pub psset: bool  // Support of PGW-C/SMF Set
+    pub psset: bool, // Support of PGW-C/SMF Set
 }
 
 impl Default for NodeFeatures {
@@ -41,7 +41,7 @@ impl Default for NodeFeatures {
             s1un: false,
             eth: false,
             mtedt: false,
-            psset: false
+            psset: false,
         }
     }
 }
@@ -58,15 +58,14 @@ impl IEs for NodeFeatures {
         buffer_ie.push(NODEFEATURES);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        let flags = 
-            (self.prn as u8) |
-            ((self.mabr as u8) << 1) |
-            ((self.ntsr as u8) << 2) |
-            ((self.ciot as u8) << 3) |
-            ((self.s1un as u8) << 4) |
-            ((self.eth as u8) << 5) |
-            ((self.mtedt as u8) << 6) |
-            ((self.psset as u8) << 7);
+        let flags = (self.prn as u8)
+            | ((self.mabr as u8) << 1)
+            | ((self.ntsr as u8) << 2)
+            | ((self.ciot as u8) << 3)
+            | ((self.s1un as u8) << 4)
+            | ((self.eth as u8) << 5)
+            | ((self.mtedt as u8) << 6)
+            | ((self.psset as u8) << 7);
         buffer_ie.push(flags);
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -116,7 +115,7 @@ fn node_features_ie_marshal_test() {
         s1un: true,
         eth: true,
         mtedt: true,
-        psset: true
+        psset: true,
     };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);

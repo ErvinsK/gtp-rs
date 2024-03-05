@@ -18,7 +18,7 @@ pub struct ServicesAuthorized {
     pub t: u8,
     pub length: u16,
     pub ins: u8,
-    pub vehicle_ue_auth: bool, // Vehicle UE Authorized
+    pub vehicle_ue_auth: bool,    // Vehicle UE Authorized
     pub pedestrian_ue_auth: bool, // Pedestrian UE Authorized
 }
 

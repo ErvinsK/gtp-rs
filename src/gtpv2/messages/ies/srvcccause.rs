@@ -11,13 +11,13 @@ use crate::gtpv2::{
 pub const SRVCC_CAUSE: u8 = 56;
 pub const SRVCC_CAUSE_LENGTH: usize = 1;
 
-/* SRVCC Cause Enum 
+/* SRVCC Cause Enum
 
 Cause value (decimal)           	Meaning
 
 0	                                Reserved. Shall not be sent and if received the Cause shall be treated as an invalid IE
 1	                                Unspecified
-2	                                Handover/Relocation cancelled by source system 
+2	                                Handover/Relocation cancelled by source system
 3	                                Handover /Relocation Failure with Target system
 4                               	Handover/Relocation Target not allowed
 5	                                Unknown Target ID

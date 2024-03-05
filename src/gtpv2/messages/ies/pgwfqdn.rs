@@ -62,7 +62,8 @@ impl IEs for PgwFqdn {
                 ..PgwFqdn::default()
             };
             if check_tliv_ie_buffer(data.length, buffer) {
-                let mut donor: Vec<u8> = buffer[MIN_IE_SIZE..(MIN_IE_SIZE + data.length as usize)].to_vec();
+                let mut donor: Vec<u8> =
+                    buffer[MIN_IE_SIZE..(MIN_IE_SIZE + data.length as usize)].to_vec();
                 let mut k: Vec<Vec<char>> = vec![];
                 loop {
                     if !donor.is_empty() {

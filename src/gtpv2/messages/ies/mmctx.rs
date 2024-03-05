@@ -14,6 +14,12 @@ pub enum MmContext {
     MmContextGsmKeyCipherQuintuplets(MmContextGsmKeyCipherQuintuplets),
 }
 
+impl Default for MmContext {
+    fn default() -> MmContext {
+        MmContext::MmContextEpsSecurityContextQuadruplets(Box::default())
+    }
+}
+
 impl From<MmContextEpsSecurityContextQuadruplets> for MmContext {
     fn from(i: MmContextEpsSecurityContextQuadruplets) -> Self {
         MmContext::MmContextEpsSecurityContextQuadruplets(Box::new(i))
@@ -83,42 +89,32 @@ impl IEs for MmContext {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         match buffer[0] {
-            MMCTXEPSSECCTXQ => {
-               match MmContextEpsSecurityContextQuadruplets::unmarshal(buffer) {
-                   Ok(i) => Ok(MmContext::MmContextEpsSecurityContextQuadruplets(Box::new(i))),
-                   Err(e) => Err(e),
-               }
-            }
-            MMCTXUMTSKQ => {
-                match MmContextUmtsKeyQuintuplets::unmarshal(buffer) {
-                    Ok(i) => Ok(MmContext::MmContextUmtsKeyQuintuplets(i)),
-                    Err(e) => Err(e),
-                }
-            }
-            MMCTXUMTSKQQ => {
-                match MmContextUmtsKeyQuadrupletsQuintuplets::unmarshal(buffer) {
-                    Ok(i) => Ok(MmContext::MmContextUmtsKeyQuadrupletsQuintuplets(i)),
-                    Err(e) => Err(e),
-                }
-            }
-            MMCTXUMTSKCQ => {
-                match MmContextUmtsKeyCipherQuintuplets::unmarshal(buffer) {
-                    Ok(i) => Ok(MmContext::MmContextUmtsKeyCipherQuintuplets(i)),
-                    Err(e) => Err(e),
-                }
-            }
-            MMCTXGSMKT => {
-                match MmContextGsmKeyTriplets::unmarshal(buffer) {
-                    Ok(i) => Ok(MmContext::MmContextGsmKeyTriplets(i)),
-                    Err(e) => Err(e),
-                }
-            }
-            MMCTXGSMKCQ => {
-                match MmContextGsmKeyCipherQuintuplets::unmarshal(buffer) {
-                    Ok(i) => Ok(MmContext::MmContextGsmKeyCipherQuintuplets(i)),
-                    Err(e) => Err(e),
-                }
-            }
+            MMCTXEPSSECCTXQ => match MmContextEpsSecurityContextQuadruplets::unmarshal(buffer) {
+                Ok(i) => Ok(MmContext::MmContextEpsSecurityContextQuadruplets(Box::new(
+                    i,
+                ))),
+                Err(e) => Err(e),
+            },
+            MMCTXUMTSKQ => match MmContextUmtsKeyQuintuplets::unmarshal(buffer) {
+                Ok(i) => Ok(MmContext::MmContextUmtsKeyQuintuplets(i)),
+                Err(e) => Err(e),
+            },
+            MMCTXUMTSKQQ => match MmContextUmtsKeyQuadrupletsQuintuplets::unmarshal(buffer) {
+                Ok(i) => Ok(MmContext::MmContextUmtsKeyQuadrupletsQuintuplets(i)),
+                Err(e) => Err(e),
+            },
+            MMCTXUMTSKCQ => match MmContextUmtsKeyCipherQuintuplets::unmarshal(buffer) {
+                Ok(i) => Ok(MmContext::MmContextUmtsKeyCipherQuintuplets(i)),
+                Err(e) => Err(e),
+            },
+            MMCTXGSMKT => match MmContextGsmKeyTriplets::unmarshal(buffer) {
+                Ok(i) => Ok(MmContext::MmContextGsmKeyTriplets(i)),
+                Err(e) => Err(e),
+            },
+            MMCTXGSMKCQ => match MmContextGsmKeyCipherQuintuplets::unmarshal(buffer) {
+                Ok(i) => Ok(MmContext::MmContextGsmKeyCipherQuintuplets(i)),
+                Err(e) => Err(e),
+            },
             _ => Err(GTPV2Error::IEIncorrect(buffer[0])),
         }
     }
@@ -143,5 +139,5 @@ impl IEs for MmContext {
             MmContext::MmContextGsmKeyTriplets(i) => i.is_empty(),
             MmContext::MmContextGsmKeyCipherQuintuplets(i) => i.is_empty(),
         }
-    } 
+    }
 }

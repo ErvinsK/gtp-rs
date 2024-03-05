@@ -18,7 +18,7 @@ pub struct IdentificationRequest {
     pub rai: Option<Uli>,
     pub ptmsi: Option<Ptmsi>,
     pub ptmsi_sig: Option<PtmsiSignature>,
-    pub carm: Option<CompleteRequestMessage>,       // Complete Attach Request Message
+    pub carm: Option<CompleteRequestMessage>, // Complete Attach Request Message
     pub ip_cplane: Option<IpAddress>,
     pub udp_src_port: Option<PortNumber>,
     pub hop_counter: Option<HopCounter>,
@@ -187,14 +187,14 @@ impl Messages for IdentificationRequest {
 
 #[test]
 fn test_identification_req_unmarshal() {
-    use std::net::{Ipv4Addr, IpAddr};
+    use std::net::{IpAddr, Ipv4Addr};
     let encoded: [u8; 90] = [
-        0x48,0x80,0x00,0x56,0x00,0x00,0x00,0x00,0x00,0x00,0x68,0x00,0x75,0x00,0x0a,0x00,
-        0x99,0xf9,0x10,0x01,0x2c,0x0a,0xff,0xff,0xff,0xff,0x56,0x00,0x08,0x00,0x04,0x62,
-        0xf2,0x10,0x0b,0xd9,0x01,0xff,0x6f,0x00,0x04,0x00,0x27,0xff,0xaa,0x11,0x70,0x00,
-        0x04,0x00,0x27,0xff,0xaa,0x11,0x74,0x00,0x06,0x00,0x00,0xaa,0xbb,0xcc,0xdd,0xee,
-        0x4a,0x00,0x04,0x00,0x0a,0x0a,0x0a,0x0a,0x7e,0x00,0x02,0x00,0x12,0x34,0x71,0x00,
-        0x01,0x00,0x03,0x53,0x00,0x03,0x00,0x99,0xf9,0x10,
+        0x48, 0x80, 0x00, 0x56, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x68, 0x00, 0x75, 0x00, 0x0a,
+        0x00, 0x99, 0xf9, 0x10, 0x01, 0x2c, 0x0a, 0xff, 0xff, 0xff, 0xff, 0x56, 0x00, 0x08, 0x00,
+        0x04, 0x62, 0xf2, 0x10, 0x0b, 0xd9, 0x01, 0xff, 0x6f, 0x00, 0x04, 0x00, 0x27, 0xff, 0xaa,
+        0x11, 0x70, 0x00, 0x04, 0x00, 0x27, 0xff, 0xaa, 0x11, 0x74, 0x00, 0x06, 0x00, 0x00, 0xaa,
+        0xbb, 0xcc, 0xdd, 0xee, 0x4a, 0x00, 0x04, 0x00, 0x0a, 0x0a, 0x0a, 0x0a, 0x7e, 0x00, 0x02,
+        0x00, 0x12, 0x34, 0x71, 0x00, 0x01, 0x00, 0x03, 0x53, 0x00, 0x03, 0x00, 0x99, 0xf9, 0x10,
     ];
     let decoded = IdentificationRequest {
         header: Gtpv2Header {
@@ -205,78 +205,56 @@ fn test_identification_req_unmarshal() {
             teid: Some(0),
             sqn: 0x68,
         },
-        guti: Some(
-            Guti {
-                mcc: 999,
+        guti: Some(Guti {
+            mcc: 999,
+            mnc: 1,
+            mmegi: 300,
+            mmec: 10,
+            mtmsi: 0xffffffff,
+            ..Guti::default()
+        }),
+        rai: Some(Uli {
+            length: 8,
+            loc: vec![Location::Rai(Rai {
+                mcc: 262,
                 mnc: 1,
-                mmegi: 300,
-                mmec: 10,
-                mtmsi: 0xffffffff,
-                ..Guti::default()
-            } 
-        ),
-        rai: Some(
-            Uli {
-                length: 8,
-                loc: vec![
-                    Location::Rai(
-                        Rai {
-                            mcc: 262,
-                            mnc: 1,
-                            lac: 0x0bd9,
-                            rac: 0x01,
-                        }
-                    ),
-                ],
-                ..Uli::default()
-            }
-        ),
-        ptmsi: Some(
-            Ptmsi {
-                ptmsi: 0x27ffaa11,
-                ..Ptmsi::default()
-            }
-        ),
-        ptmsi_sig: Some(
-            PtmsiSignature {
-                ptmsi_sig: 0x27ffaa11,
-                ..PtmsiSignature::default()
-            }
-        ),
-        carm: Some(
-            CompleteRequestMessage {
-                length: 6,
-                message: RequestMessage::AttachRequest(vec![0xaa, 0xbb, 0xcc, 0xdd, 0xee]),
-                ..CompleteRequestMessage::default() 
-            }
-        ),
-        ip_cplane: Some(
-            IpAddress {
-                t: IP_ADDRESS,
-                length: 4,
-                ins: 0,
-                ip: IpAddr::V4(Ipv4Addr::new(10, 10, 10, 10)),
-            }
-        ),
-        udp_src_port: Some(
-            PortNumber {
-                port: 0x1234,
-                ..PortNumber::default()
-            }
-        ),
-        hop_counter: Some(
-            HopCounter {
-                hop_counter: 0x03,
-                ..HopCounter::default()
-            }
-        ),
-        target_plmnid: Some(
-            ServingNetwork {
-                mcc: 999,
-                mnc: 1,
-                ..ServingNetwork::default()
-            }
-        ),  
+                lac: 0x0bd9,
+                rac: 0x01,
+            })],
+            ..Uli::default()
+        }),
+        ptmsi: Some(Ptmsi {
+            ptmsi: 0x27ffaa11,
+            ..Ptmsi::default()
+        }),
+        ptmsi_sig: Some(PtmsiSignature {
+            ptmsi_sig: 0x27ffaa11,
+            ..PtmsiSignature::default()
+        }),
+        carm: Some(CompleteRequestMessage {
+            length: 6,
+            message: RequestMessage::AttachRequest(vec![0xaa, 0xbb, 0xcc, 0xdd, 0xee]),
+            ..CompleteRequestMessage::default()
+        }),
+        ip_cplane: Some(IpAddress {
+            t: IP_ADDRESS,
+            length: 4,
+            ins: 0,
+            ip: IpAddr::V4(Ipv4Addr::new(10, 10, 10, 10)),
+        }),
+        udp_src_port: Some(PortNumber {
+            port: 0x1234,
+            ..PortNumber::default()
+        }),
+        hop_counter: Some(HopCounter {
+            hop_counter: 0x03,
+            ..HopCounter::default()
+        }),
+        target_plmnid: Some(ServingNetwork {
+            mcc: 999,
+            mnc: 1,
+            ..ServingNetwork::default()
+        }),
         ..IdentificationRequest::default()
     };
     let message = IdentificationRequest::unmarshal(&encoded).unwrap();
@@ -285,14 +263,14 @@ fn test_identification_req_unmarshal() {
 
 #[test]
 fn test_identification_req_marshal() {
-    use std::net::{Ipv4Addr, IpAddr};
+    use std::net::{IpAddr, Ipv4Addr};
     let encoded: [u8; 90] = [
-        0x48,0x80,0x00,0x56,0x00,0x00,0x00,0x00,0x00,0x00,0x68,0x00,0x75,0x00,0x0a,0x00,
-        0x99,0xf9,0x10,0x01,0x2c,0x0a,0xff,0xff,0xff,0xff,0x56,0x00,0x08,0x00,0x04,0x62,
-        0xf2,0x10,0x0b,0xd9,0x01,0xff,0x6f,0x00,0x04,0x00,0x27,0xff,0xaa,0x11,0x70,0x00,
-        0x04,0x00,0x27,0xff,0xaa,0x11,0x74,0x00,0x06,0x00,0x00,0xaa,0xbb,0xcc,0xdd,0xee,
-        0x4a,0x00,0x04,0x00,0x0a,0x0a,0x0a,0x0a,0x7e,0x00,0x02,0x00,0x12,0x34,0x71,0x00,
-        0x01,0x00,0x03,0x53,0x00,0x03,0x00,0x99,0xf9,0x10,
+        0x48, 0x80, 0x00, 0x56, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x68, 0x00, 0x75, 0x00, 0x0a,
+        0x00, 0x99, 0xf9, 0x10, 0x01, 0x2c, 0x0a, 0xff, 0xff, 0xff, 0xff, 0x56, 0x00, 0x08, 0x00,
+        0x04, 0x62, 0xf2, 0x10, 0x0b, 0xd9, 0x01, 0xff, 0x6f, 0x00, 0x04, 0x00, 0x27, 0xff, 0xaa,
+        0x11, 0x70, 0x00, 0x04, 0x00, 0x27, 0xff, 0xaa, 0x11, 0x74, 0x00, 0x06, 0x00, 0x00, 0xaa,
+        0xbb, 0xcc, 0xdd, 0xee, 0x4a, 0x00, 0x04, 0x00, 0x0a, 0x0a, 0x0a, 0x0a, 0x7e, 0x00, 0x02,
+        0x00, 0x12, 0x34, 0x71, 0x00, 0x01, 0x00, 0x03, 0x53, 0x00, 0x03, 0x00, 0x99, 0xf9, 0x10,
     ];
     let decoded = IdentificationRequest {
         header: Gtpv2Header {
@@ -303,78 +281,56 @@ fn test_identification_req_marshal() {
             teid: Some(0),
             sqn: 0x68,
         },
-        guti: Some(
-            Guti {
-                mcc: 999,
+        guti: Some(Guti {
+            mcc: 999,
+            mnc: 1,
+            mmegi: 300,
+            mmec: 10,
+            mtmsi: 0xffffffff,
+            ..Guti::default()
+        }),
+        rai: Some(Uli {
+            length: 25,
+            loc: vec![Location::Rai(Rai {
+                mcc: 262,
                 mnc: 1,
-                mmegi: 300,
-                mmec: 10,
-                mtmsi: 0xffffffff,
-                ..Guti::default()
-            } 
-        ),
-        rai: Some(
-            Uli {
-                length: 25,
-                loc: vec![
-                    Location::Rai(
-                        Rai {
-                            mcc: 262,
-                            mnc: 1,
-                            lac: 0x0bd9,
-                            rac: 0x01,
-                        }
-                    ),
-                ],
-                ..Uli::default()
-            }
-        ),
-        ptmsi: Some(
-            Ptmsi {
-                ptmsi: 0x27ffaa11,
-                ..Ptmsi::default()
-            }
-        ),
-        ptmsi_sig: Some(
-            PtmsiSignature {
-                ptmsi_sig: 0x27ffaa11,
-                ..PtmsiSignature::default()
-            }
-        ),
-        carm: Some(
-            CompleteRequestMessage {
-                length: 6,
-                message: RequestMessage::AttachRequest(vec![0xaa, 0xbb, 0xcc, 0xdd, 0xee]),
-                ..CompleteRequestMessage::default() 
-            }
-        ),
-        ip_cplane: Some(
-            IpAddress {
-                t: IP_ADDRESS,
-                length: 4,
-                ins: 0,
-                ip: IpAddr::V4(Ipv4Addr::new(10, 10, 10, 10)),
-            }
-        ),
-        udp_src_port: Some(
-            PortNumber {
-                port: 0x1234,
-                ..PortNumber::default()
-            }
-        ),
-        hop_counter: Some(
-            HopCounter {
-                hop_counter: 0x03,
-                ..HopCounter::default()
-            }
-        ),
-        target_plmnid: Some(
-            ServingNetwork {
-                mcc: 999,
-                mnc: 1,
-                ..ServingNetwork::default()
-            }
-        ),  
+                lac: 0x0bd9,
+                rac: 0x01,
+            })],
+            ..Uli::default()
+        }),
+        ptmsi: Some(Ptmsi {
+            ptmsi: 0x27ffaa11,
+            ..Ptmsi::default()
+        }),
+        ptmsi_sig: Some(PtmsiSignature {
+            ptmsi_sig: 0x27ffaa11,
+            ..PtmsiSignature::default()
+        }),
+        carm: Some(CompleteRequestMessage {
+            length: 6,
+            message: RequestMessage::AttachRequest(vec![0xaa, 0xbb, 0xcc, 0xdd, 0xee]),
+            ..CompleteRequestMessage::default()
+        }),
+        ip_cplane: Some(IpAddress {
+            t: IP_ADDRESS,
+            length: 4,
+            ins: 0,
+            ip: IpAddr::V4(Ipv4Addr::new(10, 10, 10, 10)),
+        }),
+        udp_src_port: Some(PortNumber {
+            port: 0x1234,
+            ..PortNumber::default()
+        }),
+        hop_counter: Some(HopCounter {
+            hop_counter: 0x03,
+            ..HopCounter::default()
+        }),
+        target_plmnid: Some(ServingNetwork {
+            mcc: 999,
+            mnc: 1,
+            ..ServingNetwork::default()
+        }),
         ..IdentificationRequest::default()
     };
     let mut buffer: Vec<u8> = vec![];

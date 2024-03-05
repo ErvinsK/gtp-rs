@@ -422,7 +422,11 @@ impl Messages for CreateSessionResponse {
                 }
                 InformationElement::Fqdn(j) => {
                     // 3 instances
-                    match (j.ins, self.charging_gw_name.is_none(), self.pgw_node_name.is_none()) {
+                    match (
+                        j.ins,
+                        self.charging_gw_name.is_none(),
+                        self.pgw_node_name.is_none(),
+                    ) {
                         (0, true, _) => self.charging_gw_name = Some(j.clone()),
                         (1, _, true) => self.pgw_node_name = Some(j.clone()),
                         (3, _, _) => self.alt_pgw_smf_fqdn.push(j.clone()),

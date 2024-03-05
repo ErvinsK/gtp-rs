@@ -75,13 +75,13 @@ Message Type value (Decimal)                                Message             
 130                                                         Context Request                                     Not implemented
 131                                                         Context Response                                    Not implemented
 132                                                         Context Acknowledge                                 Not implemented
-133                                                         Forward Relocation Request                          Not implemented
+133                                                         Forward Relocation Request                          Implemented*
 134                                                         Forward Relocation Response                         Not implemented
-135                                                         Forward Relocation Complete Notification            Not implemented
-136                                                         Forward Relocation Complete Acknowledge             Not implemented
+135                                                         Forward Relocation Complete Notification            Implemented*
+136                                                         Forward Relocation Complete Acknowledge             Implemented*
 137                                                         Forward Access Context Notification                 Implemented*
 138                                                         Forward Access Context Acknowledge                  Implemented*
-139                                                         Relocation Cancel Request                           Not implemented
+139                                                         Relocation Cancel Request                           Implemented*
 140                                                         Relocation Cancel Response                          Implemented*
 141                                                         Configuration Transfer Tunnel                       Implemented*
 142 to 148                                                  For future use
@@ -168,19 +168,21 @@ pub use {
     deletepdnconnectionsetreq::*, deletepdnconnectionsetresp::*, deletesessionreq::*,
     deletesessionresp::*, detachacknowledge::*, detachnotification::*, downlinkdatanotification::*,
     downlinkdatanotificationacknowledge::*, downlinkdatanotificationfailureindication::*,
-    echoreq::*, echoresp::*, ies::*, isrstatusindication::*, modifyaccessbearersreq::*,
+    echoreq::*, echoresp::*, forwardaccesscontextacknowledge::*,
+    forwardaccesscontextnotification::*, forwardrelocationcompleteacknowledge::*,
+    forwardrelocationcompletenotification::*, forwardrelocationreq::*, identificationreq::*,
+    identificationresp::*, ies::*, isrstatusindication::*, modifyaccessbearersreq::*,
     modifyaccessbearersresp::*, modifybearercommand::*, modifybearerfailureind::*,
     modifybearerreq::*, modifybearerresp::*, pgwdownlinktriggeringacknowledge::*,
     pgwdownlinktriggeringnotification::*, pgwrestartnotification::*,
-    pgwrestartnotificationacknowledge::*, releaseaccessbearersreq::*, releaseaccessbearersresp::*,
+    pgwrestartnotificationacknowledge::*, raninformationrelay::*, releaseaccessbearersreq::*,
+    releaseaccessbearersresp::*, relocationcancelreq::*, relocationcancelresp::*,
     remoteuereportacknowledge::*, remoteuereportnotification::*, resumeacknowledge::*,
     resumenotification::*, stoppagingindication::*, suspendacknowledge::*, suspendnotification::*,
     tracesessionactivation::*, tracesessiondeactivation::*, ueactivityacknowledge::*,
     ueactivitynotification::*, ueregistrationqueryreq::*, ueregistrationqueryresp::*,
     updatebearerreq::*, updatebearerresp::*, updatepdnconnectionsetreq::*,
-    updatepdnconnectionsetresp::*, versionnotsupported::*, identificationreq::*, identificationresp::*,
-    raninformationrelay::*, forwardaccesscontextnotification::*, forwardaccesscontextacknowledge::*,
-    relocationcancelresp::*,
+    updatepdnconnectionsetresp::*, versionnotsupported::*,
 };
 
 mod alertmmeacknowledge;
@@ -216,6 +218,13 @@ mod downlinkdatanotificationacknowledge;
 mod downlinkdatanotificationfailureindication;
 mod echoreq;
 mod echoresp;
+mod forwardaccesscontextacknowledge;
+mod forwardaccesscontextnotification;
+mod forwardrelocationcompleteacknowledge;
+mod forwardrelocationcompletenotification;
+mod forwardrelocationreq;
+mod identificationreq;
+mod identificationresp;
 mod ies;
 mod isrstatusindication;
 mod modifyaccessbearersreq;
@@ -228,8 +237,11 @@ mod pgwdownlinktriggeringacknowledge;
 mod pgwdownlinktriggeringnotification;
 mod pgwrestartnotification;
 mod pgwrestartnotificationacknowledge;
+mod raninformationrelay;
 mod releaseaccessbearersreq;
 mod releaseaccessbearersresp;
+mod relocationcancelreq;
+mod relocationcancelresp;
 mod remoteuereportacknowledge;
 mod remoteuereportnotification;
 mod resumeacknowledge;
@@ -248,9 +260,3 @@ mod updatebearerresp;
 mod updatepdnconnectionsetreq;
 mod updatepdnconnectionsetresp;
 mod versionnotsupported;
-mod identificationreq;
-mod identificationresp;
-mod raninformationrelay;
-mod forwardaccesscontextnotification;
-mod forwardaccesscontextacknowledge;
-mod relocationcancelresp;

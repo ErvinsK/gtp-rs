@@ -30,7 +30,7 @@ pub struct SecondaryRatUsageDataReport {
     pub end_timestamp: u32,
     pub usg_data_dl: u64,
     pub usg_data_ul: u64,
-    pub second_rat_dur_tansfer: Option<Vec<u8>>,   // Secondary RAT Data Usage Report Transfer
+    pub second_rat_dur_tansfer: Option<Vec<u8>>, // Secondary RAT Data Usage Report Transfer
 }
 
 impl Default for SecondaryRatUsageDataReport {
@@ -66,7 +66,7 @@ impl IEs for SecondaryRatUsageDataReport {
         buffer_ie.push(self.ins);
         let flag = if self.second_rat_dur_tansfer.is_some() {
             0x04 | ((self.irsgw as u8) << 1) | (self.irpgw as u8)
-        }  else {
+        } else {
             ((self.irsgw as u8) << 1) | (self.irpgw as u8)
         };
         buffer_ie.push(flag);
@@ -108,14 +108,18 @@ impl IEs for SecondaryRatUsageDataReport {
                 if buffer.len() > SCND_RAT_UDR_LENGTH + MIN_IE_SIZE {
                     let len = buffer[31] as usize;
                     if buffer.len() > SCND_RAT_UDR_LENGTH + MIN_IE_SIZE + len {
-                        data.second_rat_dur_tansfer = Some(buffer[(SCND_RAT_UDR_LENGTH+MIN_IE_SIZE+1)..(SCND_RAT_UDR_LENGTH+MIN_IE_SIZE+1+len)].to_vec());
+                        data.second_rat_dur_tansfer = Some(
+                            buffer[(SCND_RAT_UDR_LENGTH + MIN_IE_SIZE + 1)
+                                ..(SCND_RAT_UDR_LENGTH + MIN_IE_SIZE + 1 + len)]
+                                .to_vec(),
+                        );
                     } else {
                         return Err(GTPV2Error::IEIncorrect(SCND_RAT_UDR));
                     }
                 } else {
                     return Err(GTPV2Error::IEIncorrect(SCND_RAT_UDR));
                 }
-            }  
+            }
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(SCND_RAT_UDR))

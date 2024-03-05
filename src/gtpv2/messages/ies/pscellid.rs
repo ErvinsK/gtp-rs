@@ -61,7 +61,7 @@ impl IEs for PSCellId {
                 ins: buffer[3] & 0x0f,
                 mcc: mcc_mnc_decode(&buffer[4..7]).0,
                 mnc: mcc_mnc_decode(&buffer[4..7]).1,
-                nr_cgi: buffer[7..12].try_into().unwrap_or([0u8;5]),
+                nr_cgi: buffer[7..12].try_into().unwrap_or([0u8; 5]),
                 ..PSCellId::default()
             };
             Ok(data)
@@ -87,7 +87,9 @@ fn pscellid_ie_marshal_test() {
         nr_cgi: [0xaa, 0xfc, 0xfd, 0xfe, 0xff],
         ..PSCellId::default()
     };
-    let encoded: [u8; 12] = [0xd9, 0x00, 0x08, 0x00, 0x99, 0xf9, 0x10, 0xaa, 0xfc, 0xfd, 0xfe, 0xff,];
+    let encoded: [u8; 12] = [
+        0xd9, 0x00, 0x08, 0x00, 0x99, 0xf9, 0x10, 0xaa, 0xfc, 0xfd, 0xfe, 0xff,
+    ];
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
     assert_eq!(buffer, encoded);
@@ -101,6 +103,8 @@ fn pscellid_ie_unmarshal_test() {
         nr_cgi: [0xaa, 0xfc, 0xfd, 0xfe, 0xff],
         ..PSCellId::default()
     };
-    let encoded: [u8; 12] = [0xd9, 0x00, 0x08, 0x00, 0x99, 0xf9, 0x10, 0xaa, 0xfc, 0xfd, 0xfe, 0xff,];
+    let encoded: [u8; 12] = [
+        0xd9, 0x00, 0x08, 0x00, 0x99, 0xf9, 0x10, 0xaa, 0xfc, 0xfd, 0xfe, 0xff,
+    ];
     assert_eq!(PSCellId::unmarshal(&encoded).unwrap(), decoded);
 }

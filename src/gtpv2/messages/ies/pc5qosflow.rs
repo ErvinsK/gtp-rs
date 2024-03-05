@@ -14,8 +14,8 @@ pub struct PC5QosFlow {
     pub length: u16,
     pub ins: u8,
     pub pqi_label: u8,
-    pub gfbr: u32,                          // Guaranteed Flow Bit Rate
-    pub mfbr: u32,                          // Maximum Flow Bit Rate
+    pub gfbr: u32, // Guaranteed Flow Bit Rate
+    pub mfbr: u32, // Maximum Flow Bit Rate
     pub range: Option<u8>,
 }
 
@@ -74,10 +74,9 @@ impl IEs for PC5QosFlow {
             } else {
                 Err(GTPV2Error::IEInvalidLength(PC5_QOS_FLOW))
             }
-
         } else {
-                Err(GTPV2Error::IEInvalidLength(PC5_QOS_FLOW))
-        }   
+            Err(GTPV2Error::IEInvalidLength(PC5_QOS_FLOW))
+        }
     }
 
     fn len(&self) -> usize {
@@ -92,7 +91,7 @@ impl IEs for PC5QosFlow {
 #[test]
 fn pc5_qos_flow_ie_unmarshal_test() {
     let encoded: [u8; 15] = [
-        0xd4,0x00,0x0b,0x00,0x01,0x05,0x00,0x00,0xaa,0xaa,0x00,0x00,0xff,0xff,0x01,
+        0xd4, 0x00, 0x0b, 0x00, 0x01, 0x05, 0x00, 0x00, 0xaa, 0xaa, 0x00, 0x00, 0xff, 0xff, 0x01,
     ];
     let decoded = PC5QosFlow {
         length: 11,
@@ -109,7 +108,7 @@ fn pc5_qos_flow_ie_unmarshal_test() {
 #[test]
 fn pc5_qos_flow_ie_marshal_test() {
     let encoded: [u8; 15] = [
-        0xd4,0x00,0x0b,0x00,0x01,0x05,0x00,0x00,0xaa,0xaa,0x00,0x00,0xff,0xff,0x01,
+        0xd4, 0x00, 0x0b, 0x00, 0x01, 0x05, 0x00, 0x00, 0xaa, 0xaa, 0x00, 0x00, 0xff, 0xff, 0x01,
     ];
     let decoded = PC5QosFlow {
         length: 11,

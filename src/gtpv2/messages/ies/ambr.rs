@@ -105,8 +105,5 @@ fn apnambr_ie_unmarshal_test() {
         ambr_ul: 2000,
         ambr_dl: 8000,
     };
-    assert_eq!(
-        Ambr::unmarshal(&ie_to_unmarshal).unwrap(),
-        ie_unmarshalled
-    );
+    assert_eq!(Ambr::unmarshal(&ie_to_unmarshal).unwrap(), ie_unmarshalled);
 }

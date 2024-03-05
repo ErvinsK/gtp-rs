@@ -46,7 +46,6 @@ impl From<u8> for Restriction {
             _ => Restriction::NoApnRestriction,
         }
     }
-
 }
 
 // APN Restriction IE implementation
