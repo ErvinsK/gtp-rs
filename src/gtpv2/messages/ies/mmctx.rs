@@ -140,4 +140,26 @@ impl IEs for MmContext {
             MmContext::MmContextGsmKeyCipherQuintuplets(i) => i.is_empty(),
         }
     }
+
+    fn get_ins(&self) -> u8 {
+        match self {
+            MmContext::MmContextEpsSecurityContextQuadruplets(i) => i.ins,
+            MmContext::MmContextUmtsKeyQuintuplets(i) => i.ins,
+            MmContext::MmContextUmtsKeyQuadrupletsQuintuplets(i) => i.ins,
+            MmContext::MmContextUmtsKeyCipherQuintuplets(i) => i.ins,
+            MmContext::MmContextGsmKeyTriplets(i) => i.ins,
+            MmContext::MmContextGsmKeyCipherQuintuplets(i) => i.ins,
+        }
+    }
+
+    fn get_type(&self) -> u8 {
+        match self {
+            MmContext::MmContextEpsSecurityContextQuadruplets(_) => MMCTXEPSSECCTXQ,
+            MmContext::MmContextUmtsKeyQuintuplets(_) => MMCTXUMTSKQ,
+            MmContext::MmContextUmtsKeyQuadrupletsQuintuplets(_) => MMCTXUMTSKQQ,
+            MmContext::MmContextUmtsKeyCipherQuintuplets(_) => MMCTXUMTSKCQ,
+            MmContext::MmContextGsmKeyTriplets(_) => MMCTXGSMKT,
+            MmContext::MmContextGsmKeyCipherQuintuplets(_) => MMCTXGSMKCQ,
+        }
+    }
 }

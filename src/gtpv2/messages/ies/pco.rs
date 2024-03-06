@@ -74,6 +74,12 @@ impl IEs for Pco {
     fn is_empty(&self) -> bool {
         self.length == 0
     }
+    fn get_ins(&self) -> u8 {
+        self.ins
+    }
+    fn get_type(&self) -> u8 {
+        self.t
+    }
 }
 
 #[test]

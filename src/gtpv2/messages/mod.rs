@@ -76,7 +76,7 @@ Message Type value (Decimal)                                Message             
 131                                                         Context Response                                    Not implemented
 132                                                         Context Acknowledge                                 Not implemented
 133                                                         Forward Relocation Request                          Implemented*
-134                                                         Forward Relocation Response                         Not implemented
+134                                                         Forward Relocation Response                         Implemented*
 135                                                         Forward Relocation Complete Notification            Implemented*
 136                                                         Forward Relocation Complete Acknowledge             Implemented*
 137                                                         Forward Access Context Notification                 Implemented*
@@ -170,19 +170,19 @@ pub use {
     downlinkdatanotificationacknowledge::*, downlinkdatanotificationfailureindication::*,
     echoreq::*, echoresp::*, forwardaccesscontextacknowledge::*,
     forwardaccesscontextnotification::*, forwardrelocationcompleteacknowledge::*,
-    forwardrelocationcompletenotification::*, forwardrelocationreq::*, identificationreq::*,
-    identificationresp::*, ies::*, isrstatusindication::*, modifyaccessbearersreq::*,
-    modifyaccessbearersresp::*, modifybearercommand::*, modifybearerfailureind::*,
-    modifybearerreq::*, modifybearerresp::*, pgwdownlinktriggeringacknowledge::*,
-    pgwdownlinktriggeringnotification::*, pgwrestartnotification::*,
-    pgwrestartnotificationacknowledge::*, raninformationrelay::*, releaseaccessbearersreq::*,
-    releaseaccessbearersresp::*, relocationcancelreq::*, relocationcancelresp::*,
-    remoteuereportacknowledge::*, remoteuereportnotification::*, resumeacknowledge::*,
-    resumenotification::*, stoppagingindication::*, suspendacknowledge::*, suspendnotification::*,
-    tracesessionactivation::*, tracesessiondeactivation::*, ueactivityacknowledge::*,
-    ueactivitynotification::*, ueregistrationqueryreq::*, ueregistrationqueryresp::*,
-    updatebearerreq::*, updatebearerresp::*, updatepdnconnectionsetreq::*,
-    updatepdnconnectionsetresp::*, versionnotsupported::*,
+    forwardrelocationcompletenotification::*, forwardrelocationreq::*, forwardrelocationresp::*,
+    identificationreq::*, identificationresp::*, ies::*, isrstatusindication::*,
+    modifyaccessbearersreq::*, modifyaccessbearersresp::*, modifybearercommand::*,
+    modifybearerfailureind::*, modifybearerreq::*, modifybearerresp::*,
+    pgwdownlinktriggeringacknowledge::*, pgwdownlinktriggeringnotification::*,
+    pgwrestartnotification::*, pgwrestartnotificationacknowledge::*, raninformationrelay::*,
+    releaseaccessbearersreq::*, releaseaccessbearersresp::*, relocationcancelreq::*,
+    relocationcancelresp::*, remoteuereportacknowledge::*, remoteuereportnotification::*,
+    resumeacknowledge::*, resumenotification::*, stoppagingindication::*, suspendacknowledge::*,
+    suspendnotification::*, tracesessionactivation::*, tracesessiondeactivation::*,
+    ueactivityacknowledge::*, ueactivitynotification::*, ueregistrationqueryreq::*,
+    ueregistrationqueryresp::*, updatebearerreq::*, updatebearerresp::*,
+    updatepdnconnectionsetreq::*, updatepdnconnectionsetresp::*, versionnotsupported::*,
 };
 
 mod alertmmeacknowledge;
@@ -223,6 +223,7 @@ mod forwardaccesscontextnotification;
 mod forwardrelocationcompleteacknowledge;
 mod forwardrelocationcompletenotification;
 mod forwardrelocationreq;
+mod forwardrelocationresp;
 mod identificationreq;
 mod identificationresp;
 mod ies;

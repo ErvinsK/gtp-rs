@@ -23,3 +23,9 @@ impl Iterator for dyn Messages {
         }
     }
 }
+
+pub fn vec_by_ins<'a, T: IEs>(ins: u8, vec: &'a [T]) -> Vec<&'a T> {
+    vec.iter()
+        .filter(|x| (*x).get_ins() == ins)
+        .collect::<Vec<&'a T>>()
+}

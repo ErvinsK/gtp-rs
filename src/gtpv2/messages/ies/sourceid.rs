@@ -64,6 +64,12 @@ impl IEs for SourceRncIdentifier {
     fn is_empty(&self) -> bool {
         self.mcc == 0 && self.mnc == 0 && self.rnc_id == 0 && self.ext_rnc_id.is_none()
     }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
+    }
 }
 
 // Source Type Enum
@@ -141,6 +147,12 @@ impl IEs for SourceType {
             _ => true,
         }
     }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
+    }
 }
 
 // Source Identification IE implementation
@@ -214,6 +226,12 @@ impl IEs for SourceIdentification {
 
     fn is_empty(&self) -> bool {
         self.length == 0
+    }
+    fn get_ins(&self) -> u8 {
+        self.ins
+    }
+    fn get_type(&self) -> u8 {
+        self.t
     }
 }
 

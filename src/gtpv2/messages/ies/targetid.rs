@@ -75,6 +75,12 @@ impl IEs for RncIdentifier {
     fn is_empty(&self) -> bool {
         self.rai.is_empty() && self.rnc_id == 0 && self.ext_rnc_id.is_none()
     }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
+    }
 }
 
 // Macro eNB ID
@@ -114,6 +120,12 @@ impl IEs for MacroEnbIdentifier {
     fn is_empty(&self) -> bool {
         self.macro_enb_id.is_empty() && self.tac == 0
     }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
+    }
 }
 
 // Extended Macro eNB ID
@@ -151,6 +163,12 @@ impl IEs for ExtendedMacroEnbIdentifier {
 
     fn is_empty(&self) -> bool {
         self.ext_macro_enb_id.is_empty() && self.tac == 0
+    }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
     }
 }
 
@@ -193,6 +211,12 @@ impl IEs for CellIdentifier {
 
     fn is_empty(&self) -> bool {
         self.mcc == 0 && self.mnc == 0 && self.lac == 0 && self.rac == 0 && self.ci == 0
+    }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
     }
 }
 
@@ -248,6 +272,12 @@ impl IEs for GNbIdentifier {
     fn is_empty(&self) -> bool {
         self.mcc == 0 && self.mnc == 0 && self.gnb_id == 0 && self.etac == [0; 3]
     }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
+    }
 }
 
 // Macro NG-eNB ID
@@ -286,6 +316,12 @@ impl IEs for MacronGeNbIdentifier {
     fn is_empty(&self) -> bool {
         self.macro_ng_enb_id.is_empty() && self.etac == [0; 3]
     }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
+    }
 }
 
 // Extended NG-eNB ID
@@ -323,6 +359,12 @@ impl IEs for ExtendedGeNbIdentifier {
 
     fn is_empty(&self) -> bool {
         self.macro_ng_enb_id.is_empty() && self.etac == [0; 3]
+    }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
     }
 }
 
@@ -407,6 +449,12 @@ impl IEs for EnGNbIdentifier {
             && self.en_gnb_id == 0
             && self.tac.is_none()
             && self.etac.is_none()
+    }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
     }
 }
 // Target Type Enum
@@ -576,6 +624,12 @@ impl IEs for TargetType {
             _ => true,
         }
     }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
+    }
 }
 
 // Target Identification IE implementation
@@ -642,6 +696,12 @@ impl IEs for TargetIdentification {
 
     fn is_empty(&self) -> bool {
         self.length == 0
+    }
+    fn get_ins(&self) -> u8 {
+        self.ins
+    }
+    fn get_type(&self) -> u8 {
+        self.t
     }
 }
 

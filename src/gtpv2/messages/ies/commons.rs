@@ -11,6 +11,8 @@ pub trait IEs {
         Self: Sized;
     fn len(&self) -> usize; // Total IE length = Type+Length+Instance+Value for TLIV messages
     fn is_empty(&self) -> bool; // is_empty() method
+    fn get_ins(&self) -> u8; // get_ins() method
+    fn get_type(&self) -> u8; // get_type() method
 }
 
 // Location Field definitions
@@ -47,6 +49,12 @@ impl IEs for Cgi {
     fn len(&self) -> usize {
         7
     }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
@@ -80,6 +88,12 @@ impl IEs for Sai {
     }
     fn len(&self) -> usize {
         7
+    }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
     }
 }
 
@@ -116,6 +130,12 @@ impl IEs for Rai {
     fn len(&self) -> usize {
         6
     }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
@@ -147,6 +167,12 @@ impl IEs for Tai {
     fn len(&self) -> usize {
         5
     }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
@@ -177,6 +203,12 @@ impl IEs for Ecgi {
     }
     fn len(&self) -> usize {
         7
+    }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
     }
 }
 
@@ -211,6 +243,12 @@ impl IEs for Lai {
     fn len(&self) -> usize {
         5
     }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
@@ -243,6 +281,12 @@ impl IEs for MacroEnbId {
 
     fn len(&self) -> usize {
         6
+    }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
     }
 }
 
@@ -296,6 +340,12 @@ impl IEs for ExtMacroEnbId {
     fn len(&self) -> usize {
         6
     }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
+    }
 }
 
 // MM Context Authentication Field definitions
@@ -332,6 +382,12 @@ impl IEs for AuthTriplet {
 
     fn len(&self) -> usize {
         28
+    }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
     }
 }
 
@@ -437,6 +493,12 @@ impl IEs for AuthQuintuplet {
 
     fn len(&self) -> usize {
         50 + self.xres.len() + self.autn.len()
+    }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
     }
 }
 
@@ -560,6 +622,12 @@ impl IEs for AuthQuadruplet {
 
     fn len(&self) -> usize {
         50 + self.xres.len() + self.autn.len()
+    }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
     }
 }
 
@@ -698,6 +766,12 @@ impl IEs for ApnRateControlStatusMM {
 
     fn len(&self) -> usize {
         24 + self.apn.len()
+    }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
     }
 }
 
@@ -1061,6 +1135,12 @@ impl IEs for AmbrMM {
     fn len(&self) -> usize {
         8
     }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Default)]
@@ -1133,6 +1213,12 @@ impl IEs for OldEpsSecurityContext {
         } else {
             33
         }
+    }
+    fn get_ins(&self) -> u8 {
+        0
+    }
+    fn get_type(&self) -> u8 {
+        0
     }
 }
 
