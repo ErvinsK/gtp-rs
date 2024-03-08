@@ -279,9 +279,9 @@ impl Messages for ForwardRelocationRequest {
             .iter()
             .for_each(|x| elements.push(InformationElement::AdditionalRrmPolicyIndex(x.clone())));
 
-        // if let Some(i) = self.subcr_v2x_info.clone() {
-        //     elements.push(i.into());
-        // }
+        if let Some(i) = self.subcr_v2x_info.clone() {
+             elements.push(InformationElement::V2xInformation(i.clone()));
+        }
 
         if let Some(i) = self.iwk_scef_id.clone() {
             elements.push(i.into());
@@ -658,7 +658,7 @@ fn test_fwd_reloc_req_unmarshal() {
 }
 
 #[test]
-fn test_fwd_reloc_complete_notif_marshal() {
+fn test_fwd_reloc_complete_req_marshal() {
     use std::net::Ipv4Addr;
     let encoded: [u8; 431] = [
         0x48, 0x85, 0x01, 0xab, 0xa4, 0x78, 0x95, 0x80, 0x4b, 0x29, 0x1e, 0x00, 0x57, 0x00, 0x09,

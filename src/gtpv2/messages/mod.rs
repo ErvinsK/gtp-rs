@@ -72,7 +72,7 @@ Message Type value (Decimal)                                Message             
 
 128                                                         Identification Request                              Implemented*
 129                                                         Identification Response                             Implemented*
-130                                                         Context Request                                     Not implemented
+130                                                         Context Request                                     Implemented*
 131                                                         Context Response                                    Not implemented
 132                                                         Context Acknowledge                                 Not implemented
 133                                                         Forward Relocation Request                          Implemented*
@@ -183,6 +183,7 @@ pub use {
     ueactivityacknowledge::*, ueactivitynotification::*, ueregistrationqueryreq::*,
     ueregistrationqueryresp::*, updatebearerreq::*, updatebearerresp::*,
     updatepdnconnectionsetreq::*, updatepdnconnectionsetresp::*, versionnotsupported::*,
+    contextreq::*,
 };
 
 mod alertmmeacknowledge;
@@ -261,3 +262,4 @@ mod updatebearerresp;
 mod updatepdnconnectionsetreq;
 mod updatepdnconnectionsetresp;
 mod versionnotsupported;
+mod contextreq;
