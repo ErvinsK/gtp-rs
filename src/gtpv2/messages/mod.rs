@@ -73,8 +73,8 @@ Message Type value (Decimal)                                Message             
 128                                                         Identification Request                              Implemented*
 129                                                         Identification Response                             Implemented*
 130                                                         Context Request                                     Implemented*
-131                                                         Context Response                                    Not implemented
-132                                                         Context Acknowledge                                 Not implemented
+131                                                         Context Response                                    Implemented*
+132                                                         Context Acknowledge                                 Implemented*
 133                                                         Forward Relocation Request                          Implemented*
 134                                                         Forward Relocation Response                         Implemented*
 135                                                         Forward Relocation Complete Notification            Implemented*
@@ -160,8 +160,8 @@ Message Type value (Decimal)                                Message             
 pub use {
     alertmmeacknowledge::*, alertmmenotification::*, bearerresourcecommand::*,
     bearerresourcefailureind::*, changenotificationreq::*, changenotificationresp::*, commons::*,
-    createbearerreq::*, createbearerresp::*, createforwardingtunnelreq::*,
-    createforwardingtunnelresp::*, createindirectdatafwtunnelreq::*,
+    contextacknowledge::*, contextreq::*, contextresp::*, createbearerreq::*, createbearerresp::*,
+    createforwardingtunnelreq::*, createforwardingtunnelresp::*, createindirectdatafwtunnelreq::*,
     createindirectdatafwtunnelresp::*, createsessionreq::*, createsessionresp::*,
     cspagingindication::*, deletebearercommand::*, deletebearerfailureind::*, deletebearerreq::*,
     deletebearerresp::*, deleteindirectdatafwtunnelreq::*, deleteindirectdatafwtunnelresp::*,
@@ -183,7 +183,6 @@ pub use {
     ueactivityacknowledge::*, ueactivitynotification::*, ueregistrationqueryreq::*,
     ueregistrationqueryresp::*, updatebearerreq::*, updatebearerresp::*,
     updatepdnconnectionsetreq::*, updatepdnconnectionsetresp::*, versionnotsupported::*,
-    contextreq::*,
 };
 
 mod alertmmeacknowledge;
@@ -193,6 +192,9 @@ mod bearerresourcefailureind;
 mod changenotificationreq;
 mod changenotificationresp;
 mod commons;
+mod contextacknowledge;
+mod contextreq;
+mod contextresp;
 mod createbearerreq;
 mod createbearerresp;
 mod createforwardingtunnelreq;
@@ -262,4 +264,3 @@ mod updatebearerresp;
 mod updatepdnconnectionsetreq;
 mod updatepdnconnectionsetresp;
 mod versionnotsupported;
-mod contextreq;

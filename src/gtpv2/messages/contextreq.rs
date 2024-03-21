@@ -63,7 +63,7 @@ impl Default for ContextRequest {
             sgsn_number: None,
             sgsn_id: None,
             mme_id: None,
-            ciot_optim_supp_ind: None,           
+            ciot_optim_supp_ind: None,
             private_ext: vec![],
         }
     }
@@ -179,8 +179,8 @@ impl Messages for ContextRequest {
 
         if let Some(i) = self.ciot_optim_supp_ind.clone() {
             elements.push(i.into())
-        };    
-   
+        };
+
         self.private_ext
             .iter()
             .for_each(|x| elements.push(InformationElement::PrivateExtension(x.clone())));
@@ -291,11 +291,12 @@ impl Messages for ContextRequest {
 #[test]
 fn test_ctx_req_unmarshal() {
     let encoded: [u8; 78] = [
-        0x48,0x82,0x00,0x4a,0xa4,0x78,0x95,0x80,0x4b,0x29,0x1e,0x00,0x01,0x00,0x08,0x00,
-        0x99,0x41,0x55,0x01,0x91,0x16,0x78,0xf3,0x75,0x00,0x0a,0x00,0x99,0xf9,0x10,0x01,
-        0x2c,0x0a,0xff,0xff,0xff,0xff,0x6f,0x00,0x04,0x00,0xff,0xff,0xff,0xff,0x74,0x00,
-        0x06,0x00,0x01,0xaa,0xbb,0xcc,0xdd,0xee,0x52,0x00,0x01,0x00,0x06,0x53,0x00,0x03,
-        0x00,0x99,0xf9,0x10,0xff,0x00,0x06,0x00,0x00,0x00,0x01,0x62,0x9c,0xc4,
+        0x48, 0x82, 0x00, 0x4a, 0xa4, 0x78, 0x95, 0x80, 0x4b, 0x29, 0x1e, 0x00, 0x01, 0x00, 0x08,
+        0x00, 0x99, 0x41, 0x55, 0x01, 0x91, 0x16, 0x78, 0xf3, 0x75, 0x00, 0x0a, 0x00, 0x99, 0xf9,
+        0x10, 0x01, 0x2c, 0x0a, 0xff, 0xff, 0xff, 0xff, 0x6f, 0x00, 0x04, 0x00, 0xff, 0xff, 0xff,
+        0xff, 0x74, 0x00, 0x06, 0x00, 0x01, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0x52, 0x00, 0x01, 0x00,
+        0x06, 0x53, 0x00, 0x03, 0x00, 0x99, 0xf9, 0x10, 0xff, 0x00, 0x06, 0x00, 0x00, 0x00, 0x01,
+        0x62, 0x9c, 0xc4,
     ];
     let decoded = ContextRequest {
         header: Gtpv2Header {
@@ -306,48 +307,37 @@ fn test_ctx_req_unmarshal() {
             teid: Some(0xa4789580),
             sqn: 0x4b291e,
         },
-        imsi: Some(
-            Imsi {
-                length: 0x08,
-                imsi: "991455101961873".to_string(),
-                ..Imsi::default()
-            } 
-        ),
-        guti: Some(
-            Guti {
-                mcc: 999,
-                mnc: 1,
-                mmegi: 300,
-                mmec: 10,
-                mtmsi: 0xffffffff,
-                ..Guti::default()
-            }
-        ),
+        imsi: Some(Imsi {
+            length: 0x08,
+            imsi: "991455101961873".to_string(),
+            ..Imsi::default()
+        }),
+        guti: Some(Guti {
+            mcc: 999,
+            mnc: 1,
+            mmegi: 300,
+            mmec: 10,
+            mtmsi: 0xffffffff,
+            ..Guti::default()
+        }),
         ptmsi: Some(Ptmsi {
             ptmsi: 0xffffffff,
             ..Ptmsi::default()
-        }
-        ),
-        complete_tau_req_msg: Some(
-            CompleteRequestMessage {
-                length: 6,
-                message: RequestMessage::TauRequest(vec![0xaa, 0xbb, 0xcc, 0xdd, 0xee]),
-                ..CompleteRequestMessage::default()
-            }
-        ),
-        rat_type: Some(
-            RatType {
-                rat_type: Rat::Eutran,
-                ..RatType::default()
-            }
-        ),
-        target_plmnid: Some(
-            ServingNetwork {
-                mcc: 999,
-                mnc: 1,
-                ..ServingNetwork::default()
-            }
-        ),
+        }),
+        complete_tau_req_msg: Some(CompleteRequestMessage {
+            length: 6,
+            message: RequestMessage::TauRequest(vec![0xaa, 0xbb, 0xcc, 0xdd, 0xee]),
+            ..CompleteRequestMessage::default()
+        }),
+        rat_type: Some(RatType {
+            rat_type: Rat::Eutran,
+            ..RatType::default()
+        }),
+        target_plmnid: Some(ServingNetwork {
+            mcc: 999,
+            mnc: 1,
+            ..ServingNetwork::default()
+        }),
         private_ext: vec![PrivateExtension {
             length: 6,
             value: vec![0x01, 0x62, 0x9c, 0xc4],
@@ -362,11 +352,12 @@ fn test_ctx_req_unmarshal() {
 #[test]
 fn test_ctx_req_marshal() {
     let encoded: [u8; 78] = [
-        0x48,0x82,0x00,0x4a,0xa4,0x78,0x95,0x80,0x4b,0x29,0x1e,0x00,0x01,0x00,0x08,0x00,
-        0x99,0x41,0x55,0x01,0x91,0x16,0x78,0xf3,0x75,0x00,0x0a,0x00,0x99,0xf9,0x10,0x01,
-        0x2c,0x0a,0xff,0xff,0xff,0xff,0x6f,0x00,0x04,0x00,0xff,0xff,0xff,0xff,0x74,0x00,
-        0x06,0x00,0x01,0xaa,0xbb,0xcc,0xdd,0xee,0x52,0x00,0x01,0x00,0x06,0x53,0x00,0x03,
-        0x00,0x99,0xf9,0x10,0xff,0x00,0x06,0x00,0x00,0x00,0x01,0x62,0x9c,0xc4,
+        0x48, 0x82, 0x00, 0x4a, 0xa4, 0x78, 0x95, 0x80, 0x4b, 0x29, 0x1e, 0x00, 0x01, 0x00, 0x08,
+        0x00, 0x99, 0x41, 0x55, 0x01, 0x91, 0x16, 0x78, 0xf3, 0x75, 0x00, 0x0a, 0x00, 0x99, 0xf9,
+        0x10, 0x01, 0x2c, 0x0a, 0xff, 0xff, 0xff, 0xff, 0x6f, 0x00, 0x04, 0x00, 0xff, 0xff, 0xff,
+        0xff, 0x74, 0x00, 0x06, 0x00, 0x01, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0x52, 0x00, 0x01, 0x00,
+        0x06, 0x53, 0x00, 0x03, 0x00, 0x99, 0xf9, 0x10, 0xff, 0x00, 0x06, 0x00, 0x00, 0x00, 0x01,
+        0x62, 0x9c, 0xc4,
     ];
     let decoded = ContextRequest {
         header: Gtpv2Header {
@@ -377,48 +368,37 @@ fn test_ctx_req_marshal() {
             teid: Some(0xa4789580),
             sqn: 0x4b291e,
         },
-        imsi: Some(
-            Imsi {
-                length: 0x08,
-                imsi: "991455101961873".to_string(),
-                ..Imsi::default()
-            } 
-        ),
-        guti: Some(
-            Guti {
-                mcc: 999,
-                mnc: 1,
-                mmegi: 300,
-                mmec: 10,
-                mtmsi: 0xffffffff,
-                ..Guti::default()
-            }
-        ),
+        imsi: Some(Imsi {
+            length: 0x08,
+            imsi: "991455101961873".to_string(),
+            ..Imsi::default()
+        }),
+        guti: Some(Guti {
+            mcc: 999,
+            mnc: 1,
+            mmegi: 300,
+            mmec: 10,
+            mtmsi: 0xffffffff,
+            ..Guti::default()
+        }),
         ptmsi: Some(Ptmsi {
             ptmsi: 0xffffffff,
             ..Ptmsi::default()
-        }
-        ),
-        complete_tau_req_msg: Some(
-            CompleteRequestMessage {
-                length: 6,
-                message: RequestMessage::TauRequest(vec![0xaa, 0xbb, 0xcc, 0xdd, 0xee]),
-                ..CompleteRequestMessage::default()
-            }
-        ),
-        rat_type: Some(
-            RatType {
-                rat_type: Rat::Eutran,
-                ..RatType::default()
-            }
-        ),
-        target_plmnid: Some(
-            ServingNetwork {
-                mcc: 999,
-                mnc: 1,
-                ..ServingNetwork::default()
-            }
-        ),
+        }),
+        complete_tau_req_msg: Some(CompleteRequestMessage {
+            length: 6,
+            message: RequestMessage::TauRequest(vec![0xaa, 0xbb, 0xcc, 0xdd, 0xee]),
+            ..CompleteRequestMessage::default()
+        }),
+        rat_type: Some(RatType {
+            rat_type: Rat::Eutran,
+            ..RatType::default()
+        }),
+        target_plmnid: Some(ServingNetwork {
+            mcc: 999,
+            mnc: 1,
+            ..ServingNetwork::default()
+        }),
         private_ext: vec![PrivateExtension {
             length: 6,
             value: vec![0x01, 0x62, 0x9c, 0xc4],

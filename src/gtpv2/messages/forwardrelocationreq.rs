@@ -280,7 +280,7 @@ impl Messages for ForwardRelocationRequest {
             .for_each(|x| elements.push(InformationElement::AdditionalRrmPolicyIndex(x.clone())));
 
         if let Some(i) = self.subcr_v2x_info.clone() {
-             elements.push(InformationElement::V2xInformation(i.clone()));
+            elements.push(InformationElement::V2xInformation(i.clone()));
         }
 
         if let Some(i) = self.iwk_scef_id.clone() {
