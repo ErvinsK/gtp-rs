@@ -2,22 +2,27 @@
 
 **GTP-rs** is pure Rust implementation to easily handle 3GPP GTP (*GPRS Tunneling Protocol*) protocol:
 - GTPv1-C (3GPP TS 29.060 V15.5.0 (2019-06))
-- GTPv2-C (3GPP TS 29.274 V15.9.0 (2019-09))
+- GTPv2-C (3GPP TS 29.274 V17.10.0 (2023-12))
 - GTPv1-U (3GPP TS 29.281 V16.0.0 (2019-12))
 
 # Disclaimer
 
 It is still an experimental project with many items **WIP**.
 
-I'm still developing and advancing my Rust programming skills. Thus, the code might require additional polishing, optimization and further improvement. 
+Use it at your own risk! 
+
+# Status
+
+- Full implementation of GTPv2-C IEs and Messages (except MBMS related)
+- Full implementation of GTPv1-U (Zero-Copy)
+- Incomplete and outdated implementation of GTPv1-C - both IEs and Messages (it works but not so polished as GTPv2 implementation)
 
 # Things To Do
 
-- Add more functional examples
+- Add examples
 - Work on documentation
 - Bug-fixing
-- Optimization
-- Add missing IEs and messages 
+- Optimization 
 
 # Author(s)
 
