@@ -113,46 +113,19 @@ impl Gtpv1Header {
         buffer.push(self.msgtype);
         buffer.extend_from_slice(&self.length.to_be_bytes());
         buffer.extend_from_slice(&self.teid.to_be_bytes());
-        match (
-            self.sequence_number.is_some(),
-            self.npdu_number.is_some(),
-            self.extension_headers.is_some(),
-        ) {
-            (true, true, true) => {
-                buffer.extend_from_slice(&self.sequence_number.unwrap().to_be_bytes());
-                buffer.push(self.npdu_number.unwrap());
-                self.marshal_ext_hdr(buffer);
-            }
-            (true, true, false) => {
-                buffer.extend_from_slice(&self.sequence_number.unwrap().to_be_bytes());
-                buffer.push(self.npdu_number.unwrap());
-                buffer.push(NO_MORE_EXTENSION_HEADERS);
-            }
-            (true, false, false) => {
-                buffer.extend_from_slice(&self.sequence_number.unwrap().to_be_bytes());
-                buffer.push(0x00);
-                buffer.push(NO_MORE_EXTENSION_HEADERS);
-            }
-            (true, false, true) => {
-                buffer.extend_from_slice(&self.sequence_number.unwrap().to_be_bytes());
-                buffer.push(0x00);
-                self.marshal_ext_hdr(buffer);
-            }
-            (false, false, false) => (),
-            (false, false, true) => {
-                buffer.extend_from_slice(&[0; 3]);
-                self.marshal_ext_hdr(buffer);
-            }
-            (false, true, true) => {
-                buffer.extend_from_slice(&[0; 2]);
-                buffer.push(self.npdu_number.unwrap());
-                self.marshal_ext_hdr(buffer);
-            }
-            (false, true, false) => {
-                buffer.extend_from_slice(&[0; 2]);
-                buffer.push(self.npdu_number.unwrap());
-                buffer.push(NO_MORE_EXTENSION_HEADERS);
-            }
+
+        if self.sequence_number.is_none()
+            && self.extension_headers.is_none()
+            && self.npdu_number.is_none()
+        {
+            return;
+        }
+        buffer.extend_from_slice(&self.sequence_number.unwrap_or(0).to_be_bytes());
+        buffer.push(self.npdu_number.unwrap_or(0));
+        if self.extension_headers.is_some() {
+            self.marshal_ext_hdr(buffer);
+        } else {
+            buffer.push(NO_MORE_EXTENSION_HEADERS);
         }
     }
 
