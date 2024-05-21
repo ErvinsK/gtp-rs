@@ -31,7 +31,7 @@ impl Display for GTPV1Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             // GTPv1 Header Errors
-            GTPV1Error::HeaderInvalidLength => write!(f, "Invalid Header lenght"),
+            GTPV1Error::HeaderInvalidLength => write!(f, "Invalid Header length"),
             GTPV1Error::HeaderVersionNotSupported => write!(f, "GTP Version not supported"),
             GTPV1Error::HeaderFlagError => write!(f, "Header flag error"),
             GTPV1Error::HeaderTypeMismatch => write!(f, "Header type mismatch"),
