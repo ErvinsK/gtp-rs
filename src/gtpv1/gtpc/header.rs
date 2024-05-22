@@ -141,94 +141,50 @@ impl Gtpv1Header {
             (_, _) => return Err(GTPV1Error::HeaderVersionNotSupported),
         }
         data.msgtype = buffer[1];
+        // TODO: check spec
         data.length = match u16::from_be_bytes([buffer[2], buffer[3]]) {
             _l if _l < MIN_HEADER_LENGTH as u16 => return Err(GTPV1Error::HeaderInvalidLength),
             l => l,
         };
         data.teid = u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
-        match (
-            (buffer[0] & 0x02) >> 1,
-            buffer[0] & 0x01,
-            (buffer[0] & 0x04) >> 2,
-        ) {
-            (1, 1, 1) => {
-                if buffer[8..].len() < 4 {
-                    return Err(GTPV1Error::HeaderInvalidLength);
-                }
-                data.sequence_number = Some(u16::from_be_bytes([buffer[8], buffer[9]]));
-                data.npdu_number = Some(buffer[10]);
-                match Gtpv1Header::unmarshal_ext_hdr(&buffer[11..]) {
-                    Ok(i) => data.extension_headers = Some(i),
-                    Err(j) => return Err(j),
-                }
-            }
-            (1, 1, 0) => {
-                if buffer[8..].len() >= 4 {
-                    return Err(GTPV1Error::HeaderInvalidLength);
-                }
-                data.sequence_number = Some(u16::from_be_bytes([buffer[8], buffer[9]]));
-                data.npdu_number = Some(buffer[10]);
-                data.extension_headers = None;
-            }
-            (1, 0, 0) => {
-                if buffer[8..].len() >= 4 {
-                    return Err(GTPV1Error::HeaderInvalidLength);
-                }
-                data.sequence_number = Some(u16::from_be_bytes([buffer[8], buffer[9]]));
-                data.npdu_number = None;
-                data.extension_headers = None;
-            }
-            (1, 0, 1) => {
-                if buffer[8..].len() < 4 {
-                    return Err(GTPV1Error::HeaderInvalidLength);
-                }
-                data.sequence_number = Some(u16::from_be_bytes([buffer[8], buffer[9]]));
-                data.npdu_number = None;
-                match Gtpv1Header::unmarshal_ext_hdr(&buffer[11..]) {
-                    Ok(i) => data.extension_headers = Some(i),
-                    Err(j) => return Err(j),
-                }
-            }
-            (0, 0, 0) => {
-                data.sequence_number = None;
-                data.npdu_number = None;
-                data.extension_headers = None;
-            }
-            (0, 0, 1) => {
-                if buffer[8..].len() < 4 {
-                    return Err(GTPV1Error::HeaderInvalidLength);
-                }
-                data.sequence_number = Some(u16::from_be_bytes([buffer[8], buffer[9]]));
-                data.npdu_number = Some(buffer[10]);
-                match Gtpv1Header::unmarshal_ext_hdr(&buffer[11..]) {
-                    Ok(i) => data.extension_headers = Some(i),
-                    Err(j) => return Err(j),
-                }
-            }
-            (0, 1, 1) => {
-                if buffer[8..].len() < 4 {
-                    return Err(GTPV1Error::HeaderInvalidLength);
-                }
-                data.sequence_number = Some(u16::from_be_bytes([buffer[8], buffer[9]]));
-                data.npdu_number = Some(buffer[10]);
-                match Gtpv1Header::unmarshal_ext_hdr(&buffer[11..]) {
-                    Ok(i) => data.extension_headers = Some(i),
-                    Err(j) => return Err(j),
-                }
-            }
-            (0, 1, 0) => {
-                if buffer[8..].len() < 4 {
-                    return Err(GTPV1Error::HeaderInvalidLength);
-                }
-                data.sequence_number = Some(u16::from_be_bytes([buffer[8], buffer[9]]));
-                data.npdu_number = Some(buffer[10]);
-                match Gtpv1Header::unmarshal_ext_hdr(&buffer[11..]) {
-                    Ok(i) => data.extension_headers = Some(i),
-                    Err(j) => return Err(j),
-                }
-            }
-            _ => (),
+
+        if buffer[0] & 7 == 0 {
+            data.sequence_number = None;
+            data.npdu_number = None;
+            data.extension_headers = None;
+            return Ok(data);
         }
+
+        if buffer[8..].len() < 4 {
+            return Err(GTPV1Error::HeaderInvalidLength);
+        }
+
+        data.sequence_number = Some(u16::from_be_bytes([buffer[8], buffer[9]]));
+        match buffer[0] & 7 {
+            0b010 => {
+                data.npdu_number = None;
+                data.extension_headers = None;
+            },
+            0b011 => {
+                data.npdu_number = Some(buffer[10]);
+                data.extension_headers = None;
+            },
+            0b110 => {
+                data.npdu_number = None;
+                match Gtpv1Header::unmarshal_ext_hdr(&buffer[11..]) {
+                    Ok(i) => data.extension_headers = Some(i),
+                    Err(j) => return Err(j),
+                }
+            },
+            _ => {
+                data.npdu_number = Some(buffer[10]);
+                match Gtpv1Header::unmarshal_ext_hdr(&buffer[11..]) {
+                    Ok(i) => data.extension_headers = Some(i),
+                    Err(j) => return Err(j),
+                }
+            }
+        }
+
         Ok(data)
     }
 
