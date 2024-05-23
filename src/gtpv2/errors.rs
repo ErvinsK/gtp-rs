@@ -27,7 +27,7 @@ impl Display for GTPV2Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             // GTPv2 Header Errors
-            GTPV2Error::HeaderInvalidLength => write!(f, "Invalid Header lenght"),
+            GTPV2Error::HeaderInvalidLength => write!(f, "Invalid Header length"),
             GTPV2Error::HeaderVersionNotSupported => write!(f, "GTP Version not supported"),
             GTPV2Error::HeaderFlagError => write!(f, "Header flag error"),
             GTPV2Error::HeaderTypeMismatch => write!(f, "Header type mismatch"),
