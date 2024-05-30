@@ -143,7 +143,7 @@ Message Type value (Decimal)                                Message             
 
 ----------MBMS GW to MME/SGSN (Sm/Sn)-------------------------------------------------------------
 
-231                                                         MBMS Session Start Request                          Not implemented
+231                                                         MBMS Session Start Request                          Implemented*
 232                                                         MBMS Session Start Response                         Not implemented
 233                                                         MBMS Session Update Request                         Not implemented
 234                                                         MBMS Session Update Response                        Not implemented
@@ -172,8 +172,8 @@ pub use {
     forwardaccesscontextnotification::*, forwardrelocationcompleteacknowledge::*,
     forwardrelocationcompletenotification::*, forwardrelocationreq::*, forwardrelocationresp::*,
     identificationreq::*, identificationresp::*, ies::*, isrstatusindication::*,
-    modifyaccessbearersreq::*, modifyaccessbearersresp::*, modifybearercommand::*,
-    modifybearerfailureind::*, modifybearerreq::*, modifybearerresp::*,
+    mbmssessionstartreq::*, modifyaccessbearersreq::*, modifyaccessbearersresp::*,
+    modifybearercommand::*, modifybearerfailureind::*, modifybearerreq::*, modifybearerresp::*,
     pgwdownlinktriggeringacknowledge::*, pgwdownlinktriggeringnotification::*,
     pgwrestartnotification::*, pgwrestartnotificationacknowledge::*, raninformationrelay::*,
     releaseaccessbearersreq::*, releaseaccessbearersresp::*, relocationcancelreq::*,
@@ -231,6 +231,7 @@ mod identificationreq;
 mod identificationresp;
 mod ies;
 mod isrstatusindication;
+mod mbmssessionstartreq;
 mod modifyaccessbearersreq;
 mod modifyaccessbearersresp;
 mod modifybearercommand;

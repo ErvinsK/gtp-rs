@@ -236,8 +236,8 @@ pub enum InformationElement {
     NodeType(NodeType),
     Fqdn(Fqdn),
     TransactionIdentifier(TransactionIdentifier),
-    MbmsSa(MbmsSa),
-    MbmsSd(MbmsSd),
+    MbmsSa(MbmsServiceArea),
+    MbmsSd(MbmsSessionDuration),
     MbmsSessionId(MbmsSessionId),
     MbmsFlowId(MbmsFlowId),
     MbmsIpMulticastDistribution(MbmsIpMulticastDistribution),
@@ -922,14 +922,14 @@ impl InformationElement {
                     }
                     Err(j) => return Err(j),
                 },
-                138 => match MbmsSd::unmarshal(&buffer[cursor..]) {
+                138 => match MbmsSessionDuration::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
                         ies.push(InformationElement::MbmsSd(i));
                     }
                     Err(j) => return Err(j),
                 },
-                139 => match MbmsSa::unmarshal(&buffer[cursor..]) {
+                139 => match MbmsServiceArea::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
                         ies.push(InformationElement::MbmsSa(i));

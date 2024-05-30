@@ -13,16 +13,16 @@ pub const MBMSSA: u8 = 139;
 // MBMS Service Area IE implementation
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct MbmsSa {
+pub struct MbmsServiceArea {
     pub t: u8,
     pub length: u16,
     pub ins: u8,
     pub mbms_sa: Vec<u16>,
 }
 
-impl Default for MbmsSa {
-    fn default() -> MbmsSa {
-        MbmsSa {
+impl Default for MbmsServiceArea {
+    fn default() -> MbmsServiceArea {
+        MbmsServiceArea {
             t: MBMSSA,
             length: 0,
             ins: 0,
@@ -31,13 +31,13 @@ impl Default for MbmsSa {
     }
 }
 
-impl From<MbmsSa> for InformationElement {
-    fn from(i: MbmsSa) -> Self {
+impl From<MbmsServiceArea> for InformationElement {
+    fn from(i: MbmsServiceArea) -> Self {
         InformationElement::MbmsSa(i)
     }
 }
 
-impl IEs for MbmsSa {
+impl IEs for MbmsServiceArea {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(MBMSSA);
@@ -58,12 +58,12 @@ impl IEs for MbmsSa {
         buffer.append(&mut buffer_ie);
     }
 
-    fn unmarshal(buffer: &[u8]) -> Result<MbmsSa, GTPV2Error> {
+    fn unmarshal(buffer: &[u8]) -> Result<MbmsServiceArea, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE {
-            let mut data = MbmsSa {
+            let mut data = MbmsServiceArea {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                ..MbmsSa::default()
+                ..MbmsServiceArea::default()
             };
             if check_tliv_ie_buffer(data.length, buffer) {
                 if buffer.len() >= 5 + (buffer[4] as usize + 1) * 2 {
@@ -101,20 +101,20 @@ impl IEs for MbmsSa {
 #[test]
 fn mbmssa_ie_unmarshal_test() {
     let encoded_ie: [u8; 9] = [0x8b, 0x00, 0x05, 0x00, 0x01, 0x00, 0x00, 0xff, 0xff];
-    let test_struct = MbmsSa {
+    let test_struct = MbmsServiceArea {
         t: MBMSSA,
         length: 5,
         ins: 0,
         mbms_sa: vec![0, 0xffff],
     };
-    let i = MbmsSa::unmarshal(&encoded_ie);
+    let i = MbmsServiceArea::unmarshal(&encoded_ie);
     assert_eq!(i.unwrap(), test_struct);
 }
 
 #[test]
 fn mbmssa_ie_marshal_test() {
     let encoded_ie: [u8; 9] = [0x8b, 0x00, 0x05, 0x00, 0x01, 0x00, 0x00, 0xff, 0xff];
-    let test_struct = MbmsSa {
+    let test_struct = MbmsServiceArea {
         t: MBMSSA,
         length: 5,
         ins: 0,
@@ -128,6 +128,6 @@ fn mbmssa_ie_marshal_test() {
 #[test]
 fn mbmssa_ie_wrong_msmssa_length() {
     let encoded_ie: [u8; 6] = [0x8b, 0x00, 0x03, 0x00, 0x00, 0x00];
-    let i = MbmsSa::unmarshal(&encoded_ie);
+    let i = MbmsServiceArea::unmarshal(&encoded_ie);
     assert_eq!(i, Err(GTPV2Error::IEInvalidLength(MBMSSA)));
 }

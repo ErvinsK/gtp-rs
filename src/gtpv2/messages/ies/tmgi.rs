@@ -87,7 +87,7 @@ fn tmgi_ie_marshal_test() {
     let encoded: [u8; 10] = [0x9E, 0x00, 0x06, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05];
     let decoded = Tmgi {
         tmgi: [0x00, 0x01, 0x02, 0x03, 0x04, 0x05],
-        ..Default::default()
+        ..Tmgi::default()
     };
     let mut buffer: Vec<u8> = vec![];
     decoded.marshal(&mut buffer);
@@ -99,7 +99,7 @@ fn tmgi_ie_unmarshal_test() {
     let encoded: [u8; 10] = [0x9E, 0x00, 0x06, 0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05];
     let decoded = Tmgi {
         tmgi: [0x00, 0x01, 0x02, 0x03, 0x04, 0x05],
-        ..Default::default()
+        ..Tmgi::default()
     };
     assert_eq!(Tmgi::unmarshal(&encoded).unwrap(), decoded);
 }
