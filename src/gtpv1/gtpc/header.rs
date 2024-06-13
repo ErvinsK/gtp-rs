@@ -131,58 +131,56 @@ impl Gtpv1Header {
 
     pub fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV1Error> {
         if buffer.len() < MIN_HEADER_LENGTH {
-            return Err(GTPV1Error::HeaderInvalidLength)
+            return Err(GTPV1Error::HeaderInvalidLength);
         }
         let mut data = Gtpv1Header::default();
-        let gtp_version = buffer[0] >> 5;
-        let gtp_type = (buffer[0] >> 4) & 1;
-        match (gtp_version, gtp_type) {
+
+        let gtp_version = buffer[0] >> 5; // 3-bit field
+        let gtp_protocol_type = (buffer[0] >> 4) & 1; // flag PT: 1 for GTP, 0 for GTP' (not supported)
+        match (gtp_version, gtp_protocol_type) {
             (1, 1) => (),
-            (_, _) => return Err(GTPV1Error::HeaderVersionNotSupported),
-        }
-        data.msgtype = buffer[1];
-        // TODO: check spec
-        data.length = match u16::from_be_bytes([buffer[2], buffer[3]]) {
-            _l if _l < MIN_HEADER_LENGTH as u16 => return Err(GTPV1Error::HeaderInvalidLength),
-            l => l,
+            _ => return Err(GTPV1Error::HeaderVersionNotSupported),
         };
-        data.teid = u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
 
-        if buffer[0] & 7 == 0 {
-            data.sequence_number = None;
-            data.npdu_number = None;
-            data.extension_headers = None;
-            return Ok(data);
-        }
+        data.msgtype = buffer[1];
 
-        if buffer[8..].len() < 4 {
+        // the length field indicates the size of the payload (including the header & extensions) in bytes
+        data.length = u16::from_be_bytes([buffer[2], buffer[3]]);
+        if data.length < MIN_HEADER_LENGTH as u16 {
             return Err(GTPV1Error::HeaderInvalidLength);
         }
 
-        data.sequence_number = Some(u16::from_be_bytes([buffer[8], buffer[9]]));
-        match buffer[0] & 7 {
-            0b010 => {
-                data.npdu_number = None;
-                data.extension_headers = None;
-            },
-            0b011 => {
-                data.npdu_number = Some(buffer[10]);
-                data.extension_headers = None;
-            },
-            0b110 => {
-                data.npdu_number = None;
-                match Gtpv1Header::unmarshal_ext_hdr(&buffer[11..]) {
-                    Ok(i) => data.extension_headers = Some(i),
-                    Err(j) => return Err(j),
-                }
-            },
-            _ => {
-                data.npdu_number = Some(buffer[10]);
-                match Gtpv1Header::unmarshal_ext_hdr(&buffer[11..]) {
-                    Ok(i) => data.extension_headers = Some(i),
-                    Err(j) => return Err(j),
-                }
+        data.teid = u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
+
+        // flags indicate only the required fields are provided, so we can return
+        if buffer[0] & 7 == 0 {
+            return Ok(data);
+        }
+
+        let extension_header_flag = (buffer[0] >> 2) & 1; // flag E
+        let sequence_number_flag = (buffer[0] >> 1) & 1; // flag S
+        let ndpu_number_flag = buffer[0] & 1; // flag PN
+
+        if sequence_number_flag == 1 {
+            if buffer[8..].len() < 2 {
+                return Err(GTPV1Error::HeaderInvalidLength);
             }
+            data.sequence_number = Some(u16::from_be_bytes([buffer[8], buffer[9]]));
+        }
+
+        if ndpu_number_flag == 1 {
+            if buffer[8..].len() < 3 {
+                return Err(GTPV1Error::HeaderInvalidLength);
+            }
+            data.npdu_number = Some(buffer[10]);
+        }
+
+        if extension_header_flag == 1 {
+            if buffer[8..].len() < 4 {
+                return Err(GTPV1Error::HeaderInvalidLength);
+            }
+            // TODO: check the total length of extension headers does not surpass data.length
+            data.extension_headers = Some(Gtpv1Header::unmarshal_ext_hdr(&buffer[11..])?);
         }
 
         Ok(data)
