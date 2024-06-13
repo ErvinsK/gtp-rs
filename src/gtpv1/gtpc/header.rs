@@ -144,12 +144,10 @@ impl Gtpv1Header {
 
         data.msgtype = buffer[1];
 
-        // the length field indicates the size of the payload (including the header & extensions) in bytes
+        // indicates the size of the payload, including optional parts of the header
         data.length = u16::from_be_bytes([buffer[2], buffer[3]]);
-        if data.length < MIN_HEADER_LENGTH as u16 {
-            return Err(GTPV1Error::HeaderInvalidLength);
-        }
 
+        // unambiguously identifies a tunnel endpoint
         data.teid = u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]);
 
         // flags indicate only the required fields are provided, so we can return
