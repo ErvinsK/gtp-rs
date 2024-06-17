@@ -48,9 +48,9 @@ impl IEs for Apn {
     {
         if buffer.len() >= 3 {
             let mut data = Apn {
-                length: match u16::from_be_bytes([buffer[2], buffer[3]]) {
+                length: match u16::from_be_bytes([buffer[1], buffer[2]]) {
                     0 => return Err(GTPV1Error::IEInvalidLength),
-                    _ => u16::from_be_bytes([buffer[2], buffer[3]]),
+                    _ => u16::from_be_bytes([buffer[1], buffer[2]]),
                 },
                 ..Default::default()
             };
