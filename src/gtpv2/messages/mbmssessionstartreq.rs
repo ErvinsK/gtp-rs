@@ -379,7 +379,7 @@ fn test_mbms_session_start_req_unmarshal() {
 }
 
 #[test]
-fn test_modify_access_bearers_req_marshal() {
+fn test_mbms_session_start_req_marshal() {
     use std::net::{IpAddr, Ipv4Addr, Ipv6Addr};
     let encoded: [u8; 220] = [
         0x48, 0xe7, 0x00, 0xd8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x68, 0x00, 0x57, 0x00, 0x19,

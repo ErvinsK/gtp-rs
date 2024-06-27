@@ -144,11 +144,11 @@ Message Type value (Decimal)                                Message             
 ----------MBMS GW to MME/SGSN (Sm/Sn)-------------------------------------------------------------
 
 231                                                         MBMS Session Start Request                          Implemented*
-232                                                         MBMS Session Start Response                         Not implemented
-233                                                         MBMS Session Update Request                         Not implemented
-234                                                         MBMS Session Update Response                        Not implemented
-235                                                         MBMS Session Stop Request                           Not implemented
-236                                                         MBMS Session Stop Response                          Not implemented
+232                                                         MBMS Session Start Response                         Implemented*
+233                                                         MBMS Session Update Request                         Implemented*
+234                                                         MBMS Session Update Response                        Implemented*
+235                                                         MBMS Session Stop Request                           Implemented*
+236                                                         MBMS Session Stop Response                          Implemented*
 237 to 239                                                  For future use
 
 ----------Other-----------------------------------------------------------------------------------
@@ -172,17 +172,19 @@ pub use {
     forwardaccesscontextnotification::*, forwardrelocationcompleteacknowledge::*,
     forwardrelocationcompletenotification::*, forwardrelocationreq::*, forwardrelocationresp::*,
     identificationreq::*, identificationresp::*, ies::*, isrstatusindication::*,
-    mbmssessionstartreq::*, modifyaccessbearersreq::*, modifyaccessbearersresp::*,
-    modifybearercommand::*, modifybearerfailureind::*, modifybearerreq::*, modifybearerresp::*,
-    pgwdownlinktriggeringacknowledge::*, pgwdownlinktriggeringnotification::*,
-    pgwrestartnotification::*, pgwrestartnotificationacknowledge::*, raninformationrelay::*,
-    releaseaccessbearersreq::*, releaseaccessbearersresp::*, relocationcancelreq::*,
-    relocationcancelresp::*, remoteuereportacknowledge::*, remoteuereportnotification::*,
-    resumeacknowledge::*, resumenotification::*, stoppagingindication::*, suspendacknowledge::*,
-    suspendnotification::*, tracesessionactivation::*, tracesessiondeactivation::*,
-    ueactivityacknowledge::*, ueactivitynotification::*, ueregistrationqueryreq::*,
-    ueregistrationqueryresp::*, updatebearerreq::*, updatebearerresp::*,
-    updatepdnconnectionsetreq::*, updatepdnconnectionsetresp::*, versionnotsupported::*,
+    mbmssessionstartreq::*, mbmssessionstartresp::*, mbmssessionstopreq::*, mbmssessionstopresp::*,
+    mbmssessionupdatereq::*, mbmssessionupdateresp::*, modifyaccessbearersreq::*,
+    modifyaccessbearersresp::*, modifybearercommand::*, modifybearerfailureind::*,
+    modifybearerreq::*, modifybearerresp::*, pgwdownlinktriggeringacknowledge::*,
+    pgwdownlinktriggeringnotification::*, pgwrestartnotification::*,
+    pgwrestartnotificationacknowledge::*, raninformationrelay::*, releaseaccessbearersreq::*,
+    releaseaccessbearersresp::*, relocationcancelreq::*, relocationcancelresp::*,
+    remoteuereportacknowledge::*, remoteuereportnotification::*, resumeacknowledge::*,
+    resumenotification::*, stoppagingindication::*, suspendacknowledge::*, suspendnotification::*,
+    tracesessionactivation::*, tracesessiondeactivation::*, ueactivityacknowledge::*,
+    ueactivitynotification::*, ueregistrationqueryreq::*, ueregistrationqueryresp::*,
+    updatebearerreq::*, updatebearerresp::*, updatepdnconnectionsetreq::*,
+    updatepdnconnectionsetresp::*, versionnotsupported::*,
 };
 
 mod alertmmeacknowledge;
@@ -232,6 +234,11 @@ mod identificationresp;
 mod ies;
 mod isrstatusindication;
 mod mbmssessionstartreq;
+mod mbmssessionstartresp;
+mod mbmssessionstopreq;
+mod mbmssessionstopresp;
+mod mbmssessionupdatereq;
+mod mbmssessionupdateresp;
 mod modifyaccessbearersreq;
 mod modifyaccessbearersresp;
 mod modifybearercommand;
