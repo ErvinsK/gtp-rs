@@ -13,7 +13,7 @@ Use it at your own risk!
 
 # Status
 
-- Full implementation of GTPv2-C IEs and Messages (except MBMS related)
+- Full implementation of GTPv2-C IEs and Messages (100% of all messages and IEs)
 - Full implementation of GTPv1-U (Zero-Copy)
 - Incomplete and outdated implementation of GTPv1-C - both IEs and Messages (it works but not so polished as GTPv2 implementation)
 
