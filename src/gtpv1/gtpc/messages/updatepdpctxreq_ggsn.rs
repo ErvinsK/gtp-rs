@@ -477,7 +477,7 @@ impl Messages for UpdatePDPContextRequestGGSN {
                     return Err(GTPV1Error::MessageInvalidMessageFormat);
                 }
             }
-            if msg_hash.get(&NSAPI).is_some() {
+            if msg_hash.contains_key(&NSAPI) {
                 Ok(message)
             } else {
                 Err(GTPV1Error::MessageMandatoryIEMissing)

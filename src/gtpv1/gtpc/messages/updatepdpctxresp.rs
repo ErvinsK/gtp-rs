@@ -543,7 +543,7 @@ impl Messages for UpdatePDPContextResponse {
                     return Err(GTPV1Error::MessageInvalidMessageFormat);
                 }
             }
-            if msg_hash.get(&CAUSE).is_some() {
+            if msg_hash.contains_key(&CAUSE) {
                 Ok(message)
             } else {
                 Err(GTPV1Error::MessageMandatoryIEMissing)
