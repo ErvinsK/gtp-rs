@@ -18,7 +18,7 @@ pub struct UeTimeZone {
     pub t: u8,
     pub length: u16,
     pub ins: u8,
-    pub time_zone: i8, // Negative value means UTC- and positive UTC+
+    pub time_zone: i8, // Negative value means UTC- and positive UTC+, and given with 15 minutes resolution (i.e. UTC+1 = 4, UTC-1 = -4)
     pub dst: u8,
 }
 
@@ -47,15 +47,9 @@ impl IEs for UeTimeZone {
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
         if self.time_zone >= 0 {
-            let tz = (self.time_zone as u8) << 2;
-            let b: u8 = ((tz - (tz % 10)) / 10) << 4;
-            let a = tz % 10;
-            buffer_ie.push(b >> 4 | a << 4);
+            buffer_ie.push(self.time_zone as u8);
         } else {
-            let tz = self.time_zone.unsigned_abs() << 2;
-            let b: u8 = (((tz - (tz % 10)) / 10) << 4) | 0x80;
-            let a = tz % 10;
-            buffer_ie.push(b >> 4 | a << 4);
+            buffer_ie.push(0x80 | self.time_zone.unsigned_abs());
         }
         buffer_ie.push(self.dst);
         set_tliv_ie_length(&mut buffer_ie);
@@ -69,18 +63,12 @@ impl IEs for UeTimeZone {
                 ins: buffer[3] & 0x0f,
                 ..UeTimeZone::default()
             };
-            let bcd = (buffer[4] >> 4) | (buffer[4] << 4);
-            match bcd >> 7 {
-                0 => {
-                    data.time_zone = ((((bcd & 0x7f) >> 4) * 10 + ((bcd & 0x7f) & 0xf)) >> 2) as i8
-                }
-                1 => {
-                    data.time_zone =
-                        -(((((bcd & 0x7f) >> 4) * 10 + ((bcd & 0x7f) & 0xf)) >> 2) as i8)
-                }
+            match buffer[4] >> 7 {
+                0 => data.time_zone = (buffer[4] & 0x7f) as i8,
+                1 => data.time_zone = -((buffer[4] & 0x7f) as i8),
                 _ => data.time_zone = 0,
             }
-            data.dst = buffer[5] & 0x07;
+            data.dst = buffer[5] & 0x03;
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(UETIMEZONE))
@@ -104,12 +92,12 @@ impl IEs for UeTimeZone {
 
 #[test]
 fn uetimezone_ie_marshal_test() {
-    let encoded: [u8; 6] = [0x72, 0x00, 0x02, 0x00, 0x80, 0x01];
+    let encoded: [u8; 6] = [0x72, 0x00, 0x02, 0x00, 0x04, 0x01];
     let decoded = UeTimeZone {
         t: UETIMEZONE,
         length: UETIMEZONE_LENGTH as u16,
         ins: 0,
-        time_zone: 2,
+        time_zone: 4,
         dst: 1,
     };
     let mut buffer: Vec<u8> = vec![];
@@ -119,12 +107,12 @@ fn uetimezone_ie_marshal_test() {
 
 #[test]
 fn uetimezone_ie_unmarshal_test() {
-    let encoded: [u8; 6] = [0x72, 0x00, 0x02, 0x00, 0x80, 0x01];
+    let encoded: [u8; 6] = [0x72, 0x00, 0x02, 0x00, 0x04, 0x01];
     let decoded = UeTimeZone {
         t: UETIMEZONE,
         length: UETIMEZONE_LENGTH as u16,
         ins: 0,
-        time_zone: 2,
+        time_zone: 4,
         dst: 1,
     };
     assert_eq!(UeTimeZone::unmarshal(&encoded).unwrap(), decoded);

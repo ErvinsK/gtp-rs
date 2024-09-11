@@ -34,15 +34,9 @@ impl IEs for MsTimeZone {
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         if self.time_zone >= 0 {
-            let tz = (self.time_zone as u8) << 2;
-            let b: u8 = ((tz - (tz % 10)) / 10) << 4;
-            let a = tz % 10;
-            buffer_ie.push(b >> 4 | a << 4);
+            buffer_ie.push(self.time_zone as u8);
         } else {
-            let tz = self.time_zone.unsigned_abs() << 2;
-            let b: u8 = (((tz - (tz % 10)) / 10) << 4) | 0x80;
-            let a = tz % 10;
-            buffer_ie.push(b >> 4 | a << 4);
+            buffer_ie.push(0x80 | self.time_zone.unsigned_abs());
         }
         buffer_ie.push(self.dst);
         set_tlv_ie_length(&mut buffer_ie);
@@ -58,18 +52,12 @@ impl IEs for MsTimeZone {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ..Default::default()
             };
-            let bcd = (buffer[3] >> 4) | (buffer[3] << 4);
-            match bcd >> 7 {
-                0 => {
-                    data.time_zone = ((((bcd & 0x7f) >> 4) * 10 + ((bcd & 0x7f) & 0xf)) >> 2) as i8
-                }
-                1 => {
-                    data.time_zone =
-                        -(((((bcd & 0x7f) >> 4) * 10 + ((bcd & 0x7f) & 0xf)) >> 2) as i8)
-                }
+            match buffer[3] >> 7 {
+                0 => data.time_zone = (buffer[3] & 0x7f) as i8,
+                1 => data.time_zone = -((buffer[3] & 0x7f) as i8),
                 _ => data.time_zone = 0,
             }
-            data.dst = buffer[4] & 0x07;
+            data.dst = buffer[4] & 0x03;
             Ok(data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -86,11 +74,11 @@ impl IEs for MsTimeZone {
 
 #[test]
 fn mstimezone_ie_marshal_test() {
-    let ie_marshalled: [u8; 5] = [0x99, 0x00, 0x02, 0x80, 0x00];
+    let ie_marshalled: [u8; 5] = [0x99, 0x00, 0x02, 0x04, 0x00];
     let ie_to_marshal = MsTimeZone {
         t: MSTIMEZONETYPE,
         length: MSTIMEZONE_LENGTH,
-        time_zone: 2,
+        time_zone: 4,
         dst: 0,
     };
     let mut buffer: Vec<u8> = vec![];
@@ -100,7 +88,7 @@ fn mstimezone_ie_marshal_test() {
 
 #[test]
 fn mstimezone_ie_unmarshal_test() {
-    let ie_to_unmarshal: [u8; 5] = [0x99, 0x00, 0x02, 0x69, 0x00];
+    let ie_to_unmarshal: [u8; 5] = [0x99, 0x00, 0x02, 0x84, 0x00];
     let ie_unmarshalled = MsTimeZone {
         t: MSTIMEZONETYPE,
         length: MSTIMEZONE_LENGTH,
