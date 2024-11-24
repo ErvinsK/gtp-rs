@@ -59,13 +59,10 @@ impl IEs for RemoteUserId {
                 let i = tbcd_encode(&self.imsi);
                 buffer_ie.push(i.len() as u8);
                 buffer_ie.extend(i);
-                match &self.msisdn {
-                    Some(i) => {
-                        let m = tbcd_encode(i);
-                        buffer_ie.push(m.len() as u8);
-                        buffer_ie.extend(m);
-                    }
-                    None => (),
+                if let Some(i) = &self.msisdn {
+                    let m = tbcd_encode(i);
+                    buffer_ie.push(m.len() as u8);
+                    buffer_ie.extend(m);
                 }
             }
             (true, false) => {
@@ -73,13 +70,10 @@ impl IEs for RemoteUserId {
                 let i = tbcd_encode(&self.imsi);
                 buffer_ie.push(i.len() as u8);
                 buffer_ie.extend(i);
-                match &self.imei {
-                    Some(i) => {
-                        let m = tbcd_encode(i);
-                        buffer_ie.push(m.len() as u8);
-                        buffer_ie.extend(m);
-                    }
-                    None => (),
+                if let Some(i) = &self.imei {
+                    let m = tbcd_encode(i);
+                    buffer_ie.push(m.len() as u8);
+                    buffer_ie.extend(m);
                 }
             }
             (true, true) => {
@@ -87,21 +81,15 @@ impl IEs for RemoteUserId {
                 let i = tbcd_encode(&self.imsi);
                 buffer_ie.push(i.len() as u8);
                 buffer_ie.extend(i);
-                match &self.msisdn {
-                    Some(i) => {
-                        let m = tbcd_encode(i);
-                        buffer_ie.push(m.len() as u8);
-                        buffer_ie.extend(m);
-                    }
-                    None => (),
+                if let Some(i) = &self.msisdn {
+                    let m = tbcd_encode(i);
+                    buffer_ie.push(m.len() as u8);
+                    buffer_ie.extend(m);
                 }
-                match &self.imei {
-                    Some(i) => {
-                        let m = tbcd_encode(i);
-                        buffer_ie.push(m.len() as u8);
-                        buffer_ie.extend(m);
-                    }
-                    None => (),
+                if let Some(i) = &self.imei {
+                    let m = tbcd_encode(i);
+                    buffer_ie.push(m.len() as u8);
+                    buffer_ie.extend(m);
                 }
             }
         }
