@@ -71,43 +71,29 @@ impl IEs for TwanId {
         buffer_ie.push(flags);
         buffer_ie.push(self.ssid.len() as u8);
         buffer_ie.extend_from_slice(&self.ssid[..]);
-        match &self.bssid {
-            Some(i) => buffer_ie.extend_from_slice(&i[..]),
-            None => (),
+        if let Some(i) = &self.bssid {
+            buffer_ie.extend_from_slice(&i[..]);
         }
-        match &self.civic_address {
-            Some(i) => {
-                buffer_ie.push(i.len() as u8);
-                buffer_ie.extend_from_slice(&i[..]);
-            }
-            None => (),
+        if let Some(i) = &self.civic_address {
+            buffer_ie.push(i.len() as u8);
+            buffer_ie.extend_from_slice(&i[..]);
         }
-        match &self.twan_plmnid {
-            Some((i, j)) => buffer_ie.append(&mut mcc_mnc_encode(*i, *j)),
-            None => (),
+        if let Some((i, j)) = &self.twan_plmnid {
+            buffer_ie.extend_from_slice(&mcc_mnc_encode(*i, *j));
         }
-        match &self.twan_op_name {
-            Some(i) => {
-                let b = i.as_bytes();
-                buffer_ie.push(b.len() as u8);
-                buffer_ie.extend_from_slice(b);
-            }
-            None => (),
+        if let Some(i) = &self.twan_op_name {
+            let b = i.as_bytes();
+            buffer_ie.push(b.len() as u8);
+            buffer_ie.extend_from_slice(b);
         }
-        match &self.relay_id {
-            Some((i, j)) => {
-                buffer_ie.push(*i);
-                buffer_ie.push(j.len() as u8);
-                buffer_ie.extend_from_slice(&j[..]);
-            }
-            None => (),
+        if let Some(i) = &self.relay_id {
+            buffer_ie.push(i.0);
+            buffer_ie.push(i.1.len() as u8);
+            buffer_ie.extend_from_slice(&i.1[..]);
         }
-        match &self.circuit_id {
-            Some(i) => {
-                buffer_ie.push(i.len() as u8);
-                buffer_ie.extend_from_slice(&i[..]);
-            }
-            None => (),
+        if let Some(i) = &self.circuit_id {
+            buffer_ie.push(i.len() as u8);
+            buffer_ie.extend_from_slice(&i[..]);
         }
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
