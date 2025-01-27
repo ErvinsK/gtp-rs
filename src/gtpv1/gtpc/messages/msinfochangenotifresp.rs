@@ -174,19 +174,21 @@ impl Messages for MSInfoChangeNotificationResponse {
                     }
                     Err(_) => return Err(GTPV1Error::MessageOptionalIEIncorrect),
                 },
-                CSG_INFO_REPORT => match CSGInformationReportingAction::unmarshal(&buffer[cursor..]) {
-                    Ok(i) => {
-                        cursor += i.len();
-                        msg_hash
-                            .entry(current_byte)
-                            .and_modify(|e| *e += 1)
-                            .or_insert_with(|| {
-                                message.csg_info_report = Some(i);
-                                1
-                            });
+                CSG_INFO_REPORT => {
+                    match CSGInformationReportingAction::unmarshal(&buffer[cursor..]) {
+                        Ok(i) => {
+                            cursor += i.len();
+                            msg_hash
+                                .entry(current_byte)
+                                .and_modify(|e| *e += 1)
+                                .or_insert_with(|| {
+                                    message.csg_info_report = Some(i);
+                                    1
+                                });
+                        }
+                        Err(_) => return Err(GTPV1Error::MessageOptionalIEIncorrect),
                     }
-                    Err(_) => return Err(GTPV1Error::MessageOptionalIEIncorrect),
-                },
+                }
                 PRIVATE_EXTENSION => match PrivateExtension::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
                         cursor += i.len();
@@ -210,4 +212,106 @@ impl Messages for MSInfoChangeNotificationResponse {
     }
 }
 
+#[test]
+fn ms_info_change_notification_resp_unmarshal_test() {
+    let encoded = &[
+        0x32, 0x81, 0x0, 0x1c, 0x37, 0x38, 0xbf, 0x7a, 0x9b, 0xcf, 0x0, 0x0, 0x1, 0x80, 0x2, 0x9,
+        0x41, 0x50, 0x1, 0x71, 0x44, 0x45, 0xf6, 0x14, 0x0, 0x9a, 0x0, 0x8, 0x68, 0x99, 0x15, 0x30,
+        0x91, 0x64, 0x10, 0x10,
+    ];
+    let decoded = MSInfoChangeNotificationResponse {
+        header: Gtpv1Header {
+            msgtype: MS_INFO_CHANGE_NOTIFICATION_RESPONSE,
+            length: 28,
+            teid: 926465914,
+            sequence_number: Some(39887),
+            npdu_number: None,
+            extension_headers: None,
+        },
+        cause: Cause {
+            value: 128,
+            ..Default::default()
+        },
+        imsi: Some(Imsi {
+            imsi: "901405101744546".to_string(),
+            ..Default::default()
+        }),
+        linked_nsapi: Some(Nsapi::default()),
+        imei: Some(Imei {
+            imei: "8699510319460101".to_string(),
+            ..Default::default()
+        }),
+        private_extension: None,
+        ms_info_change: None,
+        csg_info_report: None,
+    };
 
+    assert_eq!(
+        MSInfoChangeNotificationResponse::unmarshal(encoded).unwrap(),
+        decoded
+    );
+}
+
+#[test]
+fn ms_info_change_notification_resp_marshal_test() {
+    let encoded = &[
+        0x32, 0x81, 0x0, 0x1c, 0x37, 0x38, 0xbf, 0x7a, 0x9b, 0xcf, 0x0, 0x0, 0x1, 0x80, 0x2, 0x9,
+        0x41, 0x50, 0x1, 0x71, 0x44, 0x45, 0xf6, 0x14, 0x0, 0x9a, 0x0, 0x8, 0x68, 0x99, 0x15, 0x30,
+        0x91, 0x64, 0x10, 0x10,
+    ];
+    let decoded = MSInfoChangeNotificationResponse {
+        header: Gtpv1Header {
+            msgtype: MS_INFO_CHANGE_NOTIFICATION_RESPONSE,
+            length: 0,
+            teid: 926465914,
+            sequence_number: Some(39887),
+            npdu_number: None,
+            extension_headers: None,
+        },
+        cause: Cause {
+            value: 128,
+            ..Default::default()
+        },
+        imsi: Some(Imsi {
+            imsi: "901405101744546".to_string(),
+            ..Default::default()
+        }),
+        linked_nsapi: Some(Nsapi::default()),
+        imei: Some(Imei {
+            imei: "8699510319460101".to_string(),
+            ..Default::default()
+        }),
+        private_extension: None,
+        ms_info_change: None,
+        csg_info_report: None,
+    };
+    let mut buffer: Vec<u8> = vec![];
+    decoded.marshal(&mut buffer);
+    assert_eq!(buffer, encoded);
+}
+
+#[test]
+fn ms_info_change_notification_resp_wrong_ie_order_unmarshal_test() {
+    let encoded = &[
+        0x32, 0x81, 0x0, 0x1c, 0x37, 0x38, 0xbf, 0x7a, 0x9b, 0xcf, 0x0, 0x0, 0x2, 0x9, 0x41, 0x50,
+        0x1, 0x71, 0x44, 0x45, 0xf6, 0x1, 0x80, 0x14, 0x0, 0x9a, 0x0, 0x8, 0x68, 0x99, 0x15, 0x30,
+        0x91, 0x64, 0x10, 0x10,
+    ];
+    assert_eq!(
+        MSInfoChangeNotificationResponse::unmarshal(encoded),
+        Err(GTPV1Error::MessageInvalidMessageFormat)
+    );
+}
+
+#[test]
+fn ms_info_change_notification_resp_missing_mandatory_ie_unmarshal_test() {
+    let encoded = &[
+        0x32, 0x81, 0x0, 0x1a, 0x37, 0x38, 0xbf, 0x7a, 0x9b, 0xcf, 0x0, 0x0, 0x2, 0x9, 0x41, 0x50,
+        0x1, 0x71, 0x44, 0x45, 0xf6, 0x14, 0x0, 0x9a, 0x0, 0x8, 0x68, 0x99, 0x15, 0x30, 0x91, 0x64,
+        0x10, 0x10,
+    ];
+    assert_eq!(
+        MSInfoChangeNotificationResponse::unmarshal(encoded),
+        Err(GTPV1Error::MessageMandatoryIEMissing)
+    );
+}
