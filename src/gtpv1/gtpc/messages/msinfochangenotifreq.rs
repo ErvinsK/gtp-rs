@@ -115,6 +115,7 @@ impl Messages for MSInfoChangeNotificationRequest {
             }
             prev_ie = buffer[cursor];
             let current_byte = buffer[cursor];
+            dbg!(current_byte);
             match current_byte {
                 IMSI => match Imsi::unmarshal(&buffer[cursor..]) {
                     Ok(i) => {
@@ -230,4 +231,117 @@ impl Messages for MSInfoChangeNotificationRequest {
     }
 }
 
+#[test]
+fn ms_info_change_notification_req_unmarshal_test() {
+    let encoded = &[
+        0x32, 0x80, 0x0, 0x29, 0x37, 0x38, 0xbf, 0x7a, 0x9b, 0xcf, 0x0, 0x0, 0x2, 0x9, 0x41, 0x50,
+        0x1, 0x71, 0x44, 0x45, 0xf6, 0x14, 0x0, 0x97, 0x0, 0x1, 0x2, 0x98, 0x0, 0x8, 0x0, 0x13,
+        0x0, 0x62, 0x53, 0x17, 0x4, 0x27, 0x9a, 0x0, 0x8, 0x68, 0x99, 0x15, 0x30, 0x91, 0x64, 0x10,
+        0x10,
+    ];
+    let decoded = MSInfoChangeNotificationRequest {
+        header: Gtpv1Header {
+            msgtype: MS_INFO_CHANGE_NOTIFICATION_REQUEST,
+            length: 41,
+            teid: 926465914,
+            sequence_number: Some(39887),
+            npdu_number: None,
+            extension_headers: None,
+        },
+        imsi: Some(Imsi {
+            imsi: "901405101744546".to_string(),
+            ..Default::default()
+        }),
+        linked_nsapi: Some(Nsapi::default()),
+        rat_type: RatType::default(),
+        uli: Some(Uli {
+            mcc: 310,
+            mnc: 260,
+            lac: 21271,
+            loc: Location::Ci(1063),
+            ..Default::default()
+        }),
+        imei: Some(Imei {
+            imei: "8699510319460101".to_string(),
+            ..Default::default()
+        }),
+        ext_common_flags: None,
+        user_csg_info: None,
+        private_extension: None,
+    };
 
+    assert_eq!(
+        MSInfoChangeNotificationRequest::unmarshal(encoded).unwrap(),
+        decoded
+    );
+}
+
+#[test]
+fn ms_info_change_notification_req_marshal_test() {
+    let encoded = &[
+        0x32, 0x80, 0x0, 0x29, 0x37, 0x38, 0xbf, 0x7a, 0x9b, 0xcf, 0x0, 0x0, 0x2, 0x9, 0x41, 0x50,
+        0x1, 0x71, 0x44, 0x45, 0xf6, 0x14, 0x0, 0x97, 0x0, 0x1, 0x2, 0x98, 0x0, 0x8, 0x0, 0x13,
+        0x0, 0x62, 0x53, 0x17, 0x4, 0x27, 0x9a, 0x0, 0x8, 0x68, 0x99, 0x15, 0x30, 0x91, 0x64, 0x10,
+        0x10,
+    ];
+    let decoded = MSInfoChangeNotificationRequest {
+        header: Gtpv1Header {
+            msgtype: MS_INFO_CHANGE_NOTIFICATION_REQUEST,
+            length: 0,
+            teid: 926465914,
+            sequence_number: Some(39887),
+            npdu_number: None,
+            extension_headers: None,
+        },
+        imsi: Some(Imsi {
+            imsi: "901405101744546".to_string(),
+            ..Default::default()
+        }),
+        linked_nsapi: Some(Nsapi::default()),
+        rat_type: RatType::default(),
+        uli: Some(Uli {
+            mcc: 310,
+            mnc: 260,
+            lac: 21271,
+            loc: Location::Ci(1063),
+            ..Default::default()
+        }),
+        imei: Some(Imei {
+            imei: "8699510319460101".to_string(),
+            ..Default::default()
+        }),
+        ext_common_flags: None,
+        user_csg_info: None,
+        private_extension: None,
+    };
+    let mut buffer: Vec<u8> = vec![];
+    decoded.marshal(&mut buffer);
+    assert_eq!(buffer, encoded);
+}
+
+#[test]
+fn ms_info_change_notification_req_wrong_ie_order_unmarshal_test() {
+    let encoded = &[
+        0x32, 0x80, 0x0, 0x29, 0x37, 0x38, 0xbf, 0x7a, 0x9b, 0xcf, 0x0, 0x0, 0x2, 0x9, 0x41, 0x50,
+        0x1, 0x71, 0x44, 0x45, 0xf6, 0x97, 0x0, 0x1, 0x2, 0x14, 0x0, 0x98, 0x0, 0x8, 0x0, 0x13,
+        0x0, 0x62, 0x53, 0x17, 0x4, 0x27, 0x9a, 0x0, 0x8, 0x68, 0x99, 0x15, 0x30, 0x91, 0x64, 0x10,
+        0x10,
+    ];
+    assert_eq!(
+        MSInfoChangeNotificationRequest::unmarshal(encoded),
+        Err(GTPV1Error::MessageInvalidMessageFormat)
+    );
+}
+
+#[test]
+fn ms_info_change_notification_req_missing_mandatory_ie_unmarshal_test() {
+    let encoded = &[
+        0x32, 0x80, 0x0, 0x25, 0x37, 0x38, 0xbf, 0x7a, 0x9b, 0xcf, 0x0, 0x0, 0x2, 0x9, 0x41, 0x50,
+        0x1, 0x71, 0x44, 0x45, 0xf6, 0x14, 0x0, 0x98, 0x0, 0x8, 0x0, 0x13, 0x0, 0x62, 0x53, 0x17,
+        0x4, 0x27, 0x9a, 0x0, 0x8, 0x68, 0x99, 0x15, 0x30, 0x91, 0x64, 0x10, 0x10,
+    ];
+    assert_eq!(
+        MSInfoChangeNotificationRequest::unmarshal(encoded),
+        Err(GTPV1Error::MessageMandatoryIEMissing)
+    );
+}
