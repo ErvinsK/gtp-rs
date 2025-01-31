@@ -1,10 +1,10 @@
 pub use {
     commons::*, createpdpctxreq::*, createpdpctxresp::*, deletepdpctxreq::*, deletepdpctxresp::*,
     echoreq::*, echoresp::*, ies::*, initiatepdpctxactivationreq::*,
-    initiatepdpctxactivationresp::*, pdunotificationrejectreq::*, pdunotificationrejectresp::*,
-    pdunotificationreq::*, pdunotificationresp::*, supportedexthdrnotification::*,
-    updatepdpctxreq::*, updatepdpctxreq_ggsn::*, updatepdpctxresp::*, updatepdpctxresp_ggsn::*,
-    versionnotsupported::*,
+    initiatepdpctxactivationresp::*, msinfochangenotifreq::*, msinfochangenotifresp::*,
+    pdunotificationrejectreq::*, pdunotificationrejectresp::*, pdunotificationreq::*,
+    pdunotificationresp::*, supportedexthdrnotification::*, updatepdpctxreq::*,
+    updatepdpctxreq_ggsn::*, updatepdpctxresp::*, updatepdpctxresp_ggsn::*, versionnotsupported::*,
 };
 mod commons;
 mod createpdpctxreq;
@@ -16,6 +16,8 @@ mod echoresp;
 mod ies;
 mod initiatepdpctxactivationreq;
 mod initiatepdpctxactivationresp;
+mod msinfochangenotifreq;
+mod msinfochangenotifresp;
 mod pdunotificationrejectreq;
 mod pdunotificationrejectresp;
 mod pdunotificationreq;
