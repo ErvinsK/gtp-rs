@@ -181,6 +181,14 @@ impl BearerContext {
 
         v.push(self.ebi.clone().into());
 
+        if let Some(i) = self.pco.clone() {
+            v.push(i.into())
+        }
+
+        if let Some(i) = self.bearer_qos.clone() {
+            v.push(i.into())
+        }
+
         if let Some(i) = self.tft.clone() {
             v.push(i.into())
         }
@@ -188,10 +196,6 @@ impl BearerContext {
         self.fteids
             .iter()
             .for_each(|x| v.push(InformationElement::Fteid(x.clone())));
-
-        if let Some(i) = self.bearer_qos.clone() {
-            v.push(i.into())
-        }
 
         if let Some(i) = self.charging_id.clone() {
             v.push(i.into())
@@ -201,11 +205,11 @@ impl BearerContext {
             v.push(i.into())
         }
 
-        if let Some(i) = self.pco.clone() {
+        if let Some(i) = self.apco.clone() {
             v.push(i.into())
         }
 
-        if let Some(i) = self.apco.clone() {
+        if let Some(i) = self.ran_nas_cause.clone() {
             v.push(i.into())
         }
 
@@ -214,10 +218,6 @@ impl BearerContext {
         }
 
         if let Some(i) = self.max_packet_loss.clone() {
-            v.push(i.into())
-        }
-
-        if let Some(i) = self.ran_nas_cause.clone() {
             v.push(i.into())
         }
 
