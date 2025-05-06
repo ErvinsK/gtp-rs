@@ -84,7 +84,7 @@ impl Messages for MSInfoChangeNotificationResponse {
 
         let mut message = MSInfoChangeNotificationResponse::default();
 
-        match Gtpv1Header::unmarshal(&buffer) {
+        match Gtpv1Header::unmarshal(buffer) {
             Ok(h) => message.header = h,
             Err(e) => return Err(e),
         }
