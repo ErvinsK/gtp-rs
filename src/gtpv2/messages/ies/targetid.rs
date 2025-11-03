@@ -177,6 +177,7 @@ impl IEs for ExtendedMacroEnbIdentifier {
 pub struct CellIdentifier {
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub lac: u16,
     pub rac: u8,
     pub ci: u16,
@@ -184,7 +185,11 @@ pub struct CellIdentifier {
 
 impl IEs for CellIdentifier {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer.extend_from_slice(&self.lac.to_be_bytes());
         buffer.push(self.rac);
         buffer.extend_from_slice(&self.ci.to_be_bytes());
@@ -192,9 +197,11 @@ impl IEs for CellIdentifier {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= 8 {
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[..=2]);
             let data = CellIdentifier {
-                mcc: mcc_mnc_decode(&buffer[..=2]).0,
-                mnc: mcc_mnc_decode(&buffer[..=2]).1,
+                mcc,
+                mnc,
+                mnc_is_three_digits,
                 lac: u16::from_be_bytes([buffer[3], buffer[4]]),
                 rac: buffer[5],
                 ci: u16::from_be_bytes([buffer[6], buffer[7]]),
@@ -225,6 +232,7 @@ impl IEs for CellIdentifier {
 pub struct GNbIdentifier {
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub gnb_id_length: u8, // gNodeB ID length from 22 to 32 bits
     pub gnb_id: u32,       // gNodeB ID length from 22 to 32 bits
     pub etac: [u8; 3],     // 5GS Tracking Area Code (24 bits)
@@ -235,6 +243,7 @@ impl Default for GNbIdentifier {
         GNbIdentifier {
             mcc: 0,
             mnc: 0,
+            mnc_is_three_digits: false,
             gnb_id_length: 22,
             gnb_id: 0,
             etac: [0; 3],
@@ -244,7 +253,11 @@ impl Default for GNbIdentifier {
 
 impl IEs for GNbIdentifier {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer.push(self.gnb_id_length);
         buffer.extend_from_slice(&self.gnb_id.to_be_bytes());
         buffer.extend_from_slice(&self.etac);
@@ -252,9 +265,11 @@ impl IEs for GNbIdentifier {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= 11 {
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[..=2]);
             let data = GNbIdentifier {
-                mcc: mcc_mnc_decode(&buffer[..=2]).0,
-                mnc: mcc_mnc_decode(&buffer[..=2]).1,
+                mcc,
+                mnc,
+                mnc_is_three_digits,
                 gnb_id_length: buffer[3],
                 gnb_id: u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]),
                 etac: [buffer[8], buffer[9], buffer[10]],
@@ -373,6 +388,7 @@ impl IEs for ExtendedGeNbIdentifier {
 pub struct EnGNbIdentifier {
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub en_gnb_id_length: u8, // gNodeB ID length from 22 to 32 bits
     pub en_gnb_id: u32,       // gNodeB ID length from 22 to 32 bits
     pub tac: Option<u16>,
@@ -384,6 +400,7 @@ impl Default for EnGNbIdentifier {
         EnGNbIdentifier {
             mcc: 0,
             mnc: 0,
+            mnc_is_three_digits: false,
             en_gnb_id_length: 22,
             en_gnb_id: 0,
             tac: None,
@@ -394,7 +411,11 @@ impl Default for EnGNbIdentifier {
 
 impl IEs for EnGNbIdentifier {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         match (self.tac.is_some(), self.etac.is_some()) {
             (true, true) => buffer.push(0xC0 | self.en_gnb_id_length),
             (true, false) => buffer.push(0x80 | self.en_gnb_id_length),
@@ -413,12 +434,14 @@ impl IEs for EnGNbIdentifier {
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= 8 {
             let mut data = EnGNbIdentifier {
-                mcc: mcc_mnc_decode(&buffer[..=2]).0,
-                mnc: mcc_mnc_decode(&buffer[..=2]).1,
                 en_gnb_id_length: buffer[3] & 0x3F,
                 en_gnb_id: u32::from_be_bytes([buffer[4], buffer[5], buffer[6], buffer[7]]),
                 ..Default::default()
             };
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[..=2]);
+            data.mcc = mcc;
+            data.mnc = mnc;
+            data.mnc_is_three_digits = mnc_is_three_digits;
             if buffer[3] & 0x40 != 0 && buffer.len() >= 10 {
                 data.tac = Some(u16::from_be_bytes([buffer[8], buffer[9]]));
             } else {
@@ -719,6 +742,7 @@ fn target_id_ie_rnc_id_marshal_test() {
             rai: Rai {
                 mcc: 263,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 lac: 0xffff,
                 rac: 0xaa,
             },
@@ -744,6 +768,7 @@ fn target_id_ie_unmarshal_test() {
             rai: Rai {
                 mcc: 263,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 lac: 0xffff,
                 rac: 0xaa,
             },
@@ -769,6 +794,7 @@ fn target_id_ie_macro_enb_id_marshal_test() {
             macro_enb_id: MacroEnbId {
                 mcc: 263,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 macro_id: 0xffff,
             },
             tac: 4098,
@@ -792,6 +818,7 @@ fn target_id_ie_macro_enb_unmarshal_test() {
             macro_enb_id: MacroEnbId {
                 mcc: 263,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 macro_id: 0xffff,
             },
             tac: 4098,
@@ -815,6 +842,7 @@ fn target_id_ie_ext_macro_enb_id_marshal_test() {
             ext_macro_enb_id: ExtMacroEnbId {
                 mcc: 263,
                 mnc: 4,
+                mnc_is_three_digits: false,
                 smenb: false,
                 ext_macro_id: 131072,
             },
@@ -839,6 +867,7 @@ fn target_id_ie_ext_macro_enb_unmarshal_test() {
             ext_macro_enb_id: ExtMacroEnbId {
                 mcc: 263,
                 mnc: 4,
+                mnc_is_three_digits: false,
                 smenb: false,
                 ext_macro_id: 131072,
             },
@@ -862,6 +891,7 @@ fn target_id_ie_cell_id_marshal_test() {
         target_type: TargetType::CellId(CellIdentifier {
             mcc: 263,
             mnc: 4,
+            mnc_is_three_digits: false,
             lac: 4098,
             rac: 2,
             ci: 16,
@@ -884,6 +914,7 @@ fn target_id_ie_cell_id_unmarshal_test() {
         target_type: TargetType::CellId(CellIdentifier {
             mcc: 263,
             mnc: 4,
+            mnc_is_three_digits: false,
             lac: 4098,
             rac: 2,
             ci: 16,
@@ -907,6 +938,7 @@ fn target_id_ie_gnodeb_id_marshal_test() {
         target_type: TargetType::GNbId(GNbIdentifier {
             mcc: 263,
             mnc: 4,
+            mnc_is_three_digits: false,
             gnb_id_length: 22,
             gnb_id: 4098,
             etac: [0, 16, 2],
@@ -930,6 +962,7 @@ fn target_id_ie_gnodeb_id_unmarshal_test() {
         target_type: TargetType::GNbId(GNbIdentifier {
             mcc: 263,
             mnc: 4,
+            mnc_is_three_digits: false,
             gnb_id_length: 22,
             gnb_id: 4098,
             etac: [0, 16, 2],
@@ -953,6 +986,7 @@ fn target_id_ie_macro_gnodeb_id_marshal_test() {
             macro_ng_enb_id: MacroEnbId {
                 mcc: 263,
                 mnc: 4,
+                mnc_is_three_digits: false,
                 macro_id: 4098,
             },
             etac: [0, 16, 2],
@@ -976,6 +1010,7 @@ fn target_id_ie_macro_gnodeb_id_unmarshal_test() {
             macro_ng_enb_id: MacroEnbId {
                 mcc: 263,
                 mnc: 4,
+                mnc_is_three_digits: false,
                 macro_id: 4098,
             },
             etac: [0, 16, 2],
@@ -999,6 +1034,7 @@ fn target_id_ie_extended_macro_gnodeb_id_marshal_test() {
             macro_ng_enb_id: ExtMacroEnbId {
                 mcc: 263,
                 mnc: 4,
+                mnc_is_three_digits: false,
                 smenb: false,
                 ext_macro_id: 4098,
             },
@@ -1023,6 +1059,7 @@ fn target_id_ie_extended_macro_gnodeb_id_unmarshal_test() {
             macro_ng_enb_id: ExtMacroEnbId {
                 mcc: 263,
                 mnc: 4,
+                mnc_is_three_digits: false,
                 smenb: false,
                 ext_macro_id: 4098,
             },
@@ -1047,6 +1084,7 @@ fn target_id_ie_engnodeb_id_marshal_test() {
         target_type: TargetType::EngNbId(EnGNbIdentifier {
             mcc: 263,
             mnc: 4,
+            mnc_is_three_digits: false,
             en_gnb_id_length: 22,
             en_gnb_id: 4098,
             etac: Some([0, 16, 2]),
@@ -1072,6 +1110,7 @@ fn target_id_ie_engnodeb_id_unmarshal_test() {
         target_type: TargetType::EngNbId(EnGNbIdentifier {
             mcc: 263,
             mnc: 4,
+            mnc_is_three_digits: false,
             en_gnb_id_length: 22,
             en_gnb_id: 4098,
             etac: Some([0, 16, 2]),

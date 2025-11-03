@@ -149,6 +149,7 @@ fn test_ue_reg_query_resp_unmarshal() {
         selected_cnoid: PlmnId {
             mcc: 999,
             mnc: 1,
+            mnc_is_three_digits: false,
             ..PlmnId::default()
         },
         private_ext: vec![PrivateExtension {
@@ -189,6 +190,7 @@ fn test_ue_reg_query_resp_marshal() {
         selected_cnoid: PlmnId {
             mcc: 999,
             mnc: 1,
+            mnc_is_three_digits: false,
             ..PlmnId::default()
         },
         private_ext: vec![PrivateExtension {

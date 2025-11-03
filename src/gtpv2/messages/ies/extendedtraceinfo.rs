@@ -20,6 +20,7 @@ pub struct ExtendedTraceInformation {
     pub ins: u8,
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub trace_id: u32,
     pub trigger_events: Vec<u8>,
     pub list_ne_types: Vec<u8>,
@@ -36,6 +37,7 @@ impl Default for ExtendedTraceInformation {
             ins: 0,
             mcc: 0,
             mnc: 0,
+            mnc_is_three_digits: false,
             trace_id: 0,
             trigger_events: vec![],
             list_ne_types: vec![],
@@ -58,7 +60,11 @@ impl IEs for ExtendedTraceInformation {
         buffer_ie.push(EXTTRACEINFO);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer_ie.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer_ie.extend_from_slice(&self.trace_id.to_be_bytes()[1..]);
         buffer_ie.push(self.trigger_events.len() as u8);
         buffer_ie.extend_from_slice(&self.trigger_events[..]);
@@ -86,11 +92,13 @@ impl IEs for ExtendedTraceInformation {
             let mut data = ExtendedTraceInformation {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3],
-                mcc: mcc_mnc_decode(&buffer[4..=6]).0,
-                mnc: mcc_mnc_decode(&buffer[4..=6]).1,
                 trace_id: u32::from_be_bytes([0x00, buffer[7], buffer[8], buffer[9]]),
                 ..ExtendedTraceInformation::default()
             };
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[4..=6]);
+            data.mcc = mcc;
+            data.mnc = mnc;
+            data.mnc_is_three_digits = mnc_is_three_digits;
             let mut cursor: usize = 10;
             {
                 let len = buffer[cursor] as usize;
@@ -190,6 +198,7 @@ fn ext_trace_info_ie_ipv4_marshal_test() {
         length: 38,
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         trace_id: 0xfffffa,
         trigger_events: vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
         list_ne_types: vec![0xff, 0xff, 0xff, 0xff],
@@ -214,6 +223,7 @@ fn ext_trace_info_ie_ipv4_unmarshal_test() {
         length: 38,
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         trace_id: 0xfffffa,
         trigger_events: vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
         list_ne_types: vec![0xff, 0xff, 0xff, 0xff],
@@ -240,6 +250,7 @@ fn ext_trace_info_ie_ipv6_marshal_test() {
         length: 50,
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         trace_id: 0xfffffa,
         trigger_events: vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
         list_ne_types: vec![0xff, 0xff, 0xff, 0xff],
@@ -267,6 +278,7 @@ fn ext_trace_info_ie_ipv6_unmarshal_test() {
         length: 50,
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         trace_id: 0xfffffa,
         trigger_events: vec![0, 0, 0, 0, 0, 0, 0, 0, 0],
         list_ne_types: vec![0xff, 0xff, 0xff, 0xff],

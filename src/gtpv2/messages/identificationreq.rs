@@ -208,6 +208,7 @@ fn test_identification_req_unmarshal() {
         guti: Some(Guti {
             mcc: 999,
             mnc: 1,
+            mnc_is_three_digits: false,
             mmegi: 300,
             mmec: 10,
             mtmsi: 0xffffffff,
@@ -218,6 +219,7 @@ fn test_identification_req_unmarshal() {
             loc: vec![Location::Rai(Rai {
                 mcc: 262,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 lac: 0x0bd9,
                 rac: 0x01,
             })],
@@ -253,6 +255,7 @@ fn test_identification_req_unmarshal() {
         target_plmnid: Some(ServingNetwork {
             mcc: 999,
             mnc: 1,
+            mnc_is_three_digits: false,
             ..ServingNetwork::default()
         }),
         ..IdentificationRequest::default()
@@ -284,6 +287,7 @@ fn test_identification_req_marshal() {
         guti: Some(Guti {
             mcc: 999,
             mnc: 1,
+            mnc_is_three_digits: false,
             mmegi: 300,
             mmec: 10,
             mtmsi: 0xffffffff,
@@ -294,6 +298,7 @@ fn test_identification_req_marshal() {
             loc: vec![Location::Rai(Rai {
                 mcc: 262,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 lac: 0x0bd9,
                 rac: 0x01,
             })],
@@ -329,6 +334,7 @@ fn test_identification_req_marshal() {
         target_plmnid: Some(ServingNetwork {
             mcc: 999,
             mnc: 1,
+            mnc_is_three_digits: false,
             ..ServingNetwork::default()
         }),
         ..IdentificationRequest::default()

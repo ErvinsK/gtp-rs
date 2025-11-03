@@ -14,6 +14,7 @@ pub struct Rai {
     pub t: u8,
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub lac: u16,
     pub rac: u8,
 }
@@ -24,6 +25,7 @@ impl Default for Rai {
             t: RAI,
             mcc: 0,
             mnc: 0,
+            mnc_is_three_digits: false,
             lac: 0,
             rac: 0,
         }
@@ -33,7 +35,11 @@ impl Default for Rai {
 impl IEs for Rai {
     fn marshal(&self, buffer: &mut Vec<u8>) {
         buffer.push(self.t);
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer.extend_from_slice(&self.lac.to_be_bytes());
         buffer.push(self.rac);
     }
@@ -43,12 +49,15 @@ impl IEs for Rai {
         Self: Sized,
     {
         if buffer.len() > RAI_LENGTH {
-            let mut data: Rai = Rai {
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[1..=3]);
+            let data: Rai = Rai {
+                mcc,
+                mnc,
+                mnc_is_three_digits,
                 lac: u16::from_be_bytes([buffer[4], buffer[5]]),
                 rac: buffer[6],
                 ..Default::default()
             };
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[1..=3]);
             Ok(data)
         } else {
             Err(GTPV1Error::IEInvalidLength)
@@ -69,6 +78,7 @@ fn rai_ie_marshal_test() {
         t: 3,
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         lac: 999,
         rac: 67,
     };
@@ -84,6 +94,7 @@ fn rai_ie_unmarshal_test() {
         t: 3,
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         lac: 999,
         rac: 67,
     };

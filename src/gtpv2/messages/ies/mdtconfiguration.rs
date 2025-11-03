@@ -58,6 +58,7 @@ impl From<u8> for MdtJobType {
 pub struct MdtPlmn {
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
 }
 
 // MDT Configuration IE implementation
@@ -157,7 +158,11 @@ impl IEs for MdtConfiguration {
         if let Some(i) = &self.mdt_plmns_list {
             buffer_ie.push(i.len() as u8);
             for plmn in i {
-                buffer_ie.append(&mut mcc_mnc_encode(plmn.mcc, plmn.mnc));
+                buffer_ie.append(&mut mcc_mnc_encode(
+                    plmn.mcc,
+                    plmn.mnc,
+                    plmn.mnc_is_three_digits,
+                ));
             }
         }
         set_tliv_ie_length(&mut buffer_ie);
@@ -219,8 +224,13 @@ impl IEs for MdtConfiguration {
                         let mut plmns = Vec::new();
                         while cursor < buffer.len() {
                             if buffer.len() >= cursor + 3 {
-                                let (mcc, mnc) = mcc_mnc_decode(&buffer[cursor..cursor + 3]);
-                                plmns.push(MdtPlmn { mcc, mnc });
+                                let (mcc, mnc, mnc_is_three_digits) =
+                                    mcc_mnc_decode(&buffer[cursor..cursor + 3]);
+                                plmns.push(MdtPlmn {
+                                    mcc,
+                                    mnc,
+                                    mnc_is_three_digits,
+                                });
                                 cursor += 3;
                             } else {
                                 return Err(GTPV2Error::IEInvalidLength(MDTCONFIG));
@@ -274,10 +284,26 @@ fn mdtconfig_ie_marshal_test() {
         measurement_period_lte: Some(0x02),
         positioning_method: Some(0x03),
         mdt_plmns_list: Some(vec![
-            MdtPlmn { mcc: 234, mnc: 1 },
-            MdtPlmn { mcc: 220, mnc: 5 },
-            MdtPlmn { mcc: 265, mnc: 3 },
-            MdtPlmn { mcc: 134, mnc: 6 },
+            MdtPlmn {
+                mcc: 234,
+                mnc: 1,
+                mnc_is_three_digits: false,
+            },
+            MdtPlmn {
+                mcc: 220,
+                mnc: 5,
+                mnc_is_three_digits: false,
+            },
+            MdtPlmn {
+                mcc: 265,
+                mnc: 3,
+                mnc_is_three_digits: false,
+            },
+            MdtPlmn {
+                mcc: 134,
+                mnc: 6,
+                mnc_is_three_digits: false,
+            },
         ]),
         ..Default::default()
     };
@@ -307,10 +333,26 @@ fn mtdconfig_ie_unmarshal_test() {
         measurement_period_lte: Some(0x02),
         positioning_method: Some(0x03),
         mdt_plmns_list: Some(vec![
-            MdtPlmn { mcc: 234, mnc: 1 },
-            MdtPlmn { mcc: 220, mnc: 5 },
-            MdtPlmn { mcc: 265, mnc: 3 },
-            MdtPlmn { mcc: 134, mnc: 6 },
+            MdtPlmn {
+                mcc: 234,
+                mnc: 1,
+                mnc_is_three_digits: false,
+            },
+            MdtPlmn {
+                mcc: 220,
+                mnc: 5,
+                mnc_is_three_digits: false,
+            },
+            MdtPlmn {
+                mcc: 265,
+                mnc: 3,
+                mnc_is_three_digits: false,
+            },
+            MdtPlmn {
+                mcc: 134,
+                mnc: 6,
+                mnc_is_three_digits: false,
+            },
         ]),
         ..Default::default()
     };

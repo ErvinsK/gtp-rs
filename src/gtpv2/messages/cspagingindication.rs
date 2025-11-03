@@ -217,11 +217,13 @@ fn test_cs_paging_indication_unmarshal() {
                 Location::Tai(Tai {
                     mcc: 247,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     tac: 0xabea,
                 }),
                 Location::Ecgi(Ecgi {
                     mcc: 247,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     eci: 2770448,
                 }),
             ],
@@ -229,6 +231,7 @@ fn test_cs_paging_indication_unmarshal() {
         global_cnid: Some(GlobalCnId {
             mcc: 999,
             mnc: 1,
+            mnc_is_three_digits: false,
             cnid: 4000,
             ..GlobalCnId::default()
         }),
@@ -294,11 +297,13 @@ fn test_cs_paging_indication_marshal() {
                 Location::Tai(Tai {
                     mcc: 247,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     tac: 0xabea,
                 }),
                 Location::Ecgi(Ecgi {
                     mcc: 247,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     eci: 2770448,
                 }),
             ],
@@ -306,6 +311,7 @@ fn test_cs_paging_indication_marshal() {
         global_cnid: Some(GlobalCnId {
             mcc: 999,
             mnc: 1,
+            mnc_is_three_digits: false,
             cnid: 4000,
             ..GlobalCnId::default()
         }),

@@ -23,6 +23,7 @@ pub struct Uli {
     pub length: u16,
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub lac: u16,
     pub loc: Location,
 }
@@ -34,6 +35,7 @@ impl Default for Uli {
             length: ULI_LENGTH,
             mcc: 0,
             mnc: 0,
+            mnc_is_three_digits: false,
             lac: 0,
             loc: Location::Ci(0),
         }
@@ -48,19 +50,31 @@ impl IEs for Uli {
         match self.loc {
             Location::Ci(i) => {
                 buffer_ie.push(0);
-                buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+                buffer_ie.append(&mut mcc_mnc_encode(
+                    self.mcc,
+                    self.mnc,
+                    self.mnc_is_three_digits,
+                ));
                 buffer_ie.extend_from_slice(&self.lac.to_be_bytes());
                 buffer_ie.extend_from_slice(&i.to_be_bytes());
             }
             Location::Sac(j) => {
                 buffer_ie.push(1);
-                buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+                buffer_ie.append(&mut mcc_mnc_encode(
+                    self.mcc,
+                    self.mnc,
+                    self.mnc_is_three_digits,
+                ));
                 buffer_ie.extend_from_slice(&self.lac.to_be_bytes());
                 buffer_ie.extend_from_slice(&j.to_be_bytes());
             }
             Location::Rac(z) => {
                 buffer_ie.push(2);
-                buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+                buffer_ie.append(&mut mcc_mnc_encode(
+                    self.mcc,
+                    self.mnc,
+                    self.mnc_is_three_digits,
+                ));
                 buffer_ie.extend_from_slice(&self.lac.to_be_bytes());
                 buffer_ie.push(z);
                 buffer_ie.push(0xff);
@@ -81,17 +95,26 @@ impl IEs for Uli {
             };
             match buffer[3] {
                 0 => {
-                    (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..=6]);
+                    let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[4..=6]);
+                    data.mcc = mcc;
+                    data.mnc = mnc;
+                    data.mnc_is_three_digits = mnc_is_three_digits;
                     data.lac = u16::from_be_bytes([buffer[7], buffer[8]]);
                     data.loc = Location::Ci(u16::from_be_bytes([buffer[9], buffer[10]]));
                 }
                 1 => {
-                    (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..=6]);
+                    let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[4..=6]);
+                    data.mcc = mcc;
+                    data.mnc = mnc;
+                    data.mnc_is_three_digits = mnc_is_three_digits;
                     data.lac = u16::from_be_bytes([buffer[7], buffer[8]]);
                     data.loc = Location::Sac(u16::from_be_bytes([buffer[9], buffer[10]]));
                 }
                 2 => {
-                    (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..=6]);
+                    let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[4..=6]);
+                    data.mcc = mcc;
+                    data.mnc = mnc;
+                    data.mnc_is_three_digits = mnc_is_three_digits;
                     data.lac = u16::from_be_bytes([buffer[7], buffer[8]]);
                     data.loc = Location::Rac(buffer[9]);
                 }
@@ -120,6 +143,7 @@ fn uli_ie_marshal_test_cgi() {
         length: ULI_LENGTH,
         mcc: 262,
         mnc: 3,
+        mnc_is_three_digits: false,
         lac: 48190,
         loc: Location::Ci(14076),
     };
@@ -138,6 +162,7 @@ fn uli_ie_unmarshal_test_cgi() {
         length: ULI_LENGTH,
         mcc: 262,
         mnc: 3,
+        mnc_is_three_digits: false,
         lac: 48190,
         loc: Location::Ci(14076),
     };
@@ -154,6 +179,7 @@ fn uli_ie_marshal_test_sai() {
         length: ULI_LENGTH,
         mcc: 262,
         mnc: 3,
+        mnc_is_three_digits: false,
         lac: 48190,
         loc: Location::Sac(14076),
     };
@@ -172,6 +198,7 @@ fn uli_ie_unmarshal_test_sai() {
         length: ULI_LENGTH,
         mcc: 262,
         mnc: 3,
+        mnc_is_three_digits: false,
         lac: 48190,
         loc: Location::Sac(14076),
     };
@@ -188,6 +215,7 @@ fn uli_ie_marshal_test_rai() {
         length: ULI_LENGTH,
         mcc: 262,
         mnc: 3,
+        mnc_is_three_digits: false,
         lac: 48190,
         loc: Location::Rac(0x10),
     };
@@ -206,6 +234,7 @@ fn uli_ie_unmarshal_test_rai() {
         length: ULI_LENGTH,
         mcc: 262,
         mnc: 3,
+        mnc_is_three_digits: false,
         lac: 48190,
         loc: Location::Rac(0x10),
     };

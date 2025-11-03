@@ -239,11 +239,13 @@ fn uli_ie_marshal_test_tai_ecgi() {
             Location::Ecgi(Ecgi {
                 mcc: 262,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 eci: 28983298,
             }),
             Location::Tai(Tai {
                 mcc: 262,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 tac: 0x0bd9,
             }),
         ],
@@ -267,11 +269,13 @@ fn uli_ie_unmarshal_test_tai_ecgi() {
             Location::Tai(Tai {
                 mcc: 262,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 tac: 0x0bd9,
             }),
             Location::Ecgi(Ecgi {
                 mcc: 262,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 eci: 28983298,
             }),
         ],

@@ -315,6 +315,7 @@ fn test_ctx_req_unmarshal() {
         guti: Some(Guti {
             mcc: 999,
             mnc: 1,
+            mnc_is_three_digits: false,
             mmegi: 300,
             mmec: 10,
             mtmsi: 0xffffffff,
@@ -336,6 +337,7 @@ fn test_ctx_req_unmarshal() {
         target_plmnid: Some(ServingNetwork {
             mcc: 999,
             mnc: 1,
+            mnc_is_three_digits: false,
             ..ServingNetwork::default()
         }),
         private_ext: vec![PrivateExtension {
@@ -376,6 +378,7 @@ fn test_ctx_req_marshal() {
         guti: Some(Guti {
             mcc: 999,
             mnc: 1,
+            mnc_is_three_digits: false,
             mmegi: 300,
             mmec: 10,
             mtmsi: 0xffffffff,
@@ -397,6 +400,7 @@ fn test_ctx_req_marshal() {
         target_plmnid: Some(ServingNetwork {
             mcc: 999,
             mnc: 1,
+            mnc_is_three_digits: false,
             ..ServingNetwork::default()
         }),
         private_ext: vec![PrivateExtension {

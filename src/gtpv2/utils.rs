@@ -57,21 +57,24 @@ fn tbcd_decode_test() {
 
 // Encode MCC and MNC
 
-pub fn mcc_mnc_encode(mcc: u16, mnc: u16) -> Vec<u8> {
-    let mcc_digits: Vec<u8> = if mcc < 10 {
-        let mut v = to_digits(mcc);
-        v.insert(0, 0);
-        v
-    } else {
-        to_digits(mcc)
-    };
-    let mnc_digits: Vec<u8> = to_digits(mnc);
+pub fn mcc_mnc_encode(mcc: u16, mnc: u16, mnc_is_three_digits: bool) -> Vec<u8> {
+    let mut mcc_digits: Vec<u8> = to_digits(mcc);
+    while mcc_digits.len() < 3 {
+        mcc_digits.insert(0, 0);
+    }
+
+    let mut mnc_digits: Vec<u8> = to_digits(mnc);
+    let encode_three_digit_mnc = mnc_is_three_digits || mnc >= 100;
+    if encode_three_digit_mnc && mnc_digits.len() < 3 {
+        mnc_digits.insert(0, 0);
+    }
+
     let mut result: Vec<u8> = vec![];
     result.push(mcc_digits[1] << 4 | mcc_digits[0]);
-    if mnc_digits.len() == 2 {
-        result.push(0b1111 << 4 | mcc_digits[2]);
-    } else {
+    if encode_three_digit_mnc {
         result.push(mnc_digits[2] << 4 | mcc_digits[2]);
+    } else {
+        result.push(0b1111 << 4 | mcc_digits[2]);
     }
     result.push(mnc_digits[1] << 4 | mnc_digits[0]);
     result
@@ -79,15 +82,36 @@ pub fn mcc_mnc_encode(mcc: u16, mnc: u16) -> Vec<u8> {
 
 #[test]
 fn mcc_mnc_encode_test() {
-    let test_mcc: u16 = 262;
-    let test_mnc: u16 = 1;
-    let encoded_number: [u8; 3] = [0x62, 0xf2, 0x10];
-    assert_eq!(mcc_mnc_encode(test_mcc, test_mnc), encoded_number);
+    // 2-digit MNC (MCC=262, MNC=01)
+    let test_mcc_262: u16 = 262;
+    let test_mnc_01: u16 = 1;
+    let encoded_number_262_01: [u8; 3] = [0x62, 0xf2, 0x10];
+    assert_eq!(
+        mcc_mnc_encode(test_mcc_262, test_mnc_01, false),
+        encoded_number_262_01
+    );
+
+    // 3-digit MNC naturally (MCC=310, MNC=123)
+    let test_mcc_310: u16 = 310;
+    let test_mnc_123: u16 = 123;
+    let encoded_number_310_123: [u8; 3] = [0x13, 0x30, 0x21];
+    assert_eq!(
+        mcc_mnc_encode(test_mcc_310, test_mnc_123, false),
+        encoded_number_310_123
+    );
+
+    // Forced 3-digit MNC (MCC=310, MNC=012)
+    let test_mnc_012: u16 = 12;
+    let encoded_number_310_012: [u8; 3] = [0x13, 0x00, 0x21];
+    assert_eq!(
+        mcc_mnc_encode(test_mcc_310, test_mnc_012, true),
+        encoded_number_310_012
+    );
 }
 
 // Decode MCC and MNC
 
-pub fn mcc_mnc_decode(buffer: &[u8]) -> (u16, u16) {
+pub fn mcc_mnc_decode(buffer: &[u8]) -> (u16, u16, bool) {
     let mut mcc_digits: Vec<u8> = vec![];
     let mut mnc_digits: Vec<u8> = vec![];
     mcc_digits.push(buffer[0] & 0b1111);
@@ -95,8 +119,10 @@ pub fn mcc_mnc_decode(buffer: &[u8]) -> (u16, u16) {
     mcc_digits.push(buffer[1] & 0b00001111);
     mnc_digits.push(buffer[2] & 0b1111);
     mnc_digits.push(buffer[2] >> 4);
-    if buffer[1] >> 4 != 0b1111 {
-        mnc_digits.push(buffer[1] >> 4);
+    let third_digit = buffer[1] >> 4;
+    let mnc_is_three_digits = third_digit != 0b1111;
+    if mnc_is_three_digits {
+        mnc_digits.push(third_digit);
     }
     let (mut mcc, mut mnc) = (0, 0);
     if let Ok(i) = mcc_digits
@@ -115,15 +141,36 @@ pub fn mcc_mnc_decode(buffer: &[u8]) -> (u16, u16) {
     {
         mnc = i;
     }
-    (mcc, mnc)
+    (mcc, mnc, mnc_is_three_digits)
 }
 
 #[test]
 fn mcc_mnc_decode_test() {
-    let test_mcc: u16 = 262;
-    let test_mnc: u16 = 1;
-    let encoded_number: [u8; 3] = [0x62, 0xf2, 0x10];
-    assert_eq!(mcc_mnc_decode(&encoded_number), (test_mcc, test_mnc));
+    // 2-digit MNC (MCC=262, MNC=01)
+    let test_mcc_262: u16 = 262;
+    let test_mnc_01: u16 = 1;
+    let encoded_number_262_01: [u8; 3] = [0x62, 0xf2, 0x10];
+    assert_eq!(
+        mcc_mnc_decode(&encoded_number_262_01),
+        (test_mcc_262, test_mnc_01, false)
+    );
+
+    // 3-digit MNC naturally (MCC=310, MNC=123)
+    let test_mcc_310: u16 = 310;
+    let test_mnc_123: u16 = 123;
+    let encoded_number_310_123: [u8; 3] = [0x13, 0x30, 0x21];
+    assert_eq!(
+        mcc_mnc_decode(&encoded_number_310_123),
+        (test_mcc_310, test_mnc_123, true)
+    );
+
+    // Forced 3-digit MNC (MCC=310, MNC=012)
+    let test_mnc_012: u16 = 12;
+    let encoded_number_310_012: [u8; 3] = [0x13, 0x00, 0x21];
+    assert_eq!(
+        mcc_mnc_decode(&encoded_number_310_012),
+        (test_mcc_310, test_mnc_012, true)
+    );
 }
 
 // Convert unsigned int to vector of digits
