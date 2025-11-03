@@ -363,11 +363,13 @@ fn test_delete_bearer_resp_unmarshal() {
                 Location::Tai(Tai {
                     mcc: 247,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     tac: 0xabea,
                 }),
                 Location::Ecgi(Ecgi {
                     mcc: 247,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     eci: 2770448,
                 }),
             ],
@@ -433,11 +435,13 @@ fn test_delete_bearer_resp_marshal() {
                 Location::Tai(Tai {
                     mcc: 247,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     tac: 0xabea,
                 }),
                 Location::Ecgi(Ecgi {
                     mcc: 247,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     eci: 2770448,
                 }),
             ],

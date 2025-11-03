@@ -20,6 +20,7 @@ pub struct PSCellId {
     pub ins: u8,
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub nr_cgi: [u8; 5],
 }
 
@@ -31,6 +32,7 @@ impl Default for PSCellId {
             ins: 0,
             mcc: 0,
             mnc: 0,
+            mnc_is_three_digits: false,
             nr_cgi: [0u8; 5],
         }
     }
@@ -48,7 +50,11 @@ impl IEs for PSCellId {
         buffer_ie.push(PSCELL_ID);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer_ie.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer_ie.extend_from_slice(&self.nr_cgi);
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -56,11 +62,13 @@ impl IEs for PSCellId {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + PSCELL_ID_LENGTH {
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[4..7]);
             let data = PSCellId {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                mcc: mcc_mnc_decode(&buffer[4..7]).0,
-                mnc: mcc_mnc_decode(&buffer[4..7]).1,
+                mcc,
+                mnc,
+                mnc_is_three_digits,
                 nr_cgi: buffer[7..12].try_into().unwrap_or([0u8; 5]),
                 ..PSCellId::default()
             };
@@ -90,6 +98,7 @@ fn pscellid_ie_marshal_test() {
     let decoded = PSCellId {
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         nr_cgi: [0xaa, 0xfc, 0xfd, 0xfe, 0xff],
         ..PSCellId::default()
     };
@@ -106,6 +115,7 @@ fn pscellid_ie_unmarshal_test() {
     let decoded = PSCellId {
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         nr_cgi: [0xaa, 0xfc, 0xfd, 0xfe, 0xff],
         ..PSCellId::default()
     };

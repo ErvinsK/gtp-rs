@@ -20,6 +20,7 @@ pub struct GlobalCnId {
     pub ins: u8,
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub cnid: u16,
 }
 
@@ -31,6 +32,7 @@ impl Default for GlobalCnId {
             ins: 0,
             mcc: 0,
             mnc: 0,
+            mnc_is_three_digits: false,
             cnid: 0,
         }
     }
@@ -48,7 +50,11 @@ impl IEs for GlobalCnId {
         buffer_ie.push(GLOBAL_CN_ID);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer_ie.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer_ie.extend_from_slice(&self.cnid.to_be_bytes());
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -56,11 +62,13 @@ impl IEs for GlobalCnId {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + GLOBAL_CN_ID_LENGTH {
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[4..7]);
             let data = GlobalCnId {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                mcc: mcc_mnc_decode(&buffer[4..7]).0,
-                mnc: mcc_mnc_decode(&buffer[4..7]).1,
+                mcc,
+                mnc,
+                mnc_is_three_digits,
                 cnid: u16::from_be_bytes([buffer[7], buffer[8]]),
                 ..GlobalCnId::default()
             };
@@ -93,6 +101,7 @@ fn global_cn_id_ie_marshal_test() {
         ins: 0,
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         cnid: 4000,
     };
     let encoded: [u8; 9] = [0x59, 0x00, 0x05, 0x00, 0x99, 0xf9, 0x10, 0x0f, 0xa0];
@@ -109,6 +118,7 @@ fn global_cn_id_ie_unmarshal_test() {
         ins: 0,
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         cnid: 4000,
     };
     let encoded: [u8; 9] = [0x59, 0x00, 0x05, 0x00, 0x99, 0xf9, 0x10, 0x0f, 0xa0];

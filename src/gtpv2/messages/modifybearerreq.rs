@@ -487,11 +487,13 @@ fn test_modify_bearer_req_unmarshal() {
                 Location::Tai(Tai {
                     mcc: 234,
                     mnc: 20,
+                    mnc_is_three_digits: false,
                     tac: 0x0d59,
                 }),
                 Location::Ecgi(Ecgi {
                     mcc: 234,
                     mnc: 20,
+                    mnc_is_three_digits: false,
                     eci: 12933122,
                 }),
             ],
@@ -502,6 +504,7 @@ fn test_modify_bearer_req_unmarshal() {
             ins: 0,
             mcc: 234,
             mnc: 20,
+            mnc_is_three_digits: false,
         }),
         fteid_control: Some(Fteid {
             t: FTEID,
@@ -626,11 +629,13 @@ fn test_modify_bearer_req_marshal() {
                 Location::Tai(Tai {
                     mcc: 206,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     tac: 0x0c3f,
                 }),
                 Location::Ecgi(Ecgi {
                     mcc: 206,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     eci: 46196230,
                 }),
             ],
@@ -641,6 +646,7 @@ fn test_modify_bearer_req_marshal() {
             ins: 0,
             mcc: 206,
             mnc: 1,
+            mnc_is_three_digits: false,
         }),
         fteid_control: Some(Fteid {
             t: FTEID,

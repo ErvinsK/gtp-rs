@@ -20,6 +20,7 @@ pub struct TraceReference {
     pub ins: u8,
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub trace_id: u32,
 }
 
@@ -31,6 +32,7 @@ impl Default for TraceReference {
             ins: 0,
             mcc: 0,
             mnc: 0,
+            mnc_is_three_digits: false,
             trace_id: 0,
         }
     }
@@ -48,7 +50,11 @@ impl IEs for TraceReference {
         buffer_ie.push(TRACEREF);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer_ie.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer_ie.extend_from_slice(&self.trace_id.to_be_bytes()[1..]);
         set_tliv_ie_length(&mut buffer_ie);
         buffer.append(&mut buffer_ie);
@@ -62,7 +68,10 @@ impl IEs for TraceReference {
                 trace_id: u32::from_be_bytes([0x00, buffer[7], buffer[8], buffer[9]]),
                 ..TraceReference::default()
             };
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..7]);
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[4..7]);
+            data.mcc = mcc;
+            data.mnc = mnc;
+            data.mnc_is_three_digits = mnc_is_three_digits;
             Ok(data)
         } else {
             Err(GTPV2Error::IEInvalidLength(TRACEREF))
@@ -92,6 +101,7 @@ fn trace_ref_ie_marshal_test() {
         ins: 0,
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         trace_id: 0xffffff,
     };
     let encoded: [u8; 10] = [0x53, 0x00, 0x06, 0x00, 0x99, 0xf9, 0x10, 0xff, 0xff, 0xff];
@@ -108,6 +118,7 @@ fn trace_ref_ie_unmarshal_test() {
         ins: 0,
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         trace_id: 0xffffff,
     };
     let encoded: [u8; 10] = [0x53, 0x00, 0x06, 0x00, 0x99, 0xf9, 0x10, 0xff, 0xff, 0xff];

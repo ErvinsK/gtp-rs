@@ -357,16 +357,19 @@ fn test_mbms_session_start_req_unmarshal() {
                 Ecgi {
                     mcc: 262,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     eci: 28983298,
                 },
                 Ecgi {
                     mcc: 262,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     eci: 28983299,
                 },
                 Ecgi {
                     mcc: 262,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     eci: 28983297,
                 },
             ]),
@@ -489,16 +492,19 @@ fn test_mbms_session_start_req_marshal() {
                 Ecgi {
                     mcc: 262,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     eci: 28983298,
                 },
                 Ecgi {
                     mcc: 262,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     eci: 28983299,
                 },
                 Ecgi {
                     mcc: 262,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     eci: 28983297,
                 },
             ]),

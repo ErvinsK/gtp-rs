@@ -140,6 +140,7 @@ fn test_ran_info_relay_unmarshal() {
                 rai: Rai {
                     mcc: 263,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     lac: 0xffff,
                     rac: 0xaa,
                 },
@@ -187,6 +188,7 @@ fn test_ran_info_relay_marshal() {
                 rai: Rai {
                     mcc: 263,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     lac: 0xffff,
                     rac: 0xaa,
                 },

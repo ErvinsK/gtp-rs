@@ -261,11 +261,13 @@ fn test_change_notification_req_unmarshal() {
                 Location::Tai(Tai {
                     mcc: 234,
                     mnc: 20,
+                    mnc_is_three_digits: false,
                     tac: 0x0d59,
                 }),
                 Location::Ecgi(Ecgi {
                     mcc: 234,
                     mnc: 20,
+                    mnc_is_three_digits: false,
                     eci: 12933122,
                 }),
             ],
@@ -365,11 +367,13 @@ fn test_change_notification_req_marshal() {
                 Location::Tai(Tai {
                     mcc: 234,
                     mnc: 20,
+                    mnc_is_three_digits: false,
                     tac: 0x0d59,
                 }),
                 Location::Ecgi(Ecgi {
                     mcc: 234,
                     mnc: 20,
+                    mnc_is_three_digits: false,
                     eci: 12933122,
                 }),
             ],

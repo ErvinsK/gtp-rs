@@ -257,6 +257,7 @@ fn ms_info_change_notification_req_unmarshal_test() {
         uli: Some(Uli {
             mcc: 310,
             mnc: 260,
+            mnc_is_three_digits: true,
             lac: 21271,
             loc: Location::Ci(1063),
             ..Default::default()
@@ -302,6 +303,7 @@ fn ms_info_change_notification_req_marshal_test() {
         uli: Some(Uli {
             mcc: 310,
             mnc: 260,
+            mnc_is_three_digits: true,
             lac: 21271,
             loc: Location::Ci(1063),
             ..Default::default()

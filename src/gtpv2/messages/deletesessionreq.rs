@@ -354,11 +354,13 @@ fn test_delete_session_req_unmarshal() {
                 Location::Tai(Tai {
                     mcc: 310,
                     mnc: 410,
+                    mnc_is_three_digits: true,
                     tac: 0x2700,
                 }),
                 Location::Ecgi(Ecgi {
                     mcc: 310,
                     mnc: 410,
+                    mnc_is_three_digits: true,
                     eci: 195475590,
                 }),
             ],
@@ -437,11 +439,13 @@ fn test_delete_session_req_marshal() {
                 Location::Tai(Tai {
                     mcc: 310,
                     mnc: 410,
+                    mnc_is_three_digits: true,
                     tac: 0x2700,
                 }),
                 Location::Ecgi(Ecgi {
                     mcc: 310,
                     mnc: 410,
+                    mnc_is_three_digits: true,
                     eci: 195475590,
                 }),
             ],

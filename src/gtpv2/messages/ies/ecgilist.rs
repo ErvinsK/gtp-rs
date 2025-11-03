@@ -121,16 +121,19 @@ fn ecgilist_ie_marshal_test() {
             Ecgi {
                 mcc: 262,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 eci: 28983298,
             },
             Ecgi {
                 mcc: 262,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 eci: 28983299,
             },
             Ecgi {
                 mcc: 262,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 eci: 28983297,
             },
         ]),
@@ -153,16 +156,19 @@ fn ecgilist_ie_unmarshal_test() {
             Ecgi {
                 mcc: 262,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 eci: 28983298,
             },
             Ecgi {
                 mcc: 262,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 eci: 28983299,
             },
             Ecgi {
                 mcc: 262,
                 mnc: 1,
+                mnc_is_three_digits: false,
                 eci: 28983297,
             },
         ]),

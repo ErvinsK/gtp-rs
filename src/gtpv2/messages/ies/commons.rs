@@ -21,13 +21,18 @@ pub trait IEs {
 pub struct Cgi {
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub lac: u16,
     pub ci: u16,
 }
 
 impl IEs for Cgi {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer.extend_from_slice(&self.lac.to_be_bytes());
         buffer.extend_from_slice(&self.ci.to_be_bytes());
     }
@@ -35,7 +40,10 @@ impl IEs for Cgi {
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= 7 {
             let mut data = Cgi::default();
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[..=2]);
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[..=2]);
+            data.mcc = mcc;
+            data.mnc = mnc;
+            data.mnc_is_three_digits = mnc_is_three_digits;
             data.lac = u16::from_be_bytes([buffer[3], buffer[4]]);
             data.ci = u16::from_be_bytes([buffer[5], buffer[6]]);
             Ok(data)
@@ -61,13 +69,18 @@ impl IEs for Cgi {
 pub struct Sai {
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub lac: u16,
     pub sac: u16,
 }
 
 impl IEs for Sai {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer.extend_from_slice(&self.lac.to_be_bytes());
         buffer.extend_from_slice(&self.sac.to_be_bytes());
     }
@@ -75,7 +88,10 @@ impl IEs for Sai {
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= 7 {
             let mut data = Sai::default();
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[..=2]);
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[..=2]);
+            data.mcc = mcc;
+            data.mnc = mnc;
+            data.mnc_is_three_digits = mnc_is_three_digits;
             data.lac = u16::from_be_bytes([buffer[3], buffer[4]]);
             data.sac = u16::from_be_bytes([buffer[5], buffer[6]]);
             Ok(data)
@@ -101,13 +117,18 @@ impl IEs for Sai {
 pub struct Rai {
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub lac: u16,
     pub rac: u8,
 }
 
 impl IEs for Rai {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer.extend_from_slice(&self.lac.to_be_bytes());
         buffer.push(self.rac);
         buffer.push(0xff);
@@ -116,7 +137,10 @@ impl IEs for Rai {
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= 6 {
             let mut data = Rai::default();
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[..=2]);
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[..=2]);
+            data.mcc = mcc;
+            data.mnc = mnc;
+            data.mnc_is_three_digits = mnc_is_three_digits;
             data.lac = u16::from_be_bytes([buffer[3], buffer[4]]);
             data.rac = buffer[5];
             Ok(data)
@@ -142,19 +166,27 @@ impl IEs for Rai {
 pub struct Tai {
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub tac: u16,
 }
 
 impl IEs for Tai {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer.extend_from_slice(&self.tac.to_be_bytes());
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= 5 {
             let mut data = Tai::default();
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[..=2]);
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[..=2]);
+            data.mcc = mcc;
+            data.mnc = mnc;
+            data.mnc_is_three_digits = mnc_is_three_digits;
             data.tac = u16::from_be_bytes([buffer[3], buffer[4]]);
             Ok(data)
         } else {
@@ -179,19 +211,27 @@ impl IEs for Tai {
 pub struct Ecgi {
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub eci: u32,
 }
 
 impl IEs for Ecgi {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer.extend_from_slice(&self.eci.to_be_bytes());
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= 7 {
             let mut data = Ecgi::default();
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[..=2]);
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[..=2]);
+            data.mcc = mcc;
+            data.mnc = mnc;
+            data.mnc_is_three_digits = mnc_is_three_digits;
             data.eci = u32::from_be_bytes([buffer[3], buffer[4], buffer[5], buffer[6]]);
             Ok(data)
         } else {
@@ -216,19 +256,27 @@ impl IEs for Ecgi {
 pub struct Lai {
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub lac: u16,
 }
 
 impl IEs for Lai {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer.extend_from_slice(&self.lac.to_be_bytes());
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= 5 {
             let mut data = Lai::default();
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[..=2]);
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[..=2]);
+            data.mcc = mcc;
+            data.mnc = mnc;
+            data.mnc_is_three_digits = mnc_is_three_digits;
             data.lac = u16::from_be_bytes([buffer[3], buffer[4]]);
             Ok(data)
         } else {
@@ -255,19 +303,27 @@ impl IEs for Lai {
 pub struct MacroEnbId {
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub macro_id: u32,
 }
 
 impl IEs for MacroEnbId {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer.extend_from_slice(&self.macro_id.to_be_bytes()[1..]);
     }
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= 6 {
             let mut data = MacroEnbId::default();
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[..=2]);
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[..=2]);
+            data.mcc = mcc;
+            data.mnc = mnc;
+            data.mnc_is_three_digits = mnc_is_three_digits;
             data.macro_id = u32::from_be_bytes([0x00, buffer[3], buffer[4], buffer[5]]);
             Ok(data)
         } else {
@@ -294,13 +350,18 @@ impl IEs for MacroEnbId {
 pub struct ExtMacroEnbId {
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub smenb: bool,
     pub ext_macro_id: u32,
 }
 
 impl IEs for ExtMacroEnbId {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         if self.smenb {
             let mut i = self.ext_macro_id.to_be_bytes();
             i[1] = (i[1] | 0x80) & 0x83;
@@ -314,7 +375,10 @@ impl IEs for ExtMacroEnbId {
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= 6 {
             let mut data = ExtMacroEnbId::default();
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[..=2]);
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[..=2]);
+            data.mcc = mcc;
+            data.mnc = mnc;
+            data.mnc_is_three_digits = mnc_is_three_digits;
             match buffer[3] >> 7 {
                 0 => {
                     data.smenb = false;

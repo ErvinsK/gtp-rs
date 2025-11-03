@@ -20,6 +20,7 @@ pub struct Guti {
     pub ins: u8,
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub mmegi: u16,
     pub mmec: u8,
     pub mtmsi: u32,
@@ -33,6 +34,7 @@ impl Default for Guti {
             ins: 0,
             mcc: 0,
             mnc: 0,
+            mnc_is_three_digits: false,
             mmegi: 0,
             mmec: 0,
             mtmsi: 0,
@@ -52,7 +54,11 @@ impl IEs for Guti {
         buffer_ie.push(GUTI);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer_ie.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer_ie.extend_from_slice(&self.mmegi.to_be_bytes());
         buffer_ie.push(self.mmec);
         buffer_ie.extend_from_slice(&self.mtmsi.to_be_bytes());
@@ -62,11 +68,13 @@ impl IEs for Guti {
 
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         if buffer.len() >= MIN_IE_SIZE + GUTI_LENGTH {
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[4..7]);
             let data = Guti {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ins: buffer[3] & 0x0f,
-                mcc: mcc_mnc_decode(&buffer[4..7]).0,
-                mnc: mcc_mnc_decode(&buffer[4..7]).1,
+                mcc,
+                mnc,
+                mnc_is_three_digits,
                 mmegi: u16::from_be_bytes([buffer[7], buffer[8]]),
                 mmec: buffer[9],
                 mtmsi: u32::from_be_bytes([buffer[10], buffer[11], buffer[12], buffer[13]]),
@@ -101,6 +109,7 @@ fn guti_ie_marshal_test() {
         ins: 0,
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         mmegi: 300,
         mmec: 10,
         mtmsi: 0xffffffff,
@@ -121,6 +130,7 @@ fn global_cn_id_ie_unmarshal_test() {
         ins: 0,
         mcc: 999,
         mnc: 1,
+        mnc_is_three_digits: false,
         mmegi: 300,
         mmec: 10,
         mtmsi: 0xffffffff,

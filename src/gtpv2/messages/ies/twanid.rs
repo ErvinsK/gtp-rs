@@ -22,7 +22,7 @@ pub struct TwanId {
     pub ssid: Vec<u8>,
     pub bssid: Option<Vec<u8>>,
     pub civic_address: Option<Vec<u8>>,
-    pub twan_plmnid: Option<(u16, u16)>, // MCC and MNC
+    pub twan_plmnid: Option<(u16, u16, bool)>, // MCC, MNC and 3-digit flag
     pub twan_op_name: Option<String>,
     pub relay_id: Option<(u8, Vec<u8>)>,
     pub circuit_id: Option<Vec<u8>>,
@@ -78,8 +78,8 @@ impl IEs for TwanId {
             buffer_ie.push(i.len() as u8);
             buffer_ie.extend_from_slice(&i[..]);
         }
-        if let Some((i, j)) = &self.twan_plmnid {
-            buffer_ie.extend_from_slice(&mcc_mnc_encode(*i, *j));
+        if let Some((i, j, mnc_is_three_digits)) = &self.twan_plmnid {
+            buffer_ie.extend_from_slice(&mcc_mnc_encode(*i, *j, *mnc_is_three_digits));
         }
         if let Some(i) = &self.twan_op_name {
             let b = i.as_bytes();
@@ -227,7 +227,7 @@ fn twan_id_ie_unmarshal_test() {
         ssid: vec![0x00, 0x00, 0x00],
         bssid: Some(vec![0xff, 0xff, 0xff, 0xff, 0xff, 0xff]),
         civic_address: Some(vec![0x00, 0x00, 0x00]),
-        twan_plmnid: Some((999, 1)),
+        twan_plmnid: Some((999, 1, false)),
         twan_op_name: Some("test".to_string()),
         relay_id: Some((0, vec![0xff, 0xff, 0xff, 0xff])),
         circuit_id: Some(vec![0xaa, 0xaa, 0xaa]),
@@ -250,7 +250,7 @@ fn twan_id_ie_marshal_test() {
         ssid: vec![0x00, 0x00, 0x00],
         bssid: Some(vec![0xff, 0xff, 0xff, 0xff, 0xff, 0xff]),
         civic_address: Some(vec![0x00, 0x00, 0x00]),
-        twan_plmnid: Some((999, 1)),
+        twan_plmnid: Some((999, 1, false)),
         twan_op_name: Some("test".to_string()),
         relay_id: Some((0, vec![0xff, 0xff, 0xff, 0xff])),
         circuit_id: Some(vec![0xaa, 0xaa, 0xaa]),

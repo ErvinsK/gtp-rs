@@ -326,11 +326,13 @@ fn test_bearer_resource_command_unmarshal() {
                 Location::Tai(Tai {
                     mcc: 262,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     tac: 0x0bd9,
                 }),
                 Location::Ecgi(Ecgi {
                     mcc: 262,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     eci: 28983298,
                 }),
             ],
@@ -341,6 +343,7 @@ fn test_bearer_resource_command_unmarshal() {
             ins: 0,
             mcc: 262,
             mnc: 1,
+            mnc_is_three_digits: false,
         }),
         rattype: Some(RatType {
             t: RATTYPE,
@@ -476,11 +479,13 @@ fn test_bearer_resource_command_marshal() {
                 Location::Tai(Tai {
                     mcc: 262,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     tac: 0x0bd9,
                 }),
                 Location::Ecgi(Ecgi {
                     mcc: 262,
                     mnc: 1,
+                    mnc_is_three_digits: false,
                     eci: 28983298,
                 }),
             ],
@@ -491,6 +496,7 @@ fn test_bearer_resource_command_marshal() {
             ins: 0,
             mcc: 262,
             mnc: 1,
+            mnc_is_three_digits: false,
         }),
         rattype: Some(RatType {
             t: RATTYPE,

@@ -32,6 +32,7 @@ pub struct Uci {
     pub length: u16,
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub csgid: u32,
     pub access_mode: AccessMode,
     pub cmi: Cmi,
@@ -44,6 +45,7 @@ impl Default for Uci {
             length: UCI_LENGTH,
             mcc: 0,
             mnc: 0,
+            mnc_is_three_digits: false,
             csgid: 0,
             access_mode: AccessMode::ClosedMode,
             cmi: Cmi::CsgMembership,
@@ -56,7 +58,11 @@ impl IEs for Uci {
         let mut buffer_ie: Vec<u8> = vec![];
         buffer_ie.push(self.t);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
-        buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer_ie.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer_ie.extend_from_slice(&(self.csgid & 0x07ffffff).to_be_bytes());
         match (&self.access_mode, &self.cmi) {
             (AccessMode::ClosedMode, Cmi::CsgMembership) => buffer_ie.push(0x00),
@@ -79,7 +85,10 @@ impl IEs for Uci {
                 length: u16::from_be_bytes([buffer[1], buffer[2]]),
                 ..Default::default()
             };
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[3..=5]);
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[3..=5]);
+            data.mcc = mcc;
+            data.mnc = mnc;
+            data.mnc_is_three_digits = mnc_is_three_digits;
             data.csgid = u32::from_be_bytes([buffer[6], buffer[7], buffer[8], buffer[9]]);
             match (buffer[10] & 0xc0) >> 6 {
                 0 => data.access_mode = AccessMode::ClosedMode,
@@ -112,6 +121,7 @@ fn uci_ie_marshal_test() {
         length: UCI_LENGTH,
         mcc: 262,
         mnc: 3,
+        mnc_is_three_digits: false,
         csgid: 48190,
         access_mode: AccessMode::ClosedMode,
         cmi: Cmi::NonCsgMembership,
@@ -131,6 +141,7 @@ fn uci_ie_unmarshal_test() {
         length: UCI_LENGTH,
         mcc: 262,
         mnc: 3,
+        mnc_is_three_digits: false,
         csgid: 48190,
         access_mode: AccessMode::HybridMode,
         cmi: Cmi::NonCsgMembership,
@@ -139,4 +150,40 @@ fn uci_ie_unmarshal_test() {
         0xC2, 0x00, 0x08, 0x62, 0xf2, 0x30, 0x00, 0x00, 0xbc, 0x3e, 0x41,
     ];
     assert_eq!(Uci::unmarshal(&ie_unmarshalled).unwrap(), ie_to_marshal);
+}
+
+#[test]
+fn uci_ie_three_digit_mnc_roundtrip_test() {
+    let three_digit = Uci {
+        t: UCI,
+        length: UCI_LENGTH,
+        mcc: 262,
+        mnc: 10,
+        mnc_is_three_digits: true,
+        csgid: 48190,
+        access_mode: AccessMode::ClosedMode,
+        cmi: Cmi::CsgMembership,
+    };
+    let encoded: [u8; 11] = [
+        0xC2, 0x00, 0x08, 0x62, 0x02, 0x10, 0x00, 0x00, 0xbc, 0x3e, 0x00,
+    ];
+    let mut buffer: Vec<u8> = vec![];
+    three_digit.marshal(&mut buffer);
+    assert_eq!(buffer, encoded);
+    assert_eq!(Uci::unmarshal(&encoded).unwrap(), three_digit);
+
+    let numeric_three_digit = Uci {
+        mnc: 742,
+        mnc_is_three_digits: true,
+        ..three_digit.clone()
+    };
+    let mut buffer_numeric: Vec<u8> = vec![];
+    numeric_three_digit.marshal(&mut buffer_numeric);
+    let expected_numeric: [u8; 11] = [
+        0xC2, 0x00, 0x08, 0x62, 0x22, 0x47, 0x00, 0x00, 0xbc, 0x3e, 0x00,
+    ];
+    assert_eq!(buffer_numeric, expected_numeric);
+    let mut decoded_numeric = numeric_three_digit.clone();
+    decoded_numeric.mnc_is_three_digits = true;
+    assert_eq!(Uci::unmarshal(&expected_numeric).unwrap(), decoded_numeric);
 }

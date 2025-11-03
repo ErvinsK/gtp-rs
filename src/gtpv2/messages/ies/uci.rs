@@ -77,6 +77,7 @@ pub struct Uci {
     pub ins: u8,
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub csgid: u32,
     pub access_mode: AccessMode,
     pub lcsg: bool, // Leave CSG flag
@@ -91,6 +92,7 @@ impl Default for Uci {
             ins: 0,
             mcc: 0,
             mnc: 0,
+            mnc_is_three_digits: false,
             csgid: 0,
             access_mode: AccessMode::ClosedMode,
             lcsg: false,
@@ -111,7 +113,11 @@ impl IEs for Uci {
         buffer_ie.push(UCI);
         buffer_ie.extend_from_slice(&self.length.to_be_bytes());
         buffer_ie.push(self.ins);
-        buffer_ie.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer_ie.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer_ie.extend_from_slice(&(self.csgid & 0x07ffffff).to_be_bytes());
 
         match self.lcsg {
@@ -136,7 +142,10 @@ impl IEs for Uci {
                 csgid: u32::from_be_bytes([buffer[7], buffer[8], buffer[9], buffer[10]]),
                 ..Uci::default()
             };
-            (data.mcc, data.mnc) = mcc_mnc_decode(&buffer[4..=6]);
+            let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[4..=6]);
+            data.mcc = mcc;
+            data.mnc = mnc;
+            data.mnc_is_three_digits = mnc_is_three_digits;
             data.access_mode = ((buffer[11] & 0xc0) >> 6).into();
             match (buffer[11] & 0x02) >> 1 {
                 0 => data.lcsg = false,
@@ -172,6 +181,7 @@ fn uci_ie_marshal_test() {
         ins: 0,
         mcc: 262,
         mnc: 3,
+        mnc_is_three_digits: false,
         csgid: 48190,
         access_mode: AccessMode::ClosedMode,
         lcsg: false,
@@ -193,6 +203,7 @@ fn uci_ie_unmarshal_test() {
         ins: 0,
         mcc: 262,
         mnc: 3,
+        mnc_is_three_digits: false,
         csgid: 48190,
         access_mode: AccessMode::ClosedMode,
         lcsg: false,

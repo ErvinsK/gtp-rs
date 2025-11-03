@@ -15,6 +15,7 @@ pub const SOURCEID: u8 = 129;
 pub struct SourceRncIdentifier {
     pub mcc: u16,
     pub mnc: u16,
+    pub mnc_is_three_digits: bool,
     pub rnc_id: u16,
     pub ext_rnc_id: Option<u16>,
 }
@@ -23,7 +24,11 @@ pub struct SourceRncIdentifier {
 
 impl IEs for SourceRncIdentifier {
     fn marshal(&self, buffer: &mut Vec<u8>) {
-        buffer.append(&mut mcc_mnc_encode(self.mcc, self.mnc));
+        buffer.append(&mut mcc_mnc_encode(
+            self.mcc,
+            self.mnc,
+            self.mnc_is_three_digits,
+        ));
         buffer.extend_from_slice(&self.rnc_id.to_be_bytes());
         if let Some(ext_rnc_id) = self.ext_rnc_id {
             buffer.extend_from_slice(&ext_rnc_id.to_be_bytes());
@@ -33,18 +38,22 @@ impl IEs for SourceRncIdentifier {
     fn unmarshal(buffer: &[u8]) -> Result<Self, GTPV2Error> {
         match buffer.len() {
             i if i < 6 => {
+                let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[..=2]);
                 let data = SourceRncIdentifier {
-                    mcc: mcc_mnc_decode(&buffer[..=2]).0,
-                    mnc: mcc_mnc_decode(&buffer[..=2]).1,
+                    mcc,
+                    mnc,
+                    mnc_is_three_digits,
                     rnc_id: u16::from_be_bytes([buffer[3], buffer[4]]),
                     ext_rnc_id: None,
                 };
                 Ok(data)
             }
             j if j >= 7 => {
+                let (mcc, mnc, mnc_is_three_digits) = mcc_mnc_decode(&buffer[..=2]);
                 let data = SourceRncIdentifier {
-                    mcc: mcc_mnc_decode(&buffer[..=2]).0,
-                    mnc: mcc_mnc_decode(&buffer[..=2]).1,
+                    mcc,
+                    mnc,
+                    mnc_is_three_digits,
                     rnc_id: u16::from_be_bytes([buffer[3], buffer[4]]),
                     ext_rnc_id: Some(u16::from_be_bytes([buffer[5], buffer[6]])),
                 };
@@ -249,6 +258,7 @@ fn source_id_ie_rnc_id_marshal_test() {
         target_cell: CellIdentifier {
             mcc: 263,
             mnc: 1,
+            mnc_is_three_digits: false,
             lac: 0xffff,
             rac: 0xaa,
             ci: 0xffaa,
@@ -256,6 +266,7 @@ fn source_id_ie_rnc_id_marshal_test() {
         source_type: SourceType::SourceRncId(SourceRncIdentifier {
             mcc: 263,
             mnc: 1,
+            mnc_is_three_digits: false,
             rnc_id: 0xffaa,
             ext_rnc_id: Some(4098),
         }),
@@ -278,6 +289,7 @@ fn source_id_ie_source_rnc_id_unmarshal_test() {
         target_cell: CellIdentifier {
             mcc: 263,
             mnc: 1,
+            mnc_is_three_digits: false,
             lac: 0xffff,
             rac: 0xaa,
             ci: 0xffaa,
@@ -285,6 +297,7 @@ fn source_id_ie_source_rnc_id_unmarshal_test() {
         source_type: SourceType::SourceRncId(SourceRncIdentifier {
             mcc: 263,
             mnc: 1,
+            mnc_is_three_digits: false,
             rnc_id: 0xffaa,
             ext_rnc_id: Some(4098),
         }),
@@ -307,6 +320,7 @@ fn source_id_ie_cell_id_marshal_test() {
         target_cell: CellIdentifier {
             mcc: 263,
             mnc: 4,
+            mnc_is_three_digits: false,
             lac: 4098,
             rac: 2,
             ci: 16,
@@ -314,6 +328,7 @@ fn source_id_ie_cell_id_marshal_test() {
         source_type: SourceType::SourceCellId(CellIdentifier {
             mcc: 263,
             mnc: 4,
+            mnc_is_three_digits: false,
             lac: 4098,
             rac: 2,
             ci: 16,
@@ -337,6 +352,7 @@ fn source_id_ie_cell_id_unmarshal_test() {
         target_cell: CellIdentifier {
             mcc: 263,
             mnc: 4,
+            mnc_is_three_digits: false,
             lac: 4098,
             rac: 2,
             ci: 16,
@@ -344,6 +360,7 @@ fn source_id_ie_cell_id_unmarshal_test() {
         source_type: SourceType::SourceCellId(CellIdentifier {
             mcc: 263,
             mnc: 4,
+            mnc_is_three_digits: false,
             lac: 4098,
             rac: 2,
             ci: 16,
