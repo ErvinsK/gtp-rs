@@ -104,6 +104,10 @@ impl Messages for DeleteBearerRequest {
             elements.push(i.into())
         };
 
+        if let Some(i) = self.ebi.clone() {
+            elements.push(i.into())
+        };
+
         self.bearer_ctxs
             .iter()
             .for_each(|x| elements.push(InformationElement::BearerContext(x.clone())));
